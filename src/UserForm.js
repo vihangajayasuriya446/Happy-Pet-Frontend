@@ -1,31 +1,41 @@
 import React, { useEffect, useState } from "react";
-import { Button, FormLabel, Box, Input, Typography, Select, MenuItem } from "@mui/material";
+import {
+  Button,
+  FormLabel,
+  Box,
+  Input,
+  Typography,
+  Select,
+  MenuItem,
+} from "@mui/material";
 
 const UserForm = ({ addUser, submitted, data, isEdit, updateUser }) => {
   const [id, setId] = useState(0);
-  const [name, setName] = useState('');
-  const [type, setType] = useState('');
-  const [age, setAge] = useState('');
-  const [gender, setGender] = useState('');
-  const [breed, setBreed] = useState('');
-  const [location, setLocation] = useState('');
+  const [name, setName] = useState("");
+  const [type, setType] = useState("");
+  const [age, setAge] = useState("");
+  const [gender, setGender] = useState("");
+  const [breed, setBreed] = useState("");
+  const [location, setLocation] = useState("");
   const [photo, setPhoto] = useState(null);
 
+  // Reset form when `submitted` or `isEdit` changes
   useEffect(() => {
-    if (!submitted) {
+    if (submitted || !isEdit) {
       setId(0);
-      setName('');
-      setType('');
-      setAge('');
-      setGender('');
-      setBreed('');
-      setLocation('');
+      setName("");
+      setType("");
+      setAge("");
+      setGender("");
+      setBreed("");
+      setLocation("");
       setPhoto(null);
     }
-  }, [submitted]);
+  }, [submitted, isEdit]);
 
+  // Populate form when editing
   useEffect(() => {
-    if (data?.id && data.id !== 0) {
+    if (isEdit && data) {
       setId(data.id);
       setName(data.name);
       setType(data.type);
@@ -35,7 +45,7 @@ const UserForm = ({ addUser, submitted, data, isEdit, updateUser }) => {
       setLocation(data.location);
       setPhoto(data.photo || null);
     }
-  }, [data]);
+  }, [data, isEdit]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -79,7 +89,13 @@ const UserForm = ({ addUser, submitted, data, isEdit, updateUser }) => {
         </Typography>
       </Box>
 
-      <Box sx={{ display: "block", alignItems: "center", marginBottom: "15px" }}>
+      <Box
+        sx={{
+          display: "block",
+          alignItems: "center",
+          marginBottom: "15px",
+        }}
+      >
         <Typography
           component={FormLabel}
           htmlFor="id"
@@ -103,7 +119,13 @@ const UserForm = ({ addUser, submitted, data, isEdit, updateUser }) => {
         />
       </Box>
 
-      <Box sx={{ display: "block", alignItems: "center", marginBottom: "15px" }}>
+      <Box
+        sx={{
+          display: "block",
+          alignItems: "center",
+          marginBottom: "15px",
+        }}
+      >
         <Typography
           component={FormLabel}
           htmlFor="name"
@@ -127,7 +149,13 @@ const UserForm = ({ addUser, submitted, data, isEdit, updateUser }) => {
         />
       </Box>
 
-      <Box sx={{ display: "block", alignItems: "center", marginBottom: "15px" }}>
+      <Box
+        sx={{
+          display: "block",
+          alignItems: "center",
+          marginBottom: "15px",
+        }}
+      >
         <Typography
           component={FormLabel}
           htmlFor="type"
@@ -154,7 +182,13 @@ const UserForm = ({ addUser, submitted, data, isEdit, updateUser }) => {
         </Select>
       </Box>
 
-      <Box sx={{ display: "block", alignItems: "center", marginBottom: "15px" }}>
+      <Box
+        sx={{
+          display: "block",
+          alignItems: "center",
+          marginBottom: "15px",
+        }}
+      >
         <Typography
           component={FormLabel}
           htmlFor="age"
@@ -178,7 +212,13 @@ const UserForm = ({ addUser, submitted, data, isEdit, updateUser }) => {
         />
       </Box>
 
-      <Box sx={{ display: "block", alignItems: "center", marginBottom: "15px" }}>
+      <Box
+        sx={{
+          display: "block",
+          alignItems: "center",
+          marginBottom: "15px",
+        }}
+      >
         <Typography
           component={FormLabel}
           htmlFor="gender"
@@ -204,7 +244,13 @@ const UserForm = ({ addUser, submitted, data, isEdit, updateUser }) => {
         </Select>
       </Box>
 
-      <Box sx={{ display: "block", alignItems: "center", marginBottom: "15px" }}>
+      <Box
+        sx={{
+          display: "block",
+          alignItems: "center",
+          marginBottom: "15px",
+        }}
+      >
         <Typography
           component={FormLabel}
           htmlFor="breed"
@@ -228,7 +274,13 @@ const UserForm = ({ addUser, submitted, data, isEdit, updateUser }) => {
         />
       </Box>
 
-      <Box sx={{ display: "block", alignItems: "center", marginBottom: "15px" }}>
+      <Box
+        sx={{
+          display: "block",
+          alignItems: "center",
+          marginBottom: "15px",
+        }}
+      >
         <Typography
           component={FormLabel}
           htmlFor="location"
@@ -252,7 +304,13 @@ const UserForm = ({ addUser, submitted, data, isEdit, updateUser }) => {
         />
       </Box>
 
-      <Box sx={{ display: "block", alignItems: "center", marginBottom: "15px" }}>
+      <Box
+        sx={{
+          display: "block",
+          alignItems: "center",
+          marginBottom: "15px",
+        }}
+      >
         <Typography
           component={FormLabel}
           htmlFor="photo"
@@ -276,11 +334,22 @@ const UserForm = ({ addUser, submitted, data, isEdit, updateUser }) => {
         />
         {photo && (
           <Box sx={{ marginTop: "10px" }}>
-            <Typography variant="body2">Selected: {photo.name}</Typography>
+            <Typography variant="body2">
+              Selected: {photo instanceof File ? photo.name : "Existing Photo"}
+            </Typography>
             <img
-              src={URL.createObjectURL(photo)}
+              src={
+                photo instanceof File
+                  ? URL.createObjectURL(photo) // For new files
+                  : `data:image/jpeg;base64,${photo}` // For existing Base64 strings
+              }
               alt="Pet Preview"
-              style={{ width: "150px", height: "150px", marginTop: "10px", borderRadius: "8px" }}
+              style={{
+                width: "150px",
+                height: "150px",
+                marginTop: "10px",
+                borderRadius: "8px",
+              }}
             />
           </Box>
         )}
@@ -300,7 +369,7 @@ const UserForm = ({ addUser, submitted, data, isEdit, updateUser }) => {
         }}
         onClick={handleSubmit}
       >
-        {isEdit ? 'Update' : 'Add'}
+        {isEdit ? "Update" : "Add"}
       </Button>
     </Box>
   );
