@@ -1,15 +1,18 @@
 import React from "react";
-import { Box, Typography, Link, TextField, Button, Grid } from "@mui/material";
+import { Box, Typography, Link, TextField, Button } from "@mui/material";
+import Grid from '@mui/material/Grid2';
 import { Facebook, Instagram, Twitter } from "@mui/icons-material";
+import { theme } from "../themes/themes";
+import HappyPetLogo from '../assets/HappyPet.png';
 
-const Footer = () => {
+const footer = () => {
   return (
     <Box
       sx={{
-        bgcolor: "#f8f9fa",
+        bgcolor: theme.secondaryColor,
         py: 5,
         px: 3,
-        mt: 5,
+        // mt: 5,
         borderTop: "1px solid #ddd",
       }}
     >
@@ -17,9 +20,9 @@ const Footer = () => {
         {/* Logo & Basic Links */}
         <Grid item xs={12} sm={3} textAlign={{ xs: "center", sm: "left" }}>
           <img
-            src="/logo192.png"
+            src={HappyPetLogo}
             alt="Happy Pet"
-            style={{ height: 180, marginBottom: 20, objectFit: "contain" }}
+            style={{ height: 180, marginBottom: 0, objectFit: "contain" }}
           />
           <Box>
             <Typography variant="body1" sx={{ mb: 1 }}>
@@ -104,7 +107,7 @@ const Footer = () => {
         </Grid>
       </Grid>
 
-      {/* Copyright Section */}
+      {/* Copyright */}
       <Box textAlign="center" mt={5}>
         <Typography variant="body2" color="textSecondary">
           © {new Date().getFullYear()} Happy Pet. All rights reserved.
@@ -114,4 +117,4 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+export default footer;
