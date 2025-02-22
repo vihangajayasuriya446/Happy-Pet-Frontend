@@ -86,8 +86,20 @@ const UserForm = ({ addUser, submitted, data, isEdit, updateUser }) => {
       }}
     >
       <Box sx={{ marginBottom: "20px" }}>
-        <Typography component="h1" sx={{ color: "#000000", fontSize: "24px", fontWeight: "bold" }}>
-          Pet Form
+        <Typography
+          component="h1"
+          sx={{
+            color: "#002855",
+            fontSize: "24px",
+            fontWeight: "bold",
+          }}
+        >
+          Yay! We Love to Hear About You Adding Pets to Our Platform!
+        </Typography>
+        <Typography variant="body1" sx={{ color: "rgba(0, 0, 0, 0.6)" }}>
+          We’re excited to help you find a loving home for your pet. Please
+          provide the details of your pet so we can showcase them to potential
+          adopters looking for specific breeds. Let’s get started!
         </Typography>
       </Box>
 

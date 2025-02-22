@@ -86,41 +86,49 @@ const Users = () => {
   };
 
   return (
-    <Box
-      sx={{
-        width: "100%", // Take full width
-        margin: "auto",
-        marginTop: "100px",
-      }}
-    >
-      <h1>Admin Dashboard</h1>
-      <UserForm
-        addUser={addUser}
-        updateUser={updateUser}
-        submitted={submitted}
-        data={selectedUser}
-        isEdit={isEdit}
-        resetForm={resetForm} // Pass resetForm to UserForm
-      />
-      <Box sx={{ marginTop: "40px",
-        width: "97%",
-        overflowX: "auto",
-        paddingLeft: 2,  // Add left padding (adjust value as needed)
-        paddingRight: 2, }}> {/* Adjust the value as needed */}
-        <UserTable
-          rows={users}
-          selectedUser={handleSelectUser}
-          deleteUser={deleteUser}
+    <>
+      <Box
+        sx={{
+          width: "100%",
+          margin: "auto",
+          marginTop: "80px",
+          bgcolor: "#002855",
+          paddingBottom: "50px",
+        }}
+      >
+        <Navbar />
+        
+        <UserForm
+          addUser={addUser}
+          updateUser={updateUser}
+          submitted={submitted}
+          data={selectedUser}
+          isEdit={isEdit}
+          resetForm={resetForm}
         />
+        <Box
+          sx={{
+            marginTop: "40px",
+            width: "97%",
+            overflowX: "auto",
+            paddingLeft: 2,
+            paddingRight: 2,
+          }}
+        >
+          <UserTable
+            rows={users}
+            selectedUser={handleSelectUser}
+            deleteUser={deleteUser}
+          />
+        </Box>
       </Box>
-
-      <Box sx={{ width: "100%" }}> {/* Wrap Footer in a Box */}
+      <Box sx={{ width: "100%" }}>
         <Footer />
       </Box>
-      <Navbar></Navbar>
-    </Box>
+    </>
   );
 };
+
 
 export default Users;
 

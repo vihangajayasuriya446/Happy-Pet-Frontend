@@ -1,5 +1,5 @@
 import React from "react";
-import { AppBar, Toolbar, Typography, IconButton, InputBase, Container, Card, CardContent, CardMedia, Button, Select, MenuItem, FormControl, InputLabel, Box, Drawer, List, ListItem, ListItemText } from "@mui/material";
+import { AppBar, Toolbar, Typography, IconButton, InputBase, Container, Card, CardContent, CardMedia, Button, Select, MenuItem, FormControl, InputLabel, Box, Drawer, List, ListItem, ListItemText, Input } from "@mui/material";
 import { Menu as MenuIcon, AccountCircle, Search as SearchIcon } from "@mui/icons-material";
 
 const pets = [
@@ -103,13 +103,17 @@ const MainPage = () => {
                 <MenuItem value="Female">Female</MenuItem>
               </Select>
             </FormControl>
-            <FormControl fullWidth sx={{ mb: 2 }}><InputLabel>Breed</InputLabel>
-              <Select value={breed} onChange={(e) => setBreed(e.target.value)}>
-                <MenuItem value="Rottweiler">Rottweiler</MenuItem>
-                <MenuItem value="Labrador">Labrador</MenuItem>
-                <MenuItem value="Golden Retriever">Golden Retriever</MenuItem>
-              </Select>
-            </FormControl>
+            <FormControl fullWidth sx={{ mb: 2 }}>
+            <InputLabel shrink>Breed</InputLabel>
+            <Input
+              type="text"
+              value={breed}
+              onChange={(e) => setBreed(e.target.value)}
+              placeholder="Enter breed"
+              sx={{ width: "100%", padding: "10px", border: "1px solid #ccc", borderRadius: "5px" }}
+            />
+          </FormControl>
+
             <FormControl fullWidth sx={{ mb: 2 }}><InputLabel>Your Location</InputLabel>
               <Select value={location} onChange={(e) => setLocation(e.target.value)}>
               <MenuItem value="Ampara">Ampara</MenuItem>
