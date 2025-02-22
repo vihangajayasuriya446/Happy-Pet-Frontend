@@ -91,7 +91,8 @@ const MainPage = () => {
             </FormControl>
             <FormControl fullWidth sx={{ mb: 2 }}><InputLabel>Age</InputLabel>
               <Select value={age} onChange={(e) => setAge(e.target.value)}>
-                <MenuItem value="Puppy">Puppy</MenuItem>
+                <MenuItem value="Baby">Baby</MenuItem>
+                <MenuItem value="Young">Young</MenuItem>
                 <MenuItem value="Adult">Adult</MenuItem>
                 <MenuItem value="Senior">Senior</MenuItem>
               </Select>
@@ -111,9 +112,31 @@ const MainPage = () => {
             </FormControl>
             <FormControl fullWidth sx={{ mb: 2 }}><InputLabel>Your Location</InputLabel>
               <Select value={location} onChange={(e) => setLocation(e.target.value)}>
-                <MenuItem value="Colombo">Colombo</MenuItem>
-                <MenuItem value="Kandy">Kandy</MenuItem>
-                <MenuItem value="Galle">Galle</MenuItem>
+              <MenuItem value="Ampara">Ampara</MenuItem>
+              <MenuItem value="Anuradhapura">Anuradhapura</MenuItem>
+              <MenuItem value="Badulla">Badulla</MenuItem>
+              <MenuItem value="Batticaloa">Batticaloa</MenuItem>
+              <MenuItem value="Colombo">Colombo</MenuItem>
+              <MenuItem value="Galle">Galle</MenuItem>
+              <MenuItem value="Gampaha">Gampaha</MenuItem>
+              <MenuItem value="Hambantota">Hambantota</MenuItem>
+              <MenuItem value="Jaffna">Jaffna</MenuItem>
+              <MenuItem value="Kalutara">Kalutara</MenuItem>
+              <MenuItem value="Kandy">Kandy</MenuItem>
+              <MenuItem value="Kegalle">Kegalle</MenuItem>
+              <MenuItem value="Kilinochchi">Kilinochchi</MenuItem>
+              <MenuItem value="Kurunegala">Kurunegala</MenuItem>
+              <MenuItem value="Mannar">Mannar</MenuItem>
+              <MenuItem value="Matale">Matale</MenuItem>
+              <MenuItem value="Matara">Matara</MenuItem>
+              <MenuItem value="Monaragala">Monaragala</MenuItem>
+              <MenuItem value="Mullaitivu">Mullaitivu</MenuItem>
+              <MenuItem value="Nuwara Eliya">Nuwara Eliya</MenuItem>
+              <MenuItem value="Polonnaruwa">Polonnaruwa</MenuItem>
+              <MenuItem value="Puttalam">Puttalam</MenuItem>
+              <MenuItem value="Ratnapura">Ratnapura</MenuItem>
+              <MenuItem value="Trincomalee">Trincomalee</MenuItem>
+              <MenuItem value="Vavuniya">Vavuniya</MenuItem>
               </Select>
             </FormControl>
             <Button variant="contained" fullWidth sx={{ bgcolor: "#002855", color: "white", fontWeight: "bold" }}>Search</Button>
