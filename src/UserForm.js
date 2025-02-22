@@ -73,6 +73,15 @@ const UserForm = ({ addUser, submitted, data, isEdit, updateUser }) => {
     }
   };
 
+  const handleIdChange = (e) => {
+    const value = e.target.value;
+    if (!isNaN(value) && value >= 0) {
+      setId(parseInt(value, 10));
+    } else if (value === '') {
+      setId(0);
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -127,9 +136,18 @@ const UserForm = ({ addUser, submitted, data, isEdit, updateUser }) => {
           type="number"
           id="id"
           name="id"
-          sx={{ width: "100%" }}
+          sx={{
+            width: "100%",
+            '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
+              WebkitAppearance: 'none',
+              margin: 0,
+            },
+            '&[type=number]': {
+              MozAppearance: 'textfield',
+            },
+          }}
           value={id}
-          onChange={(e) => setId(e.target.value)}
+          onChange={handleIdChange}
         />
       </Box>
 
