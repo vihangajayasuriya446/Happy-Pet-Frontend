@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import UserForm from "./UserForm";
 import UserTable from "./UsersTable";
+import Footer from "./Footer";
+import Navbar from "./Navbar";
 import { Box } from "@mui/material";
 import Axios from "axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -86,12 +88,12 @@ const Users = () => {
   return (
     <Box
       sx={{
-        width: "calc(100% - 100px)",
+        width: "100%", // Take full width
         margin: "auto",
         marginTop: "100px",
       }}
     >
-      <h1>Users Page</h1>
+      <h1>Admin Dashboard</h1>
       <UserForm
         addUser={addUser}
         updateUser={updateUser}
@@ -100,11 +102,22 @@ const Users = () => {
         isEdit={isEdit}
         resetForm={resetForm} // Pass resetForm to UserForm
       />
-      <UserTable
-        rows={users}
-        selectedUser={handleSelectUser}
-        deleteUser={deleteUser}
-      />
+      <Box sx={{ marginTop: "40px",
+        width: "97%",
+        overflowX: "auto",
+        paddingLeft: 2,  // Add left padding (adjust value as needed)
+        paddingRight: 2, }}> {/* Adjust the value as needed */}
+        <UserTable
+          rows={users}
+          selectedUser={handleSelectUser}
+          deleteUser={deleteUser}
+        />
+      </Box>
+
+      <Box sx={{ width: "100%" }}> {/* Wrap Footer in a Box */}
+        <Footer />
+      </Box>
+      <Navbar></Navbar>
     </Box>
   );
 };

@@ -76,16 +76,18 @@ const UserForm = ({ addUser, submitted, data, isEdit, updateUser }) => {
   return (
     <Box
       sx={{
-        backgroundColor: "#ffffff",
-        marginBottom: "30px",
-        display: "block",
+        backgroundColor: "#f5f5f5", // Light gray background
         padding: "20px",
         borderRadius: "8px",
+        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)", // Subtle shadow
+        border: "1px solid #e0e0e0", // Light border
+        maxWidth: "600px",
+        margin: "auto",
       }}
     >
       <Box sx={{ marginBottom: "20px" }}>
-        <Typography component="h1" sx={{ color: "#000000" }}>
-          User Form
+        <Typography component="h1" sx={{ color: "#000000", fontSize: "24px", fontWeight: "bold" }}>
+          Pet Form
         </Typography>
       </Box>
 
@@ -113,7 +115,7 @@ const UserForm = ({ addUser, submitted, data, isEdit, updateUser }) => {
           type="number"
           id="id"
           name="id"
-          sx={{ width: "400px" }}
+          sx={{ width: "100%" }}
           value={id}
           onChange={(e) => setId(e.target.value)}
         />
@@ -143,7 +145,7 @@ const UserForm = ({ addUser, submitted, data, isEdit, updateUser }) => {
           type="text"
           id="name"
           name="name"
-          sx={{ width: "400px" }}
+          sx={{ width: "100%" }}
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
@@ -174,7 +176,7 @@ const UserForm = ({ addUser, submitted, data, isEdit, updateUser }) => {
           name="type"
           value={type}
           onChange={(e) => setType(e.target.value)}
-          sx={{ width: "400px" }}
+          sx={{ width: "100%" }}
         >
           <MenuItem value="Dog">Dog</MenuItem>
           <MenuItem value="Cat">Cat</MenuItem>
@@ -183,34 +185,39 @@ const UserForm = ({ addUser, submitted, data, isEdit, updateUser }) => {
       </Box>
 
       <Box
+      sx={{
+        display: "block",
+        alignItems: "center",
+        marginBottom: "15px",
+      }}
+    >
+      <Typography
+        component={FormLabel}
+        htmlFor="age"
         sx={{
+          color: "#000000",
+          marginRight: "20px",
+          fontSize: "16px",
+          width: "100px",
           display: "block",
-          alignItems: "center",
-          marginBottom: "15px",
         }}
       >
-        <Typography
-          component={FormLabel}
-          htmlFor="age"
-          sx={{
-            color: "#000000",
-            marginRight: "20px",
-            fontSize: "16px",
-            width: "100px",
-            display: "block",
-          }}
-        >
-          Age
-        </Typography>
-        <Input
-          type="number"
-          id="age"
-          name="age"
-          sx={{ width: "400px" }}
-          value={age}
-          onChange={(e) => setAge(e.target.value)}
-        />
-      </Box>
+        Age
+      </Typography>
+      <Select
+        id="age"
+        name="age"
+        value={age}
+        onChange={(e) => setAge(e.target.value)}
+        sx={{ width: "100%" }}
+      >
+        <MenuItem value="Baby">Baby</MenuItem>
+        <MenuItem value="Young">Young</MenuItem>
+        <MenuItem value="Adult">Adult</MenuItem>
+        <MenuItem value="Senior">Senior</MenuItem>
+      </Select>
+    </Box>
+
 
       <Box
         sx={{
@@ -237,7 +244,7 @@ const UserForm = ({ addUser, submitted, data, isEdit, updateUser }) => {
           name="gender"
           value={gender}
           onChange={(e) => setGender(e.target.value)}
-          sx={{ width: "400px" }}
+          sx={{ width: "100%" }}
         >
           <MenuItem value="Male">Male</MenuItem>
           <MenuItem value="Female">Female</MenuItem>
@@ -268,41 +275,67 @@ const UserForm = ({ addUser, submitted, data, isEdit, updateUser }) => {
           type="text"
           id="breed"
           name="breed"
-          sx={{ width: "400px" }}
+          sx={{ width: "100%" }}
           value={breed}
           onChange={(e) => setBreed(e.target.value)}
         />
       </Box>
 
       <Box
-        sx={{
-          display: "block",
-          alignItems: "center",
-          marginBottom: "15px",
-        }}
-      >
-        <Typography
-          component={FormLabel}
-          htmlFor="location"
-          sx={{
-            color: "#000000",
-            marginRight: "20px",
-            fontSize: "16px",
-            width: "100px",
-            display: "block",
-          }}
-        >
-          Location
-        </Typography>
-        <Input
-          type="text"
-          id="location"
-          name="location"
-          sx={{ width: "400px" }}
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-        />
-      </Box>
+    sx={{
+      display: "block",
+      alignItems: "center",
+      marginBottom: "15px",
+    }}
+  >
+    <Typography
+      component={FormLabel}
+      htmlFor="location"
+      sx={{
+        color: "#000000",
+        marginRight: "20px",
+        fontSize: "16px",
+        width: "100px",
+        display: "block",
+      }}
+    >
+      Location
+    </Typography>
+    <Select
+      id="location"
+      name="location"
+      value={location}
+      onChange={(e) => setLocation(e.target.value)}
+      sx={{ width: "100%" }}
+    >
+      <MenuItem value="Ampara">Ampara</MenuItem>
+    <MenuItem value="Anuradhapura">Anuradhapura</MenuItem>
+    <MenuItem value="Badulla">Badulla</MenuItem>
+    <MenuItem value="Batticaloa">Batticaloa</MenuItem>
+    <MenuItem value="Colombo">Colombo</MenuItem>
+    <MenuItem value="Galle">Galle</MenuItem>
+    <MenuItem value="Gampaha">Gampaha</MenuItem>
+    <MenuItem value="Hambantota">Hambantota</MenuItem>
+    <MenuItem value="Jaffna">Jaffna</MenuItem>
+    <MenuItem value="Kalutara">Kalutara</MenuItem>
+    <MenuItem value="Kandy">Kandy</MenuItem>
+    <MenuItem value="Kegalle">Kegalle</MenuItem>
+    <MenuItem value="Kilinochchi">Kilinochchi</MenuItem>
+    <MenuItem value="Kurunegala">Kurunegala</MenuItem>
+    <MenuItem value="Mannar">Mannar</MenuItem>
+    <MenuItem value="Matale">Matale</MenuItem>
+    <MenuItem value="Matara">Matara</MenuItem>
+    <MenuItem value="Monaragala">Monaragala</MenuItem>
+    <MenuItem value="Mullaitivu">Mullaitivu</MenuItem>
+    <MenuItem value="Nuwara Eliya">Nuwara Eliya</MenuItem>
+    <MenuItem value="Polonnaruwa">Polonnaruwa</MenuItem>
+    <MenuItem value="Puttalam">Puttalam</MenuItem>
+    <MenuItem value="Ratnapura">Ratnapura</MenuItem>
+    <MenuItem value="Trincomalee">Trincomalee</MenuItem>
+    <MenuItem value="Vavuniya">Vavuniya</MenuItem>
+    </Select>
+  </Box>
+
 
       <Box
         sx={{
@@ -329,7 +362,7 @@ const UserForm = ({ addUser, submitted, data, isEdit, updateUser }) => {
           id="photo"
           name="photo"
           accept="image/*"
-          sx={{ width: "400px" }}
+          sx={{ width: "100%" }}
           onChange={handleFileChange}
         />
         {photo && (
