@@ -401,21 +401,34 @@ const UserForm = ({ addUser, submitted, data, isEdit, updateUser }) => {
       </Box>
 
       <Button
-        sx={{
-          margin: "auto",
-          marginBottom: "20px",
-          backgroundColor: "#00c6e6",
-          marginLeft: "15px",
-          marginTop: "20px",
-          "&:hover": {
-            opacity: "0.7",
-            backgroundColor: "#00c6e6",
-          },
-        }}
-        onClick={handleSubmit}
-      >
-        {isEdit ? "Update" : "Add"}
-      </Button>
+      sx={{
+        display: 'block',
+        margin: "20px auto",
+        padding: "12px 24px",
+        backgroundColor: "#1976d2",
+        color: "white",
+        borderRadius: "8px",
+        border: "none",
+        fontSize: "16px",
+        fontWeight: "600",
+        cursor: "pointer",
+        transition: "opacity 0.3s ease",
+        "&:hover": {
+          opacity: "0.8",
+          backgroundColor: "#1565c0",
+        },
+        "&:focus": {
+          outline: "2px solid #0099b5",
+          outlineOffset: "2px",
+        },
+        "&:active": {
+          opacity: "0.9",
+        },
+      }}
+      onClick={handleSubmit}
+    >
+      {isEdit ? "Update" : "Add"}
+    </Button>
     </Box>
   );
 };
