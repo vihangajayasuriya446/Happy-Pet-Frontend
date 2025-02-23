@@ -1,4 +1,6 @@
+import React, { useState } from 'react';
 import { Grid, Card, CardContent, CardMedia, Button, Typography, Box } from '@mui/material';
+import AdoptionForm from './AdoptionForm';
 
 const petData = [
     {
@@ -54,6 +56,27 @@ const petData = [
 ];
 
 const PetGrid = () => {
+    const [selectedPet, setSelectedPet] = useState<typeof petData[0] | null>(null);
+
+    const handleAdoptClick = (pet: typeof petData[0]) => {
+        setSelectedPet(pet);
+    };
+
+    const handleFormSubmit = (formData: {
+        name: string;
+        email: string;
+        phone: string;
+        address: string;
+    }) => {
+        console.log('Adoption Form Data:', formData);
+        alert(`Thank you, ${formData.name}! Your adoption request for ${selectedPet?.name} has been submitted.`);
+        setSelectedPet(null); // Close the form after submission
+    };
+
+    const handleFormClose = () => {
+        setSelectedPet(null); // Close the form
+    };
+
     return (
         <Box sx={{ 
             padding: '2rem', 
@@ -132,6 +155,7 @@ const PetGrid = () => {
                                         color: '#ffffff',
                                         '&:hover': { backgroundColor: '#002244' }
                                     }}
+                                    onClick={() => handleAdoptClick(pet)}
                                 >
                                     Adopt Me
                                 </Button>
@@ -140,6 +164,15 @@ const PetGrid = () => {
                     </Grid>
                 ))}
             </Grid>
+
+            {/* Adoption Form Popup */}
+            {selectedPet && (
+                <AdoptionForm
+                    pet={selectedPet}
+                    onClose={handleFormClose}
+                    onSubmit={handleFormSubmit}
+                />
+            )}
         </Box>
     );
 };
