@@ -19,6 +19,7 @@ const App: React.FC = () => {
           <Route path="/dashboard" element={<Users />} />
           <Route path="/matchmaking" element={<MainPage />} />
           <Route path="/contactus" element={<ContactUsPage />} />
+          <Route path="/contactowner" element={<ContactOwner />} />
         </Routes>
         <Footer />
       </Box>
