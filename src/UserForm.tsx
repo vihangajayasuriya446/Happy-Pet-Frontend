@@ -36,6 +36,63 @@ const UserForm: React.FC<UserFormProps> = ({
   const [location, setLocation] = useState<string>("");
   const [photo, setPhoto] = useState<string | File | null>(null);
 
+  // Breed options for each pet type
+  const dogBreeds = [
+    "Labrador Retriever",
+    "German Shepherd",
+    "Golden Retriever",
+    "Bulldog (English/French)",
+    "Beagle",
+    "Poodle (Standard, Miniature, Toy)",
+    "Boxer",
+    "Rottweiler",
+    "Dachshund",
+    "Shih Tzu",
+    "Chihuahua",
+    "Siberian Husky",
+    "Cocker Spaniel",
+    "Pug",
+    "Doberman Pinscher",
+  ];
+
+  const catBreeds = [
+    "Persian",
+    "Maine Coon",
+    "Siamese",
+    "Bengal",
+    "Ragdoll",
+    "Sphynx",
+    "Abyssinian",
+    "British Shorthair",
+    "Scottish Fold",
+    "Siberian",
+    "Russian Blue",
+    "Burmese",
+    "Birman",
+    "Devon Rex",
+    "Oriental Shorthair",
+  ];
+
+  const birdBreeds = [
+    "Budgerigar (Budgie)",
+    "Cockatiel",
+    "African Grey Parrot",
+    "Macaw (Blue-and-Gold, Scarlet, etc.)",
+    "Lovebird",
+    "Canary",
+    "Finch (Zebra Finch, Gouldian Finch)",
+    "Conure (Sun Conure, Green-cheeked Conure)",
+    "Amazon Parrot (Yellow-naped, Blue-fronted)",
+    "Eclectus Parrot",
+    "Parakeet",
+    "Quaker Parrot",
+    "Pionus Parrot",
+    "Kea",
+    "Cockatoo",
+  ];
+
+  const [availableBreeds, setAvailableBreeds] = useState<string[]>([]);
+
   // Reset form when `submitted` or `isEdit` changes
   useEffect(() => {
     if (submitted || !isEdit) {
@@ -62,8 +119,26 @@ const UserForm: React.FC<UserFormProps> = ({
       setBreed(data.breed);
       setLocation(data.location);
       setPhoto(data.photo || null);
+      updateBreedOptions(data.type); // Set breed options based on the type when editing
     }
   }, [data, isEdit]);
+
+  // Update breed options based on the selected pet type
+  const updateBreedOptions = (type: string) => {
+    switch (type) {
+      case "Dog":
+        setAvailableBreeds(dogBreeds);
+        break;
+      case "Cat":
+        setAvailableBreeds(catBreeds);
+        break;
+      case "Bird":
+        setAvailableBreeds(birdBreeds);
+        break;
+      default:
+        setAvailableBreeds([]);
+    }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -226,7 +301,10 @@ const UserForm: React.FC<UserFormProps> = ({
           id="type"
           name="type"
           value={type}
-          onChange={(e) => setType(e.target.value)}
+          onChange={(e) => {
+            setType(e.target.value);
+            updateBreedOptions(e.target.value); // Update breed options based on type
+          }}
           sx={{ width: "100%" }}
         >
           <MenuItem value="Dog">Dog</MenuItem>
@@ -234,7 +312,6 @@ const UserForm: React.FC<UserFormProps> = ({
           <MenuItem value="Bird">Bird</MenuItem>
         </Select>
       </Box>
-
       {/* Age Field */}
       <Box
         sx={{
@@ -324,14 +401,19 @@ const UserForm: React.FC<UserFormProps> = ({
         >
           Breed
         </Typography>
-        <Input
-          type="text"
+        <Select
           id="breed"
           name="breed"
-          sx={{ width: "100%" }}
           value={breed}
           onChange={(e) => setBreed(e.target.value)}
-        />
+          sx={{ width: "100%" }}
+        >
+          {availableBreeds.map((breedOption, index) => (
+            <MenuItem key={index} value={breedOption}>
+              {breedOption}
+            </MenuItem>
+          ))}
+        </Select>
       </Box>
 
       {/* Location Field */}
@@ -445,32 +527,22 @@ const UserForm: React.FC<UserFormProps> = ({
       {/* Submit Button */}
       <Button
         sx={{
-          display: "block",
-          margin: "20px auto",
-          padding: "12px 24px",
-          backgroundColor: "#1976d2",
+          display: "inline-block",
+          backgroundColor: "#4caf50", // Green button
           color: "white",
-          borderRadius: "8px",
-          border: "none",
+          padding: "10px 20px",
           fontSize: "16px",
-          fontWeight: "600",
-          cursor: "pointer",
-          transition: "opacity 0.3s ease",
+          fontWeight: "bold",
+          marginTop: "15px",
+          width: "100%",
+          borderRadius: "5px",
           "&:hover": {
-            opacity: "0.8",
-            backgroundColor: "#1565c0",
-          },
-          "&:focus": {
-            outline: "2px solid #0099b5",
-            outlineOffset: "2px",
-          },
-          "&:active": {
-            opacity: "0.9",
+            backgroundColor: "#45a049",
           },
         }}
         onClick={handleSubmit}
       >
-        {isEdit ? "Update" : "Add"}
+        {isEdit ? "Update Pet" : "Add Pet"}
       </Button>
     </Box>
   );
