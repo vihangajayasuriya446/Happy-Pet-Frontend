@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Grid, Card, CardContent, CardMedia, Button, Typography, Box } from '@mui/material';
 import AdoptionForm from './AdoptionForm';
 
