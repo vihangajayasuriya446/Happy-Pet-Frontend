@@ -27,10 +27,10 @@ const MainPage:React.FC = () => {
   const [breed, setBreed] = useState("");
   const [location, setLocation] = useState("");
 
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   const handleContactOwner = () => {
-    navigate('/contactowner'); // Navigate to the ContactOwnerPage
+    navigate('/contactowner');
   };
 
   return (
