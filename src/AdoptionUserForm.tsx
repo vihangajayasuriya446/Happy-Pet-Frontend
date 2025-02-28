@@ -25,7 +25,6 @@ const PetForm: React.FC<PetFormProps> = ({
   const [age, setAge] = useState<string>("");
   const [gender, setGender] = useState<string>("");
   const [breed, setBreed] = useState<string>("");
-  const [location, setLocation] = useState<string>("");
   const [adoptionStatus, setAdoptionStatus] = useState<string>("Available");
   const [photo, setPhoto] = useState<string | File | null>(null);
 
@@ -48,7 +47,6 @@ const PetForm: React.FC<PetFormProps> = ({
     setAge("");
     setGender("");
     setBreed("");
-    setLocation("");
     setAdoptionStatus("Available");
     setPhoto(null);
     resetForm();
@@ -61,7 +59,6 @@ const PetForm: React.FC<PetFormProps> = ({
     setAge(data.age);
     setGender(data.gender);
     setBreed(data.breed);
-    setLocation(data.location);
     setAdoptionStatus(data.adoptionStatus);
     setPhoto(data.photo || null);
   };
@@ -81,7 +78,6 @@ const PetForm: React.FC<PetFormProps> = ({
       age,
       gender,
       breed,
-      location,
       adoptionStatus,
       photo,
     };
@@ -96,7 +92,7 @@ const PetForm: React.FC<PetFormProps> = ({
   return (
     <Card sx={{ maxWidth: 600, margin: "auto", mt: 4, boxShadow: 3 }}>
       <CardContent>
-        <Typography variant="h5" sx={{ mb: 3, color: "#002855", fontWeight: "bold" }}>
+        <Typography variant="h5" sx={{ mb: 3, color: "#002855", fontWeight: "bold", textAlign: "center" }}>
           {isEdit ? "Edit Pet" : "Add a New Pet for Adoption"}
         </Typography>
 
@@ -138,11 +134,6 @@ const PetForm: React.FC<PetFormProps> = ({
           </Box>
 
           <Box>
-            <FormLabel sx={{ fontWeight: "bold", color: "#002855" }}>Location</FormLabel>
-            <Input fullWidth value={location} onChange={(e) => setLocation(e.target.value)} />
-          </Box>
-
-          <Box>
             <FormLabel sx={{ fontWeight: "bold", color: "#002855" }}>Adoption Status</FormLabel>
             <Select fullWidth value={adoptionStatus} onChange={(e) => setAdoptionStatus(e.target.value)}>
               <MenuItem value="Available">Available</MenuItem>
@@ -160,7 +151,7 @@ const PetForm: React.FC<PetFormProps> = ({
             variant="contained"
             color="primary"
             onClick={handleSubmit}
-            sx={{ mt: 2, textTransform: "none" }}
+            sx={{ mt: 2, textTransform: "none", borderRadius: "4px" }}
           >
             {isEdit ? "Update Pet" : "Add Pet"}
           </Button>
