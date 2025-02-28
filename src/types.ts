@@ -6,7 +6,6 @@ export interface Pet {
   age: string;
   gender: string;
   breed: string;
-  location: string;
   adoptionStatus: string; // New field
   adoptionFee?: number; // Optional field
   photo?: string | File | null;
