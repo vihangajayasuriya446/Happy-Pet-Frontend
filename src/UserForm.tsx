@@ -194,7 +194,7 @@ const UserForm: React.FC<UserFormProps> = ({
 
   const handleIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (!isNaN(Number(value)) && Number(value) >= 0) {
+    if (!isNaN(Number(value)) && Number(value) >= 1) {
       setId(parseInt(value, 10));
     } else if (value === "") {
       setId(1); // Reset ID to 1 if the field is empty
