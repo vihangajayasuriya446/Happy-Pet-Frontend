@@ -109,8 +109,6 @@ const Users: React.FC = () => {
           paddingBottom: "50px",
         }}
       >
-        
-        
         <UserForm
           addUser={addUser}
           updateUser={updateUser}
@@ -118,6 +116,7 @@ const Users: React.FC = () => {
           data={selectedUser || undefined} // Pass undefined if no user is selected
           isEdit={isEdit}
           resetForm={resetForm}
+          users={users} // Pass the users array to UserForm
         />
         <Box
           sx={{
@@ -135,9 +134,7 @@ const Users: React.FC = () => {
           />
         </Box>
       </Box>
-      <Box sx={{ width: "100%" }}>
-        
-      </Box>
+      <Box sx={{ width: "100%" }}></Box>
     </>
   );
 };

@@ -17,6 +17,7 @@ interface UserFormProps {
   data?: User; // Optional data for editing
   isEdit: boolean;
   resetForm: () => void;
+  users: User[]; // Add users as a prop
 }
 
 const UserForm: React.FC<UserFormProps> = ({
@@ -26,6 +27,7 @@ const UserForm: React.FC<UserFormProps> = ({
   data,
   isEdit,
   resetForm,
+  users, // Add users as a prop
 }) => {
   const [id, setId] = useState<number>(0);
   const [name, setName] = useState<string>("");
@@ -148,6 +150,15 @@ const UserForm: React.FC<UserFormProps> = ({
   };
 
   const handleSubmit = () => {
+    // Check if the ID already exists in the users array
+    const isIdExists = users.some((user: User) => user.id === id);
+
+    if (isIdExists && !isEdit) {
+      // Show an alert if the ID already exists and it's not an edit operation
+      alert("User with this ID already exists. Please use a different ID.");
+      return; // Stop further execution
+    }
+
     const userData: User = {
       id,
       name,
@@ -242,6 +253,7 @@ const UserForm: React.FC<UserFormProps> = ({
           }}
           value={id}
           onChange={handleIdChange}
+          disabled={isEdit} // Disable the ID field in edit mode
         />
       </Box>
 
@@ -312,6 +324,7 @@ const UserForm: React.FC<UserFormProps> = ({
           <MenuItem value="Bird">Bird</MenuItem>
         </Select>
       </Box>
+
       {/* Age Field */}
       <Box
         sx={{
@@ -494,12 +507,12 @@ const UserForm: React.FC<UserFormProps> = ({
           Pet Photo
         </Typography>
         <input
-            type="file"
-            id="photo"
-            name="photo"
-            accept="image/*"
-            onChange={handleFileChange}
-            style={{ width: "100%" }}
+          type="file"
+          id="photo"
+          name="photo"
+          accept="image/*"
+          onChange={handleFileChange}
+          style={{ width: "100%" }}
         />
         {photo && (
           <Box sx={{ marginTop: "10px" }}>
