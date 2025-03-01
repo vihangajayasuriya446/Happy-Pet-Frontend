@@ -9,6 +9,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import PetList from "./components/PetList";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import DrawerMenu from "./components/DrawerMenu";
 
 interface SearchBarProps {
     placeholder?: string;
@@ -78,15 +79,15 @@ const App: React.FC = () => {
             fontFamily: '"Nunito Sans", sans-serif',
         }}>
             <Navbar toggleDrawer={toggleDrawer} />
+            <DrawerMenu open={drawerOpen} toggleDrawer={toggleDrawer} />
 
             <Box
                 sx={{
                     bgcolor: '#003366',
-                    pt: { xs: 12, md: 14 }, // Increased padding-top to account for navbar height
+                    pt: { xs: 12, md: 14 },
                     pb: 3,
                     px: 4,
                     position: 'relative',
-                    // Removed marginTop and increased padding-top instead
                 }}
             >
                 <Container
@@ -118,7 +119,7 @@ const App: React.FC = () => {
                         display: { xs: 'none', md: 'block' }
                     }}>
                         <SearchBar
-                            placeholder="Search for pets..."
+                            placeholder="Search for dogs or cats..."
                             onSearch={handleSearch}
                         />
                     </Box>
