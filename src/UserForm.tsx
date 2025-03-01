@@ -29,7 +29,7 @@ const UserForm: React.FC<UserFormProps> = ({
   resetForm,
   users, // Add users as a prop
 }) => {
-  const [id, setId] = useState<number>(0);
+  const [id, setId] = useState<number>(1); // Initialize ID to 1
   const [name, setName] = useState<string>("");
   const [type, setType] = useState<string>("");
   const [age, setAge] = useState<string>("");
@@ -98,7 +98,7 @@ const UserForm: React.FC<UserFormProps> = ({
   // Reset form when `submitted` or `isEdit` changes
   useEffect(() => {
     if (submitted || !isEdit) {
-      setId(0);
+      setId(1); // Reset ID to 1
       setName("");
       setType("");
       setAge("");
@@ -150,6 +150,21 @@ const UserForm: React.FC<UserFormProps> = ({
   };
 
   const handleSubmit = () => {
+    // Check if all fields are filled
+    if (
+      !id ||
+      !name ||
+      !type ||
+      !age ||
+      !gender ||
+      !breed ||
+      !location ||
+      !photo
+    ) {
+      alert("Please fill all fields before submitting.");
+      return;
+    }
+
     // Check if the ID already exists in the users array
     const isIdExists = users.some((user: User) => user.id === id);
 
@@ -182,7 +197,7 @@ const UserForm: React.FC<UserFormProps> = ({
     if (!isNaN(Number(value)) && Number(value) >= 0) {
       setId(parseInt(value, 10));
     } else if (value === "") {
-      setId(0);
+      setId(1); // Reset ID to 1 if the field is empty
     }
   };
 
