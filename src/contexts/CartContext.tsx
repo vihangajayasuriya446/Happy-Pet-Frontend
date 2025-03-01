@@ -1,31 +1,25 @@
 // src/contexts/CartContext.tsx
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
+import { Pet } from '../components/PetCard'; // Import the Pet type from PetCard
 
 // Define the structure for a cart item
 export interface CartItem {
-    pet: {
-        id: number;
-        name: string;
-        breed: string;
-        price: number;
-        birthYear: number;
-        petType: string;
-        image: string;
-    };
+    pet: Pet;
     quantity: number;
 }
 
 // Define what the context will provide
 interface CartContextType {
     items: CartItem[];
-    addToCart: (pet: any, quantity: number) => void;
+    addToCart: (pet: Pet, quantity: number) => void;
     removeFromCart: (id: number) => void;
     updateQuantity: (id: number, type: 'plus' | 'minus') => void;
     getItemCount: () => number;
     clearCart: () => void;
+    getCartTotal: () => number;
 }
 
-// Create the context
+// Create the context with default values
 const CartContext = createContext<CartContextType>({
     items: [],
     addToCart: () => {},
@@ -33,75 +27,84 @@ const CartContext = createContext<CartContextType>({
     updateQuantity: () => {},
     getItemCount: () => 0,
     clearCart: () => {},
+    getCartTotal: () => 0,
 });
 
 // Provider component
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [items, setItems] = useState<CartItem[]>([]);
 
-    const addToCart = (pet: any, quantity: number) => {
+    // Use useCallback to memoize functions and prevent unnecessary re-renders
+    const addToCart = useCallback((pet: Pet, quantity: number) => {
         setItems(prevItems => {
             // Check if item already exists in cart
-            const existingItemIndex = prevItems.findIndex(item => item.pet.id === pet.id);
+            const existingItem = prevItems.find(item => item.pet.id === pet.id);
 
-            if (existingItemIndex >= 0) {
+            if (existingItem) {
                 // If item exists, update quantity
-                const updatedItems = [...prevItems];
-                updatedItems[existingItemIndex].quantity += quantity;
-                return updatedItems;
+                return prevItems.map(item =>
+                    item.pet.id === pet.id
+                        ? { ...item, quantity: item.quantity + quantity }
+                        : item
+                );
             } else {
                 // If item doesn't exist, add it
                 return [...prevItems, { pet, quantity }];
             }
         });
-    };
+    }, []);
 
-    const removeFromCart = (id: number) => {
+    const removeFromCart = useCallback((id: number) => {
         setItems(prevItems => prevItems.filter(item => item.pet.id !== id));
-    };
+    }, []);
 
-    const updateQuantity = (id: number, type: 'plus' | 'minus') => {
+    // Revised updateQuantity function to ensure it only updates by exactly 1
+    const updateQuantity = useCallback((id: number, type: 'plus' | 'minus') => {
+        console.log(`Updating quantity for item ${id}: ${type}`); // Debug log
+
         setItems(prevItems => {
-            const itemIndex = prevItems.findIndex(item => item.pet.id === id);
+            return prevItems.map(item => {
+                if (item.pet.id === id) {
+                    const newQuantity = type === 'plus'
+                        ? item.quantity + 1
+                        : Math.max(1, item.quantity - 1);
 
-            if (itemIndex === -1) return prevItems;
+                    console.log(`Item ${id}: ${item.quantity} -> ${newQuantity}`); // Debug log
 
-            const updatedItems = [...prevItems];
-
-            if (type === 'plus') {
-                updatedItems[itemIndex].quantity += 1;
-            } else if (type === 'minus') {
-                updatedItems[itemIndex].quantity -= 1;
-
-                // Remove item if quantity becomes zero
-                if (updatedItems[itemIndex].quantity <= 0) {
-                    return updatedItems.filter(item => item.pet.id !== id);
+                    return {
+                        ...item,
+                        quantity: newQuantity
+                    };
                 }
-            }
-
-            return updatedItems;
+                return item;
+            });
         });
-    };
+    }, []);
 
-    const getItemCount = () => {
+    const getItemCount = useCallback(() => {
         return items.reduce((total, item) => total + item.quantity, 0);
-    };
+    }, [items]);
 
-    const clearCart = () => {
+    const getCartTotal = useCallback(() => {
+        return items.reduce((total, item) => total + (Number(item.pet.price) * item.quantity), 0);
+    }, [items]);
+
+    const clearCart = useCallback(() => {
         setItems([]);
+    }, []);
+
+    const value = {
+        items,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        getItemCount,
+        clearCart,
+        getCartTotal
     };
 
     return (
-        <CartContext.Provider
-            value={{
-                items,
-                addToCart,
-                removeFromCart,
-                updateQuantity,
-                getItemCount,
-                clearCart
-            }}
-        >
+        <CartContext.Provider value={value}>
             {children}
         </CartContext.Provider>
     );
