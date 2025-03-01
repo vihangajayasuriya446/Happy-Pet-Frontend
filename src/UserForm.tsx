@@ -27,7 +27,6 @@ const UserForm: React.FC<UserFormProps> = ({
   isEdit,
   resetForm,
 }) => {
-  const [id, setId] = useState<number>(0);
   const [name, setName] = useState<string>("");
   const [type, setType] = useState<string>("");
   const [age, setAge] = useState<string>("");
@@ -96,7 +95,6 @@ const UserForm: React.FC<UserFormProps> = ({
   // Reset form when `submitted` or `isEdit` changes
   useEffect(() => {
     if (submitted || !isEdit) {
-      setId(0);
       setName("");
       setType("");
       setAge("");
@@ -111,7 +109,6 @@ const UserForm: React.FC<UserFormProps> = ({
   // Populate form when editing
   useEffect(() => {
     if (isEdit && data) {
-      setId(data.id);
       setName(data.name);
       setType(data.type);
       setAge(data.age);
@@ -148,8 +145,7 @@ const UserForm: React.FC<UserFormProps> = ({
   };
 
   const handleSubmit = () => {
-    const userData: User = {
-      id,
+    const userData: Omit<User, "id"> = {
       name,
       type,
       age,
@@ -159,30 +155,23 @@ const UserForm: React.FC<UserFormProps> = ({
       photo,
     };
 
-    if (isEdit) {
-      updateUser(userData);
+    if (isEdit && data) {
+      // Include ID for updates
+      updateUser({ ...userData, id: data.id });
     } else {
-      addUser(userData);
-    }
-  };
-
-  const handleIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (!isNaN(Number(value)) && Number(value) >= 0) {
-      setId(parseInt(value, 10));
-    } else if (value === "") {
-      setId(0);
+      // Exclude ID for new users
+      addUser(userData as User);
     }
   };
 
   return (
     <Box
       sx={{
-        backgroundColor: "#f5f5f5", // Light gray background
+        backgroundColor: "#f5f5f5",
         padding: "20px",
         borderRadius: "8px",
-        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)", // Subtle shadow
-        border: "1px solid #e0e0e0", // Light border
+        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+        border: "1px solid #e0e0e0",
         maxWidth: "600px",
         margin: "auto",
       }}
@@ -203,46 +192,6 @@ const UserForm: React.FC<UserFormProps> = ({
           provide the details of your pet so we can showcase them to potential
           adopters looking for specific breeds. Let’s get started!
         </Typography>
-      </Box>
-
-      {/* ID Field */}
-      <Box
-        sx={{
-          display: "block",
-          alignItems: "center",
-          marginBottom: "15px",
-        }}
-      >
-        <Typography
-          component={FormLabel}
-          htmlFor="id"
-          sx={{
-            color: "#000000",
-            marginRight: "20px",
-            fontSize: "16px",
-            width: "100px",
-            display: "block",
-          }}
-        >
-          ID
-        </Typography>
-        <Input
-          type="number"
-          id="id"
-          name="id"
-          sx={{
-            width: "100%",
-            "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
-              WebkitAppearance: "none",
-              margin: 0,
-            },
-            "&[type=number]": {
-              MozAppearance: "textfield",
-            },
-          }}
-          value={id}
-          onChange={handleIdChange}
-        />
       </Box>
 
       {/* Name Field */}
@@ -312,6 +261,7 @@ const UserForm: React.FC<UserFormProps> = ({
           <MenuItem value="Bird">Bird</MenuItem>
         </Select>
       </Box>
+
       {/* Age Field */}
       <Box
         sx={{
@@ -494,12 +444,12 @@ const UserForm: React.FC<UserFormProps> = ({
           Pet Photo
         </Typography>
         <input
-            type="file"
-            id="photo"
-            name="photo"
-            accept="image/*"
-            onChange={handleFileChange}
-            style={{ width: "100%" }}
+          type="file"
+          id="photo"
+          name="photo"
+          accept="image/*"
+          onChange={handleFileChange}
+          style={{ width: "100%" }}
         />
         {photo && (
           <Box sx={{ marginTop: "10px" }}>
@@ -528,7 +478,7 @@ const UserForm: React.FC<UserFormProps> = ({
       <Button
         sx={{
           display: "inline-block",
-          backgroundColor: "#4caf50", // Green button
+          backgroundColor: "#4caf50",
           color: "white",
           padding: "10px 20px",
           fontSize: "16px",
