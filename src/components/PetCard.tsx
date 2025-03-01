@@ -4,157 +4,146 @@ import {
     CardMedia,
     Typography,
     Button,
-    Skeleton,
-    Box
+    Box,
+    IconButton
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
+import { useCart } from "../contexts/CartContext";
 
 export interface Pet {
+    id: number;
     name: string;
     breed: string;
     price: number;
     birthYear: number;
+    petType: string;
     image: string;
-    petType?: string;
 }
 
-interface PetCardProps extends Pet {
-    onAdopt?: () => void;
+interface PetCardProps {
+    pet: Pet;
 }
 
-const PetCard: React.FC<PetCardProps> = ({
-                                             name,
-                                             breed,
-                                             price,
-                                             birthYear,
-                                             image,
-                                             onAdopt
-                                         }) => {
-    const [imageLoading, setImageLoading] = useState(true);
-    const [imageError, setImageError] = useState(false);
+const PetCard: React.FC<PetCardProps> = ({ pet }) => {
+    const [quantity, setQuantity] = useState(0);
+    const { addToCart } = useCart();
 
-    const displayImage = imageError ? "https://via.placeholder.com/280x240" : image;
+    const handleIncrement = () => {
+        setQuantity(prev => prev + 1);
+    };
 
-    const handleAdoptClick = () => {
-        if (onAdopt) {
-            onAdopt(); //
+    const handleDecrement = () => {
+        if (quantity > 0) {
+            setQuantity(prev => prev - 1);
+        }
+    };
+
+    const handleAddToCart = () => {
+        if (quantity > 0) {
+            addToCart(pet, quantity);
+            setQuantity(0); // Reset quantity after adding to cart
         }
     };
 
     return (
-        <Box sx={{ width: '100%', mb: 2 }}> {/* Added mb: 4 for gap between rows */}
-            {/* Image Card */}
-            <Card sx={{
-                width: '100%',
-                borderRadius: 4,
-                backgroundColor: 'white',
-                mb: 1,
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                transition: 'box-shadow 0.3s ease-in-out',
-                '&:hover': {
-                    boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
-                },
-                '& .MuiCardContent-root:last-child': {
-                    pb: 0
-                }
-            }}>
-                {imageLoading && (
-                    <Skeleton
-                        variant="rectangular"
-                        height={240}
-                        animation="wave"
-                    />
-                )}
-                <CardMedia
-                    component="img"
-                    height={240}
-                    image={displayImage}
-                    alt={`${name} - ${breed}`}
-                    sx={{
-                        objectFit: "cover",
-                        display: imageLoading ? 'none' : 'block'
-                    }}
-                    onLoad={() => setImageLoading(false)}
-                    onError={() => {
-                        setImageLoading(false);
-                        setImageError(true);
-                    }}
-                />
-            </Card>
+        <Card sx={{
+            borderRadius: 4,
+            overflow: 'hidden',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            transition: 'transform 0.3s, box-shadow 0.3s',
+            '&:hover': {
+                transform: 'translateY(-5px)',
+                boxShadow: '0 8px 16px rgba(0,0,0,0.15)'
+            }
+        }}>
+            <CardMedia
+                component="img"
+                height={240}
+                image={pet.image}
+                alt={pet.name}
+                sx={{ objectFit: "cover" }}
+            />
 
-            {/* Content Section */}
-            <Box sx={{ p: 1.5, bgcolor: '#003366', borderRadius: 4 }}>
+            <Box sx={{ p: 2 }}>
                 <Box sx={{
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     mb: 1
                 }}>
-                    <Typography
-                        variant="h6"
-                        sx={{
-                            fontWeight: 'bold',
-                            color: 'white',
-                            fontFamily: "'Nunito Sans', sans-serif"
-                        }}
-                    >
-                        {name}
+                    <Typography variant="h6" fontWeight="bold">
+                        {pet.name}
                     </Typography>
-                    <Typography
-                        variant="body1"
-                        sx={{
-                            fontWeight: 'bold',
-                            color: 'white',
-                            fontFamily: "'Nunito Sans', sans-serif"
-                        }}
-                    >
-                        LKR {price.toLocaleString()}/=
+                    <Typography variant="h6" fontWeight="bold">
+                        ${pet.price}
                     </Typography>
                 </Box>
 
-                <Typography
-                    variant="body2"
-                    sx={{
-                        color: 'rgba(255, 255, 255, 0.8)',
-                        fontFamily: "'Nunito Sans', sans-serif"
-                    }}
-                >
-                    {breed}
+                <Typography variant="body2" color="text.secondary" mb={1}>
+                    {pet.breed} • Born {pet.birthYear}
                 </Typography>
 
-                <Typography
-                    variant="body2"
-                    sx={{
-                        mt: 1,
-                        color: 'rgba(255, 255, 255, 0.8)',
-                        fontFamily: "'Nunito Sans', sans-serif"
-                    }}
-                >
-                    Birth {birthYear}
-                </Typography>
+                {/* Quantity controls */}
+                <Box sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    mt: 2,
+                    mb: 2
+                }}>
+                    <Typography variant="body2">
+                        Quantity:
+                    </Typography>
+
+                    <Box sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        bgcolor: '#f5f5f5',
+                        borderRadius: 2,
+                        overflow: 'hidden'
+                    }}>
+                        <IconButton
+                            size="small"
+                            onClick={handleDecrement}
+                            className="minus"
+                            disabled={quantity === 0}
+                            sx={{ color: quantity === 0 ? 'rgba(0,0,0,0.3)' : 'inherit' }}
+                        >
+                            <RemoveIcon fontSize="small" />
+                        </IconButton>
+
+                        <Typography sx={{ px: 2 }}>
+                            {quantity}
+                        </Typography>
+
+                        <IconButton
+                            size="small"
+                            onClick={handleIncrement}
+                            className="plus"
+                        >
+                            <AddIcon fontSize="small" />
+                        </IconButton>
+                    </Box>
+                </Box>
 
                 <Button
                     variant="contained"
                     fullWidth
-                    onClick={handleAdoptClick}
+                    onClick={handleAddToCart}
+                    disabled={quantity === 0}
                     sx={{
-                        mt: 2,
-                        height: '40px',
-                        py: 0,
-                        textTransform: 'none',
-                        backgroundColor: 'white',
-                        color: '#003366',
-                        fontFamily: "'Nunito Sans', sans-serif",
-                        fontWeight: 'bold',
-                        borderRadius: '25px',
-                        '&:hover': {
-                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        bgcolor: '#003366',
+                        '&:hover': { bgcolor: '#002244' },
+                        '&.Mui-disabled': {
+                            bgcolor: 'rgba(0,0,0,0.12)',
                         }
                     }}
                 >
-                    Buy Me
+                    Add to Cart
                 </Button>
             </Box>
-        </Box>
+        </Card>
     );
 };
 

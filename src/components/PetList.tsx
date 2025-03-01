@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Grid, CircularProgress, Box, Typography } from "@mui/material";
-import PetCard, { Pet } from "./PetCard";
+import DefaultPetCard, { Pet } from "./PetCard";
 import axios from "axios";
 
 //Interface for the API data only
@@ -15,11 +15,11 @@ interface PetDTO {
     purchased?: boolean;
 }
 
-
 interface PetListProps {
     searchQuery?: string;
     petType?: string;
     birthYear?: string;
+    PetCardComponent?: React.FC<{ pet: Pet; onAdopt?: () => void }>;
 }
 
 const API_BASE_URL = 'http://localhost:8080';
@@ -29,7 +29,8 @@ const PETS_API_URL = `${API_BASE_URL}/api/v1/pets`;
 const PetCardWithHoverImage: React.FC<{
     pet: Pet;
     onAdopt: () => void;
-}> = ({ pet, onAdopt }) => {
+    CardComponent: React.FC<{ pet: Pet; onAdopt?: () => void }>;
+}> = ({ pet, onAdopt, CardComponent }) => {
     return (
         <Box
             sx={{
@@ -42,21 +43,12 @@ const PetCardWithHoverImage: React.FC<{
                 '&:hover img': {
                     transform: 'scale(1.1)',
                 },
-
                 '&:hover': {
                     boxShadow: '0 8px 16px rgba(0,0,0,0.2)',
                 }
             }}
         >
-            <PetCard
-                name={pet.name}
-                breed={pet.breed}
-                price={pet.price}
-                birthYear={pet.birthYear}
-                image={pet.image}
-                petType={pet.petType}
-                onAdopt={onAdopt}
-            />
+            <CardComponent pet={pet} onAdopt={onAdopt} />
         </Box>
     );
 };
@@ -64,12 +56,16 @@ const PetCardWithHoverImage: React.FC<{
 const PetList: React.FC<PetListProps> = ({
                                              searchQuery = '',
                                              petType = 'all',
-                                             birthYear = 'all'
+                                             birthYear = 'all',
+                                             PetCardComponent
                                          }) => {
     // Store the full API data including IDs
     const [petsData, setPetsData] = useState<PetDTO[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    // Use the provided PetCardComponent or fall back to the default
+    const CardComponent = PetCardComponent || DefaultPetCard;
 
     // Helper function to get full image URL
     const getFullImageUrl = (imageUrl?: string) => {
@@ -227,10 +223,9 @@ const PetList: React.FC<PetListProps> = ({
                     ? getFullImageUrl(petDTO.imageUrl)
                     : `/images/${petDTO.petType.toLowerCase()}-placeholder.png`;
 
-                console.log(`Pet ${petDTO.name} image URL: ${imageUrl}`);
-
                 // Map the API data to what PetCard expects
                 const petCardProps: Pet = {
+                    id: parseInt(petDTO.id), // Convert string ID to number
                     name: petDTO.name,
                     breed: petDTO.breed,
                     price: parseFloat(petDTO.price),
@@ -244,6 +239,7 @@ const PetList: React.FC<PetListProps> = ({
                         <PetCardWithHoverImage
                             pet={petCardProps}
                             onAdopt={() => handleAdopt(petDTO)}
+                            CardComponent={CardComponent}
                         />
                     </Grid>
                 );
@@ -253,3 +249,4 @@ const PetList: React.FC<PetListProps> = ({
 };
 
 export default PetList;
+export type { PetListProps, Pet };
