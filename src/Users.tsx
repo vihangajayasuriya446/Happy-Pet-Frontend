@@ -1,21 +1,19 @@
 import React, { useState } from "react";
 import UserForm from "./UserForm";
 import UserTable from "./UserTable";
-import Footer from "./Footer";
-import Navbar from "./Navbar";
 import { Box } from "@mui/material";
 import Axios from "axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface User {
-  id: number;
+  id?: number; // Make ID optional
   name: string;
   type: string;
-  age: string; // Age is a string
+  age: string;
   gender: string;
   breed: string;
   location: string;
-  photo?: string | File | null; // Allow string, File, or null
+  photo?: string | File | null;
 }
 
 const Users: React.FC = () => {
@@ -86,7 +84,11 @@ const Users: React.FC = () => {
   };
 
   const deleteUser = (user: User) => {
-    deleteUserMutation.mutate(user.id);
+    if (user.id) {
+      deleteUserMutation.mutate(user.id);
+    } else {
+      console.error("User ID is missing. Cannot delete user.");
+    }
   };
 
   const handleSelectUser = (user: User) => {
@@ -111,8 +113,6 @@ const Users: React.FC = () => {
           paddingBottom: "50px",
         }}
       >
-        
-        
         <UserForm
           addUser={addUser}
           updateUser={updateUser}
@@ -137,9 +137,7 @@ const Users: React.FC = () => {
           />
         </Box>
       </Box>
-      <Box sx={{ width: "100%" }}>
-        
-      </Box>
+      <Box sx={{ width: "100%" }}></Box>
     </>
   );
 };
