@@ -6,14 +6,14 @@ import Axios from "axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface User {
-  id?: number; // Make ID optional
+  id: number;
   name: string;
   type: string;
-  age: string;
+  age: string; // Age is a string
   gender: string;
   breed: string;
   location: string;
-  photo?: string | File | null;
+  photo?: string | File | null; // Allow string, File, or null
 }
 
 const Users: React.FC = () => {
@@ -84,11 +84,7 @@ const Users: React.FC = () => {
   };
 
   const deleteUser = (user: User) => {
-    if (user.id) {
-      deleteUserMutation.mutate(user.id);
-    } else {
-      console.error("User ID is missing. Cannot delete user.");
-    }
+    deleteUserMutation.mutate(user.id);
   };
 
   const handleSelectUser = (user: User) => {
@@ -113,6 +109,8 @@ const Users: React.FC = () => {
           paddingBottom: "50px",
         }}
       >
+        
+        
         <UserForm
           addUser={addUser}
           updateUser={updateUser}
@@ -137,7 +135,9 @@ const Users: React.FC = () => {
           />
         </Box>
       </Box>
-      <Box sx={{ width: "100%" }}></Box>
+      <Box sx={{ width: "100%" }}>
+        
+      </Box>
     </>
   );
 };
