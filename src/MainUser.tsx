@@ -248,23 +248,27 @@ const MainPage = () => {
                           alt={pet.name}
                         />
                         <CardContent>
-                          <Typography variant="h6" fontWeight="bold">
-                            {pet.name}
-                          </Typography>
-                          <Typography variant="body2" color="textSecondary">
-                            {pet.gender} - {pet.breed}
-                          </Typography>
-                          <Typography variant="body2" color="textSecondary">
-                            Age: {pet.age} - {pet.location}
-                          </Typography>
-                          <Button
-                            variant="contained"
-                            fullWidth
-                            sx={{ mt: 2, bgcolor: "#002855", color: "white" }}
-                          >
-                            Contact Owner
-                          </Button>
-                        </CardContent>
+                        <Typography variant="h6" fontWeight="bold">
+                          {pet.name}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {pet.gender} • {pet.breed}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Age: {pet.age}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Location: {pet.location}
+                        </Typography>
+                        <Button
+                          variant="contained"
+                          fullWidth
+                          sx={{ mt: 2, bgcolor: "#002855", color: "white" }}
+                        >
+                          Contact Owner
+                        </Button>
+                      </CardContent>
+
                       </Card>
                     </Grid>
                   ))
