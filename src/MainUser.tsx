@@ -34,55 +34,56 @@ const MainPage = () => {
 
   const breeds: { [key: string]: string[] } = {
     Dog: [
-    "Labrador Retriever",
-    "German Shepherd",
-    "Golden Retriever",
-    "Bulldog (English/French)",
-    "Beagle",
-    "Poodle (Standard, Miniature, Toy)",
-    "Boxer",
-    "Rottweiler",
-    "Dachshund",
-    "Shih Tzu",
-    "Chihuahua",
-    "Siberian Husky",
-    "Cocker Spaniel",
-    "Pug",
-    "Doberman Pinscher",],
-
+      "Labrador Retriever",
+      "German Shepherd",
+      "Golden Retriever",
+      "Bulldog (English/French)",
+      "Beagle",
+      "Poodle (Standard, Miniature, Toy)",
+      "Boxer",
+      "Rottweiler",
+      "Dachshund",
+      "Shih Tzu",
+      "Chihuahua",
+      "Siberian Husky",
+      "Cocker Spaniel",
+      "Pug",
+      "Doberman Pinscher",
+    ],
     Cat: [
-    "Persian",
-    "Maine Coon",
-    "Siamese",
-    "Bengal",
-    "Ragdoll",
-    "Sphynx",
-    "Abyssinian",
-    "British Shorthair",
-    "Scottish Fold",
-    "Siberian",
-    "Russian Blue",
-    "Burmese",
-    "Birman",
-    "Devon Rex",
-    "Oriental Shorthair",],
-
+      "Persian",
+      "Maine Coon",
+      "Siamese",
+      "Bengal",
+      "Ragdoll",
+      "Sphynx",
+      "Abyssinian",
+      "British Shorthair",
+      "Scottish Fold",
+      "Siberian",
+      "Russian Blue",
+      "Burmese",
+      "Birman",
+      "Devon Rex",
+      "Oriental Shorthair",
+    ],
     Bird: [
-    "Budgerigar (Budgie)",
-    "Cockatiel",
-    "African Grey Parrot",
-    "Macaw (Blue-and-Gold, Scarlet, etc.)",
-    "Lovebird",
-    "Canary",
-    "Finch (Zebra Finch, Gouldian Finch)",
-    "Conure (Sun Conure, Green-cheeked Conure)",
-    "Amazon Parrot (Yellow-naped, Blue-fronted)",
-    "Eclectus Parrot",
-    "Parakeet",
-    "Quaker Parrot",
-    "Pionus Parrot",
-    "Kea",
-    "Cockatoo",],
+      "Budgerigar (Budgie)",
+      "Cockatiel",
+      "African Grey Parrot",
+      "Macaw (Blue-and-Gold, Scarlet, etc.)",
+      "Lovebird",
+      "Canary",
+      "Finch (Zebra Finch, Gouldian Finch)",
+      "Conure (Sun Conure, Green-cheeked Conure)",
+      "Amazon Parrot (Yellow-naped, Blue-fronted)",
+      "Eclectus Parrot",
+      "Parakeet",
+      "Quaker Parrot",
+      "Pionus Parrot",
+      "Kea",
+      "Cockatoo",
+    ],
   };
 
   const fetchPets = async () => {
@@ -231,7 +232,15 @@ const MainPage = () => {
                 {pets.length > 0 ? (
                   pets.map((pet) => (
                     <Grid item xs={12} sm={6} md={4} key={pet.id}>
-                      <Card sx={{ borderRadius: 2 }}>
+                      <Card
+                        sx={{
+                          borderRadius: 2,
+                          transition: "transform 0.3s ease-in-out",
+                          "&:hover": {
+                            transform: "scale(1.2)",
+                          },
+                        }}
+                      >
                         <CardMedia
                           component="img"
                           sx={{ height: 200, width: "100%", objectFit: "cover" }}
@@ -256,23 +265,23 @@ const MainPage = () => {
                             Contact Owner
                           </Button>
                         </CardContent>
-                      </Card></Grid>
-                          ))
-                        ) : (
-                          <Grid item xs={12}>
-                            <Typography variant="body2" color="white">
-                              No matches found. Try adjusting your search criteria.
-                            </Typography>
-                          </Grid>
-                        )}
-                      </Grid>
-                    </Box>
+                      </Card>
+                    </Grid>
+                  ))
+                ) : (
+                  <Grid item xs={12}>
+                    <Typography variant="body2" color="white">
+                      No matches found. Try adjusting your search criteria.
+                    </Typography>
                   </Grid>
-                </Grid>
-              </Container>
+                )}
+              </Grid>
             </Box>
-          );
-        };
+          </Grid>
+        </Grid>
+      </Container>
+    </Box>
+  );
+};
 
 export default MainPage;
-       
