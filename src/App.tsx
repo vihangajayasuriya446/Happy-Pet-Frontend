@@ -8,15 +8,17 @@ import Footer from "./components/Footer";
 import DrawerMenu from "./components/DrawerMenu";
 import Cart from "./components/Cart";
 
-// Types definitions
+// Types definitions with fixed type inconsistencies
 export interface Pet {
-    id: number;
+    id: number | string; // Accept both number and string
     name: string;
     breed: string;
-    price: number;
-    birthYear: number;
-    petType: 'cat' | 'dog';
-    image: string;
+    price: number | string; // Accept both number and string
+    birthYear: number | string; // Accept both number and string
+    petType: string; // Accept any string, will be normalized in components
+    image?: string;
+    imageUrl?: string;
+    purchased?: boolean; // Added to support the API response
 }
 
 export interface CartItem {
@@ -105,7 +107,7 @@ const AppContent: React.FC = () => {
                                 }
                             }}
                         >
-                            <ShoppingBagIcon sx={{ color: '#003366' }} /> {/* Changed to ShoppingBagIcon */}
+                            <ShoppingBagIcon sx={{ color: '#003366' }} />
                         </Badge>
                     </IconButton>
                 </Container>

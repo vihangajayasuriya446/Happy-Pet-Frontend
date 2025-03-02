@@ -21,6 +21,7 @@ interface PetListProps {
     petType?: string;
     birthYear?: string;
     PetCardComponent?: React.FC<{ pet: Pet; onAdopt?: () => void }>;
+    isAdminView?: boolean; // Flag to determine if this is admin view
 }
 
 const API_BASE_URL = 'http://localhost:8080';
@@ -29,7 +30,7 @@ const PETS_API_URL = `${API_BASE_URL}/api/v1/pets`;
 // Custom PetCard wrapper with image hover effect
 const PetCardWithHoverImage: React.FC<{
     pet: Pet;
-    onAdopt: () => void;
+    onAdopt?: () => void;
     CardComponent: React.FC<{ pet: Pet; onAdopt?: () => void }>;
 }> = ({ pet, onAdopt, CardComponent }) => {
     return (
@@ -38,6 +39,7 @@ const PetCardWithHoverImage: React.FC<{
                 position: 'relative',
                 overflow: 'hidden',
                 borderRadius: '8px',
+                height: '100%',
                 '& img': {
                     transition: 'transform 0.3s ease',
                 },
@@ -58,7 +60,8 @@ const PetList: React.FC<PetListProps> = ({
                                              searchQuery = '',
                                              petType = 'all',
                                              birthYear = 'all',
-                                             PetCardComponent
+                                             PetCardComponent,
+                                             isAdminView = false
                                          }) => {
     // Store the full API data including IDs
     const [petsData, setPetsData] = useState<PetDTO[]>([]);
@@ -127,38 +130,25 @@ const PetList: React.FC<PetListProps> = ({
         }
     };
 
-    // Filter pets by search query - specifically for pet types (dog/cat)
+    // Enhanced search function that checks name, breed, and pet type
     const filterBySearchQuery = (pets: PetDTO[], query: string): PetDTO[] => {
         const normalizedQuery = query.toLowerCase().trim();
 
         // If query is empty, return all pets
         if (!normalizedQuery) return pets;
 
-        // Check if query is related to dogs
-        const isDogQuery = normalizedQuery === 'dog' ||
-            normalizedQuery === 'dogs' ||
-            normalizedQuery.includes('dog');
-
-        // Check if query is related to cats
-        const isCatQuery = normalizedQuery === 'cat' ||
-            normalizedQuery === 'cats' ||
-            normalizedQuery.includes('cat');
-
-        // If query doesn't match dog or cat, return no results
-        if (!isDogQuery && !isCatQuery) return [];
-
         return pets.filter(pet => {
-            const petTypeNormalized = pet.petType.toLowerCase();
-
-            if (isDogQuery && petTypeNormalized === 'dog') {
-                return true;
-            }
-
-            if (isCatQuery && petTypeNormalized === 'cat') {
-                return true;
-            }
-
-            return false;
+            // Check if any of the pet's properties match the search query
+            return (
+                pet.name.toLowerCase().includes(normalizedQuery) ||
+                pet.breed.toLowerCase().includes(normalizedQuery) ||
+                pet.petType.toLowerCase().includes(normalizedQuery) ||
+                // Check for common terms
+                (pet.petType.toLowerCase() === 'dog' &&
+                    (normalizedQuery === 'dog' || normalizedQuery === 'dogs' || normalizedQuery.includes('dog'))) ||
+                (pet.petType.toLowerCase() === 'cat' &&
+                    (normalizedQuery === 'cat' || normalizedQuery === 'cats' || normalizedQuery.includes('cat')))
+            );
         });
     };
 
@@ -235,14 +225,16 @@ const PetList: React.FC<PetListProps> = ({
                     price: parseFloat(petDTO.price),
                     birthYear: parseInt(petDTO.birthYear),
                     image: imageUrl,
+                    imageUrl: imageUrl, // Add imageUrl for consistency
                     petType: petTypeValue, // Use the validated petType
                 };
 
                 return (
-                    <Grid item xs={12} sm={6} md={3} key={petDTO.id}>
+                    <Grid item xs={12} sm={6} md={3} key={petDTO.id} sx={{ display: 'flex' }}>
                         <PetCardWithHoverImage
                             pet={petCardProps}
-                            onAdopt={() => handleAdopt(petDTO)}
+                            // Only pass onAdopt if this is admin view
+                            onAdopt={isAdminView ? () => handleAdopt(petDTO) : undefined}
                             CardComponent={CardComponent}
                         />
                     </Grid>

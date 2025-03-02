@@ -6,6 +6,9 @@ import {
     Button,
     Box,
     IconButton,
+    Snackbar,
+    Alert,
+    CircularProgress
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -16,9 +19,20 @@ interface PetCardProps {
     pet: Pet;
 }
 
+// Helper function to format price in LKR
+const formatPriceLKR = (price: number | string): string => {
+    const numericPrice = typeof price === 'string' ? parseFloat(price) : price;
+    return `LKR ${numericPrice.toFixed(0)}/=`;
+};
+
 const PetCard: React.FC<PetCardProps> = ({ pet }) => {
     const [quantity, setQuantity] = useState(0);
-    const { addToCart } = useCart();
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [isAdding, setIsAdding] = useState(false);
+    const { addToCart, loading } = useCart();
+
+    // Get the correct image URL with fallback
+    const imageUrl = pet.imageUrl || pet.image || '/default-pet-image.jpg';
 
     // Updated to explicitly increment by 1
     const handleIncrement = () => {
@@ -32,11 +46,46 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
         }
     };
 
-    const handleAddToCart = () => {
+    const handleAddToCart = async () => {
         if (quantity > 0) {
-            addToCart(pet, quantity);
-            setQuantity(0); // Reset quantity after adding to cart
+            setIsAdding(true);
+            try {
+                await addToCart(pet, quantity);
+                setSnackbarOpen(true);
+                setQuantity(0); // Reset quantity after adding to cart
+            } catch (error) {
+                console.error("Error adding to cart:", error);
+                // You could show an error snackbar here
+            } finally {
+                setIsAdding(false);
+            }
         }
+    };
+
+    const handleCloseSnackbar = () => {
+        setSnackbarOpen(false);
+    };
+
+    // Quick add - adds 1 item directly to cart
+    const handleQuickAdd = async () => {
+        setIsAdding(true);
+        try {
+            await addToCart(pet, 1);
+            setSnackbarOpen(true);
+        } catch (error) {
+            console.error("Error adding to cart:", error);
+        } finally {
+            setIsAdding(false);
+        }
+    };
+
+    // Calculate pet age safely
+    const calculateAge = (): number => {
+        const birthYear = typeof pet.birthYear === 'string'
+            ? parseInt(pet.birthYear, 10)
+            : pet.birthYear;
+
+        return new Date().getFullYear() - birthYear;
     };
 
     return (
@@ -48,15 +97,42 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
+            position: 'relative',
             '&:hover': {
                 transform: 'translateY(-5px)',
                 boxShadow: '0 8px 16px rgba(0,0,0,0.15)'
             }
         }}>
+            {/* Quick add button that appears on hover */}
+            <Box sx={{
+                position: 'absolute',
+                top: 12,
+                right: 12,
+                opacity: 0,
+                transition: 'opacity 0.2s',
+                '.MuiCard-root:hover &': {
+                    opacity: 1
+                }
+            }}>
+                <IconButton
+                    onClick={handleQuickAdd}
+                    disabled={isAdding || loading}
+                    sx={{
+                        bgcolor: 'white',
+                        boxShadow: 2,
+                        '&:hover': {
+                            bgcolor: '#f5f5f5',
+                        }
+                    }}
+                >
+                    {isAdding ? <CircularProgress size={24} /> : <AddIcon />}
+                </IconButton>
+            </Box>
+
             <CardMedia
                 component="img"
                 height={240}
-                image={pet.image}
+                image={imageUrl}
                 alt={pet.name}
                 sx={{
                     objectFit: "cover",
@@ -73,8 +149,14 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                     <Typography variant="h6" fontWeight="bold">
                         {pet.name}
                     </Typography>
-                    <Typography variant="h6" fontWeight="bold" color="primary">
-                        ${pet.price}
+                    <Typography
+                        color="primary"
+                        sx={{
+                            fontSize: '0.9rem', // Reduced font size for price
+                            fontWeight: 600
+                        }}
+                    >
+                        {formatPriceLKR(pet.price)}
                     </Typography>
                 </Box>
 
@@ -83,9 +165,9 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                     {pet.breed}
                 </Typography>
 
-                {/* Birth year below breed */}
+                {/* Birth year below breed - Changed "Born" to "Birth" */}
                 <Typography variant="body2" color="text.secondary" mb={1}>
-                    Born {pet.birthYear}
+                    Birth {pet.birthYear} ({calculateAge()} years old)
                 </Typography>
 
                 {/* Spacer to push controls to bottom */}
@@ -110,7 +192,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                         <IconButton
                             size="small"
                             onClick={handleDecrement}
-                            disabled={quantity === 0}
+                            disabled={quantity === 0 || isAdding || loading}
                             sx={{
                                 color: quantity === 0 ? 'rgba(0,0,0,0.3)' : 'inherit',
                                 padding: '4px'
@@ -130,6 +212,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                         <IconButton
                             size="small"
                             onClick={handleIncrement}
+                            disabled={isAdding || loading}
                             sx={{ padding: '4px' }}
                         >
                             <AddIcon fontSize="small" />
@@ -140,7 +223,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                     <Button
                         variant="contained"
                         onClick={handleAddToCart}
-                        disabled={quantity === 0}
+                        disabled={quantity === 0 || isAdding || loading}
                         sx={{
                             bgcolor: '#003366',
                             '&:hover': { bgcolor: '#002244' },
@@ -154,10 +237,30 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                             fontWeight: 600
                         }}
                     >
-                        Add to Cart
+                        {isAdding ? (
+                            <CircularProgress size={20} sx={{ color: 'white' }} />
+                        ) : (
+                            'Add to Cart'
+                        )}
                     </Button>
                 </Box>
             </Box>
+
+            {/* Success Snackbar */}
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={3000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert
+                    onClose={handleCloseSnackbar}
+                    severity="success"
+                    sx={{ width: '100%' }}
+                >
+                    {pet.name} added to cart!
+                </Alert>
+            </Snackbar>
         </Card>
     );
 };
