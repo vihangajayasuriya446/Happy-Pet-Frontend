@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Grid, CircularProgress, Box, Typography } from "@mui/material";
-import DefaultPetCard, { Pet } from "./PetCard";
+import DefaultPetCard from "./PetCard";
 import axios from "axios";
+import { Pet } from "../App";
 
 //Interface for the API data only
 interface PetDTO {
@@ -223,6 +224,9 @@ const PetList: React.FC<PetListProps> = ({
                     ? getFullImageUrl(petDTO.imageUrl)
                     : `/images/${petDTO.petType.toLowerCase()}-placeholder.png`;
 
+                // Validate petType to ensure it's either "dog" or "cat"
+                const petTypeValue = petDTO.petType.toLowerCase() === "dog" ? "dog" : "cat";
+
                 // Map the API data to what PetCard expects
                 const petCardProps: Pet = {
                     id: parseInt(petDTO.id), // Convert string ID to number
@@ -231,7 +235,7 @@ const PetList: React.FC<PetListProps> = ({
                     price: parseFloat(petDTO.price),
                     birthYear: parseInt(petDTO.birthYear),
                     image: imageUrl,
-                    petType: petDTO.petType,
+                    petType: petTypeValue, // Use the validated petType
                 };
 
                 return (
@@ -249,4 +253,4 @@ const PetList: React.FC<PetListProps> = ({
 };
 
 export default PetList;
-export type { PetListProps, Pet };
+export type { PetListProps };

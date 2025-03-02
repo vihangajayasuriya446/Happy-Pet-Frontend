@@ -10,16 +10,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { useCart } from "../contexts/CartContext";
-
-export interface Pet {
-    id: number;
-    name: string;
-    breed: string;
-    price: number;
-    birthYear: number;
-    petType: string;
-    image: string;
-}
+import { Pet } from "../App"; // Import Pet type from App.tsx
 
 interface PetCardProps {
     pet: Pet;
@@ -77,10 +68,15 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
             />
 
             <Box sx={{ p: 2, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                {/* Price and name */}
-                <Typography variant="h6" fontWeight="bold" mb={1}>
-                    ${pet.price} - {pet.name}
-                </Typography>
+                {/* Name and price on the same line - name first, price after */}
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                    <Typography variant="h6" fontWeight="bold">
+                        {pet.name}
+                    </Typography>
+                    <Typography variant="h6" fontWeight="bold" color="primary">
+                        ${pet.price}
+                    </Typography>
+                </Box>
 
                 {/* Breed */}
                 <Typography variant="body2" color="text.secondary">

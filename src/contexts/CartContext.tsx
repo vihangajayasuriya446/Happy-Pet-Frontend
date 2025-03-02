@@ -1,6 +1,6 @@
 // src/contexts/CartContext.tsx
 import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
-import { Pet } from '../components/PetCard'; // Import the Pet type from PetCard
+import { Pet } from '../App'; // Import the Pet type from App instead of PetCard
 
 // Define the structure for a cart item
 export interface CartItem {

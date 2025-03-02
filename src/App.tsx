@@ -1,12 +1,12 @@
-// App.tsx
 import React, { useState } from "react";
-import { Box, Typography, Container, Stack } from "@mui/material";
-import { CartProvider } from "./contexts/CartContext";
+import { Box, Typography, Container, IconButton, Badge } from "@mui/material";
+import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
+import { CartProvider, useCart } from "./contexts/CartContext";
 import PetList from "./components/PetList";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import DrawerMenu from "./components/DrawerMenu";
-import Cart, { CartButton } from "./components/Cart";
+import Cart from "./components/Cart";
 
 // Types definitions
 export interface Pet {
@@ -29,6 +29,8 @@ const AppContent: React.FC = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [cartOpen, setCartOpen] = useState(false);
     const [searchQuery] = useState('');
+    const { getItemCount } = useCart();
+    const itemCount = getItemCount();
 
     const toggleDrawer = () => {
         setDrawerOpen(!drawerOpen);
@@ -50,46 +52,62 @@ const AppContent: React.FC = () => {
             <DrawerMenu open={drawerOpen} toggleDrawer={toggleDrawer} />
             <Cart open={cartOpen} onClose={toggleCart} />
 
-            {/* Title and Cart Button Section */}
+            {/* Title Section with Shopping Bag Icon */}
             <Box
                 sx={{
                     bgcolor: '#003366',
                     pt: { xs: 12, md: 16 },
                     pb: 3,
-                    px: 4,
+                    position: 'relative',
                 }}
             >
-                <Container maxWidth="lg">
-                    {/* Stack for horizontal layout with space between */}
-                    <Stack
-                        direction="row"
-                        alignItems="center"
-                        justifyContent="space-between"
-                        spacing={2}
+                <Container maxWidth="lg" sx={{
+                    position: 'relative',
+                    display: 'flex',
+                    justifyContent: 'center',
+                }}>
+                    <Typography
+                        variant="h3"
+                        sx={{
+                            color: 'common.white',
+                            fontWeight: 800,
+                            fontSize: { xs: '2rem', md: '3rem' },
+                            fontFamily: '"Nunito", sans-serif',
+                        }}
                     >
-                        {/* Cart icon on the left with explicit onClick prop */}
-                        <Box>
-                            <CartButton onClick={toggleCart} />
-                        </Box>
+                        Buy a Pet
+                    </Typography>
 
-                        {/* Title in the center */}
-                        <Typography
-                            variant="h3"
+                    {/* Shopping Bag Icon positioned at the right edge */}
+                    <IconButton
+                        onClick={toggleCart}
+                        sx={{
+                            position: 'absolute',
+                            right: { xs: -70, sm: -70, md: -70 },
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            bgcolor: 'white',
+                            boxShadow: 3,
+                            '&:hover': {
+                                bgcolor: '#f5f5f5',
+                            },
+                        }}
+                    >
+                        <Badge
+                            badgeContent={itemCount}
+                            color="error"
                             sx={{
-                                color: 'common.white',
-                                fontWeight: 800,
-                                fontSize: { xs: '2rem', md: '3rem' },
-                                fontFamily: '"Nunito", sans-serif',
-                                flexGrow: 1,
-                                textAlign: 'center'
+                                '& .MuiBadge-badge': {
+                                    fontSize: '0.7rem',
+                                    height: '20px',
+                                    minWidth: '20px',
+                                    padding: '0 4px',
+                                }
                             }}
                         >
-                            Buy a Pet
-                        </Typography>
-
-                        {/* Empty box for spacing */}
-                        <Box sx={{ width: '40px' }} />
-                    </Stack>
+                            <ShoppingBagIcon sx={{ color: '#003366' }} /> {/* Changed to ShoppingBagIcon */}
+                        </Badge>
+                    </IconButton>
                 </Container>
             </Box>
 
