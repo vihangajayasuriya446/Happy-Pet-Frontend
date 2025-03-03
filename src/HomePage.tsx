@@ -8,6 +8,7 @@ const HomePage: React.FC = () => {
 
   const handleCardClick = (path: string) => {
     navigate(path);
+    window.scrollTo(0, 0);
   };
 
   const FullHeightBox = styled(Box)({
