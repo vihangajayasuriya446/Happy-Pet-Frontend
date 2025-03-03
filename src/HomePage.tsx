@@ -233,7 +233,7 @@ const HomePage: React.FC = () => {
         variant="contained"
         color="secondary"
         sx={{ mt: 2, px: 4, py: 1, borderRadius: "20px" }}
-        onClick={() => handleCardClick("/dashboard")}
+        onClick={() => handleCardClick("/admindb")}
       >
         Admin Dashboard
       </Button>

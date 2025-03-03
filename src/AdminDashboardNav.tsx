@@ -63,7 +63,7 @@ const AdminDashboardNav: React.FC = () => {
                     {[
                         { label: 'Pet Adopt Admin Dashboard', path: '/pet-adopt' },
                         { label: 'Pet Buy Admin Dashboard', path: '/pet-buy' },
-                        { label: 'Matchmaking Admin Dashboard', path: '/matchmaking' }
+                        { label: 'Matchmaking Admin Dashboard', path: '/dashboard' }
                     ].map((item, index) => (
                         <button
                             key={index}
