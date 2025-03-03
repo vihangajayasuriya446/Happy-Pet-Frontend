@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Card,
     CardMedia,
@@ -31,8 +31,23 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
     const [isAdding, setIsAdding] = useState(false);
     const { addToCart, loading } = useCart();
 
-    // Get the correct image URL with fallback
-    const imageUrl = pet.imageUrl || pet.image || '/default-pet-image.jpg';
+    // Store the resolved image URL in state to ensure consistency
+    const [resolvedImageUrl, setResolvedImageUrl] = useState<string>('');
+
+    // Resolve the image URL once when component mounts
+    useEffect(() => {
+        // Get the correct image URL with fallback
+        const imageSource = pet.imageUrl || pet.image || '/default-pet-image.jpg';
+
+        // Log the image source for debugging
+        console.log(`Resolving image for pet ${pet.id} (${pet.name}):`, {
+            petImageUrl: pet.imageUrl,
+            petImage: pet.image,
+            resolved: imageSource
+        });
+
+        setResolvedImageUrl(imageSource);
+    }, [pet.imageUrl, pet.image, pet.id, pet.name]);
 
     // Updated to explicitly increment by 1
     const handleIncrement = () => {
@@ -50,7 +65,21 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
         if (quantity > 0) {
             setIsAdding(true);
             try {
-                await addToCart(pet, quantity);
+                // Create a complete pet object with image explicitly included
+                const petWithImage = {
+                    ...pet,
+                    image: resolvedImageUrl,
+                    imageUrl: resolvedImageUrl
+                };
+
+                console.log("Adding pet to cart with image:", {
+                    petId: pet.id,
+                    petName: pet.name,
+                    imageUrl: resolvedImageUrl,
+                    quantity: quantity
+                });
+
+                await addToCart(petWithImage, quantity);
                 setSnackbarOpen(true);
                 setQuantity(0); // Reset quantity after adding to cart
             } catch (error) {
@@ -70,7 +99,20 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
     const handleQuickAdd = async () => {
         setIsAdding(true);
         try {
-            await addToCart(pet, 1);
+            // Create a complete pet object with image explicitly included
+            const petWithImage = {
+                ...pet,
+                image: resolvedImageUrl,
+                imageUrl: resolvedImageUrl
+            };
+
+            console.log("Quick adding pet to cart with image:", {
+                petId: pet.id,
+                petName: pet.name,
+                imageUrl: resolvedImageUrl
+            });
+
+            await addToCart(petWithImage, 1);
             setSnackbarOpen(true);
         } catch (error) {
             console.error("Error adding to cart:", error);
@@ -87,6 +129,14 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
 
         return new Date().getFullYear() - birthYear;
     };
+
+    // Preload the image to ensure it's cached
+    useEffect(() => {
+        if (resolvedImageUrl) {
+            const img = new Image();
+            img.src = resolvedImageUrl;
+        }
+    }, [resolvedImageUrl]);
 
     return (
         <Card sx={{
@@ -112,7 +162,8 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                 transition: 'opacity 0.2s',
                 '.MuiCard-root:hover &': {
                     opacity: 1
-                }
+                },
+                zIndex: 1 // Ensure button is clickable
             }}>
                 <IconButton
                     onClick={handleQuickAdd}
@@ -132,7 +183,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
             <CardMedia
                 component="img"
                 height={240}
-                image={imageUrl}
+                image={resolvedImageUrl}
                 alt={pet.name}
                 sx={{
                     objectFit: "cover",
@@ -140,6 +191,11 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                     '&:hover': {
                         transform: 'scale(1.05)'
                     }
+                }}
+                onError={(e) => {
+                    console.error(`Image failed to load for pet ${pet.name}:`, resolvedImageUrl);
+                    (e.target as HTMLImageElement).src = '/default-pet-image.jpg';
+                    setResolvedImageUrl('/default-pet-image.jpg');
                 }}
             />
 

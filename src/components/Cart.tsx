@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
     Box, Typography, IconButton, Drawer, Button, List, ListItem, ListItemAvatar, Avatar,
     ListItemText, ListItemSecondaryAction, Badge, Divider, useMediaQuery, useTheme,
@@ -54,7 +54,7 @@ export const CartButton: React.FC<CartButtonProps> = ({ onClick }) => {
                             }
                         }}
                     >
-                        <ShoppingBagIcon  sx={{ color: '#003366' }} />
+                        <ShoppingBagIcon sx={{ color: '#003366' }} />
                     </Badge>
                 )}
             </IconButton>
@@ -76,6 +76,45 @@ const ensureNumber = (value: string | number): number => {
     return value;
 };
 
+// Cache for resolved image URLs to avoid repeated processing
+const imageCache: Record<string, string> = {};
+
+// Default fallback image path
+const DEFAULT_IMAGE = '/default-pet-image.png';
+
+// Helper function to get image with fallbacks for different formats
+const getImageWithFallbacks = (
+    baseImageUrl: string | undefined,
+    petName: string = 'pet'
+): string => {
+    if (!baseImageUrl || baseImageUrl.trim() === '') {
+        console.log(`Empty image URL for ${petName}, using default`);
+        return DEFAULT_IMAGE;
+    }
+
+    // If URL already has an extension or is a full URL, use it as is
+    if (
+        baseImageUrl.match(/\.(jpg|jpeg|png|gif|webp)$/i) ||
+        baseImageUrl.startsWith('http://') ||
+        baseImageUrl.startsWith('https://') ||
+        baseImageUrl.startsWith('/api/v1/pets/images/')
+    ) {
+        return baseImageUrl;
+    }
+
+    // Otherwise, assume it's just a base filename and we need to add path and extension
+    const baseUrl = process.env.REACT_APP_API_URL || window.location.origin;
+
+    // Remove any trailing slashes from baseUrl
+    const cleanBaseUrl = baseUrl.replace(/\/+$/, '');
+
+    // Clean up the image name (remove any path and extension)
+    const imageName = baseImageUrl.split('/').pop()?.split('.')[0] || baseImageUrl;
+
+    // Return the URL without extension - let the server determine the correct format
+    return `${cleanBaseUrl}/api/v1/pets/images/${imageName}`;
+};
+
 const Cart: React.FC<CartProps> = ({ open, onClose }) => {
     const { items, removeFromCart, updateQuantity, clearCart, loading, getCartTotal } = useCart();
     const theme = useTheme();
@@ -86,33 +125,133 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
         severity: 'success' as 'success' | 'error'
     });
 
+    // State to track resolved image URLs
+    const [resolvedImages, setResolvedImages] = useState<Record<string | number, string>>({});
+
+    // Enhanced image handling function
     const getPetImageUrl = (pet: Pet): string => {
-        // First check if imageUrl exists (from backend)
-        if (pet.imageUrl && pet.imageUrl.trim() !== '') {
-            // Check if the URL is already absolute (starts with http or https)
-            if (pet.imageUrl.startsWith('http://') || pet.imageUrl.startsWith('https://')) {
-                return pet.imageUrl;
-            }
+        const petId = pet.id.toString();
 
-            // If it's a relative URL from the backend (starts with /api/v1/pets/images/)
-            if (pet.imageUrl.startsWith('/api/v1/pets/images/')) {
-                // Get the base URL of your API
-                const baseUrl = process.env.REACT_APP_API_URL || window.location.origin;
-                return `${baseUrl}${pet.imageUrl}`;
-            }
-
-            // If it's just a filename, construct the full path
-            return `${process.env.REACT_APP_API_URL || window.location.origin}/api/v1/pets/images/${pet.imageUrl}`;
+        // Return from cache if available
+        if (imageCache[petId]) {
+            return imageCache[petId];
         }
 
-        // Then check if image exists (from frontend)
+        // Debug log to check what image data is available
+        console.log("Processing pet image for cart:", {
+            id: pet.id,
+            name: pet.name,
+            imageUrl: pet.imageUrl,
+            image: pet.image
+        });
+
+        let finalImageUrl = DEFAULT_IMAGE;
+
+        // Check for image property first (from frontend)
         if (pet.image && typeof pet.image === 'string' && pet.image.trim() !== '') {
-            return pet.image;
+            finalImageUrl = getImageWithFallbacks(pet.image, pet.name);
+        }
+        // Then check for imageUrl (from backend)
+        else if (pet.imageUrl && typeof pet.imageUrl === 'string' && pet.imageUrl.trim() !== '') {
+            finalImageUrl = getImageWithFallbacks(pet.imageUrl, pet.name);
+        }
+        else {
+            console.warn(`No image found for pet ${pet.name} (${petId}), using default`);
         }
 
-        // Return a default image if neither exists
-        return '/default-pet-image.jpg';
+        // Cache the result
+        imageCache[petId] = finalImageUrl;
+
+        console.log(`Resolved image URL for pet ${pet.name} (${pet.id}):`, finalImageUrl);
+        return finalImageUrl;
     };
+
+    // Handle image error with format fallbacks
+    const handleImageError = useCallback((petId: string | number, petName: string) => {
+        console.error(`Image failed to load for pet ${petName} (ID: ${petId})`);
+
+        // Get the current URL that failed
+        const currentUrl = imageCache[petId.toString()] || '';
+        console.log(`Failed URL: ${currentUrl}`);
+
+        // If the URL doesn't have a file extension, try different ones
+        if (currentUrl && !currentUrl.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+            const baseUrl = currentUrl.split('?')[0]; // Remove any query parameters
+            const baseUrlWithoutExt = baseUrl.replace(/\.[^/.]+$/, ''); // Remove any existing extension
+
+            // Try with different extensions
+            const extensions = ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
+            let extensionIndex = 0;
+
+            const tryNextExtension = () => {
+                if (extensionIndex >= extensions.length) {
+                    // We've tried all extensions, use the default image
+                    imageCache[petId.toString()] = DEFAULT_IMAGE;
+                    setResolvedImages(prev => ({
+                        ...prev,
+                        [petId.toString()]: DEFAULT_IMAGE
+                    }));
+                    return;
+                }
+
+                const extension = extensions[extensionIndex++];
+                const newUrl = `${baseUrlWithoutExt}${extension}`;
+
+                console.log(`Trying URL with extension: ${newUrl}`);
+
+                const img = new Image();
+                img.onload = () => {
+                    console.log(`✅ Found working URL for ${petName}: ${newUrl}`);
+                    imageCache[petId.toString()] = newUrl;
+                    setResolvedImages(prev => ({
+                        ...prev,
+                        [petId.toString()]: newUrl
+                    }));
+                };
+                img.onerror = () => {
+                    console.log(`❌ URL failed: ${newUrl}`);
+                    tryNextExtension();
+                };
+                img.src = newUrl;
+            };
+
+            // Start trying extensions
+            tryNextExtension();
+        } else {
+            // If the URL already has an extension but still failed, use default
+            imageCache[petId.toString()] = DEFAULT_IMAGE;
+            setResolvedImages(prev => ({
+                ...prev,
+                [petId.toString()]: DEFAULT_IMAGE
+            }));
+        }
+    }, []);
+
+    // Preload and resolve all images when cart opens or items change
+    useEffect(() => {
+        if (open && items.length > 0) {
+            const newResolvedImages: Record<string | number, string> = {};
+
+            items.forEach(item => {
+                const imageUrl = getPetImageUrl(item.pet);
+                newResolvedImages[item.pet.id] = imageUrl;
+
+                // Preload the image
+                const img = new Image();
+                img.onload = () => {
+                    console.log(`✅ Image for ${item.pet.name} loaded successfully: ${imageUrl}`);
+                };
+                img.onerror = () => {
+                    console.error(`❌ Image for ${item.pet.name} failed to load: ${imageUrl}`);
+                    handleImageError(item.pet.id, item.pet.name);
+                };
+                img.src = imageUrl;
+            });
+
+            setResolvedImages(newResolvedImages);
+        }
+    }, [open, items, handleImageError]);
+
     const handleCheckout = () => {
         // Just close the cart drawer
         onClose();
@@ -120,7 +259,6 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
         // Optional: log for development purposes
         console.log("Checkout clicked, total:", getCartTotal().toFixed(2));
     };
-
 
     const handleIncrement = async (id: string | number, e: React.MouseEvent) => {
         e.stopPropagation();
@@ -199,7 +337,7 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                         justifyContent: 'center',
                         height: '60vh'
                     }}>
-                        <ShoppingBagIcon  sx={{ fontSize: 80, color: '#ccc', mb: 3 }} />
+                        <ShoppingBagIcon sx={{ fontSize: 80, color: '#ccc', mb: 3 }} />
                         <Typography variant="h6" sx={{ textAlign: 'center', mb: 1, fontWeight: 'medium' }}>
                             Your cart is empty
                         </Typography>
@@ -243,6 +381,9 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                     : item.pet.price;
                                 const itemTotal = (itemPrice * item.quantity).toFixed(2);
 
+                                // Get the image URL for this pet from resolved images or compute it
+                                const imageUrl = resolvedImages[item.pet.id] || getPetImageUrl(item.pet);
+
                                 return (
                                     <ListItem
                                         key={item.pet.id}
@@ -255,7 +396,7 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                     >
                                         <ListItemAvatar>
                                             <Avatar
-                                                src={getPetImageUrl(item.pet)}
+                                                src={imageUrl}
                                                 alt={item.pet.name}
                                                 variant="rounded"
                                                 sx={{
@@ -263,6 +404,20 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                                     height: 70,
                                                     mr: 2,
                                                     borderRadius: 2,
+                                                    bgcolor: '#e0e0e0',
+                                                    '& img': {
+                                                        objectFit: 'cover'
+                                                    }
+                                                }}
+                                                imgProps={{
+                                                    onError: () => {
+                                                        // Immediately set to default to avoid broken image
+                                                        const imgElement = document.querySelector(`img[alt="${item.pet.name}"]`) as HTMLImageElement;
+                                                        if (imgElement) imgElement.src = DEFAULT_IMAGE;
+
+                                                        // Try to find a working URL with different formats
+                                                        handleImageError(item.pet.id, item.pet.name);
+                                                    }
                                                 }}
                                             />
                                         </ListItemAvatar>
@@ -275,7 +430,6 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                             }
                                             secondary={
                                                 <>
-                                                    {/* Fixed nested paragraph issue by adding component="span" */}
                                                     <Typography variant="body2" color="text.secondary" component="span">
                                                         {item.pet.petType} • {item.pet.breed}
                                                     </Typography>
@@ -391,7 +545,6 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                     disabled={loading}
                                     sx={{
                                         borderColor: '#999',
-
                                         color: '#666',
                                         borderRadius: 2,
                                         py: 1.2,
@@ -449,3 +602,4 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
 };
 
 export default Cart;
+
