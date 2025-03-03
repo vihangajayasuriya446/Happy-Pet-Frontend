@@ -18,10 +18,10 @@ interface PetDTO {
 
 interface PetListProps {
     searchQuery?: string;
-    petType?: string;
+    petType?: string; // 'dog', 'cat', or 'all'
     birthYear?: string;
     PetCardComponent?: React.FC<{ pet: Pet; onAdopt?: () => void }>;
-    isAdminView?: boolean; // Flag to determine if this is admin view
+    isAdminView?: boolean;
 }
 
 const API_BASE_URL = 'http://localhost:8080';
@@ -63,7 +63,6 @@ const PetList: React.FC<PetListProps> = ({
                                              PetCardComponent,
                                              isAdminView = false
                                          }) => {
-    // Store the full API data including IDs
     const [petsData, setPetsData] = useState<PetDTO[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -80,17 +79,34 @@ const PetList: React.FC<PetListProps> = ({
 
     useEffect(() => {
         setLoading(true);
+        console.log("Fetching pets with filters:", { petType, birthYear, searchQuery });
 
-        // First fetch all pets or filtered pets
-        fetchPetsWithFilters()
-            .then(pets => {
-                if (searchQuery && searchQuery.trim() !== '') {
-                    // If there's a search query, filter the results further
-                    return filterBySearchQuery(pets, searchQuery);
+        // Fetch all pets first
+        axios.get<PetDTO[]>(PETS_API_URL)
+            .then(response => {
+                let filteredPets = response.data;
+                console.log(`Fetched ${filteredPets.length} total pets`);
+
+                // Apply pet type filter if not 'all'
+                if (petType !== 'all') {
+                    filteredPets = filteredPets.filter(pet =>
+                        pet.petType.toLowerCase() === petType.toLowerCase()
+                    );
+                    console.log(`Filtered to ${filteredPets.length} ${petType} pets`);
                 }
-                return pets;
-            })
-            .then(filteredPets => {
+
+                // Apply birth year filter if not 'all'
+                if (birthYear !== 'all') {
+                    filteredPets = filteredPets.filter(pet => pet.birthYear === birthYear);
+                    console.log(`Filtered to ${filteredPets.length} pets with birth year ${birthYear}`);
+                }
+
+                // Apply search query if present
+                if (searchQuery && searchQuery.trim() !== '') {
+                    filteredPets = filterBySearchQuery(filteredPets, searchQuery);
+                    console.log(`Filtered to ${filteredPets.length} pets matching search "${searchQuery}"`);
+                }
+
                 setPetsData(filteredPets);
                 setError(null);
             })
@@ -102,33 +118,6 @@ const PetList: React.FC<PetListProps> = ({
                 setLoading(false);
             });
     }, [searchQuery, petType, birthYear]);
-
-    // Fetch pets with type and year filters applied
-    const fetchPetsWithFilters = async (): Promise<PetDTO[]> => {
-        try {
-            // Start with base URL
-            let url = PETS_API_URL;
-
-            // If pet type is specified, use the type endpoint
-            if (petType !== 'all') {
-                url = `${PETS_API_URL}/type/${petType}`;
-            }
-
-            // Fetch pets
-            const response = await axios.get<PetDTO[]>(url);
-            let pets = response.data;
-
-            // Filter by birth year if specified
-            if (birthYear !== 'all') {
-                pets = pets.filter(pet => pet.birthYear === birthYear);
-            }
-
-            return pets;
-        } catch (err) {
-            console.error("Error fetching filtered pets:", err);
-            throw err;
-        }
-    };
 
     // Enhanced search function that checks name, breed, and pet type
     const filterBySearchQuery = (pets: PetDTO[], query: string): PetDTO[] => {
@@ -158,15 +147,29 @@ const PetList: React.FC<PetListProps> = ({
             console.log(`Purchased pet with ID: ${petDTO.id}`);
 
             // Refresh the pet list after purchase
-            fetchPetsWithFilters()
-                .then(pets => {
-                    if (searchQuery) {
-                        return filterBySearchQuery(pets, searchQuery);
+            axios.get<PetDTO[]>(PETS_API_URL)
+                .then(response => {
+                    let updatedPets = response.data;
+
+                    // Re-apply filters
+                    if (petType !== 'all') {
+                        updatedPets = updatedPets.filter(pet =>
+                            pet.petType.toLowerCase() === petType.toLowerCase()
+                        );
                     }
-                    return pets;
+
+                    if (birthYear !== 'all') {
+                        updatedPets = updatedPets.filter(pet => pet.birthYear === birthYear);
+                    }
+
+                    if (searchQuery && searchQuery.trim() !== '') {
+                        updatedPets = filterBySearchQuery(updatedPets, searchQuery);
+                    }
+
+                    setPetsData(updatedPets);
                 })
-                .then(filteredPets => {
-                    setPetsData(filteredPets);
+                .catch(error => {
+                    console.error("Error refreshing pets after purchase:", error);
                 });
         } catch (error) {
             console.error('Error during purchase:', error);
@@ -176,7 +179,7 @@ const PetList: React.FC<PetListProps> = ({
     if (loading) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-                <CircularProgress size={60} sx={{ color: 'white' }} />
+                <CircularProgress size={60} sx={{ color: '#003366' }} />
             </Box>
         );
     }
@@ -187,7 +190,7 @@ const PetList: React.FC<PetListProps> = ({
                 <Typography variant="h6" color="error" gutterBottom>
                     {error}
                 </Typography>
-                <Typography variant="body1" color="white">
+                <Typography variant="body1">
                     Please check your connection and try again.
                 </Typography>
             </Box>
@@ -197,10 +200,17 @@ const PetList: React.FC<PetListProps> = ({
     if (petsData.length === 0) {
         return (
             <Box sx={{ py: 8, textAlign: 'center' }}>
-                <Typography variant="h6" color="white">
+                <Typography variant="h6">
+                    {petType !== 'all'
+                        ? `No ${petType}s available${searchQuery ? ' matching your search' : ''}.`
+                        : searchQuery
+                            ? "No pets match your search criteria."
+                            : "No pets available at the moment."}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
                     {searchQuery || petType !== 'all' || birthYear !== 'all'
-                        ? "No pets match your search criteria."
-                        : "No pets available at the moment."}
+                        ? "Try adjusting your filters or search terms."
+                        : "Please check back later for new arrivals."}
                 </Typography>
             </Box>
         );
@@ -214,9 +224,6 @@ const PetList: React.FC<PetListProps> = ({
                     ? getFullImageUrl(petDTO.imageUrl)
                     : `/images/${petDTO.petType.toLowerCase()}-placeholder.png`;
 
-                // Validate petType to ensure it's either "dog" or "cat"
-                const petTypeValue = petDTO.petType.toLowerCase() === "dog" ? "dog" : "cat";
-
                 // Map the API data to what PetCard expects
                 const petCardProps: Pet = {
                     id: parseInt(petDTO.id), // Convert string ID to number
@@ -226,11 +233,11 @@ const PetList: React.FC<PetListProps> = ({
                     birthYear: parseInt(petDTO.birthYear),
                     image: imageUrl,
                     imageUrl: imageUrl, // Add imageUrl for consistency
-                    petType: petTypeValue, // Use the validated petType
+                    petType: petDTO.petType.toLowerCase(), // Ensure lowercase for consistency
                 };
 
                 return (
-                    <Grid item xs={12} sm={6} md={3} key={petDTO.id} sx={{ display: 'flex' }}>
+                    <Grid item xs={12} sm={6} md={4} lg={3} key={petDTO.id} sx={{ display: 'flex' }}>
                         <PetCardWithHoverImage
                             pet={petCardProps}
                             // Only pass onAdopt if this is admin view

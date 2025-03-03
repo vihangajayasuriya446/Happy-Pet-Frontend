@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Typography, Container, IconButton, Badge } from "@mui/material";
+import { Box, Typography, Container, IconButton, Badge, FormControl, Select, MenuItem, SelectChangeEvent } from "@mui/material";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import { CartProvider, useCart } from "./contexts/CartContext";
 import PetList from "./components/PetList";
@@ -10,15 +10,15 @@ import Cart from "./components/Cart";
 
 // Types definitions with fixed type inconsistencies
 export interface Pet {
-    id: number | string; // Accept both number and string
+    id: number | string;
     name: string;
     breed: string;
-    price: number | string; // Accept both number and string
-    birthYear: number | string; // Accept both number and string
-    petType: string; // Accept any string, will be normalized in components
+    price: number | string;
+    birthYear: number | string;
+    petType: string;
     image?: string;
     imageUrl?: string;
-    purchased?: boolean; // Added to support the API response
+    purchased?: boolean;
 }
 
 export interface CartItem {
@@ -31,6 +31,7 @@ const AppContent: React.FC = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [cartOpen, setCartOpen] = useState(false);
     const [searchQuery] = useState('');
+    const [petType, setPetType] = useState<string>('all');
     const { getItemCount } = useCart();
     const itemCount = getItemCount();
 
@@ -40,6 +41,11 @@ const AppContent: React.FC = () => {
 
     const toggleCart = () => {
         setCartOpen(!cartOpen);
+    };
+
+    const handlePetTypeChange = (event: SelectChangeEvent<string>) => {
+        setPetType(event.target.value);
+        console.log(`Pet type changed to: ${event.target.value}`);
     };
 
     return (
@@ -54,7 +60,7 @@ const AppContent: React.FC = () => {
             <DrawerMenu open={drawerOpen} toggleDrawer={toggleDrawer} />
             <Cart open={cartOpen} onClose={toggleCart} />
 
-            {/* Title Section with Shopping Bag Icon */}
+            {/* Title Section with Shopping Bag Icon and Filter */}
             <Box
                 sx={{
                     bgcolor: '#003366',
@@ -63,22 +69,90 @@ const AppContent: React.FC = () => {
                     position: 'relative',
                 }}
             >
-                <Container maxWidth="lg" sx={{
-                    position: 'relative',
-                    display: 'flex',
-                    justifyContent: 'center',
-                }}>
-                    <Typography
-                        variant="h3"
-                        sx={{
-                            color: 'common.white',
-                            fontWeight: 800,
-                            fontSize: { xs: '2rem', md: '3rem' },
-                            fontFamily: '"Nunito", sans-serif',
-                        }}
-                    >
-                        Buy a Pet
-                    </Typography>
+                <Container maxWidth="lg" sx={{ position: 'relative' }}>
+                    {/* Title and Filter in the same row */}
+                    <Box sx={{
+                        display: 'flex',
+                        flexDirection: { xs: 'column', sm: 'row' },
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        mb: { xs: 3, sm: 4 },
+                        position: 'relative'
+                    }}>
+                        {/* Filter positioned on the left */}
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                position: { xs: 'static', sm: 'absolute' },
+                                left: { xs: 'auto', sm: 25 },
+                                top: '-5%',
+                                transform: { xs: 'none', sm: 'translateY(-50%)' },
+                                order: { xs: 2, sm: 1 },
+                                mt: { xs: 2, sm: 0 }
+                            }}
+                        >
+                            <Typography
+                                variant="body1"
+                                sx={{
+                                    color: 'white',
+                                    fontWeight: 600,
+                                    mr: 2,
+                                    display: { xs: 'none', sm: 'block' }
+                                }}
+                            >
+                                Filter by:
+                            </Typography>
+                            <FormControl
+                                size="small"
+                                sx={{
+                                    minWidth: 150,
+                                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                    borderRadius: 1,
+                                    '& .MuiOutlinedInput-notchedOutline': {
+                                        borderColor: 'transparent'
+                                    },
+                                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                                        borderColor: 'transparent'
+                                    }
+                                }}
+                            >
+                                <Select
+                                    value={petType}
+                                    onChange={handlePetTypeChange}
+                                    displayEmpty
+                                    inputProps={{ 'aria-label': 'Select pet type' }}
+                                    sx={{
+                                        color: '#003366',
+                                        fontWeight: 600,
+                                        '&:focus': {
+                                            backgroundColor: 'white'
+                                        }
+                                    }}
+                                >
+                                    <MenuItem value="all">All Pets</MenuItem>
+                                    <MenuItem value="dog">Dogs</MenuItem>
+                                    <MenuItem value="cat">Cats</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Box>
+
+                        {/* Title in the center */}
+                        <Typography
+                            variant="h3"
+                            sx={{
+                                color: 'common.white',
+                                fontWeight: 800,
+                                fontSize: { xs: '2rem', md: '3rem' },
+                                fontFamily: '"Nunito", sans-serif',
+                                textAlign: 'center',
+                                order: { xs: 1, sm: 2 },
+                                mx: 'auto'
+                            }}
+                        >
+                            Buy a Pet
+                        </Typography>
+                    </Box>
 
                     {/* Shopping Bag Icon positioned at the right edge */}
                     <IconButton
@@ -86,7 +160,7 @@ const AppContent: React.FC = () => {
                         sx={{
                             position: 'absolute',
                             right: { xs: -70, sm: -70, md: -70 },
-                            top: '50%',
+                            top: { xs: 20, md: 15 },
                             transform: 'translateY(-50%)',
                             bgcolor: 'white',
                             boxShadow: 3,
@@ -124,10 +198,11 @@ const AppContent: React.FC = () => {
                 <Container
                     maxWidth="lg"
                     sx={{
-                        py: { xs: 4, md: 6 }
+                        py: { xs: 2, md: 3 }
                     }}
                 >
-                    <PetList searchQuery={searchQuery} />
+                    {/* Pet List Component */}
+                    <PetList searchQuery={searchQuery} petType={petType} />
                 </Container>
             </Box>
 
