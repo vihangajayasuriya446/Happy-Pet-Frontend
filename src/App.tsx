@@ -7,6 +7,7 @@ import MainPage from './MainUser';
 import Users from './Users';
 import HomePage from './HomePage';
 import ContactUsPage from './ContactUsPage';
+import AdminDashboardNav from './AdminDashboardNav';
 
 
 const App: React.FC = () => {
@@ -19,6 +20,7 @@ const App: React.FC = () => {
           <Route path="/dashboard" element={<Users />} />
           <Route path="/matchmaking" element={<MainPage />} />
           <Route path="/contactus" element={<ContactUsPage />} />
+          <Route path="/admindb" element={<AdminDashboardNav />} />
         </Routes>
         <Footer />
       </Box>
