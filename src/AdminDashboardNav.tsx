@@ -7,32 +7,34 @@ const AdminDashboardNav: React.FC = () => {
     const styles: { [key: string]: React.CSSProperties } = {
         body: {
             fontFamily: 'Arial, sans-serif',
-            backgroundColor: '#f4f4f9',
+            backgroundColor: '#f0f2f5', // Light gray background for the whole page
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            height: '100vh',
+            minHeight: '100vh',
             margin: 0,
-            padding: 0,
+            padding: '2rem',
+            boxSizing: 'border-box',
         },
         dashboardContainer: {
-            textAlign: 'center' as const,
+            textAlign: 'center',
             backgroundColor: '#ffffff',
-            padding: '2rem',
-            borderRadius: '10px',
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-            maxWidth: '400px',
+            padding: '2.5rem',
+            borderRadius: '12px',
+            boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1)',
+            maxWidth: '450px',
             width: '100%',
         },
         heading: {
-            fontSize: '24px',
+            fontSize: '28px',
             color: '#333',
-            marginBottom: '1.5rem',
+            marginBottom: '2rem',
+            fontWeight: '600',
         },
         buttonContainer: {
             display: 'flex',
-            flexDirection: 'column' as const,
-            gap: '1rem',
+            flexDirection: 'column',
+            gap: '1.25rem',
         },
         dashboardButton: {
             display: 'block',
@@ -41,13 +43,16 @@ const AdminDashboardNav: React.FC = () => {
             color: '#ffffff',
             border: 'none',
             cursor: 'pointer',
-            borderRadius: '5px',
+            borderRadius: '8px',
             fontSize: '16px',
-            transition: 'background-color 0.3s ease, transform 0.2s ease',
+            fontWeight: '500',
+            transition: 'background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         },
         dashboardButtonHover: {
             backgroundColor: '#0056b3',
             transform: 'translateY(-2px)',
+            boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)',
         },
     };
 
@@ -71,10 +76,12 @@ const AdminDashboardNav: React.FC = () => {
                             onMouseEnter={(e) => {
                                 e.currentTarget.style.backgroundColor = styles.dashboardButtonHover.backgroundColor ?? '#0056b3';
                                 e.currentTarget.style.transform = styles.dashboardButtonHover.transform ?? 'translateY(-2px)';
+                                e.currentTarget.style.boxShadow = styles.dashboardButtonHover.boxShadow ?? '0 6px 12px rgba(0, 0, 0, 0.15)';
                             }}
                             onMouseLeave={(e) => {
                                 e.currentTarget.style.backgroundColor = styles.dashboardButton.backgroundColor ?? '#007bff';
                                 e.currentTarget.style.transform = 'translateY(0)';
+                                e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
                             }}
                             onClick={() => handleNavigation(item.path)}
                         >
@@ -88,4 +95,3 @@ const AdminDashboardNav: React.FC = () => {
 };
 
 export default AdminDashboardNav;
-
