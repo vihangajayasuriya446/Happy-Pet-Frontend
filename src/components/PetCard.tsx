@@ -180,49 +180,76 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                 </IconButton>
             </Box>
 
-            <CardMedia
-                component="img"
-                height={240}
-                image={resolvedImageUrl}
-                alt={pet.name}
-                sx={{
-                    objectFit: "cover",
-                    transition: 'transform 0.3s ease-in-out',
-                    '&:hover': {
-                        transform: 'scale(1.05)'
-                    }
-                }}
-                onError={(e) => {
-                    console.error(`Image failed to load for pet ${pet.name}:`, resolvedImageUrl);
-                    (e.target as HTMLImageElement).src = '/default-pet-image.jpg';
-                    setResolvedImageUrl('/default-pet-image.jpg');
-                }}
-            />
+            {/* Image container with slightly darker gray background */}
+            <Box sx={{
+                backgroundColor: '#e0e0e0', // Slightly darker gray background for image area
+                height: 240,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                overflow: 'hidden'
+            }}>
+                <CardMedia
+                    component="img"
+                    height={240}
+                    image={resolvedImageUrl}
+                    alt={pet.name}
+                    sx={{
+                        objectFit: "cover",
+                        transition: 'transform 0.3s ease-in-out',
+                        width: '100%',
+                        '&:hover': {
+                            transform: 'scale(1.05)'
+                        }
+                    }}
+                    onError={(e) => {
+                        console.error(`Image failed to load for pet ${pet.name}:`, resolvedImageUrl);
+                        (e.target as HTMLImageElement).src = '/default-pet-image.jpg';
+                        setResolvedImageUrl('/default-pet-image.jpg');
+                    }}
+                />
+            </Box>
 
             <Box sx={{ p: 2, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                {/* Name and price on the same line - name first, price after */}
+                {/* Name and price on the same line - name first, price after - both with same styling */}
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                    <Typography variant="h6" fontWeight="bold">
+                    <Typography
+                        variant="h6"
+                        fontWeight="bold"
+                        color="primary"
+                        sx={{ fontSize: '1.1rem' }} // Slightly reduced font size from h6 default
+                    >
                         {pet.name}
                     </Typography>
                     <Typography
+                        variant="h6"
+                        fontWeight="bold"
                         color="primary"
-                        sx={{
-                            fontSize: '0.9rem', // Reduced font size for price
-                            fontWeight: 600
-                        }}
+                        sx={{ fontSize: '1.1rem' }} // Matching reduced font size
                     >
                         {formatPriceLKR(pet.price)}
                     </Typography>
                 </Box>
 
-                {/* Breed */}
-                <Typography variant="body2" color="text.secondary">
+                {/* Breed - darker gray and consistent size */}
+                <Typography
+                    sx={{
+                        color: '#555555', // Darker gray color
+                        fontSize: '0.9rem',  // Smaller than name/price but consistent with birth
+                        mb: 0.5 // Small margin bottom for spacing
+                    }}
+                >
                     {pet.breed}
                 </Typography>
 
-                {/* Birth year below breed - Changed "Born" to "Birth" */}
-                <Typography variant="body2" color="text.secondary" mb={1}>
+                {/* Birth year - matching the breed styling */}
+                <Typography
+                    sx={{
+                        color: '#555555', // Same darker gray
+                        fontSize: '0.9rem', // Same size as breed
+                        mb: 1
+                    }}
+                >
                     Birth {pet.birthYear} ({calculateAge()} years old)
                 </Typography>
 
@@ -296,7 +323,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                         {isAdding ? (
                             <CircularProgress size={20} sx={{ color: 'white' }} />
                         ) : (
-                            'Add to Cart'
+                            'Select Me'
                         )}
                     </Button>
                 </Box>

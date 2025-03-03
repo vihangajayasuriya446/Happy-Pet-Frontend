@@ -305,7 +305,7 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                     borderBottom: '1px solid #eee'
                 }}>
                     <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: '#003366' }}>
-                        Shopping Cart ({items.length} {items.length === 1 ? 'item' : 'items'})
+                        Selected Pets ({items.length} {items.length === 1 ? 'item' : 'pets'})
                     </Typography>
                     <IconButton
                         onClick={onClose}
@@ -339,10 +339,10 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                     }}>
                         <ShoppingBagIcon sx={{ fontSize: 80, color: '#ccc', mb: 3 }} />
                         <Typography variant="h6" sx={{ textAlign: 'center', mb: 1, fontWeight: 'medium' }}>
-                            Your cart is empty
+                            Your pet bag is empty
                         </Typography>
                         <Typography variant="body1" color="text.secondary" sx={{ textAlign: 'center', mb: 4 }}>
-                            Add some pets to get started!
+                            Find a furry friend to add!
                         </Typography>
                         <Button
                             variant="contained"
@@ -355,7 +355,7 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                 '&:hover': { bgcolor: '#002244' }
                             }}
                         >
-                            Continue Shopping
+                            Find a Pet
                         </Button>
                     </Box>
                 ) : (
@@ -415,7 +415,7 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                                         const imgElement = document.querySelector(`img[alt="${item.pet.name}"]`) as HTMLImageElement;
                                                         if (imgElement) imgElement.src = DEFAULT_IMAGE;
 
-                                                        // Try to find a working URL with different formats
+
                                                         handleImageError(item.pet.id, item.pet.name);
                                                     }
                                                 }}
@@ -443,7 +443,7 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                                             color: '#003366'
                                                         }}
                                                     >
-                                                        LKR{itemPrice.toFixed(2)} × {item.quantity} = LKR{itemTotal}
+                                                        LKR {itemPrice.toFixed(2)} × {item.quantity} = LKR {itemTotal}
                                                     </Typography>
                                                 </>
                                             }
@@ -524,7 +524,7 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                     Subtotal:
                                 </Typography>
                                 <Typography variant="body1" color="text.secondary">
-                                    LKR{getCartTotal().toFixed(2)}
+                                    LKR {getCartTotal().toFixed(2)}
                                 </Typography>
                             </Box>
 
@@ -533,7 +533,7 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                     Total:
                                 </Typography>
                                 <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#003366' }}>
-                                    LKR{getCartTotal().toFixed(2)}
+                                    LKR {getCartTotal().toFixed(2)}
                                 </Typography>
                             </Box>
 
@@ -554,7 +554,7 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                         }
                                     }}
                                 >
-                                    Clear Cart
+                                    Clear Bag
                                 </Button>
                                 <Button
                                     variant="contained"
