@@ -12,14 +12,16 @@ interface PetDTO {
     price: string;
     breed: string;
     birthYear: string;
+    gender: string;
     imageUrl?: string;
     purchased?: boolean;
 }
 
 interface PetListProps {
     searchQuery?: string;
-    petType?: string; // 'dog', 'cat', or 'all'
+    petType?: string;
     birthYear?: string;
+
     PetCardComponent?: React.FC<{ pet: Pet; onAdopt?: () => void }>;
     isAdminView?: boolean;
 }
@@ -60,6 +62,7 @@ const PetList: React.FC<PetListProps> = ({
                                              searchQuery = '',
                                              petType = 'all',
                                              birthYear = 'all',
+                                             // Removed gender parameter
                                              PetCardComponent,
                                              isAdminView = false
                                          }) => {
@@ -101,6 +104,7 @@ const PetList: React.FC<PetListProps> = ({
                     console.log(`Filtered to ${filteredPets.length} pets with birth year ${birthYear}`);
                 }
 
+
                 // Apply search query if present
                 if (searchQuery && searchQuery.trim() !== '') {
                     filteredPets = filterBySearchQuery(filteredPets, searchQuery);
@@ -117,9 +121,9 @@ const PetList: React.FC<PetListProps> = ({
             .finally(() => {
                 setLoading(false);
             });
-    }, [searchQuery, petType, birthYear]);
+    }, [searchQuery, petType, birthYear]); // Removed gender from dependency array
 
-    // Enhanced search function that checks name, breed, and pet type
+    // Enhanced search function that checks name, breed, pet type, and gender
     const filterBySearchQuery = (pets: PetDTO[], query: string): PetDTO[] => {
         const normalizedQuery = query.toLowerCase().trim();
 
@@ -132,11 +136,17 @@ const PetList: React.FC<PetListProps> = ({
                 pet.name.toLowerCase().includes(normalizedQuery) ||
                 pet.breed.toLowerCase().includes(normalizedQuery) ||
                 pet.petType.toLowerCase().includes(normalizedQuery) ||
+                (pet.gender && pet.gender.toLowerCase().includes(normalizedQuery)) || // Keep gender in search
                 // Check for common terms
                 (pet.petType.toLowerCase() === 'dog' &&
                     (normalizedQuery === 'dog' || normalizedQuery === 'dogs' || normalizedQuery.includes('dog'))) ||
                 (pet.petType.toLowerCase() === 'cat' &&
-                    (normalizedQuery === 'cat' || normalizedQuery === 'cats' || normalizedQuery.includes('cat')))
+                    (normalizedQuery === 'cat' || normalizedQuery === 'cats' || normalizedQuery.includes('cat'))) ||
+                // Keep gender-related terms in search
+                (pet.gender && pet.gender.toLowerCase() === 'male' &&
+                    (normalizedQuery === 'male' || normalizedQuery === 'boy' || normalizedQuery.includes('male'))) ||
+                (pet.gender && pet.gender.toLowerCase() === 'female' &&
+                    (normalizedQuery === 'female' || normalizedQuery === 'girl' || normalizedQuery.includes('female')))
             );
         });
     };
@@ -161,6 +171,7 @@ const PetList: React.FC<PetListProps> = ({
                     if (birthYear !== 'all') {
                         updatedPets = updatedPets.filter(pet => pet.birthYear === birthYear);
                     }
+
 
                     if (searchQuery && searchQuery.trim() !== '') {
                         updatedPets = filterBySearchQuery(updatedPets, searchQuery);
@@ -226,14 +237,15 @@ const PetList: React.FC<PetListProps> = ({
 
                 // Map the API data to what PetCard expects
                 const petCardProps: Pet = {
-                    id: parseInt(petDTO.id), // Convert string ID to number
+                    id: parseInt(petDTO.id),
                     name: petDTO.name,
                     breed: petDTO.breed,
                     price: parseFloat(petDTO.price),
                     birthYear: parseInt(petDTO.birthYear),
+                    gender: petDTO.gender,
                     image: imageUrl,
-                    imageUrl: imageUrl, // Add imageUrl for consistency
-                    petType: petDTO.petType.toLowerCase(), // Ensure lowercase for consistency
+                    imageUrl: imageUrl,
+                    petType: petDTO.petType.toLowerCase(),
                 };
 
                 return (

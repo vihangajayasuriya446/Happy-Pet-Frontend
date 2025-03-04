@@ -13,7 +13,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { useCart } from "../contexts/CartContext";
-import { Pet } from "../App"; // Import Pet type from App.tsx
+import { Pet } from "../App";
 
 interface PetCardProps {
     pet: Pet;
@@ -241,6 +241,19 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                 >
                     {pet.breed}
                 </Typography>
+
+                {/* Gender - without icon, matching styling */}
+                {pet.gender && (
+                    <Typography
+                        sx={{
+                            color: '#555555',
+                            fontSize: '0.9rem',
+                            mb: 0.5
+                        }}
+                    >
+                        {pet.gender}
+                    </Typography>
+                )}
 
                 {/* Birth year - matching the breed styling */}
                 <Typography

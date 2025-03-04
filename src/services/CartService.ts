@@ -1,4 +1,3 @@
-// src/services/CartService.ts
 import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:8080/api/v1/cart';
@@ -32,6 +31,12 @@ export interface Pet {
     imageUrl: string;
     purchased: boolean;
     [key: string]: unknown; // Allow for additional properties
+}
+
+// New interface for the cart item deletion response
+export interface CartItemDeleteResponse {
+    message: string;
+    status: string;
 }
 
 // Helper functions for local storage
@@ -91,8 +96,6 @@ const cartService = {
                     saveLocalCart(localCart);
                     return existingItem;
                 } else {
-                    // This is a fallback that would work best if you have pet details cached elsewhere
-                    // For now, we'll throw an error as we can't create a complete cart item without pet details
                     throw new Error("Cannot add to local cart without pet details");
                 }
             } catch {
@@ -103,7 +106,7 @@ const cartService = {
         }
     },
 
-    // Update cart item quantity - matches your @PutMapping("/{cartItemId}")
+    // Update cart item quantity - matches @PutMapping("/{cartItemId}")
     updateCartItemQuantity: async (cartItemId: number, quantity: number): Promise<CartItemResponse | null> => {
         try {
             const response = await axios.put(`${API_BASE_URL}/${cartItemId}`, null, {
@@ -157,30 +160,45 @@ const cartService = {
         }
     },
 
-    // Remove item from cart - matches your @DeleteMapping("/{cartItemId}")
-    removeFromCart: async (cartItemId: number): Promise<void> => {
+    // Remove item from cart - matches  @DeleteMapping("/{cartItemId}")
+    // Updated to return the new response format
+    // Remove item from cart - matches @DeleteMapping("/{cartItemId}")
+    removeFromCart: async (cartItemId: number): Promise<CartItemDeleteResponse> => {
         try {
-            await axios.delete(`${API_BASE_URL}/${cartItemId}`);
+            const response = await axios.delete(`${API_BASE_URL}/${cartItemId}`);
 
             // Remove from local storage
             const localCart = getLocalCart();
+            // No need to find the item here since we're not using it
             const updatedCart = localCart.filter(item => item.id !== cartItemId);
             saveLocalCart(updatedCart);
+
+            // Return the response data with message and status
+            return response.data;
         } catch (error) {
             console.error(`Error removing cart item ${cartItemId}:`, error);
 
             // Try local removal if API fails
             try {
                 const localCart = getLocalCart();
+                const itemToRemove = localCart.find(item => item.id === cartItemId);
                 const updatedCart = localCart.filter(item => item.id !== cartItemId);
                 saveLocalCart(updatedCart);
+
+                // Create a fallback response that mimics the backend format
+                return {
+                    message: itemToRemove
+                        ? `${itemToRemove.pet.name} removed from cart (offline mode)!`
+                        : "Item removed from cart (offline mode)!",
+                    status: "success"
+                };
             } catch {
-                // Removed parameter completely
                 console.error('Local fallback failed');
                 throw error; // Rethrow the original error
             }
         }
     },
+
 
     // Clear entire cart - matches your @DeleteMapping
     clearCart: async (): Promise<void> => {

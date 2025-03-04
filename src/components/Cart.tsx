@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
     Box, Typography, IconButton, Drawer, Button, List, ListItem, ListItemAvatar, Avatar,
     ListItemText, ListItemSecondaryAction, Badge, Divider, useMediaQuery, useTheme,
-    CircularProgress, Snackbar, Alert
+    CircularProgress
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -10,7 +10,14 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import { useCart } from "../contexts/CartContext";
-import { Pet } from "../App"; // Import the Pet type
+import { Pet } from "../App";
+import Toast from "../components/Toast";
+
+// Define a type for the response from cart operations
+interface CartOperationResponse {
+    success: boolean;
+    message: string;
+}
 
 // CartButton component
 interface CartButtonProps {
@@ -119,10 +126,12 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
     const { items, removeFromCart, updateQuantity, clearCart, loading, getCartTotal } = useCart();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    const [snackbar, setSnackbar] = useState({
+
+    // Toast state for notifications
+    const [toast, setToast] = useState({
         open: false,
         message: '',
-        severity: 'success' as 'success' | 'error'
+        type: 'success' as 'success' | 'error'
     });
 
     // State to track resolved image URLs
@@ -260,27 +269,91 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
         console.log("Checkout clicked, total:", getCartTotal().toFixed(2));
     };
 
+    // Handle quantity increment without showing notifications
     const handleIncrement = async (id: string | number, e: React.MouseEvent) => {
         e.stopPropagation();
-        await updateQuantity(id, 'plus');
+        try {
+            // Call the updateQuantity function but don't show a notification
+            await updateQuantity(id, 'plus');
+        } catch (error) {
+            console.error("Error increasing quantity:", error);
+            // Only show notification for errors
+            setToast({
+                open: true,
+                message: 'Failed to update quantity',
+                type: 'error'
+            });
+        }
     };
 
+    // Handle quantity decrement without showing notifications
     const handleDecrement = async (id: string | number, e: React.MouseEvent) => {
         e.stopPropagation();
         const idAsNumber = ensureNumber(id);
         const item = items.find(item => ensureNumber(item.pet.id) === idAsNumber);
         if (item && item.quantity > 1) {
-            await updateQuantity(id, 'minus');
+            try {
+                // Call the updateQuantity function but don't show a notification
+                await updateQuantity(id, 'minus');
+            } catch (error) {
+                console.error("Error decreasing quantity:", error);
+                // Only show notification for errors
+                setToast({
+                    open: true,
+                    message: 'Failed to update quantity',
+                    type: 'error'
+                });
+            }
         }
     };
 
     const handleRemove = async (id: string | number, e: React.MouseEvent) => {
         e.stopPropagation();
-        await removeFromCart(id);
+        try {
+            // Type assertion to fix the TypeScript error
+            const result = await removeFromCart(id) as CartOperationResponse | undefined;
+
+            // Show notification from backend or default message
+            setToast({
+                open: true,
+                message: result?.message || 'Item removed from cart successfully',
+                type: result?.success !== false ? 'success' : 'error'
+            });
+        } catch (error) {
+            console.error("Error removing item from cart:", error);
+            setToast({
+                open: true,
+                message: 'Failed to remove item from cart',
+                type: 'error'
+            });
+        }
     };
 
-    const closeSnackbar = () => {
-        setSnackbar({ ...snackbar, open: false });
+    // Handle clearing the cart with notifications
+    const handleClearCart = async () => {
+        try {
+            // Type assertion to fix the TypeScript error
+            const result = await clearCart() as CartOperationResponse | undefined;
+
+            // Show notification from backend or default message
+            setToast({
+                open: true,
+                message: result?.message || 'Cart cleared successfully',
+                type: result?.success !== false ? 'success' : 'error'
+            });
+        } catch (error) {
+            console.error("Error clearing cart:", error);
+            setToast({
+                open: true,
+                message: 'Failed to clear cart',
+                type: 'error'
+            });
+        }
+    };
+
+    // Close toast handler
+    const closeToast = () => {
+        setToast({ ...toast, open: false });
     };
 
     return (
@@ -541,7 +614,7 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                 <Button
                                     variant="outlined"
                                     fullWidth
-                                    onClick={() => clearCart()}
+                                    onClick={handleClearCart}
                                     disabled={loading}
                                     sx={{
                                         borderColor: '#999',
@@ -582,24 +655,15 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                 )}
             </Drawer>
 
-            <Snackbar
-                open={snackbar.open}
-                autoHideDuration={6000}
-                onClose={closeSnackbar}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-            >
-                <Alert
-                    onClose={closeSnackbar}
-                    severity={snackbar.severity}
-                    variant="filled"
-                    sx={{ width: '100%' }}
-                >
-                    {snackbar.message}
-                </Alert>
-            </Snackbar>
+            {/* Use the Toast component for notifications */}
+            <Toast
+                open={toast.open}
+                message={toast.message}
+                type={toast.type}
+                onClose={closeToast}
+            />
         </>
     );
 };
 
 export default Cart;
-

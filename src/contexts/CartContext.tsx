@@ -1,4 +1,3 @@
-// src/contexts/CartContext.tsx
 import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
 import { Pet } from '../App';
 import cartService, { CartItemResponse } from '../services/CartService';
@@ -617,4 +616,3 @@ export const refreshAllImages = async (): Promise<void> => {
         }
     }
 };
-

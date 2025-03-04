@@ -8,7 +8,7 @@ import Footer from "./components/Footer";
 import DrawerMenu from "./components/DrawerMenu";
 import Cart from "./components/Cart";
 
-// Types definitions with fixed type inconsistencies
+// Types definitions with gender field added
 export interface Pet {
     id: number | string;
     name: string;
@@ -16,6 +16,7 @@ export interface Pet {
     price: number | string;
     birthYear: number | string;
     petType: string;
+    gender?: string;
     image?: string;
     imageUrl?: string;
     purchased?: boolean;
@@ -32,6 +33,7 @@ const AppContent: React.FC = () => {
     const [cartOpen, setCartOpen] = useState(false);
     const [searchQuery] = useState('');
     const [petType, setPetType] = useState<string>('all');
+    // Removed gender state variable
     const { getItemCount } = useCart();
     const itemCount = getItemCount();
 
@@ -48,6 +50,7 @@ const AppContent: React.FC = () => {
         console.log(`Pet type changed to: ${event.target.value}`);
     };
 
+
     return (
         <Box sx={{
             minHeight: '100vh',
@@ -60,7 +63,7 @@ const AppContent: React.FC = () => {
             <DrawerMenu open={drawerOpen} toggleDrawer={toggleDrawer} />
             <Cart open={cartOpen} onClose={toggleCart} />
 
-            {/* Title Section with Shopping Bag Icon and Filter */}
+            {/* Title Section with Shopping Bag Icon and Filters */}
             <Box
                 sx={{
                     bgcolor: '#003366',
@@ -79,17 +82,18 @@ const AppContent: React.FC = () => {
                         mb: { xs: 3, sm: 4 },
                         position: 'relative'
                     }}>
-                        {/* Filter positioned on the left */}
+                        {/* Filters positioned on the left */}
                         <Box
                             sx={{
                                 display: 'flex',
                                 alignItems: 'center',
                                 position: { xs: 'static', sm: 'absolute' },
                                 left: { xs: 'auto', sm: 25 },
-                                top: '-5%',
+                                top: '180%',
                                 transform: { xs: 'none', sm: 'translateY(-50%)' },
                                 order: { xs: 2, sm: 1 },
-                                mt: { xs: 2, sm: 0 }
+                                mt: { xs: 2, sm: 0 },
+                                gap: 2
                             }}
                         >
                             <Typography
@@ -103,6 +107,7 @@ const AppContent: React.FC = () => {
                             >
                                 Filter by:
                             </Typography>
+                            {/* Pet Type Filter */}
                             <FormControl
                                 size="small"
                                 sx={{
@@ -135,6 +140,8 @@ const AppContent: React.FC = () => {
                                     <MenuItem value="cat">Cats</MenuItem>
                                 </Select>
                             </FormControl>
+
+                            {/* Gender Filter removed */}
                         </Box>
 
                         {/* Title in the center */}
@@ -201,7 +208,7 @@ const AppContent: React.FC = () => {
                         py: { xs: 2, md: 3 }
                     }}
                 >
-                    {/* Pet List Component */}
+                    {/* Pet List Component without gender filter */}
                     <PetList searchQuery={searchQuery} petType={petType} />
                 </Container>
             </Box>
