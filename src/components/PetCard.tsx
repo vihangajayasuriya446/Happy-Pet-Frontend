@@ -81,10 +81,9 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
 
                 await addToCart(petWithImage, quantity);
                 setSnackbarOpen(true);
-                setQuantity(0); // Reset quantity after adding to cart
+                setQuantity(0);
             } catch (error) {
                 console.error("Error adding to cart:", error);
-                // You could show an error snackbar here
             } finally {
                 setIsAdding(false);
             }
@@ -115,7 +114,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
             await addToCart(petWithImage, 1);
             setSnackbarOpen(true);
         } catch (error) {
-            console.error("Error adding to cart:", error);
+            console.error("Error adding to pet bag:", error);
         } finally {
             setIsAdding(false);
         }
@@ -148,8 +147,8 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
             display: 'flex',
             flexDirection: 'column',
             position: 'relative',
-            maxWidth: '100%', // Added to ensure card takes full width of container
-            width: '100%',    // Added to explicitly set width to 100%
+            maxWidth: '100%',
+            width: '100%',
             '&:hover': {
                 transform: 'translateY(-5px)',
                 boxShadow: '0 8px 16px rgba(0,0,0,0.15)'
@@ -165,7 +164,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                 '.MuiCard-root:hover &': {
                     opacity: 1
                 },
-                zIndex: 1 // Ensure button is clickable
+                zIndex: 1
             }}>
                 <IconButton
                     onClick={handleQuickAdd}
@@ -182,15 +181,15 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                 </IconButton>
             </Box>
 
-            {/* Image container with slightly darker gray background */}
+
             <Box sx={{
-                backgroundColor: '#e0e0e0', // Slightly darker gray background for image area
+                backgroundColor: '#e0e0e0',
                 height: 240,
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
                 overflow: 'hidden',
-                width: '100%' // Ensure image container takes full width
+                width: '100%'
             }}>
                 <CardMedia
                     component="img"
@@ -237,9 +236,9 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                 {/* Breed - darker gray and consistent size */}
                 <Typography
                     sx={{
-                        color: '#555555', // Darker gray color
-                        fontSize: '0.9rem',  // Smaller than name/price but consistent with birth
-                        mb: 0.5 // Small margin bottom for spacing
+                        color: '#555555',
+                        fontSize: '0.9rem',
+                        mb: 0.5
                     }}
                 >
                     {pet.breed}
@@ -261,8 +260,8 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                 {/* Birth year - matching the breed styling */}
                 <Typography
                     sx={{
-                        color: '#555555', // Same darker gray
-                        fontSize: '0.9rem', // Same size as breed
+                        color: '#555555',
+                        fontSize: '0.9rem',
                         mb: 1
                     }}
                 >
@@ -358,7 +357,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                     severity="success"
                     sx={{ width: '100%' }}
                 >
-                    {pet.name} added to cart!
+                    {pet.name} added successfully!
                 </Alert>
             </Snackbar>
         </Card>

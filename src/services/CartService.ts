@@ -220,7 +220,7 @@ const cartService = {
         }
     },
 
-    // Get cart total - matches your @GetMapping("/total")
+    // Get cart total - matches the @GetMapping("/total")
     getCartTotal: async (): Promise<number> => {
         try {
             const response = await axios.get(`${API_BASE_URL}/total`);
@@ -242,7 +242,7 @@ const cartService = {
         }
     },
 
-    // Process checkout - matches your @PostMapping("/checkout")
+    // Process checkout - matches the @PostMapping("/checkout")
     checkout: async (): Promise<{ message: string; total: number }> => {
         try {
             const response = await axios.post(`${API_BASE_URL}/checkout`);
@@ -266,8 +266,7 @@ const cartService = {
 
                 throw new Error(`Checkout failed, but your cart total is $${total.toFixed(2)}`);
             } catch {
-                // Removed parameter completely
-                throw error; // Rethrow the original error
+                throw error;
             }
         }
     },

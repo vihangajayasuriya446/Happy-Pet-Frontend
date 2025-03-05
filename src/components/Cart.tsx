@@ -316,14 +316,14 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
             // Show notification from backend or default message
             setToast({
                 open: true,
-                message: result?.message || 'Item removed from cart successfully',
+                message: result?.message || 'Pet successfully removed ',
                 type: result?.success !== false ? 'success' : 'error'
             });
         } catch (error) {
-            console.error("Error removing item from cart:", error);
+            console.error("Error removing pet :", error);
             setToast({
                 open: true,
-                message: 'Failed to remove item from cart',
+                message: 'Failed to remove pet',
                 type: 'error'
             });
         }
@@ -338,14 +338,14 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
             // Show notification from backend or default message
             setToast({
                 open: true,
-                message: result?.message || 'Cart cleared successfully',
+                message: result?.message || 'Pet bag cleared successfully',
                 type: result?.success !== false ? 'success' : 'error'
             });
         } catch (error) {
-            console.error("Error clearing cart:", error);
+            console.error("Error clearing pet bag:", error);
             setToast({
                 open: true,
-                message: 'Failed to clear cart',
+                message: 'Failed to clear pet bag',
                 type: 'error'
             });
         }

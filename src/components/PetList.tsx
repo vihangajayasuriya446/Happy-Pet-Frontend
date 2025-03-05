@@ -42,7 +42,7 @@ const PetCardWithHoverImage: React.FC<{
                 overflow: 'hidden',
                 borderRadius: '8px',
                 height: '100%',
-                width: '100%', // Ensure full width
+                width: '100%',
                 '& img': {
                     transition: 'transform 0.3s ease',
                 },
@@ -63,7 +63,6 @@ const PetList: React.FC<PetListProps> = ({
                                              searchQuery = '',
                                              petType = 'all',
                                              birthYear = 'all',
-                                             // Removed gender parameter
                                              PetCardComponent,
                                              isAdminView = false
                                          }) => {
@@ -122,7 +121,7 @@ const PetList: React.FC<PetListProps> = ({
             .finally(() => {
                 setLoading(false);
             });
-    }, [searchQuery, petType, birthYear]); // Removed gender from dependency array
+    }, [searchQuery, petType, birthYear]);
 
     // Enhanced search function that checks name, breed, pet type, and gender
     const filterBySearchQuery = (pets: PetDTO[], query: string): PetDTO[] => {

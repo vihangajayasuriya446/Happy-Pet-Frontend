@@ -606,7 +606,7 @@ export const refreshAllImages = async (): Promise<void> => {
     for (const key of keys) {
         const currentUrl = globalImageCache[key];
         if (currentUrl && currentUrl !== DEFAULT_IMAGE) {
-            const baseUrl = currentUrl.split('?')[0]; // Remove any existing query parameters
+            const baseUrl = currentUrl.split('?')[0];
             const refreshedUrl = `${baseUrl}?v=${Date.now()}`;
             globalImageCache[key] = refreshedUrl;
 
