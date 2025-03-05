@@ -148,6 +148,8 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
             display: 'flex',
             flexDirection: 'column',
             position: 'relative',
+            maxWidth: '100%', // Added to ensure card takes full width of container
+            width: '100%',    // Added to explicitly set width to 100%
             '&:hover': {
                 transform: 'translateY(-5px)',
                 boxShadow: '0 8px 16px rgba(0,0,0,0.15)'
@@ -187,7 +189,8 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                width: '100%' // Ensure image container takes full width
             }}>
                 <CardMedia
                     component="img"
@@ -210,7 +213,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                 />
             </Box>
 
-            <Box sx={{ p: 2, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+            <Box sx={{ p: 2, flexGrow: 1, display: 'flex', flexDirection: 'column', width: '100%' }}>
                 {/* Name and price on the same line - name first, price after - both with same styling */}
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                     <Typography
@@ -274,7 +277,8 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    mt: 2
+                    mt: 2,
+                    width: '100%'
                 }}>
                     {/* Quantity control box */}
                     <Box sx={{
@@ -283,7 +287,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                         bgcolor: '#f5f5f5',
                         borderRadius: 2,
                         overflow: 'hidden',
-                        height: 36 // Explicit height
+                        height: 36
                     }}>
                         <IconButton
                             size="small"
@@ -315,7 +319,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                         </IconButton>
                     </Box>
 
-                    {/* Add to Cart button */}
+
                     <Button
                         variant="contained"
                         onClick={handleAddToCart}
@@ -326,7 +330,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                             '&.Mui-disabled': {
                                 bgcolor: 'rgba(0,0,0,0.12)',
                             },
-                            height: 36, // Same height as quantity box
+                            height: 36,
                             ml: 2,
                             px: 2,
                             fontSize: '0.875rem',

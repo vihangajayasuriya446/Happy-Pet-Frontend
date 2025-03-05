@@ -42,6 +42,7 @@ const PetCardWithHoverImage: React.FC<{
                 overflow: 'hidden',
                 borderRadius: '8px',
                 height: '100%',
+                width: '100%', // Ensure full width
                 '& img': {
                     transition: 'transform 0.3s ease',
                 },
