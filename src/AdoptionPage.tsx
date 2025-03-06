@@ -1,64 +1,35 @@
-import { useState } from 'react';
-import { Grid, Card, CardContent, CardMedia, Button, Typography, Box } from '@mui/material';
+// src/components/PetGrid.tsx
+import { useState, useEffect } from 'react';
+import { Grid, Card, CardContent, CardMedia, Button, Typography, Box, CircularProgress } from '@mui/material';
 import AdoptionForm from './AdoptionForm';
-
-const petData = [
-    {
-        name: 'Lal',
-        text: 'Hi I am Lal. If you like to adopt me click the button below.',
-        image: './src/assets/dog1.jpg'
-    },
-    {
-        name: 'Bako',
-        text: 'Hi I am Bako. If you like to adopt me click the button below.',
-        image: './src/assets/dog2.jpg'
-    },
-    {
-        name: 'Kumaa',
-        text: 'Hi I am Kumaa. If you like to adopt me click the button below.',
-        image: './src/assets/dog3.jpg'
-    },
-    {
-        name: 'Nina',
-        text: 'Hi I am Nina. If you like to adopt me click the button below.',
-        image: './src/assets/cat1.jpg'
-    },
-    {
-        name: 'Lora',
-        text: 'Hi I am Lora. If you like to adopt me click the button below.',
-        image: './src/assets/dog4.jpg'
-    },
-    {
-        name: 'Vije',
-        text: 'Hi I am Vije. If you like to adopt me click the button below.',
-        image: './src/assets/cat2.jpg'
-    },
-    {
-        name: 'Vega',
-        text: 'Hi I am Vega. If you like to adopt me click the button below.',
-        image: './src/assets/cat3.jpg'
-    },
-    {
-        name: 'Rose',
-        text: 'Hi I am Rosa. If you like to adopt me click the button below.',
-        image: './src/assets/dog6.jpg'
-    },
-    {
-        name: 'Kuku',
-        text: 'Hi I am Kuku. If you like to adopt me click the button below.',
-        image: './src/assets/dog5.jpg'
-    },
-    {
-        name: 'Trinco',
-        text: 'Hi I am Trinco. If you like to adopt me click the button below.',
-        image: './src/assets/cat4.jpg'
-    }
-];
+import { fetchAvailablePets } from './petService';
+import { Pet } from './types';
 
 const PetGrid = () => {
-    const [selectedPet, setSelectedPet] = useState<typeof petData[0] | null>(null);
+    const [pets, setPets] = useState<Pet[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+    const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
 
-    const handleAdoptClick = (pet: typeof petData[0]) => {
+    useEffect(() => {
+        const loadPets = async () => {
+            try {
+                setLoading(true);
+                const availablePets = await fetchAvailablePets();
+                setPets(availablePets);
+                setError(null);
+            } catch (err) {
+                setError('Failed to load pets. Please try again later.');
+                console.error('Error loading pets:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadPets();
+    }, []);
+
+    const handleAdoptClick = (pet: Pet) => {
         setSelectedPet(pet);
     };
 
@@ -68,14 +39,38 @@ const PetGrid = () => {
         phone: string;
         address: string;
     }) => {
+        // Here you would actually submit the adoption request to your backend
         console.log('Adoption Form Data:', formData);
-        alert(`Thank you, ${formData.name}! Your adoption request for ${selectedPet?.name} has been submitted.`);
+        alert(`Thank you, ${formData.name}! Your adoption request for ${selectedPet?.pet_name} has been submitted.`);
         setSelectedPet(null); // Close the form after submission
     };
 
     const handleFormClose = () => {
         setSelectedPet(null); // Close the form
     };
+
+    if (loading) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
+
+    if (error) {
+        return (
+            <Box sx={{ padding: '2rem', textAlign: 'center' }}>
+                <Typography color="error">{error}</Typography>
+                <Button 
+                    variant="contained" 
+                    sx={{ mt: 2 }}
+                    onClick={() => window.location.reload()}
+                >
+                    Try Again
+                </Button>
+            </Box>
+        );
+    }
 
     return (
         <Box sx={{ 
@@ -100,69 +95,107 @@ const PetGrid = () => {
 
             {/* Pet Grid */}
             <Grid container spacing={4}>
-                {petData.map((pet) => (
-                    <Grid item xs={12} sm={6} md={4} lg={3} key={pet.name}>
-                        <Card sx={{
-                            height: '100%',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'space-between',
-                            backgroundColor: '#ffffff',
-                            borderRadius: '16px',
-                            boxShadow: 3,
-                            overflow: 'hidden'
-                        }}>
-                            <CardMedia
-                                component="img"
-                                sx={{
-                                    height: '200px',
-                                    objectFit: 'cover',
-                                    width: '100%'
-                                }}
-                                image={pet.image}
-                                alt={pet.name}
-                            />
-                            <CardContent>
-                                <Typography
-                                    gutterBottom
-                                    variant="h5"
-                                    component="div"
+                {pets.length > 0 ? (
+                    pets.map((pet) => (
+                        <Grid item xs={12} sm={6} md={4} lg={3} key={pet.pet_id}>
+                            <Card sx={{
+                                height: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'space-between',
+                                backgroundColor: '#ffffff',
+                                borderRadius: '16px',
+                                boxShadow: 3,
+                                overflow: 'hidden'
+                            }}>
+                                <CardMedia
+                                    component="img"
                                     sx={{
-                                        color: '#003366',
-                                        fontWeight: 'bold',
-                                        textAlign: 'center'
+                                        height: '200px',
+                                        objectFit: 'cover',
+                                        width: '100%'
                                     }}
-                                >
-                                    {pet.name}
-                                </Typography>
-                                <Typography
-                                    variant="body2"
-                                    color="text.secondary"
-                                    sx={{
-                                        mb: 2,
-                                        textAlign: 'justify',
-                                        hyphens: 'auto'
-                                    }}
-                                >
-                                    {pet.text}
-                                </Typography>
-                                <Button
-                                    fullWidth
-                                    variant="contained"
-                                    sx={{
-                                        mt: 2,
-                                        backgroundColor: '#003366',
-                                        color: '#ffffff',
-                                        '&:hover': { backgroundColor: '#002244' }
-                                    }}
-                                    onClick={() => handleAdoptClick(pet)}
-                                >
-                                    Adopt Me
-                                </Button>
-                            </CardContent>
-                        </Card>
+                                    image={pet.image_url}
+                                    alt={pet.pet_name}
+                                />
+                                <CardContent>
+                                    <Typography
+                                        gutterBottom
+                                        variant="h5"
+                                        component="div"
+                                        sx={{
+                                            color: '#003366',
+                                            fontWeight: 'bold',
+                                            textAlign: 'center'
+                                        }}
+                                    >
+                                        {pet.pet_name}
+                                    </Typography>
+                                    <Typography
+                                        variant="body2"
+                                        color="text.secondary"
+                                        sx={{
+                                            mb: 2,
+                                            textAlign: 'justify',
+                                            hyphens: 'auto'
+                                        }}
+                                    >
+                                        {pet.pet_description || `Hi I am ${pet.pet_name}. I'm a ${pet.pet_age} year old ${pet.pet_breed} ${pet.pet_species.toLowerCase()}. If you'd like to adopt me, click the button below.`}
+                                    </Typography>
+                                    <Typography
+                                        variant="body2"
+                                        sx={{
+                                            mb: 1,
+                                            color: '#555'
+                                        }}
+                                    >
+                                        <strong>Age:</strong> {pet.pet_age} years
+                                    </Typography>
+                                    <Typography
+                                        variant="body2"
+                                        sx={{
+                                            mb: 1,
+                                            color: '#555'
+                                        }}
+                                    >
+                                        <strong>Breed:</strong> {pet.pet_breed}
+                                    </Typography>
+                                    <Typography
+                                        variant="body2"
+                                        sx={{
+                                            mb: 2,
+                                            color: '#555'
+                                        }}
+                                    >
+                                        <strong>Gender:</strong> {pet.pet_gender}
+                                    </Typography>
+                                    <Button
+                                        fullWidth
+                                        variant="contained"
+                                        sx={{
+                                            mt: 2,
+                                            backgroundColor: '#003366',
+                                            color: '#ffffff',
+                                            '&:hover': { backgroundColor: '#002244' }
+                                        }}
+                                        onClick={() => handleAdoptClick(pet)}
+                                    >
+                                        Adopt Me
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    ))
+                ) : (
+                    <Grid item xs={12}>
+                        <Typography 
+                            variant="h6" 
+                            sx={{ textAlign: 'center', color: 'white', mt: 4 }}
+                        >
+                            No pets available for adoption at the moment.
+                        </Typography>
                     </Grid>
-                ))}
+                )}
             </Grid>
 
             {/* Adoption Form Popup */}
