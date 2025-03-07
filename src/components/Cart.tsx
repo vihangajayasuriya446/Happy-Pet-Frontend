@@ -502,13 +502,31 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                                 </Typography>
                                             }
                                             secondary={
-                                                <>
-                                                    <Typography variant="body2" color="text.secondary" component="span">
+                                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                                                    {/* Pet type and breed */}
+                                                    <Typography variant="body2" color="text.secondary" component="div">
                                                         {item.pet.petType} • {item.pet.breed}
                                                     </Typography>
+
+                                                    {/* Gender */}
+                                                    {item.pet.gender && (
+                                                        <Typography variant="body2" color="text.secondary" component="div">
+                                                            Gender: {item.pet.gender}
+                                                        </Typography>
+                                                    )}
+
+                                                    {/* Age/Birth Year */}
+                                                    {item.pet.birthYear && (
+                                                        <Typography variant="body2" color="text.secondary" component="div">
+                                                            Age: {new Date().getFullYear() - Number(item.pet.birthYear)} years
+                                                            (Born: {item.pet.birthYear})
+                                                        </Typography>
+                                                    )}
+
+                                                    {/* Price information */}
                                                     <Typography
                                                         variant="body1"
-                                                        component="span"
+                                                        component="div"
                                                         sx={{
                                                             display: 'block',
                                                             fontWeight: 'bold',
@@ -518,9 +536,11 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                                     >
                                                         LKR {itemPrice.toFixed(2)} × {item.quantity} = LKR {itemTotal}
                                                     </Typography>
-                                                </>
+                                                </Box>
                                             }
                                         />
+
+
 
                                         <Box sx={{
                                             display: 'flex',

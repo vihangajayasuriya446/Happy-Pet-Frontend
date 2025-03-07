@@ -228,7 +228,7 @@ const PetList: React.FC<PetListProps> = ({
     }
 
     return (
-        <Grid container spacing={3} sx={{ p: 4 }}>
+        <Grid container spacing={3} sx={{ p: 3 }}>
             {petsData.map((petDTO) => {
                 // Get proper image URL or use placeholder
                 const imageUrl = petDTO.imageUrl
