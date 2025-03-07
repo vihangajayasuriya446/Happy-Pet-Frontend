@@ -157,6 +157,16 @@ const PetGrid = () => {
                                             mb: 1,
                                             color: '#555'
                                         }}
+                                    
+                                    >
+                                        <strong>Species:</strong> {pet.pet_species}
+                                    </Typography>
+                                    <Typography
+                                        variant="body2"
+                                        sx={{
+                                            mb: 1,
+                                            color: '#555'
+                                        }}
                                     >
                                         <strong>Breed:</strong> {pet.pet_breed}
                                     </Typography>
@@ -166,6 +176,8 @@ const PetGrid = () => {
                                             mb: 2,
                                             color: '#555'
                                         }}
+
+                                        
                                     >
                                         <strong>Gender:</strong> {pet.pet_gender}
                                     </Typography>
