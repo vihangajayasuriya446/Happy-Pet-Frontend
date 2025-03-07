@@ -122,6 +122,17 @@ const getImageWithFallbacks = (
     return `${cleanBaseUrl}/api/v1/pets/images/${imageName}`;
 };
 
+// Helper function to extract gender from pet object
+const extractGenderFromPet = (pet: Pet): string => {
+    // Check if gender property exists directly
+    if (pet.gender) {
+        return pet.gender;
+    }
+
+    // If gender doesn't exist, return "Unknown"
+    return "Unknown";
+};
+
 const Cart: React.FC<CartProps> = ({ open, onClose }) => {
     const { items, removeFromCart, updateQuantity, clearCart, loading, getCartTotal } = useCart();
     const theme = useTheme();
@@ -488,7 +499,6 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                                         const imgElement = document.querySelector(`img[alt="${item.pet.name}"]`) as HTMLImageElement;
                                                         if (imgElement) imgElement.src = DEFAULT_IMAGE;
 
-
                                                         handleImageError(item.pet.id, item.pet.name);
                                                     }
                                                 }}
@@ -508,20 +518,16 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                                         {item.pet.petType} • {item.pet.breed}
                                                     </Typography>
 
-                                                    {/* Gender */}
-                                                    {item.pet.gender && (
-                                                        <Typography variant="body2" color="text.secondary" component="div">
-                                                            Gender: {item.pet.gender}
-                                                        </Typography>
-                                                    )}
+                                                    {/* Gender - Using the helper function */}
+                                                    <Typography variant="body2" color="text.secondary" component="div">
+                                                        Gender: {extractGenderFromPet(item.pet)}
+                                                    </Typography>
 
-                                                    {/* Age/Birth Year */}
-                                                    {item.pet.birthYear && (
-                                                        <Typography variant="body2" color="text.secondary" component="div">
-                                                            Age: {new Date().getFullYear() - Number(item.pet.birthYear)} years
-                                                            (Born: {item.pet.birthYear})
-                                                        </Typography>
-                                                    )}
+                                                    {/* Birth Year */}
+                                                    <Typography variant="body2" color="text.secondary" component="div">
+                                                        Birth Year: {item.pet.birthYear || "Not specified"}
+                                                        {item.pet.birthYear && ` (Age: ${new Date().getFullYear() - Number(item.pet.birthYear)} years)`}
+                                                    </Typography>
 
                                                     {/* Price information */}
                                                     <Typography
@@ -539,8 +545,6 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                                 </Box>
                                             }
                                         />
-
-
 
                                         <Box sx={{
                                             display: 'flex',

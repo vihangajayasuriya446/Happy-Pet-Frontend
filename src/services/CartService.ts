@@ -6,21 +6,12 @@ const CART_STORAGE_KEY = 'pet_shop_cart';
 // This interface matches your backend CartDTO structure
 export interface CartItemResponse {
     id: number;
-    pet: {
-        id: number;
-        name: string;
-        petType: string;
-        price: string;
-        breed: string;
-        birthYear: string;
-        imageUrl: string;
-        purchased: boolean;
-    };
+    pet: Pet;
     quantity: number;
     subtotal: number;
 }
 
-// Define Pet interface to replace 'any'
+// Updated Pet interface with gender property
 export interface Pet {
     id: number;
     name: string;
@@ -30,6 +21,7 @@ export interface Pet {
     birthYear: string;
     imageUrl: string;
     purchased: boolean;
+    gender?: string; // Made gender optional since it might not always be available
     [key: string]: unknown; // Allow for additional properties
 }
 
@@ -49,19 +41,41 @@ const saveLocalCart = (cart: CartItemResponse[]): void => {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
 };
 
+// Helper to handle missing gender property
+const handleMissingGender = (pet: Pet): Pet => {
+    if (!pet.gender) {
+        // Instead of using a hardcoded mapping, just mark it as unknown
+        return {
+            ...pet,
+            gender: "Unknown"
+        };
+    }
+    return pet;
+};
+
+// Process cart items to ensure they all have gender handled
+const processCartItems = (items: CartItemResponse[]): CartItemResponse[] => {
+    return items.map(item => ({
+        ...item,
+        pet: handleMissingGender(item.pet)
+    }));
+};
+
 const cartService = {
     // Get all items in cart
     getCartItems: async (): Promise<CartItemResponse[]> => {
         try {
             const response = await axios.get(API_BASE_URL);
+            // Process items to handle missing gender
+            const processedItems = processCartItems(response.data);
             // Save to local storage as backup
-            saveLocalCart(response.data);
-            return response.data;
+            saveLocalCart(processedItems);
+            return processedItems;
         } catch (error) {
             console.error('Error fetching cart items:', error);
             console.log('Falling back to local storage');
             // Return local data if API call fails
-            return getLocalCart();
+            return processCartItems(getLocalCart());
         }
     },
 
@@ -72,11 +86,27 @@ const cartService = {
                 params: { quantity }
             });
 
+            // Handle missing gender property
+            const processedItem = {
+                ...response.data,
+                pet: handleMissingGender(response.data.pet)
+            };
+
             // Update local storage with new item
             const localCart = getLocalCart();
-            saveLocalCart([...localCart, response.data]);
+            const existingItemIndex = localCart.findIndex(item => item.pet.id === petId);
 
-            return response.data;
+            if (existingItemIndex >= 0) {
+                // Replace existing item with updated one
+                localCart[existingItemIndex] = processedItem;
+            } else {
+                // Add new item
+                localCart.push(processedItem);
+            }
+
+            saveLocalCart(localCart);
+
+            return processedItem;
         } catch (error) {
             console.error(`Error adding pet ${petId} to cart:`, error);
 
@@ -93,13 +123,26 @@ const cartService = {
                     // Update quantity if pet already in cart
                     existingItem.quantity += quantity;
                     existingItem.subtotal = parseFloat(existingItem.pet.price) * existingItem.quantity;
+                    // Handle missing gender
+                    existingItem.pet = handleMissingGender(existingItem.pet);
                     saveLocalCart(localCart);
                     return existingItem;
                 } else {
+                    // Try to get pet details from cache
+                    const cachedPet = cartService.getCachedPetDetails(petId);
+                    if (cachedPet) {
+                        const newItem: CartItemResponse = {
+                            id: Date.now(), // Generate temporary ID
+                            pet: handleMissingGender(cachedPet),
+                            quantity,
+                            subtotal: parseFloat(cachedPet.price) * quantity
+                        };
+                        saveLocalCart([...localCart, newItem]);
+                        return newItem;
+                    }
                     throw new Error("Cannot add to local cart without pet details");
                 }
             } catch {
-                // Removed parameter completely
                 console.error('Local fallback failed');
                 throw error; // Rethrow the original error
             }
@@ -113,16 +156,30 @@ const cartService = {
                 params: { quantity }
             });
 
+            // Handle missing gender in response
+            let processedItem = null;
+            if (response.data) {
+                processedItem = {
+                    ...response.data,
+                    pet: handleMissingGender(response.data.pet)
+                };
+            }
+
             // Update in local storage
             const localCart = getLocalCart();
             const updatedCart = localCart.map(item =>
                 item.id === cartItemId
-                    ? { ...item, quantity, subtotal: parseFloat(item.pet.price) * quantity }
+                    ? processedItem || {
+                    ...item,
+                    quantity,
+                    subtotal: parseFloat(item.pet.price) * quantity,
+                    pet: handleMissingGender(item.pet)
+                }
                     : item
             );
             saveLocalCart(updatedCart);
 
-            return response.data;
+            return processedItem;
         } catch (error) {
             console.error(`Error updating cart item ${cartItemId} quantity:`, error);
 
@@ -141,13 +198,14 @@ const cartService = {
                         // Update quantity
                         itemToUpdate.quantity = quantity;
                         itemToUpdate.subtotal = parseFloat(itemToUpdate.pet.price) * quantity;
+                        // Handle missing gender
+                        itemToUpdate.pet = handleMissingGender(itemToUpdate.pet);
                         saveLocalCart(localCart);
                         return itemToUpdate;
                     }
                 }
                 throw new Error(`Item with id ${cartItemId} not found in local cart`);
             } catch {
-                // Removed parameter completely
                 console.error('Local fallback failed');
 
                 if (axios.isAxiosError(error) && error.response?.status === 204) {
@@ -160,8 +218,6 @@ const cartService = {
         }
     },
 
-    // Remove item from cart - matches  @DeleteMapping("/{cartItemId}")
-    // Updated to return the new response format
     // Remove item from cart - matches @DeleteMapping("/{cartItemId}")
     removeFromCart: async (cartItemId: number): Promise<CartItemDeleteResponse> => {
         try {
@@ -169,7 +225,6 @@ const cartService = {
 
             // Remove from local storage
             const localCart = getLocalCart();
-            // No need to find the item here since we're not using it
             const updatedCart = localCart.filter(item => item.id !== cartItemId);
             saveLocalCart(updatedCart);
 
@@ -199,7 +254,6 @@ const cartService = {
         }
     },
 
-
     // Clear entire cart - matches your @DeleteMapping
     clearCart: async (): Promise<void> => {
         try {
@@ -213,7 +267,6 @@ const cartService = {
             try {
                 localStorage.removeItem(CART_STORAGE_KEY);
             } catch {
-                // Removed parameter completely
                 console.error('Failed to clear local storage');
                 throw error; // Rethrow the original error
             }
@@ -235,7 +288,6 @@ const cartService = {
                     sum + (parseFloat(item.pet.price) * item.quantity), 0);
                 return total;
             } catch {
-                // Removed parameter completely
                 console.error('Local total calculation failed');
                 return 0;
             }
@@ -289,29 +341,53 @@ const cartService = {
 
             // Get updated cart from server
             const response = await axios.get(API_BASE_URL);
-            saveLocalCart(response.data);
+            // Process items to handle missing gender
+            const processedItems = processCartItems(response.data);
+            saveLocalCart(processedItems);
         } catch (error) {
             console.error('Error syncing local cart with server:', error);
         }
     },
 
     // Method to store pet details in local storage for offline use
-    // This helps with the issue of adding items to local cart when API is down
     storePetDetails: (pet: Pet): void => {
         try {
+            // Handle missing gender before caching
+            const petWithHandledGender = handleMissingGender(pet);
+
             const petsStorageKey = 'pet_shop_pets_cache';
             const petsCache = localStorage.getItem(petsStorageKey);
             const pets = petsCache ? JSON.parse(petsCache) : {};
 
             // Store or update pet in cache
             pets[pet.id] = {
-                ...pet,
+                ...petWithHandledGender,
                 cachedAt: new Date().toISOString()
             };
 
             localStorage.setItem(petsStorageKey, JSON.stringify(pets));
         } catch (error) {
             console.error('Error storing pet details in cache:', error);
+        }
+    },
+
+    // Method to get cached pet details
+    getCachedPetDetails: (petId: number): Pet | null => {
+        try {
+            const petsStorageKey = 'pet_shop_pets_cache';
+            const petsCache = localStorage.getItem(petsStorageKey);
+            if (!petsCache) return null;
+
+            const pets = JSON.parse(petsCache);
+            const pet = pets[petId];
+
+            if (!pet) return null;
+
+            // Handle missing gender for cached pet
+            return handleMissingGender(pet);
+        } catch (error) {
+            console.error('Error retrieving cached pet details:', error);
+            return null;
         }
     }
 };
