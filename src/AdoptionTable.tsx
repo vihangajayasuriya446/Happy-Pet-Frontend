@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Avatar, Chip, Box } from "@mui/material";
-import { useNavigate } from "react-router-dom"; // Import this for navigation
+import { useNavigate } from "react-router-dom"; // Import for navigation
 import { Pet } from "./types";
 
 interface PetTableProps {
@@ -11,7 +11,7 @@ interface PetTableProps {
 
 const PetTable: React.FC<PetTableProps> = ({ rows, selectedPet, deletePet }) => {
   const navigate = useNavigate(); // Hook for navigation
-  
+
   // Function to get status color
   type StatusColor = "success" | "warning" | "default";
 
@@ -31,22 +31,51 @@ const PetTable: React.FC<PetTableProps> = ({ rows, selectedPet, deletePet }) => 
   return (
     <>
       {/* Header with navigation button */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h5" sx={{ color: "#002855", fontWeight: "bold" }}>
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          flexWrap: 'wrap', // Ensures button wraps on small screens
+          gap: 2, // Adds spacing when wrapped
+          mb: 2, // Adjust margin-bottom for better spacing
+          p: 2 // Padding for spacing
+        }}
+      >
+        <Typography 
+          variant="h5" 
+          sx={{ 
+            color: "#002855", 
+            fontWeight: "bold", 
+            flex: "1 1 auto" // Ensures text takes space and button moves correctly
+          }}
+        >
           Pet Management Dashboard
         </Typography>
+        
         <Button
           variant="contained"
           color="primary"
           onClick={goToUserDetailsDashboard}
-          sx={{ textTransform: "none", borderRadius: "4px" }}
+          sx={{ 
+            textTransform: "none", 
+            borderRadius: "4px",
+            flexShrink: 0 // Prevents button from shrinking too much
+          }}
         >
           User Details Dashboard
         </Button>
       </Box>
 
-      {/* Existing Table */}
-      <TableContainer component={Paper} sx={{ borderRadius: "8px", boxShadow: 3 }}>
+      {/* Table with full responsiveness */}
+      <TableContainer component={Paper} 
+        sx={{ 
+          borderRadius: "8px", 
+          boxShadow: 3, 
+          overflowX: "auto", // Enables scrolling on small screens
+          width: "100%" // Makes table take full width
+        }}
+      >
         <Table>
           <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
             <TableRow>
