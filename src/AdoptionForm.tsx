@@ -29,10 +29,46 @@ const AdoptionForm: React.FC<AdoptionFormProps> = ({ pet, onClose, onSubmit }) =
     const [isSubmitting, setIsSubmitting] = React.useState(false);
     const [error, setError] = React.useState<string | null>(null);
     const [adoptionSuccess, setAdoptionSuccess] = React.useState(false);
+    const [isExistingUser, setIsExistingUser] = React.useState(false);
+    const [userId, setUserId] = React.useState<number>(0);
+    const [isCheckingUser, setIsCheckingUser] = React.useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
+        
+        // Reset existing user status when email changes
+        if (name === 'email') {
+            setIsExistingUser(false);
+            setUserId(0);
+        }
+    };
+
+    const checkExistingUser = async () => {
+        if (!formData.email) return;
+        
+        setIsCheckingUser(true);
+        try {
+            const response = await fetch(`/api/users/lookup?email=${encodeURIComponent(formData.email)}`);
+            if (response.ok) {
+                const userData = await response.json();
+                setFormData({
+                    userName: userData.user_name,
+                    email: userData.email,
+                    phone: userData.phone || '',
+                    address: userData.address || ''
+                });
+                setUserId(userData.user_id);
+                setIsExistingUser(true);
+            } else {
+                // User not found - keep the entered email, but reset the flag
+                setIsExistingUser(false);
+            }
+        } catch (err) {
+            console.log('Error checking for existing user', err);
+        } finally {
+            setIsCheckingUser(false);
+        }
     };
 
     const handleNext = () => {
@@ -64,7 +100,8 @@ const AdoptionForm: React.FC<AdoptionFormProps> = ({ pet, onClose, onSubmit }) =
             
             // Format request to match your backend DTO
             const adoptionRequest = {
-                petId: pet.pet_id, // Make sure this matches the ID field name from your Pet entity
+                petId: pet.pet_id,
+                userId: userId, // Use the userId state variable (0 for new users)
                 userName: formData.userName,
                 email: formData.email,
                 phone: formData.phone,
@@ -110,20 +147,36 @@ const AdoptionForm: React.FC<AdoptionFormProps> = ({ pet, onClose, onSubmit }) =
                         </Typography>
                         <TextField
                             fullWidth
-                            label="Your Name"
-                            name="userName" // Changed to match DTO field name
-                            value={formData.userName}
+                            label="Email"
+                            name="email"
+                            value={formData.email}
                             onChange={handleChange}
                             sx={{ mb: 2 }}
                             required
                             variant="outlined"
-                            InputProps={{ style: { borderRadius: '12px', fontFamily: 'Nunito Sans' } }}
+                            InputProps={{ 
+                                style: { borderRadius: '12px', fontFamily: 'Nunito Sans' },
+                                endAdornment: (
+                                    <Button 
+                                        onClick={checkExistingUser} 
+                                        size="small"
+                                        disabled={!formData.email || isCheckingUser}
+                                    >
+                                        {isCheckingUser ? 'Checking...' : 'Check'}
+                                    </Button>
+                                )
+                            }}
                         />
+                        {isExistingUser && (
+                            <Typography variant="body2" sx={{ mb: 2, color: '#4CAF50', fontStyle: 'italic' }}>
+                                Welcome back! We've filled in your details.
+                            </Typography>
+                        )}
                         <TextField
                             fullWidth
-                            label="Email"
-                            name="email"
-                            value={formData.email}
+                            label="Your Name"
+                            name="userName"
+                            value={formData.userName}
                             onChange={handleChange}
                             sx={{ mb: 2 }}
                             required
