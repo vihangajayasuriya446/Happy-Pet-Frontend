@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
-    Box, Typography, IconButton, Drawer, Button, List, ListItem, ListItemAvatar, Avatar,
-    ListItemText, ListItemSecondaryAction, Badge, Divider, useMediaQuery, useTheme,
+    Box, Typography, IconButton, Drawer, Button, List, ListItem,
+    Badge, Divider, useMediaQuery, useTheme,
     CircularProgress
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
@@ -12,6 +12,7 @@ import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import { useCart } from "../contexts/CartContext";
 import { Pet } from "../App";
 import Toast from "../components/Toast";
+
 
 // Define a type for the response from cart operations
 interface CartOperationResponse {
@@ -475,43 +476,44 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                             py: 2.5,
                                             px: 3,
                                             transition: 'background-color 0.2s',
-                                            '&:hover': { bgcolor: 'rgba(0,0,0,0.02)' }
+                                            '&:hover': { bgcolor: 'rgba(0,0,0,0.02)' },
+                                            position: 'relative'
                                         }}
                                     >
-                                        <ListItemAvatar>
-                                            <Avatar
+                                        {/* UPDATED: Using a custom layout with Box components instead of ListItemAvatar */}
+                                        <Box sx={{
+                                            display: 'flex',
+                                            width: '100%',
+                                            pr: isMobile ? 4 : 6 // Make room for the delete button
+                                        }}>
+                                            {/* Pet Image */}
+                                            <Box
+                                                component="img"
                                                 src={imageUrl}
                                                 alt={item.pet.name}
-                                                variant="rounded"
                                                 sx={{
                                                     width: 70,
                                                     height: 70,
-                                                    mr: 2,
                                                     borderRadius: 2,
+                                                    objectFit: 'cover',
                                                     bgcolor: '#e0e0e0',
-                                                    '& img': {
-                                                        objectFit: 'cover'
-                                                    }
+                                                    mr: 2,
+                                                    flexShrink: 0
                                                 }}
-                                                imgProps={{
-                                                    onError: () => {
-                                                        // Immediately set to default to avoid broken image
-                                                        const imgElement = document.querySelector(`img[alt="${item.pet.name}"]`) as HTMLImageElement;
-                                                        if (imgElement) imgElement.src = DEFAULT_IMAGE;
-
-                                                        handleImageError(item.pet.id, item.pet.name);
-                                                    }
+                                                onError={() => {
+                                                    // Set to default image on error
+                                                    const imgElement = document.querySelector(`img[alt="${item.pet.name}"]`) as HTMLImageElement;
+                                                    if (imgElement) imgElement.src = DEFAULT_IMAGE;
+                                                    handleImageError(item.pet.id, item.pet.name);
                                                 }}
                                             />
-                                        </ListItemAvatar>
 
-                                        <ListItemText
-                                            primary={
+                                            {/* Pet Details */}
+                                            <Box sx={{ flexGrow: 1, overflow: 'hidden' }}>
                                                 <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 0.5 }}>
                                                     {item.pet.name}
                                                 </Typography>
-                                            }
-                                            secondary={
+
                                                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                                                     {/* Pet type and breed */}
                                                     <Typography variant="body2" color="text.secondary" component="div">
@@ -543,13 +545,17 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                                         LKR {itemPrice.toFixed(2)} × {item.quantity} = LKR {itemTotal}
                                                     </Typography>
                                                 </Box>
-                                            }
-                                        />
+                                            </Box>
+                                        </Box>
 
+                                        {/* Quantity Controls */}
                                         <Box sx={{
                                             display: 'flex',
                                             alignItems: 'center',
-                                            mr: isMobile ? 2 : 5,
+                                            position: 'absolute',
+                                            right: isMobile ? 40 : 50,
+                                            top: '50%',
+                                            transform: 'translateY(-50%)',
                                             border: '1px solid #e0e0e0',
                                             borderRadius: 1,
                                             px: 0.5
@@ -584,7 +590,13 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                             </IconButton>
                                         </Box>
 
-                                        <ListItemSecondaryAction>
+                                        {/* Delete Button */}
+                                        <Box sx={{
+                                            position: 'absolute',
+                                            right: 12,
+                                            top: '50%',
+                                            transform: 'translateY(-50%)'
+                                        }}>
                                             <IconButton
                                                 edge="end"
                                                 aria-label="delete"
@@ -600,7 +612,7 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                             >
                                                 <DeleteOutlineIcon />
                                             </IconButton>
-                                        </ListItemSecondaryAction>
+                                        </Box>
 
                                         <Divider sx={{ position: 'absolute', bottom: 0, left: 16, right: 16 }} />
                                     </ListItem>
