@@ -49,6 +49,7 @@ const Pets: React.FC = () => {
     },
   });
 
+  
   // Update a pet
   const updatePetMutation = useMutation({
     mutationFn: async (data: FormData) => {
@@ -108,6 +109,8 @@ const Pets: React.FC = () => {
     updatePetMutation.mutate(formData);
   };
 
+
+
   // Handle deleting a pet
   const deletePet = (pet: Pet) => {
     deletePetMutation.mutate(pet.pet_id);
@@ -125,6 +128,7 @@ const Pets: React.FC = () => {
     setIsEdit(false);
     setSubmitted(false);
   };
+
 
   return (
     <Box sx={{ width: "100%", margin: "auto", mt: 4, p: 2 }}>

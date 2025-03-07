@@ -7,6 +7,7 @@ import Users from './Pets';
 import HomePage from './HomePage';
 import ContactUsPage from './ContactUsPage';
 import AdoptionPage from './AdoptionPage';
+import UserDetailsDashboard from './UserDetailsDashboard';
 
 
 const App: React.FC = () => {
@@ -19,6 +20,7 @@ const App: React.FC = () => {
           <Route path="/dashboard" element={<Users />} />
           <Route path="/adopt" element={<AdoptionPage />} />
           <Route path="/contactus" element={<ContactUsPage />} />
+          <Route path="/user-dashboard" element={<UserDetailsDashboard />} />
         </Routes>
         <Footer />
       </Box>

@@ -41,3 +41,25 @@ export const ageNumberToString = (ageNumber: number): string => {
   if (ageNumber < 10) return "Adult";
   return "Senior";
 };
+
+export interface UserDetails {
+  user_id: number;
+  name: string;
+  email: string;
+  password?: string; // Optional for updates
+  phone?: string;
+  address?: string;
+  role: string;
+  active: boolean;
+  registered_date: string;
+  adoptions?: UserAdoption[]; // Optional relationship to adoptions
+}
+
+export interface UserAdoption {
+  adoption_id: number;
+  pet_id: number;
+  adoption_date: string;
+  status: string;
+  pet_name?: string; // For display purposes
+}
+

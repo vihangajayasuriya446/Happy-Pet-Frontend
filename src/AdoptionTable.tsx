@@ -24,9 +24,8 @@ const PetTable: React.FC<PetTableProps> = ({ rows, selectedPet, deletePet }) => 
     }
   };
 
-  // Function to navigate to the UserDetailsDashboard
   const goToUserDetailsDashboard = () => {
-    navigate('/admin/UserDetailsDashboard'); // Adjust the path as needed
+    navigate('/user-dashboard'); // Navigate to the UserDetailsDashboard route
   };
 
   return (

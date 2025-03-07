@@ -1,142 +1,133 @@
-import React, { useState } from "react";
-import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, CircularProgress } from "@mui/material";
-import axios from "axios";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-
-interface Adoption {
-  adoption_id: number;
-  user: {
-    user_id: number;
-    user_name: string;
-    email: string;
-    phone: string;
-    address: string;
-  };
-  pet: {
-    pet_id: number;
-    pet_name: string;
-    pet_species: string;
-    pet_age: number;
-    pet_gender: string;
-    pet_breed: string;
-    status: string;
-    image_url: string;
-  };
-  status: string;
-  applied_at: string;
-}
+// src/components/UserDetailsDashboard.tsx
+import React, { useState } from 'react';
+import { Box, Typography, Button } from '@mui/material';
+import UserDetailsTable from './UserDetailsTable';
+import UserDetailsForm from './UserDetailsForm';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+import { UserDetails } from './types';
+import { useNavigate } from 'react-router-dom';
 
 const UserDetailsDashboard: React.FC = () => {
   const queryClient = useQueryClient();
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [selectedUser, setSelectedUser] = useState<UserDetails | null>(null);
+  const [submitted, setSubmitted] = useState<boolean>(false);
 
-  // Fetch adoption records
-  const { data: adoptions = [] as Adoption[], isError, error: queryError, isLoading } = useQuery<Adoption[], Error>({
-    queryKey: ["adoptions"],
-    queryFn: async (): Promise<Adoption[]> => {
-      const response = await axios.get("http://localhost:8080/api/adoptions/all");
-      return response.data as Adoption[];
-    }
+  // Fetch all users
+  const { data: users = [], isLoading, error } = useQuery<UserDetails[], Error>({
+    queryKey: ['users'],
+    queryFn: async (): Promise<UserDetails[]> => {
+      const response = await axios.get<UserDetails[]>('http://localhost:8080/api/v1/users');
+      return response.data;
+    },
   });
 
-  React.useEffect(() => {
-    if (isLoading) {
-      setLoading(true);
-    } else {
-      setLoading(false);
-    }
-
-    if (isError) {
-      setError(queryError?.message || "An error occurred");
-    }
-  }, [isLoading, isError, queryError]);
-
-  // Delete adoption record
-  const deleteAdoptionMutation = useMutation({
-    mutationFn: async (id: number) => {
-      const response = await axios.delete(`http://localhost:8080/api/adoptions/${id}`);
+  // Add a user
+  const addUserMutation = useMutation({
+    mutationFn: async (data: UserDetails) => {
+      const response = await axios.post('http://localhost:8080/api/v1/users/add', data);
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["adoptions"] });
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      setSubmitted(true);
     },
   });
 
-  const handleDeleteAdoption = (id: number) => {
-    deleteAdoptionMutation.mutate(id);
+  // Update a user
+  const updateUserMutation = useMutation({
+    mutationFn: async (data: UserDetails) => {
+      const response = await axios.put(`http://localhost:8080/api/v1/users/update/${data.user_id}`, data);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      setSubmitted(true);
+      setIsEdit(false);
+    },
+  });
+
+  // Delete a user
+  const deleteUserMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await axios.delete(`http://localhost:8080/api/v1/users/delete/${id}`);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+    },
+  });
+
+  // Handle adding a user
+  const addUser = (data: UserDetails) => {
+    addUserMutation.mutate(data);
   };
 
-  if (loading) {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
+  // Handle updating a user
+  const updateUser = (data: UserDetails) => {
+    updateUserMutation.mutate(data);
+  };
 
-  if (error) {
-    return (
-      <Box sx={{ padding: "2rem", textAlign: "center" }}>
-        <Typography color="error">{error}</Typography>
-        <Button variant="contained" onClick={() => window.location.reload()}>
-          Try Again
-        </Button>
-      </Box>
-    );
-  }
+  // Handle deleting a user
+  const deleteUser = (user: UserDetails) => {
+    if (window.confirm(`Are you sure you want to delete ${user.name}?`)) {
+      deleteUserMutation.mutate(user.user_id);
+    }
+  };
+
+  // Handle selecting a user for editing
+  const handleSelectUser = (user: UserDetails) => {
+    setSelectedUser(user);
+    setIsEdit(true);
+  };
+
+  // Reset the form
+  const resetForm = () => {
+    setSelectedUser(null);
+    setIsEdit(false);
+    setSubmitted(false);
+  };
+
+  const goToPetManagementDashboard = () => {
+    navigate('/admin/pets'); // Adjust the path as needed
+  };
 
   return (
-    <Box sx={{ padding: "2rem" }}>
-      <Typography variant="h4" sx={{ mb: 4, color: "#003366", fontWeight: "bold" }}>
-        User Adoption Details
-      </Typography>
-      <TableContainer component={Paper} sx={{ borderRadius: "8px", boxShadow: 3 }}>
-        <Table>
-          <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
-            <TableRow>
-              <TableCell sx={{ fontWeight: "bold", color: "#002855", textAlign: "center" }}>User Name</TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#002855", textAlign: "center" }}>Email</TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#002855", textAlign: "center" }}>Phone</TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#002855", textAlign: "center" }}>Address</TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#002855", textAlign: "center" }}>Pet Name</TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#002855", textAlign: "center" }}>Pet Type</TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#002855", textAlign: "center" }}>Pet Age</TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#002855", textAlign: "center" }}>Pet Gender</TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#002855", textAlign: "center" }}>Pet Breed</TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#002855", textAlign: "center" }}>Adoption Status</TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#002855", textAlign: "center" }}>Applied At</TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: "#002855", textAlign: "center" }}>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {Array.isArray(adoptions) && adoptions.map((adoption) => (
-              <TableRow key={adoption.adoption_id}>
-                <TableCell sx={{ textAlign: "center" }}>{adoption.user.user_name}</TableCell>
-                <TableCell sx={{ textAlign: "center" }}>{adoption.user.email}</TableCell>
-                <TableCell sx={{ textAlign: "center" }}>{adoption.user.phone}</TableCell>
-                <TableCell sx={{ textAlign: "center" }}>{adoption.user.address}</TableCell>
-                <TableCell sx={{ textAlign: "center" }}>{adoption.pet.pet_name}</TableCell>
-                <TableCell sx={{ textAlign: "center" }}>{adoption.pet.pet_species}</TableCell>
-                <TableCell sx={{ textAlign: "center" }}>{adoption.pet.pet_age}</TableCell>
-                <TableCell sx={{ textAlign: "center" }}>{adoption.pet.pet_gender}</TableCell>
-                <TableCell sx={{ textAlign: "center" }}>{adoption.pet.pet_breed}</TableCell>
-                <TableCell sx={{ textAlign: "center" }}>{adoption.status}</TableCell>
-                <TableCell sx={{ textAlign: "center" }}>{adoption.applied_at}</TableCell>
-                <TableCell sx={{ textAlign: "center" }}>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() => handleDeleteAdoption(adoption.adoption_id)}
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+    <Box sx={{ width: '100%', margin: 'auto', mt: 4, p: 2 }}>
+      {/* Header with navigation button */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Typography variant="h4" sx={{ color: '#002855', fontWeight: 'bold' }}>
+          User Management Dashboard
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={goToPetManagementDashboard}
+          sx={{ textTransform: 'none', borderRadius: '4px' }}
+        >
+          Pet Management Dashboard
+        </Button>
+      </Box>
+
+      <UserDetailsForm
+        addUser={addUser}
+        updateUser={updateUser}
+        submitted={submitted}
+        data={selectedUser || undefined}
+        isEdit={isEdit}
+        resetForm={resetForm}
+      />
+      <Box sx={{ mt: 4 }}>
+        <UserDetailsTable 
+          rows={users} 
+          selectedUser={handleSelectUser} 
+          deleteUser={deleteUser}
+          isLoading={isLoading}
+          error={error ? error.message : null} 
+        />
+      </Box>
     </Box>
   );
 };
