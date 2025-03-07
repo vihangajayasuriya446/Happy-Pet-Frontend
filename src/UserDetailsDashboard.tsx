@@ -1,4 +1,3 @@
-// src/components/UserDetailsDashboard.tsx
 import React, { useState } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import UserDetailsTable from './UserDetailsTable';
@@ -15,7 +14,6 @@ const UserDetailsDashboard: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<UserDetails | null>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
 
-  // Fetch all users
   const { data: users = [], isLoading, error } = useQuery<UserDetails[], Error>({
     queryKey: ['users'],
     queryFn: async (): Promise<UserDetails[]> => {
@@ -24,7 +22,6 @@ const UserDetailsDashboard: React.FC = () => {
     },
   });
 
-  // Add a user
   const addUserMutation = useMutation({
     mutationFn: async (data: UserDetails) => {
       const response = await axios.post('http://localhost:8080/api/v1/users/add', data);
@@ -36,7 +33,6 @@ const UserDetailsDashboard: React.FC = () => {
     },
   });
 
-  // Update a user
   const updateUserMutation = useMutation({
     mutationFn: async (data: UserDetails) => {
       const response = await axios.put(`http://localhost:8080/api/v1/users/update/${data.user_id}`, data);
@@ -49,7 +45,6 @@ const UserDetailsDashboard: React.FC = () => {
     },
   });
 
-  // Delete a user
   const deleteUserMutation = useMutation({
     mutationFn: async (id: number) => {
       const response = await axios.delete(`http://localhost:8080/api/v1/users/delete/${id}`);
@@ -60,30 +55,25 @@ const UserDetailsDashboard: React.FC = () => {
     },
   });
 
-  // Handle adding a user
   const addUser = (data: UserDetails) => {
     addUserMutation.mutate(data);
   };
 
-  // Handle updating a user
   const updateUser = (data: UserDetails) => {
     updateUserMutation.mutate(data);
   };
 
-  // Handle deleting a user
   const deleteUser = (user: UserDetails) => {
     if (window.confirm(`Are you sure you want to delete ${user.name}?`)) {
       deleteUserMutation.mutate(user.user_id);
     }
   };
 
-  // Handle selecting a user for editing
   const handleSelectUser = (user: UserDetails) => {
     setSelectedUser(user);
     setIsEdit(true);
   };
 
-  // Reset the form
   const resetForm = () => {
     setSelectedUser(null);
     setIsEdit(false);
@@ -91,14 +81,29 @@ const UserDetailsDashboard: React.FC = () => {
   };
 
   const goToPetManagementDashboard = () => {
-    navigate('/admin/pets'); // Adjust the path as needed
+    navigate('/admin/pets');
   };
 
   return (
-    <Box sx={{ width: '100%', margin: 'auto', mt: 4, p: 2 }}>
-      {/* Header with navigation button */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h4" sx={{ color: '#002855', fontWeight: 'bold' }}>
+    <Box sx={{ width: '100%', maxWidth: '1200px', margin: 'auto', mt: 10, p: 2 }}>
+      {/* Header */}
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          mb: 4, 
+          flexWrap: 'wrap'
+        }}
+      >
+        <Typography 
+          variant="h4" 
+          sx={{ 
+            color: '#002855', 
+            fontWeight: 'bold',
+            fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' }
+          }}
+        >
           User Management Dashboard
         </Typography>
         <Button
@@ -111,6 +116,7 @@ const UserDetailsDashboard: React.FC = () => {
         </Button>
       </Box>
 
+      {/* Form */}
       <UserDetailsForm
         addUser={addUser}
         updateUser={updateUser}
@@ -119,7 +125,9 @@ const UserDetailsDashboard: React.FC = () => {
         isEdit={isEdit}
         resetForm={resetForm}
       />
-      <Box sx={{ mt: 4 }}>
+
+      {/* Table */}
+      <Box sx={{ mt: 4, overflowX: 'auto' }}>
         <UserDetailsTable 
           rows={users} 
           selectedUser={handleSelectUser} 
