@@ -3,44 +3,13 @@ import { createTheme } from '@mui/material/styles';
 export const theme = createTheme({
     typography: {
         fontFamily: '"Nunito Sans", sans-serif',
-        // Apply Nunito Sans to all typography variants
-        allVariants: {
-            fontFamily: '"Nunito Sans", sans-serif',
-        },
-        h1: {
-            fontFamily: '"Nunito Sans", sans-serif',
-            fontWeight: 800,
-        },
-        h2: {
-            fontFamily: '"Nunito Sans", sans-serif',
-            fontWeight: 700,
-        },
-        h3: {
-            fontFamily: '"Nunito Sans", sans-serif',
-            fontWeight: 700,
-        },
-        h4: {
-            fontFamily: '"Nunito Sans", sans-serif',
-            fontWeight: 600,
-        },
-        h5: {
-            fontFamily: '"Nunito Sans", sans-serif',
-            fontWeight: 600,
-        },
-        h6: {
-            fontFamily: '"Nunito Sans", sans-serif',
-            fontWeight: 600,
-        },
-        body1: {
-            fontFamily: '"Nunito Sans", sans-serif',
-            fontWeight: 400,
-        },
-        body2: {
-            fontFamily: '"Nunito Sans", sans-serif',
-            fontWeight: 400,
-        },
+        h1: { fontWeight: 800 },
+        h2: { fontWeight: 700 },
+        h3: { fontWeight: 700 },
+        h4: { fontWeight: 600 },
+        h5: { fontWeight: 600 },
+        h6: { fontWeight: 600 },
         button: {
-            fontFamily: '"Nunito Sans", sans-serif',
             fontWeight: 600,
             textTransform: 'none',
         },
@@ -59,7 +28,6 @@ export const theme = createTheme({
         MuiCssBaseline: {
             styleOverrides: {
                 body: {
-                    fontFamily: '"Nunito Sans", sans-serif',
                     margin: 0,
                     padding: 0,
                     boxSizing: 'border-box',
@@ -84,27 +52,11 @@ export const theme = createTheme({
                 },
             },
         },
-        MuiContainer: {
-            styleOverrides: {
-                root: {
-                    '@media (max-width: 768px)': {
-                        padding: '0 1rem',
-                    },
-                },
-            },
-        },
         MuiButton: {
             styleOverrides: {
                 root: {
                     borderRadius: 4,
                     padding: '0.75rem 1.5rem',
-                },
-            },
-        },
-        MuiInputBase: {
-            styleOverrides: {
-                root: {
-                    fontFamily: '"Nunito Sans", sans-serif',
                 },
             },
         },
