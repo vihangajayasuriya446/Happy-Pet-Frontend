@@ -6,6 +6,11 @@ import React from "react";
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
 
+  const role = localStorage.getItem('role');
+  console.log('User role:', role);
+
+
+
   const handleCardClick = (path: string) => {
     navigate(path);
     window.scrollTo(0, 0);
@@ -49,8 +54,6 @@ const HomePage: React.FC = () => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             HappyPet
           </Typography>
-          <Button color="inherit">Sign Up</Button>
-          <Button color="inherit">Login</Button>
         </Toolbar>
       </AppBar>
 
@@ -78,6 +81,7 @@ const HomePage: React.FC = () => {
             transform: "translateY(-50%)",
             display: "flex",
             gap: "8px",
+            zIndex: 1, // Add this line
           }}
         >
           <Button
@@ -94,6 +98,7 @@ const HomePage: React.FC = () => {
                 backgroundColor: "#e91e63",
               },
             }}
+            onClick={() => navigate("/signup")} // Add signup path here
           >
             Sign Up
           </Button>
@@ -112,6 +117,7 @@ const HomePage: React.FC = () => {
                 backgroundColor: "rgba(255, 255, 255, 0.1)",
               },
             }}
+            onClick={() => navigate("/login")} // Add login path here
           >
             Login
           </Button>
@@ -229,14 +235,17 @@ const HomePage: React.FC = () => {
       </Button>
 
       {/* Admin Dashboard Button */}
-      <Button
-        variant="contained"
-        color="secondary"
-        sx={{ mt: 2, px: 4, py: 1, borderRadius: "20px" }}
-        onClick={() => handleCardClick("/admindb")}
-      >
-        Admin Dashboard
-      </Button>
+      {role === 'ADMIN' && (
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    sx={{ mt: 2, px: 4, py: 1, borderRadius: "20px" }}
+                    onClick={() => navigate('/admindb')}
+                >
+                    Admin Dashboard
+                </Button>
+            )}
+
     </FullHeightBox>
   );
 };

@@ -8,6 +8,10 @@ import Users from './Users';
 import HomePage from './HomePage';
 import ContactUsPage from './ContactUsPage';
 import AdminDashboardNav from './AdminDashboardNav';
+import Signup from './Signup';
+import Login from './Login';
+import AdminLogin from './AdminLogin';
+import AdminSignup from './AdminSignup';
 
 
 const App: React.FC = () => {
@@ -21,6 +25,10 @@ const App: React.FC = () => {
           <Route path="/matchmaking" element={<MainPage />} />
           <Route path="/contactus" element={<ContactUsPage />} />
           <Route path="/admindb" element={<AdminDashboardNav />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/adminlogin" element={<AdminLogin />} />
+          <Route path="/adminsignup" element={<AdminSignup />} />
         </Routes>
         <Footer />
       </Box>
