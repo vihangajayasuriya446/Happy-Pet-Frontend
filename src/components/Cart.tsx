@@ -531,15 +531,16 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                                         {item.pet.birthYear && ` (Age: ${new Date().getFullYear() - Number(item.pet.birthYear)} years)`}
                                                     </Typography>
 
-                                                    {/* Price information */}
+                                                    {/* MODIFIED: Price information - reduced size */}
                                                     <Typography
-                                                        variant="body1"
+                                                        variant="body2"
                                                         component="div"
                                                         sx={{
                                                             display: 'block',
                                                             fontWeight: 'bold',
                                                             mt: 1,
-                                                            color: '#003366'
+                                                            color: '#003366',
+                                                            fontSize: '0.875rem'
                                                         }}
                                                     >
                                                         LKR {itemPrice.toFixed(2)} × {item.quantity} = LKR {itemTotal}
