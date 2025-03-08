@@ -1,0 +1,54 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    background-color: #f4f4f4;
+  }
+  
+  .content {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .title {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+  }
+  
+  .buttonGroup {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .paymentButton {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .paymentButton:first-child {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .paymentButton:first-child:hover {
+    background-color: #0056b3;
+  }
+  
+  .paymentButton:last-child {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .paymentButton:last-child:hover {
+    background-color: #1e7e34;
+  }
