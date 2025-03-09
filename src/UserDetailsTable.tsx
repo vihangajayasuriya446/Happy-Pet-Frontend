@@ -1,4 +1,3 @@
-// src/UserDetailsTable.tsx
 import React from 'react';
 import {
   Button,
@@ -13,6 +12,7 @@ import {
   Chip,
   Box,
   CircularProgress,
+  Stack,
 } from '@mui/material';
 import { UserDetails } from './types';
 
@@ -106,23 +106,33 @@ const UserDetailsTable: React.FC<UserDetailsTableProps> = ({
                 <TableCell sx={{ textAlign: 'center' }}>
                   {new Date(row.registered_date).toLocaleDateString()}
                 </TableCell>
-                <TableCell sx={{ textAlign: 'center' }}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    sx={{ marginRight: 1, textTransform: 'none', borderRadius: '4px' }}
-                    onClick={() => selectedUser(row)}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    sx={{ textTransform: 'none', borderRadius: '4px' }}
-                    onClick={() => deleteUser(row)}
-                  >
-                    Delete
-                  </Button>
+                <TableCell>
+                  <Stack direction="row" spacing={1} justifyContent="center">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      size="small"
+                      sx={{ textTransform: 'none', borderRadius: '4px' }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        selectedUser(row);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      size="small"
+                      sx={{ textTransform: 'none', borderRadius: '4px' }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteUser(row);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </Stack>
                 </TableCell>
               </TableRow>
             ))
