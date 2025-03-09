@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Typography, Button, Snackbar, Alert } from '@mui/material';
 import UserDetailsTable from './UserDetailsTable';
 import UserDetailsForm from './UserDetailsForm';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import { fetchAllUsers, createUser, updateUser, deleteUser } from './UserService';
 import { UserDetails } from './types';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,64 +13,100 @@ const UserDetailsDashboard: React.FC = () => {
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<UserDetails | null>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
-
-  const { data: users = [], isLoading, error } = useQuery<UserDetails[], Error>({
-    queryKey: ['users'],
-    queryFn: async (): Promise<UserDetails[]> => {
-      const response = await axios.get<UserDetails[]>('http://localhost:8080/api/v1/users');
-      return response.data;
-    },
+  
+  // Add state for notifications
+  const [notification, setNotification] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error' | 'info' | 'warning';
+  }>({
+    open: false,
+    message: '',
+    severity: 'info'
   });
 
+  // Use fetchAllUsers from your service
+  const { data: users = [], isLoading, error } = useQuery<UserDetails[], Error>({
+    queryKey: ['users'],
+    queryFn: fetchAllUsers
+  });
+
+  // Use createUser from your service
   const addUserMutation = useMutation({
-    mutationFn: async (data: UserDetails) => {
-      const response = await axios.post('http://localhost:8080/api/v1/users/add', data);
-      return response.data;
-    },
+    mutationFn: createUser,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
       setSubmitted(true);
+      resetForm();
+      showNotification('User added successfully!', 'success');
     },
+    onError: (error: { response?: { data?: { message?: string } } }) => {
+      console.error('Error adding user:', error);
+      const errorMessage = error.response?.data?.message || 'Failed to add user. Please try again.';
+      showNotification(errorMessage, 'error');
+    }
   });
 
+  // Use updateUser from your service
   const updateUserMutation = useMutation({
-    mutationFn: async (data: UserDetails) => {
-      const response = await axios.put(`http://localhost:8080/api/v1/users/update/${data.user_id}`, data);
-      return response.data;
-    },
+    mutationFn: updateUser,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
       setSubmitted(true);
       setIsEdit(false);
+      resetForm();
+      showNotification('User updated successfully!', 'success');
     },
+    onError: (error: { response?: { data?: { message?: string } } }) => {
+      console.error('Error updating user:', error);
+      const errorMessage = error.response?.data?.message || 'Failed to update user. Please try again.';
+      showNotification(errorMessage, 'error');
+    }
   });
 
+  // Use deleteUser from your service
   const deleteUserMutation = useMutation({
-    mutationFn: async (id: number) => {
-      const response = await axios.delete(`http://localhost:8080/api/v1/users/delete/${id}`);
-      return response.data;
-    },
+    mutationFn: deleteUser,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
+      showNotification('User deleted successfully!', 'success');
     },
+    onError: (error: { response?: { data?: { message?: string } } }) => {
+      console.error('Error deleting user:', error);
+      const errorMessage = error.response?.data?.message || 'Failed to delete user. Please try again.';
+      showNotification(errorMessage, 'error');
+    }
   });
 
   const addUser = (data: UserDetails) => {
     addUserMutation.mutate(data);
   };
 
-  const updateUser = (data: UserDetails) => {
+  const updateUserHandler = (data: UserDetails) => {
+    if (!data.user_id) {
+      console.error('Cannot update user without ID');
+      showNotification('User ID is missing. Cannot update.', 'error');
+      return;
+    }
     updateUserMutation.mutate(data);
   };
 
-  const deleteUser = (user: UserDetails) => {
+  const deleteUserHandler = (user: UserDetails) => {
+    if (!user || !user.user_id) {
+      console.error('Cannot delete user without ID');
+      showNotification('User ID is missing. Cannot delete.', 'error');
+      return;
+    }
+    
     if (window.confirm(`Are you sure you want to delete ${user.name}?`)) {
-      deleteUserMutation.mutate(user.user_id);
+      deleteUserMutation.mutate(Number(user.user_id));
     }
   };
 
   const handleSelectUser = (user: UserDetails) => {
-    setSelectedUser(user);
+    console.log('Selected user for editing:', user);
+    // Create a deep copy to avoid reference issues
+    setSelectedUser(JSON.parse(JSON.stringify(user)));
     setIsEdit(true);
   };
 
@@ -82,6 +118,21 @@ const UserDetailsDashboard: React.FC = () => {
 
   const goToPetManagementDashboard = () => {
     navigate('/admin/pets');
+  };
+
+  const showNotification = (message: string, severity: 'success' | 'error' | 'info' | 'warning') => {
+    setNotification({
+      open: true,
+      message,
+      severity
+    });
+  };
+
+  const handleCloseNotification = () => {
+    setNotification({
+      ...notification,
+      open: false
+    });
   };
 
   return (
@@ -119,7 +170,7 @@ const UserDetailsDashboard: React.FC = () => {
       {/* Form */}
       <UserDetailsForm
         addUser={addUser}
-        updateUser={updateUser}
+        updateUser={updateUserHandler}
         submitted={submitted}
         data={selectedUser || undefined}
         isEdit={isEdit}
@@ -131,11 +182,27 @@ const UserDetailsDashboard: React.FC = () => {
         <UserDetailsTable 
           rows={users} 
           selectedUser={handleSelectUser} 
-          deleteUser={deleteUser}
+          deleteUser={deleteUserHandler}
           isLoading={isLoading}
           error={error ? error.message : null} 
         />
       </Box>
+
+      {/* Notification */}
+      <Snackbar 
+        open={notification.open} 
+        autoHideDuration={6000} 
+        onClose={handleCloseNotification}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={handleCloseNotification} 
+          severity={notification.severity}
+          sx={{ width: '100%' }}
+        >
+          {notification.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
