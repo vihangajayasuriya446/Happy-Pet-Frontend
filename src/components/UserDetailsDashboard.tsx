@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Snackbar, Alert } from '@mui/material';
+import { Box, Button, Snackbar, Alert, Typography, Paper } from '@mui/material';
 import UserDetailsTable from './UserDetailsTable';
 import UserDetailsForm from './UserDetailsForm';
 import { useNavigate } from 'react-router-dom';
@@ -128,30 +128,53 @@ const UserDetailsDashboard: React.FC = () => {
 
     return (
         <Box sx={{ width: '100%', margin: 'auto', p: 2 }}>
-            {/* Header with navigation button */}
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-                <Button
-                    variant="contained"
-                    onClick={goToPetManagementDashboard}
-                    startIcon={<DashboardIcon />}
+
+            <Paper
+                elevation={3}
+                sx={{
+                    bgcolor: '#002855',
+                    color: 'white',
+                    p: 2,
+                    mb: 3,
+                    borderRadius: '8px',
+                    position: 'relative',
+                    textAlign: 'center'
+                }}
+            >
+                <Typography
+                    variant="h5"
+                    component="h1"
                     sx={{
-                        bgcolor: 'white',
-                        color: '#003366',
-                        border: '1px solid #e0e0e0',
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                        '&:hover': {
-                            bgcolor: '#f5f5f5',
-                            color: '#002244',
-                        },
-                        textTransform: 'none',
-                        fontWeight: 'medium',
-                        px: 2,
-                        borderRadius: '4px'
+                        fontWeight: 'bold',
+                        width: '100%'
                     }}
                 >
-                    Pet Management Dashboard
-                </Button>
-            </Box>
+                    User Management Dashboard
+                </Typography>
+
+
+                <Box sx={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)' }}>
+                    <Button
+                        variant="contained"
+                        onClick={goToPetManagementDashboard}
+                        startIcon={<DashboardIcon />}
+                        sx={{
+                            bgcolor: 'white',
+                            color: '#003366',
+                            '&:hover': {
+                                bgcolor: '#f5f5f5',
+                                color: '#002244',
+                            },
+                            textTransform: 'none',
+                            fontWeight: 'medium',
+                            px: 2,
+                            borderRadius: '4px'
+                        }}
+                    >
+                        Pet Buy Management Dashboard
+                    </Button>
+                </Box>
+            </Paper>
 
             <UserDetailsForm
                 addUser={addUser}
