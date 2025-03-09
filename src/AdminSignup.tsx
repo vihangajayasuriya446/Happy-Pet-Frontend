@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 const AdminSignup: React.FC = () => {
     const [firstName, setFirstName] = useState('');
@@ -8,7 +10,8 @@ const AdminSignup: React.FC = () => {
     const [password, setPassword] = useState('');
     const [secretKey, setSecretKey] = useState('');
     const [error, setError] = useState('');
-    const [emailError, setEmailError] = useState(''); // Added email error state
+    const [emailError, setEmailError] = useState('');
+    const [passwordVisible, setPasswordVisible] = useState(false);
     const navigate = useNavigate();
 
     const validateEmail = (email: string): boolean => {
@@ -19,7 +22,7 @@ const AdminSignup: React.FC = () => {
     const handleAdminSignup = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-        setEmailError(''); // Clear email error
+        setEmailError('');
 
         if (!validateEmail(email)) {
             setEmailError('Please enter a valid email address.');
@@ -69,7 +72,12 @@ const AdminSignup: React.FC = () => {
                     <input type="text" placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} required style={{ padding: '0.75rem', border: '1px solid #ddd', borderRadius: '8px', fontSize: '1rem', outline: 'none' }} />
                     <input type="text" placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} required style={{ padding: '0.75rem', border: '1px solid #ddd', borderRadius: '8px', fontSize: '1rem', outline: 'none' }} />
                     <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required style={{ padding: '0.75rem', border: '1px solid #ddd', borderRadius: '8px', fontSize: '1rem', outline: 'none' }} />
-                    <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required style={{ padding: '0.75rem', border: '1px solid #ddd', borderRadius: '8px', fontSize: '1rem', outline: 'none' }} />
+                    <div style={{ position: 'relative' }}>
+                        <input type={passwordVisible ? 'text' : 'password'} placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required style={{ padding: '0.75rem', border: '1px solid #ddd', borderRadius: '8px', fontSize: '1rem', outline: 'none', width: '100%', boxSizing: 'border-box' }} />
+                        <span style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer' }} onClick={() => setPasswordVisible(!passwordVisible)}>
+                            <FontAwesomeIcon icon={passwordVisible ? faEyeSlash : faEye} />
+                        </span>
+                    </div>
                     <input type="text" placeholder="Secret Key" value={secretKey} onChange={(e) => setSecretKey(e.target.value)} required style={{ padding: '0.75rem', border: '1px solid #ddd', borderRadius: '8px', fontSize: '1rem', outline: 'none' }} />
                     <button type="submit" style={{ padding: '0.75rem', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '8px', fontSize: '1rem', cursor: 'pointer', transition: 'background-color 0.3s ease' }} onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')} onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}>
                         Sign Up

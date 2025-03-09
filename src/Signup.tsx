@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 const Signup: React.FC = () => {
     const [firstName, setFirstName] = useState('');
@@ -8,6 +10,7 @@ const Signup: React.FC = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [emailError, setEmailError] = useState('');
+    const [passwordVisible, setPasswordVisible] = useState(false);
     const navigate = useNavigate();
 
     const validateEmail = (email: string): boolean => {
@@ -164,21 +167,37 @@ const Signup: React.FC = () => {
                             transition: 'border-color 0.3s ease',
                         }}
                     />
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        style={{
-                            padding: '0.75rem',
-                            border: '1px solid #ddd',
-                            borderRadius: '8px',
-                            fontSize: '1rem',
-                            outline: 'none',
-                            transition: 'border-color 0.3s ease',
-                        }}
-                    />
+                    <div style={{ position: 'relative' }}>
+                        <input
+                            type={passwordVisible ? 'text' : 'password'}
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            style={{
+                                padding: '0.75rem',
+                                border: '1px solid #ddd',
+                                borderRadius: '8px',
+                                fontSize: '1rem',
+                                outline: 'none',
+                                transition: 'border-color 0.3s ease',
+                                width: '100%',
+                                boxSizing: 'border-box',
+                            }}
+                        />
+                        <span
+                            style={{
+                                position: 'absolute',
+                                right: '10px',
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                cursor: 'pointer',
+                            }}
+                            onClick={() => setPasswordVisible(!passwordVisible)}
+                        >
+                            <FontAwesomeIcon icon={passwordVisible ? faEyeSlash : faEye} />
+                        </span>
+                    </div>
                     <button
                         type="submit"
                         style={{

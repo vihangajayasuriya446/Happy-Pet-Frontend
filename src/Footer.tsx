@@ -68,7 +68,7 @@ const Footer = () => {
           <Link href="/terms" underline="hover" color="inherit" display="block" sx={{ mb: 1, color: "black" }}>
             Terms & Conditions
           </Link>
-          <Link href="#" underline="hover" color="inherit" display="block" sx={{ color: "black" }}>
+          <Link href="/privacy" underline="hover" color="inherit" display="block" sx={{ color: "black" }}>
             Privacy Policy
           </Link>
         </Grid>

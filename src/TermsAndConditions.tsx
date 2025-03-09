@@ -13,7 +13,7 @@ const TermsAndConditions: React.FC = () => {
         <p style={styles.text}>
           We are <strong>Happy Pet</strong> ("Company," "we," "us," or "our"), a
           company registered in <strong>Sri Lanka</strong> at{" "}
-          <strong>Bambalapitiya, Colombo, Western Province</strong>. We operate
+          <strong>Colombo 04, Western Province</strong>. We operate
           the website{" "}
           <a href="http://www.happypet.com.lk" style={styles.link}>
             http://www.happypet.com.lk
@@ -28,8 +28,8 @@ const TermsAndConditions: React.FC = () => {
         </p>
         <p style={styles.text}>
           You can contact us by phone at <strong>0770092167</strong>, email at{" "}
-          <strong>happypet@gmail.com</strong>, or by mail to{" "}
-          <strong>Bambalapitiya, Colombo, Western Province, Sri Lanka</strong>.
+          <strong>happypet@gmail.com</strong>, or by post to{" "}
+          <strong>IIT, Colombo 04, Western Province, Sri Lanka</strong>.
         </p>
         <p style={styles.text}>
           These Legal Terms constitute a legally binding agreement between you
@@ -271,6 +271,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     color: "#333",
     lineHeight: 1.6,
     backgroundColor: "#f8f9fa",
+    borderRadius:'12px',
     
   },
   header: {

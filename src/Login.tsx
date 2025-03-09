@@ -1,22 +1,25 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 const Login: React.FC = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const [emailError, setEmailError] = useState(''); // New state for email error
+    const [emailError, setEmailError] = useState('');
+    const [passwordVisible, setPasswordVisible] = useState(false);
     const navigate = useNavigate();
 
     const validateEmail = (email: string): boolean => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     };
-    
+
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-        setEmailError(''); // Clear email error on each submit
+        setEmailError('');
 
         if (!validateEmail(email)) {
             setEmailError('Please enter a valid email address.');
@@ -98,7 +101,7 @@ const Login: React.FC = () => {
                         {error}
                     </div>
                 )}
-                {emailError && ( // Display email error
+                {emailError && (
                     <div
                         style={{
                             color: '#dc3545',
@@ -134,23 +137,41 @@ const Login: React.FC = () => {
                             fontSize: '1rem',
                             outline: 'none',
                             transition: 'border-color 0.3s ease',
+                            width: '100%', // Ensure email input takes full width
+                            boxSizing: 'border-box', // Ensure padding doesn't affect width
                         }}
                     />
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        style={{
-                            padding: '0.75rem',
-                            border: '1px solid #ddd',
-                            borderRadius: '8px',
-                            fontSize: '1rem',
-                            outline: 'none',
-                            transition: 'border-color 0.3s ease',
-                        }}
-                    />
+                    <div style={{ position: 'relative', width: '100%', boxSizing: 'border-box' }}>
+                        <input
+                            type={passwordVisible ? 'text' : 'password'}
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            style={{
+                                padding: '0.75rem',
+                                border: '1px solid #ddd',
+                                borderRadius: '8px',
+                                fontSize: '1rem',
+                                outline: 'none',
+                                transition: 'border-color 0.3s ease',
+                                width: '100%', // Ensure password input takes full width
+                                boxSizing: 'border-box', // Ensure padding doesn't affect width
+                            }}
+                        />
+                        <span
+                            style={{
+                                position: 'absolute',
+                                right: '10px',
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                cursor: 'pointer',
+                            }}
+                            onClick={() => setPasswordVisible(!passwordVisible)}
+                        >
+                            <FontAwesomeIcon icon={passwordVisible ? faEyeSlash : faEye} />
+                        </span>
+                    </div>
                     <button
                         type="submit"
                         style={{
