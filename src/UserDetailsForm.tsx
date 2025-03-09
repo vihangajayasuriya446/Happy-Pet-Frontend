@@ -1,4 +1,3 @@
-// src/components/UserDetailsForm.tsx
 import React, { useEffect, useState } from 'react';
 import {
   Button,
@@ -14,6 +13,7 @@ import {
   FormControlLabel,
   InputAdornment,
   IconButton,
+  FormHelperText,
 } from '@mui/material';
 import { UserDetails } from './types';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -47,16 +47,23 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
   const [registered_date, setRegisteredDate] = useState<string>(
     new Date().toISOString().split('T')[0]
   );
+  
+  // Form validation
+  const [emailError, setEmailError] = useState<string>('');
+  const [nameError, setNameError] = useState<string>('');
+  const [passwordError, setPasswordError] = useState<string>('');
 
   useEffect(() => {
-    if (submitted || !isEdit) {
+    if (submitted) {
       resetFormState();
     }
-  }, [submitted, isEdit]);
+  }, [submitted]);
 
   useEffect(() => {
     if (isEdit && data) {
       populateForm(data);
+    } else if (!isEdit) {
+      resetFormState();
     }
   }, [data, isEdit]);
 
@@ -70,18 +77,22 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
     setRole('USER');
     setActive(true);
     setRegisteredDate(new Date().toISOString().split('T')[0]);
+    // Clear errors
+    setEmailError('');
+    setNameError('');
+    setPasswordError('');
     resetForm();
   };
 
   const populateForm = (data: UserDetails) => {
     setUserId(data.user_id);
-    setName(data.name);
-    setEmail(data.email);
+    setName(data.name || '');
+    setEmail(data.email || '');
     setPassword(''); // Don't show password for security reasons
     setPhone(data.phone || '');
     setAddress(data.address || '');
-    setRole(data.role);
-    setActive(data.active);
+    setRole(data.role || 'USER');
+    setActive(data.active !== undefined ? data.active : true);
     setRegisteredDate(
       data.registered_date
         ? new Date(data.registered_date).toISOString().split('T')[0]
@@ -89,12 +100,50 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
     );
   };
 
+  const validateForm = () => {
+    let isValid = true;
+    
+    // Name validation
+    if (!name.trim()) {
+      setNameError('Name is required');
+      isValid = false;
+    } else {
+      setNameError('');
+    }
+    
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email.trim()) {
+      setEmailError('Email is required');
+      isValid = false;
+    } else if (!emailRegex.test(email)) {
+      setEmailError('Please enter a valid email address');
+      isValid = false;
+    } else {
+      setEmailError('');
+    }
+    
+    // Password validation (only for new users)
+    if (!isEdit && !password.trim()) {
+      setPasswordError('Password is required for new users');
+      isValid = false;
+    } else {
+      setPasswordError('');
+    }
+    
+    return isValid;
+  };
+
   const handleSubmit = () => {
+    if (!validateForm()) {
+      return;
+    }
+    
     const userData: UserDetails = {
       user_id,
       name,
       email,
-      password: password || undefined, // Only include password if it's set
+      password: password.trim() ? password : undefined, // Only include password if it's set
       phone,
       address,
       role,
@@ -102,6 +151,8 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
       registered_date,
     };
 
+    console.log('Submitting user data:', userData);
+    
     if (isEdit) {
       updateUser(userData);
     } else {
@@ -114,7 +165,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
   };
 
   const isFormValid = () => {
-    // Basic validation
+    // Basic validation for button disable state
     if (!name || !email) return false;
     if (!isEdit && !password) return false; // Password required for new users
     
@@ -135,7 +186,13 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Box>
             <FormLabel sx={{ fontWeight: 'bold', color: '#002855' }}>Name*</FormLabel>
-            <Input fullWidth value={name} onChange={(e) => setName(e.target.value)} />
+            <Input 
+              fullWidth 
+              value={name} 
+              onChange={(e) => setName(e.target.value)} 
+              error={!!nameError}
+            />
+            {nameError && <FormHelperText error>{nameError}</FormHelperText>}
           </Box>
 
           <Box>
@@ -145,7 +202,9 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
               type="email" 
               value={email} 
               onChange={(e) => setEmail(e.target.value)} 
+              error={!!emailError}
             />
+            {emailError && <FormHelperText error>{emailError}</FormHelperText>}
           </Box>
 
           <Box>
@@ -157,6 +216,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              error={!!passwordError}
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
@@ -169,6 +229,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
                 </InputAdornment>
               }
             />
+            {passwordError && <FormHelperText error>{passwordError}</FormHelperText>}
           </Box>
 
           <Box>
