@@ -13,6 +13,7 @@ const AdminDashboardNav: React.FC = () => {
             alignItems: 'center',
             minHeight: '100vh',
             margin: 0,
+            marginTop: 0,
             padding: '2rem',
             boxSizing: 'border-box',
         },

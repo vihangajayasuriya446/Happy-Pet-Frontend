@@ -2,6 +2,7 @@ import { Box, Typography, Link, TextField, Button, Grid } from "@mui/material";
 import { Facebook, Instagram, Twitter } from "@mui/icons-material";
 
 const Footer = () => {
+  
   return (
     <Box
       sx={{
@@ -64,7 +65,7 @@ const Footer = () => {
           <Link href="#" underline="hover" color="inherit" display="block" sx={{ mb: 1, color: "black" }}>
             Support
           </Link>
-          <Link href="#" underline="hover" color="inherit" display="block" sx={{ mb: 1, color: "black" }}>
+          <Link href="/terms" underline="hover" color="inherit" display="block" sx={{ mb: 1, color: "black" }}>
             Terms & Conditions
           </Link>
           <Link href="#" underline="hover" color="inherit" display="block" sx={{ color: "black" }}>

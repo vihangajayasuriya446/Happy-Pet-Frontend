@@ -12,6 +12,7 @@ import Signup from './Signup';
 import Login from './Login';
 import AdminLogin from './AdminLogin';
 import AdminSignup from './AdminSignup';
+import TermsAndConditions from './TermsAndConditions';
 
 
 const App: React.FC = () => {
@@ -29,6 +30,7 @@ const App: React.FC = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/adminlogin" element={<AdminLogin />} />
           <Route path="/adminsignup" element={<AdminSignup />} />
+          <Route path="/terms" element={<TermsAndConditions />} />
         </Routes>
         <Footer />
       </Box>

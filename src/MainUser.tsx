@@ -118,8 +118,8 @@ const MainPage = () => {
   };
 
   return (
-    <Box sx={{ bgcolor: "#002855", minHeight: "100vh", py: 4 }}>
-      <Container maxWidth="lg" sx={{ mt: 8 }}>
+    <Box sx={{ bgcolor: "#002855", minHeight: "100vh", py: 4, marginTop: "50px", }}>
+      <Container maxWidth="lg" sx={{ mt: 8 , marginTop: "10px",}}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={4}>
             <Box bgcolor="white" p={4} borderRadius={2} boxShadow={2}>
