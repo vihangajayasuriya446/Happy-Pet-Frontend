@@ -8,12 +8,24 @@ const AdminSignup: React.FC = () => {
     const [password, setPassword] = useState('');
     const [secretKey, setSecretKey] = useState('');
     const [error, setError] = useState('');
+    const [emailError, setEmailError] = useState(''); // Added email error state
     const navigate = useNavigate();
+
+    const validateEmail = (email: string): boolean => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
 
     const handleAdminSignup = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError(''); // Clear previous errors
-    
+        setError('');
+        setEmailError(''); // Clear email error
+
+        if (!validateEmail(email)) {
+            setEmailError('Please enter a valid email address.');
+            return;
+        }
+
         try {
             const response = await fetch('http://localhost:8080/api/auth/register-admin?secretKey=vihanga-2022', {
                 method: 'POST',
@@ -22,24 +34,22 @@ const AdminSignup: React.FC = () => {
                 },
                 body: JSON.stringify({ firstName, lastName, email, password }),
             });
-    
+
             if (!response.ok) {
-                // Attempt to parse the error response as text
                 const errorText = await response.text();
                 setError(errorText || 'Signup failed. Please try again.');
                 return;
             }
-    
+
             const data = await response.json();
-            localStorage.setItem('token', data.token); // Store JWT token
+            localStorage.setItem('token', data.token);
             localStorage.setItem('role', data.role);
-            navigate('/admindb'); // Redirect to admin dashboard on success
+            navigate('/admindb');
         } catch (error) {
             console.error('Error during signup:', error);
             setError('An error occurred during signup. Please try again.');
         }
     };
-    
 
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', backgroundColor: '#f8f9fa', fontFamily: 'Arial, sans-serif' }}>
@@ -48,6 +58,11 @@ const AdminSignup: React.FC = () => {
                 {error && (
                     <div style={{ color: '#dc3545', backgroundColor: '#f8d7da', padding: '0.75rem', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.9rem' }}>
                         {error}
+                    </div>
+                )}
+                {emailError && (
+                    <div style={{ color: '#dc3545', backgroundColor: '#f8d7da', padding: '0.75rem', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.9rem' }}>
+                        {emailError}
                     </div>
                 )}
                 <form onSubmit={handleAdminSignup} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>

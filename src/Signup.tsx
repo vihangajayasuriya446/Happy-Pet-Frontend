@@ -7,11 +7,23 @@ const Signup: React.FC = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [emailError, setEmailError] = useState('');
     const navigate = useNavigate();
+
+    const validateEmail = (email: string): boolean => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError(''); // Clear previous errors
+        setError('');
+        setEmailError('');
+
+        if (!validateEmail(email)) {
+            setEmailError('Please enter a valid email address.');
+            return;
+        }
 
         try {
             const response = await fetch('http://localhost:8080/api/auth/register', {
@@ -29,9 +41,9 @@ const Signup: React.FC = () => {
             }
 
             const data = await response.json();
-            localStorage.setItem('token', data.token); // Store JWT token
+            localStorage.setItem('token', data.token);
             localStorage.setItem('role', data.role);
-            navigate('/'); // Redirect to home on success
+            navigate('/');
         } catch (error) {
             console.error('Error during signup:', error);
             setError('An error occurred during signup. Please try again.');
@@ -83,6 +95,20 @@ const Signup: React.FC = () => {
                         }}
                     >
                         {error}
+                    </div>
+                )}
+                {emailError && (
+                    <div
+                        style={{
+                            color: '#dc3545',
+                            backgroundColor: '#f8d7da',
+                            padding: '0.75rem',
+                            borderRadius: '8px',
+                            marginBottom: '1.5rem',
+                            fontSize: '0.9rem',
+                        }}
+                    >
+                        {emailError}
                     </div>
                 )}
                 <form
