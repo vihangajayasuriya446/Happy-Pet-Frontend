@@ -23,6 +23,8 @@ import { jwtDecode } from "jwt-decode";
 interface UserDetails {
   email: string;
   role: string;
+  firstName: string;
+  lastName: string;
 }
 
 const Navbar = () => {
@@ -62,6 +64,8 @@ const Navbar = () => {
       userDetails = {
         email: decodedToken.sub,
         role: decodedToken.role,
+        firstName: decodedToken.firstName,
+        lastName: decodedToken.lastName,
       };
     } catch (error) {
       console.error("Error decoding token:", error);
@@ -126,8 +130,21 @@ const Navbar = () => {
             <InputBase placeholder="Search" sx={{ ml: 1 }} />
           </Box>
           <IconButton sx={{ ml: 2 }} onClick={handleAccountClick}>
-            <AccountCircle />
-          </IconButton>
+          {userDetails ? (
+            <Avatar
+              sx={{
+                bgcolor: "primary.main", // Use primary color for the avatar background
+                width: 25, // Adjust size to match the icon
+                height: 25,
+                fontSize: 15, // Adjust font size for the character
+              }}
+            >
+              {userDetails.firstName.charAt(0).toUpperCase()} {/* Display first character */}
+            </Avatar>
+          ) : (
+            <AccountCircle /> // Default icon when no user is logged in
+          )}
+        </IconButton>
           <IconButton onClick={toggleDrawer}>
             <MenuIcon />
           </IconButton>
@@ -147,37 +164,105 @@ const Navbar = () => {
           vertical: "top",
           horizontal: "right",
         }}
+        PaperProps={{
+          style: {
+            minWidth: '280px', // Slightly wider for better readability
+            padding: '20px', // More padding for a spacious feel
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)', // Softer shadow
+            borderRadius: '12px', // More rounded corners
+            border: '1px solid #e0e0e0', // Subtle border for definition
+            backgroundColor: '#ffffff', // Ensure white background
+          },
+        }}
       >
         <Box
           sx={{
-            p: 2,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            gap: '12px', // Consistent spacing between elements
           }}
         >
           {userDetails ? (
             <>
-              <Avatar sx={{ bgcolor: "primary.main", mb: 1 }}>
-                {userDetails.email.charAt(0).toUpperCase()}
-              </Avatar>
-              <Typography variant="body1">Email: {userDetails.email}</Typography>
-              <Typography variant="body1">Role: {userDetails.role}</Typography>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleLogout}
-                sx={{ mt: 2 }}
+              <Avatar
+                sx={{
+                  bgcolor: "primary.main",
+                  width: '64px', // Larger avatar
+                  height: '64px',
+                  fontSize: '24px', // Larger font for initials
+                  mb: 2, // More space below the avatar
+                }}
               >
-                Sign Out
-              </Button>
+                {userDetails.firstName.charAt(0).toUpperCase()}
+              </Avatar>
+              <Typography
+                variant="body1"
+                sx={{
+                  fontWeight: '600', // Bold for emphasis
+                  fontSize: '18px', // Slightly larger font
+                  color: '#333333', // Darker text for better readability
+                  textAlign: 'center', // Center-aligned text
+                }}
+              >
+                {userDetails.firstName} {userDetails.lastName}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: '#666666', // Lighter text for less emphasis
+                  fontSize: '14px', // Smaller font for secondary info
+                  textAlign: 'center',
+                }}
+              >
+                {userDetails.email}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: '#666666',
+                  fontSize: '14px',
+                  textAlign: 'center',
+                  mb: 2, // Space above the button
+                }}
+              >
+                Role: {userDetails.role}
+              </Typography>
+              <Button
+              variant="contained"
+              color="secondary" // Standard secondary color
+              onClick={handleLogout}
+              sx={{
+                width: '100%',
+                padding: '10px',
+                borderRadius: '8px',
+                fontWeight: '600',
+                textTransform: 'none',
+                fontSize: '16px',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                '&:hover': {
+                  backgroundColor: '#9c27b0', // Darker shade of secondary color on hover
+                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+                },
+              }}
+            >
+              Sign Out
+            </Button>
             </>
           ) : (
-            <Typography variant="body1">No user details available</Typography>
+            <Typography
+              variant="body1"
+              sx={{
+                color: '#666666',
+                fontSize: '16px',
+                textAlign: 'center',
+              }}
+            >
+              No user details available
+            </Typography>
           )}
         </Box>
       </Popover>
-
       <DrawerMenu open={drawerOpen} toggleDrawer={toggleDrawer} />
     </>
   );
