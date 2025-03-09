@@ -21,8 +21,7 @@ interface PetListProps {
     searchQuery?: string;
     petType?: string;
     birthYear?: string;
-
-    PetCardComponent?: React.FC<{ pet: Pet; onAdopt?: () => void }>;
+    PetCardComponent?: React.ComponentType<{ pet: Pet; onAdopt?: () => void }>;
     isAdminView?: boolean;
 }
 
@@ -33,7 +32,7 @@ const PETS_API_URL = `${API_BASE_URL}/api/v1/pets`;
 const PetCardWithHoverImage: React.FC<{
     pet: Pet;
     onAdopt?: () => void;
-    CardComponent: React.FC<{ pet: Pet; onAdopt?: () => void }>;
+    CardComponent: React.ComponentType<{ pet: Pet; onAdopt?: () => void }>;
 }> = ({ pet, onAdopt, CardComponent }) => {
     return (
         <Box
@@ -104,7 +103,6 @@ const PetList: React.FC<PetListProps> = ({
                     console.log(`Filtered to ${filteredPets.length} pets with birth year ${birthYear}`);
                 }
 
-
                 // Apply search query if present
                 if (searchQuery && searchQuery.trim() !== '') {
                     filteredPets = filterBySearchQuery(filteredPets, searchQuery);
@@ -171,7 +169,6 @@ const PetList: React.FC<PetListProps> = ({
                     if (birthYear !== 'all') {
                         updatedPets = updatedPets.filter(pet => pet.birthYear === birthYear);
                     }
-
 
                     if (searchQuery && searchQuery.trim() !== '') {
                         updatedPets = filterBySearchQuery(updatedPets, searchQuery);

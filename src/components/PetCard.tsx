@@ -13,10 +13,11 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { useCart } from "../contexts/CartContext";
-import { Pet } from "../App";
+import { Pet } from "../App"; // Import from App instead of ./types
 
 interface PetCardProps {
     pet: Pet;
+    onAdopt?: () => void;
 }
 
 // Helper function to format price in LKR
@@ -25,7 +26,7 @@ const formatPriceLKR = (price: number | string): string => {
     return `LKR ${numericPrice.toFixed(0)}/=`;
 };
 
-const PetCard: React.FC<PetCardProps> = ({ pet }) => {
+const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
     const [quantity, setQuantity] = useState(0);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [isAdding, setIsAdding] = useState(false);
@@ -65,13 +66,6 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
         if (quantity > 0) {
             setIsAdding(true);
             try {
-                // Create a complete pet object with image explicitly included
-                const petWithImage = {
-                    ...pet,
-                    image: resolvedImageUrl,
-                    imageUrl: resolvedImageUrl
-                };
-
                 console.log("Adding pet to cart with image:", {
                     petId: pet.id,
                     petName: pet.name,
@@ -79,7 +73,8 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                     quantity: quantity
                 });
 
-                await addToCart(petWithImage, quantity);
+                // Pass the entire pet object
+                await addToCart(pet, quantity);
                 setSnackbarOpen(true);
                 setQuantity(0);
             } catch (error) {
@@ -98,20 +93,14 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
     const handleQuickAdd = async () => {
         setIsAdding(true);
         try {
-            // Create a complete pet object with image explicitly included
-            const petWithImage = {
-                ...pet,
-                image: resolvedImageUrl,
-                imageUrl: resolvedImageUrl
-            };
-
             console.log("Quick adding pet to cart with image:", {
                 petId: pet.id,
                 petName: pet.name,
                 imageUrl: resolvedImageUrl
             });
 
-            await addToCart(petWithImage, 1);
+            // Pass the entire pet object
+            await addToCart(pet, 1);
             setSnackbarOpen(true);
         } catch (error) {
             console.error("Error adding to pet bag:", error);
@@ -154,6 +143,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                 boxShadow: '0 8px 16px rgba(0,0,0,0.15)'
             }
         }}>
+            {/* Rest of the component remains unchanged */}
             {/* Quick add button that appears on hover */}
             <Box sx={{
                 position: 'absolute',
@@ -180,7 +170,6 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                     {isAdding ? <CircularProgress size={24} /> : <AddIcon />}
                 </IconButton>
             </Box>
-
 
             <Box sx={{
                 backgroundColor: '#e0e0e0',
@@ -318,11 +307,10 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                         </IconButton>
                     </Box>
 
-
                     <Button
                         variant="contained"
-                        onClick={handleAddToCart}
-                        disabled={quantity === 0 || isAdding || loading}
+                        onClick={onAdopt || handleAddToCart}
+                        disabled={(!onAdopt && quantity === 0) || isAdding || loading}
                         sx={{
                             bgcolor: '#003366',
                             '&:hover': { bgcolor: '#002244' },
@@ -339,7 +327,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                         {isAdding ? (
                             <CircularProgress size={20} sx={{ color: 'white' }} />
                         ) : (
-                            'Select Me'
+                            onAdopt ? 'Adopt Now' : 'Select Me'
                         )}
                     </Button>
                 </Box>

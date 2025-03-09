@@ -1,17 +1,9 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+import { CART_API_URL } from '../constants';
 
-const API_BASE_URL = 'http://localhost:8080/api/v1/cart';
 const CART_STORAGE_KEY = 'pet_shop_cart';
 
-// This interface matches your backend CartDTO structure
-export interface CartItemResponse {
-    id: number;
-    pet: Pet;
-    quantity: number;
-    subtotal: number;
-}
 
-// Updated Pet interface with gender property
 export interface Pet {
     id: number;
     name: string;
@@ -19,16 +11,34 @@ export interface Pet {
     price: string;
     breed: string;
     birthYear: string;
-    imageUrl: string;
+    imageUrl: string | null;
     purchased: boolean;
-    gender?: string; // Made gender optional since it might not always be available
-    [key: string]: unknown; // Allow for additional properties
+    gender?: string;
+}
+
+
+export interface CartItemResponse {
+    id: number;
+    pet: Pet;
+    quantity: number;
+    subtotal: number;
 }
 
 // New interface for the cart item deletion response
 export interface CartItemDeleteResponse {
     message: string;
     status: string;
+}
+
+// Interface for checkout response
+export interface CheckoutResponse {
+    message: string;
+    total: number;
+}
+
+// Interface for cart total response
+export interface CartTotalResponse {
+    total: number;
 }
 
 // Helper functions for local storage
@@ -44,7 +54,6 @@ const saveLocalCart = (cart: CartItemResponse[]): void => {
 // Helper to handle missing gender property
 const handleMissingGender = (pet: Pet): Pet => {
     if (!pet.gender) {
-        // Instead of using a hardcoded mapping, just mark it as unknown
         return {
             ...pet,
             gender: "Unknown"
@@ -65,8 +74,8 @@ const cartService = {
     // Get all items in cart
     getCartItems: async (): Promise<CartItemResponse[]> => {
         try {
-            const response = await axios.get(API_BASE_URL);
-            // Process items to handle missing gender
+            const response = await axios.get<CartItemResponse[]>(CART_API_URL);
+
             const processedItems = processCartItems(response.data);
             // Save to local storage as backup
             saveLocalCart(processedItems);
@@ -79,14 +88,13 @@ const cartService = {
         }
     },
 
-    // Add item to cart - matches your @PostMapping("/add/{petId}")
+    // Add item to cart - matches the @PostMapping("/add/{petId}")
     addToCart: async (petId: number, quantity: number): Promise<CartItemResponse> => {
         try {
-            const response = await axios.post(`${API_BASE_URL}/add/${petId}`, null, {
+            const response = await axios.post<CartItemResponse>(`${CART_API_URL}/add/${petId}`, null, {
                 params: { quantity }
             });
 
-            // Handle missing gender property
             const processedItem = {
                 ...response.data,
                 pet: handleMissingGender(response.data.pet)
@@ -113,7 +121,6 @@ const cartService = {
             // Try to add to local storage if API fails
             try {
                 // Fetch pet details from another API endpoint or use cached data
-                // This is a simplified version - you might need to fetch pet details separately
                 const localCart = getLocalCart();
 
                 // Check if pet already exists in local cart
@@ -123,7 +130,6 @@ const cartService = {
                     // Update quantity if pet already in cart
                     existingItem.quantity += quantity;
                     existingItem.subtotal = parseFloat(existingItem.pet.price) * existingItem.quantity;
-                    // Handle missing gender
                     existingItem.pet = handleMissingGender(existingItem.pet);
                     saveLocalCart(localCart);
                     return existingItem;
@@ -144,7 +150,7 @@ const cartService = {
                 }
             } catch {
                 console.error('Local fallback failed');
-                throw error; // Rethrow the original error
+                throw error;
             }
         }
     },
@@ -152,7 +158,7 @@ const cartService = {
     // Update cart item quantity - matches @PutMapping("/{cartItemId}")
     updateCartItemQuantity: async (cartItemId: number, quantity: number): Promise<CartItemResponse | null> => {
         try {
-            const response = await axios.put(`${API_BASE_URL}/${cartItemId}`, null, {
+            const response = await axios.put<CartItemResponse>(`${CART_API_URL}/${cartItemId}`, null, {
                 params: { quantity }
             });
 
@@ -198,7 +204,6 @@ const cartService = {
                         // Update quantity
                         itemToUpdate.quantity = quantity;
                         itemToUpdate.subtotal = parseFloat(itemToUpdate.pet.price) * quantity;
-                        // Handle missing gender
                         itemToUpdate.pet = handleMissingGender(itemToUpdate.pet);
                         saveLocalCart(localCart);
                         return itemToUpdate;
@@ -208,12 +213,13 @@ const cartService = {
             } catch {
                 console.error('Local fallback failed');
 
-                if (axios.isAxiosError(error) && error.response?.status === 204) {
+                const axiosError = error as AxiosError;
+                if (axiosError.response?.status === 204) {
                     // Item was removed (quantity was 0)
                     return null;
                 }
 
-                throw error; // Rethrow the original error
+                throw error;
             }
         }
     },
@@ -221,7 +227,7 @@ const cartService = {
     // Remove item from cart - matches @DeleteMapping("/{cartItemId}")
     removeFromCart: async (cartItemId: number): Promise<CartItemDeleteResponse> => {
         try {
-            const response = await axios.delete(`${API_BASE_URL}/${cartItemId}`);
+            const response = await axios.delete<CartItemDeleteResponse>(`${CART_API_URL}/${cartItemId}`);
 
             // Remove from local storage
             const localCart = getLocalCart();
@@ -257,7 +263,7 @@ const cartService = {
     // Clear entire cart - matches your @DeleteMapping
     clearCart: async (): Promise<void> => {
         try {
-            await axios.delete(API_BASE_URL);
+            await axios.delete(CART_API_URL);
             // Clear local storage cart
             localStorage.removeItem(CART_STORAGE_KEY);
         } catch (error) {
@@ -276,7 +282,7 @@ const cartService = {
     // Get cart total - matches the @GetMapping("/total")
     getCartTotal: async (): Promise<number> => {
         try {
-            const response = await axios.get(`${API_BASE_URL}/total`);
+            const response = await axios.get<CartTotalResponse>(`${CART_API_URL}/total`);
             return response.data.total || 0;
         } catch (error) {
             console.error('Error fetching cart total:', error);
@@ -295,22 +301,18 @@ const cartService = {
     },
 
     // Process checkout - matches the @PostMapping("/checkout")
-    checkout: async (): Promise<{ message: string; total: number }> => {
+    checkout: async (): Promise<CheckoutResponse> => {
         try {
-            const response = await axios.post(`${API_BASE_URL}/checkout`);
+            const response = await axios.post<CheckoutResponse>(`${CART_API_URL}/checkout`);
 
             // Clear local cart after successful checkout
             localStorage.removeItem(CART_STORAGE_KEY);
 
-            return {
-                message: response.data.message,
-                total: response.data.total
-            };
+            return response.data;
         } catch (error) {
             console.error('Error processing checkout:', error);
 
-            // For checkout, we don't want a local fallback that pretends checkout succeeded
-            // But we can return the calculated total for display purposes
+            // return the calculated total for display purposes
             try {
                 const localCart = getLocalCart();
                 const total = localCart.reduce((sum, item) =>
@@ -323,25 +325,24 @@ const cartService = {
         }
     },
 
-    // New method to sync local cart with server (useful after page refresh)
+    // method to sync local cart with server
     syncLocalCartWithServer: async (): Promise<void> => {
         try {
             const localCart = getLocalCart();
             if (localCart.length === 0) return;
 
             // Clear server cart first
-            await axios.delete(API_BASE_URL);
+            await axios.delete(CART_API_URL);
 
             // Add each item from local cart to server
             for (const item of localCart) {
-                await axios.post(`${API_BASE_URL}/add/${item.pet.id}`, null, {
+                await axios.post(`${CART_API_URL}/add/${item.pet.id}`, null, {
                     params: { quantity: item.quantity }
                 });
             }
 
             // Get updated cart from server
-            const response = await axios.get(API_BASE_URL);
-            // Process items to handle missing gender
+            const response = await axios.get<CartItemResponse[]>(CART_API_URL);
             const processedItems = processCartItems(response.data);
             saveLocalCart(processedItems);
         } catch (error) {

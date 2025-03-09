@@ -48,9 +48,14 @@ const globalImageCache: Record<string, string> = {};
 
 // Helper function to get image with fallbacks for different formats
 const getImageWithFallbacks = (
-    baseImageUrl: string | undefined,
+    baseImageUrl: string | undefined | null,  // Updated to accept null
     petName: string = 'pet'
 ): string => {
+    // Handle null values
+    if (baseImageUrl === null) {
+        baseImageUrl = undefined;
+    }
+
     if (!baseImageUrl || baseImageUrl.trim() === '') {
         console.log(`Empty image URL for ${petName}, using default`);
         return DEFAULT_IMAGE;
@@ -110,6 +115,7 @@ const mapCartItemResponseToCartItem = (item: CartItemResponse): CartItem => {
         petType: item.pet.petType.toLowerCase() === 'dog' ? 'dog' : 'cat',
         imageUrl: imageUrl,
         image: imageUrl, // Set both imageUrl and image for compatibility
+        gender: item.pet.gender // Include gender from the API response
     };
 
     // Log the processed pet data with image URL
@@ -366,6 +372,11 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
             // Process and cache the pet's image URL
             let imageUrl = pet.imageUrl || pet.image || '';
+            // Handle null values
+            if (imageUrl === null) {
+                imageUrl = '';
+            }
+
             if (imageUrl) {
                 imageUrl = getImageWithFallbacks(imageUrl, pet.name);
 
@@ -408,6 +419,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             setLoading(false);
         }
     }, [refreshCart, handleImageError]);
+
     const removeFromCart = useCallback(async (id: number | string) => {
         try {
             setLoading(true);
@@ -555,6 +567,11 @@ export const preloadPetImage = async (pet: Pet): Promise<string> => {
 
     // Process image URL
     let imageUrl = pet.imageUrl || pet.image || '';
+    // Handle null values
+    if (imageUrl === null) {
+        imageUrl = '';
+    }
+
     if (!imageUrl) return DEFAULT_IMAGE;
 
     imageUrl = getImageWithFallbacks(imageUrl, pet.name);
