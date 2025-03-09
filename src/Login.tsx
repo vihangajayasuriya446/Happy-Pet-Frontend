@@ -5,11 +5,23 @@ const Login: React.FC = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [emailError, setEmailError] = useState(''); // New state for email error
     const navigate = useNavigate();
 
+    const validateEmail = (email: string): boolean => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+    
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError(''); // Clear previous errors
+        setError('');
+        setEmailError(''); // Clear email error on each submit
+
+        if (!validateEmail(email)) {
+            setEmailError('Please enter a valid email address.');
+            return;
+        }
 
         try {
             const response = await fetch('http://localhost:8080/api/auth/authenticate', {
@@ -27,9 +39,9 @@ const Login: React.FC = () => {
             }
 
             const data = await response.json();
-            localStorage.setItem('token', data.token); // Store JWT token
-            localStorage.setItem('role', data.role); // Store user role
-            navigate('/'); // Redirect to home on success
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('role', data.role);
+            navigate('/');
         } catch (error) {
             console.error('Error during login:', error);
             setError('An error occurred during login. Please try again.');
@@ -46,6 +58,7 @@ const Login: React.FC = () => {
                 backgroundColor: '#f8f9fa',
                 fontFamily: 'Arial, sans-serif',
                 padding: '20px',
+                marginTop: '-70px',
             }}
         >
             <div
@@ -57,6 +70,7 @@ const Login: React.FC = () => {
                     width: '100%',
                     maxWidth: '400px',
                     textAlign: 'center',
+                    marginTop: 0,
                 }}
             >
                 <h2
@@ -65,6 +79,7 @@ const Login: React.FC = () => {
                         marginBottom: '1.5rem',
                         color: '#333',
                         fontWeight: '600',
+                        marginTop: 0,
                     }}
                 >
                     Login
@@ -83,12 +98,27 @@ const Login: React.FC = () => {
                         {error}
                     </div>
                 )}
+                {emailError && ( // Display email error
+                    <div
+                        style={{
+                            color: '#dc3545',
+                            backgroundColor: '#f8d7da',
+                            padding: '0.75rem',
+                            borderRadius: '8px',
+                            marginBottom: '1.5rem',
+                            fontSize: '0.9rem',
+                        }}
+                    >
+                        {emailError}
+                    </div>
+                )}
                 <form
                     onSubmit={handleLogin}
                     style={{
                         display: 'flex',
                         flexDirection: 'column',
                         gap: '1.25rem',
+                        marginTop: 0,
                     }}
                 >
                     <input
