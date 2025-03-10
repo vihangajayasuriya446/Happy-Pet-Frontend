@@ -103,7 +103,7 @@ const OwnerTable: React.FC = () => {
             ) : (
               <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell component="th" scope="row" colSpan={5} align="center" sx={{ padding: '20px', fontWeight: 'bold', color: 'grey' }}>
-                  No Owners Found
+                  No Requests Found
                 </TableCell>
               </TableRow>
             )}
