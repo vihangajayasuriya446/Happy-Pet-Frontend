@@ -1,31 +1,31 @@
-import React, { useEffect, useState } from 'react';
+// UserDetailsForm.tsx
+import React, { useState, useEffect } from 'react';
 import {
-    Button,
-    FormLabel,
     Box,
-    Input,
-    Typography,
-    Select,
-    MenuItem,
-    Card,
-    CardContent,
-    Switch,
-    FormControlLabel,
-    InputAdornment,
-    IconButton,
     TextField,
+    Button,
+    Grid,
+    Paper,
+    Typography
 } from '@mui/material';
-import { UserDetails } from './types';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+
+// Export the UserDetails interface so it can be imported elsewhere
+export interface UserDetails {
+    user_id?: number;
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    message: string;
+}
 
 interface UserDetailsFormProps {
-    addUser: (user: UserDetails) => void;
-    updateUser: (user: UserDetails) => void;
+    addUser: (user: Omit<UserDetails, 'user_id'>) => Promise<void>;
+    updateUser: (user: UserDetails) => Promise<void>;
     submitted: boolean;
-    data?: UserDetails;
+    data: UserDetails | null;
     isEdit: boolean;
     resetForm: () => void;
-    includeRegisteredDate?: boolean;
 }
 
 const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
@@ -34,222 +34,215 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
                                                              submitted,
                                                              data,
                                                              isEdit,
-                                                             resetForm,
-                                                             includeRegisteredDate = true,
+                                                             resetForm
                                                          }) => {
-    const [user_id, setUserId] = useState<number>(0);
-    const [name, setName] = useState<string>('');
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const [showPassword, setShowPassword] = useState<boolean>(false);
-    const [phone, setPhone] = useState<string>('');
-    const [address, setAddress] = useState<string>('');
-    const [role, setRole] = useState<string>('USER');
-    const [active, setActive] = useState<boolean>(true);
-    const [registered_date, setRegisteredDate] = useState<string>(
-        new Date().toISOString().split('T')[0]
-    );
-
-    // Theme colors
-    const themeColor = '#002855';
-
-    useEffect(() => {
-        if (submitted || !isEdit) {
-            resetFormState();
-        }
-    }, [submitted, isEdit]);
-
-    useEffect(() => {
-        if (isEdit && data) {
-            populateForm(data);
-        }
-    }, [data, isEdit]);
-
-    const resetFormState = () => {
-        setUserId(0);
-        setName('');
-        setEmail('');
-        setPassword('');
-        setPhone('');
-        setAddress('');
-        setRole('USER');
-        setActive(true);
-        setRegisteredDate(new Date().toISOString().split('T')[0]);
-        resetForm();
+    const initialFormState: UserDetails = {
+        name: '',
+        email: '',
+        phone: '',
+        address: '',
+        message: ''
     };
 
-    const populateForm = (data: UserDetails) => {
-        setUserId(data.user_id);
-        setName(data.name);
-        setEmail(data.email);
-        setPassword('');
-        setPhone(data.phone || '');
-        setAddress(data.address || '');
-        setRole(data.role);
-        setActive(data.active);
-        setRegisteredDate(
-            data.registered_date
-                ? new Date(data.registered_date).toISOString().split('T')[0]
-                : new Date().toISOString().split('T')[0]
-        );
-    };
+    const [formData, setFormData] = useState<UserDetails>(initialFormState);
+    const [errors, setErrors] = useState<Partial<Record<keyof UserDetails, string>>>({});
 
-    const handleSubmit = () => {
-        const userData: UserDetails = {
-            user_id,
-            name,
-            email,
-            password: password || undefined,
-            phone,
-            address,
-            role,
-            active,
-            registered_date,
-        };
+    // Reset form when submitted is true
+    useEffect(() => {
+        if (submitted) {
+            setFormData(initialFormState);
+            setErrors({});
+        }
+    }, [submitted]);
 
-        if (isEdit) {
-            updateUser(userData);
+    // Update form data when editing an existing user
+    useEffect(() => {
+        if (data) {
+            setFormData(data);
         } else {
-            addUser(userData);
+            setFormData(initialFormState);
+        }
+    }, [data]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+
+        // Clear error when field is modified
+        if (errors[name as keyof UserDetails]) {
+            setErrors(prev => ({
+                ...prev,
+                [name]: ''
+            }));
         }
     };
 
-    const handleClickShowPassword = () => {
-        setShowPassword(!showPassword);
+    const validateForm = (): boolean => {
+        const newErrors: Partial<Record<keyof UserDetails, string>> = {};
+
+        if (!formData.name.trim()) {
+            newErrors.name = 'Name is required';
+        }
+
+        if (!formData.email.trim()) {
+            newErrors.email = 'Email is required';
+        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+            newErrors.email = 'Email is invalid';
+        }
+
+        if (!formData.phone.trim()) {
+            newErrors.phone = 'Phone number is required';
+        }
+
+        if (!formData.message.trim()) {
+            newErrors.message = 'Message is required';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
 
-    const isFormValid = () => {
-        // Basic validation
-        if (!name || !email) return false;
-        if (!isEdit && !password) return false;
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
 
-        // Email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) return false;
+        if (!validateForm()) {
+            return;
+        }
 
-        return true;
+        if (isEdit && formData.user_id) {
+            await updateUser(formData);
+        } else {
+            await addUser(formData);
+        }
     };
 
-    // Common style for form labels with reduced boldness
-    const labelStyle = { color: themeColor, fontWeight: 'normal' };
+    const handleCancel = () => {
+        resetForm();
+        setFormData(initialFormState);
+        setErrors({});
+    };
 
     return (
-        <Card sx={{ maxWidth: 600, margin: 'auto', mt: 4, boxShadow: 3 }}>
-            <CardContent>
-                <Typography variant="h5" sx={{ mb: 3, color: themeColor, fontWeight: 'bold', textAlign: 'center' }}>
-                    {isEdit ? 'Edit User' : 'Add a New User'}
-                </Typography>
+        <Paper elevation={3} sx={{ p: 3, borderRadius: '8px', bgcolor: '#f9f9f9' }}>
+            <Typography variant="h6" gutterBottom>
+                {isEdit ? 'Edit Contact Information' : 'Contact Information'}
+            </Typography>
 
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <Box>
-                        <FormLabel sx={labelStyle}>Name*</FormLabel>
-                        <Input fullWidth value={name} onChange={(e) => setName(e.target.value)} />
-                    </Box>
-
-                    <Box>
-                        <FormLabel sx={labelStyle}>Email*</FormLabel>
-                        <Input
+            <Box component="form" onSubmit={handleSubmit} noValidate>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                        <TextField
+                            required
                             fullWidth
+                            id="name"
+                            name="name"
+                            label="Name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            error={!!errors.name}
+                            helperText={errors.name}
+                            margin="normal"
+                            variant="outlined"
+                        />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                        <TextField
+                            required
+                            fullWidth
+                            id="email"
+                            name="email"
+                            label="Email"
                             type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            value={formData.email}
+                            onChange={handleChange}
+                            error={!!errors.email}
+                            helperText={errors.email}
+                            margin="normal"
+                            variant="outlined"
                         />
-                    </Box>
+                    </Grid>
 
-                    <Box>
-                        <FormLabel sx={labelStyle}>
-                            {isEdit ? 'Password (leave blank to keep unchanged)' : 'Password*'}
-                        </FormLabel>
-                        <Input
+                    <Grid item xs={12} sm={6}>
+                        <TextField
+                            required
                             fullWidth
-                            type={showPassword ? 'text' : 'password'}
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            endAdornment={
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        aria-label="toggle password visibility"
-                                        onClick={handleClickShowPassword}
-                                        edge="end"
-                                    >
-                                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                                    </IconButton>
-                                </InputAdornment>
-                            }
+                            id="phone"
+                            name="phone"
+                            label="Phone Number"
+                            value={formData.phone}
+                            onChange={handleChange}
+                            error={!!errors.phone}
+                            helperText={errors.phone}
+                            margin="normal"
+                            variant="outlined"
                         />
-                    </Box>
+                    </Grid>
 
-                    <Box>
-                        <FormLabel sx={labelStyle}>Phone</FormLabel>
-                        <Input fullWidth value={phone} onChange={(e) => setPhone(e.target.value)} />
-                    </Box>
-
-                    <Box>
-                        <FormLabel sx={labelStyle}>Address</FormLabel>
-                        <Input
+                    <Grid item xs={12} sm={6}>
+                        <TextField
                             fullWidth
+                            id="address"
+                            name="address"
+                            label="Address"
+                            value={formData.address}
+                            onChange={handleChange}
+                            error={!!errors.address}
+                            helperText={errors.address}
+                            margin="normal"
+                            variant="outlined"
+                        />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                        <TextField
+                            required
+                            fullWidth
+                            id="message"
+                            name="message"
+                            label="Message"
                             multiline
-                            rows={2}
-                            value={address}
-                            onChange={(e) => setAddress(e.target.value)}
+                            rows={4}
+                            value={formData.message}
+                            onChange={handleChange}
+                            error={!!errors.message}
+                            helperText={errors.message}
+                            margin="normal"
+                            variant="outlined"
                         />
-                    </Box>
+                    </Grid>
+                </Grid>
 
-                    <Box>
-                        <FormLabel sx={labelStyle}>Role</FormLabel>
-                        <Select fullWidth value={role} onChange={(e) => setRole(e.target.value as string)}>
-                            <MenuItem value="USER">User</MenuItem>
-                            <MenuItem value="ADMIN">Admin</MenuItem>
-                        </Select>
-                    </Box>
-
-                    {includeRegisteredDate && (
-                        <Box>
-                            <FormLabel sx={labelStyle}>Registered Date</FormLabel>
-                            <TextField
-                                fullWidth
-                                type="date"
-                                value={registered_date}
-                                onChange={(e) => setRegisteredDate(e.target.value)}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                            />
-                        </Box>
+                <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+                    {isEdit && (
+                        <Button
+                            variant="outlined"
+                            color="secondary"
+                            onClick={handleCancel}
+                        >
+                            Cancel
+                        </Button>
                     )}
 
-                    <Box>
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={active}
-                                    onChange={(e) => setActive(e.target.checked)}
-                                    color="primary"
-                                />
-                            }
-                            label="Active Account"
-                        />
-                    </Box>
-
                     <Button
+                        type="submit"
                         variant="contained"
-                        onClick={handleSubmit}
-                        disabled={!isFormValid()}
+                        color="primary"
                         sx={{
-                            mt: 2,
-                            textTransform: 'none',
-                            borderRadius: '4px',
-                            bgcolor: themeColor,
+                            bgcolor: '#003366',
                             '&:hover': {
-                                bgcolor: '#001c3d',
-                            },
+                                bgcolor: '#002244',
+                            }
                         }}
                     >
-                        {isEdit ? 'Update User' : 'Add User'}
+                        {isEdit ? 'Update' : 'Submit'}
                     </Button>
                 </Box>
-            </CardContent>
-        </Card>
+            </Box>
+        </Paper>
     );
 };
 

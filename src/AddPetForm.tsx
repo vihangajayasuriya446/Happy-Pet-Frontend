@@ -21,9 +21,11 @@ import {
     SelectChangeEvent,
     Alert,
     Snackbar,
-    Divider
+    Divider,
+    CircularProgress
 } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
+import { UserDetails } from './components/types';
 
 interface PetData {
     id: string;
@@ -38,6 +40,7 @@ interface PetData {
 }
 
 const API_BASE_URL = 'http://localhost:8080/api/v1/pets';
+const USER_API_URL = 'http://localhost:8080/api/v1/users';
 
 const AddPetForm = () => {
     const [formData, setFormData] = useState<PetData>({
@@ -52,18 +55,22 @@ const AddPetForm = () => {
     });
 
     const [pets, setPets] = useState<PetData[]>([]);
+    const [users, setUsers] = useState<UserDetails[]>([]);
     const [previewUrl, setPreviewUrl] = useState<string>('');
     const [editMode, setEditMode] = useState(false);
     const [editIndex, setEditIndex] = useState<number | null>(null);
     const [snackbar, setSnackbar] = useState({
         open: false,
         message: '',
-        severity: 'success' as 'success' | 'error'
+        severity: 'success' as 'success' | 'error' | 'info' | 'warning'
     });
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    // Fetch pets on component mount
+    // Fetch pets and users on component mount
     useEffect(() => {
         fetchPets();
+        fetchUsers();
     }, []);
 
     const fetchPets = async () => {
@@ -73,6 +80,20 @@ const AddPetForm = () => {
         } catch (error) {
             console.error('Error fetching pets:', error);
             showSnackbar('Error fetching pets', 'error');
+        }
+    };
+
+    const fetchUsers = async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const response = await axios.get(USER_API_URL);
+            setUsers(response.data);
+        } catch (error) {
+            console.error('Error fetching users:', error);
+            setError('Failed to load users. Please try again.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -102,7 +123,7 @@ const AddPetForm = () => {
         }
     };
 
-    const showSnackbar = (message: string, severity: 'success' | 'error') => {
+    const showSnackbar = (message: string, severity: 'success' | 'error' | 'info' | 'warning') => {
         setSnackbar({
             open: true,
             message,
@@ -172,6 +193,23 @@ const AddPetForm = () => {
         }
     };
 
+    const handleUserEdit = (user: UserDetails) => {
+        // This would typically open a modal or navigate to edit user page
+        console.log('Edit user:', user);
+        showSnackbar('User edit functionality not implemented in this view', 'info');
+    };
+
+    const handleUserDelete = async (user: UserDetails) => {
+        try {
+            await axios.delete(`${USER_API_URL}/${user.user_id}`);
+            showSnackbar('User deleted successfully', 'success');
+            fetchUsers();
+        } catch (error) {
+            console.error('Error deleting user:', error);
+            showSnackbar('Error deleting user', 'error');
+        }
+    };
+
     const resetForm = () => {
         setFormData({
             id: '',
@@ -213,6 +251,9 @@ const AddPetForm = () => {
             borderBottomColor: '#003366',
         }
     };
+
+    // Theme color for user table
+    const themeColor = '#002855';
 
     return (
         <Box
@@ -462,7 +503,23 @@ const AddPetForm = () => {
                 </CardContent>
             </Card>
 
-            {/* Enhanced Table */}
+            {/* Section Title for Pets Table */}
+            <Typography
+                variant="h6"
+                component="h3"
+                sx={{
+                    width: '100%',
+                    mt: 4,
+                    mb: 2,
+                    color: '#003366',
+                    fontWeight: 'bold',
+                    textAlign: 'left'
+                }}
+            >
+                Pets Inventory
+            </Typography>
+
+            {/* Enhanced Pets Table */}
             <TableContainer
                 component={Paper}
                 sx={{
@@ -488,78 +545,193 @@ const AddPetForm = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {pets.map((pet, index) => (
-                            <TableRow
-                                key={pet.id}
-                                sx={{
-                                    '&:nth-of-type(odd)': { backgroundColor: '#f9f9f9' },
-                                    '&:hover': { backgroundColor: '#f0f7ff' }
-                                }}
-                            >
-                                <TableCell>{pet.id}</TableCell>
-                                <TableCell>{pet.name}</TableCell>
-                                <TableCell>{pet.petType}</TableCell>
-                                <TableCell sx={{ fontWeight: 'medium' }}>{formatPrice(pet.price)}</TableCell>
-                                <TableCell>{pet.breed}</TableCell>
-                                <TableCell>{pet.birthYear}</TableCell>
-                                <TableCell>{pet.gender}</TableCell>
-                                <TableCell>
-                                    {pet.imageUrl && (
-                                        <img
-                                            src={pet.imageUrl}
-                                            alt={pet.name}
-                                            style={{
-                                                width: '60px',
-                                                height: '60px',
-                                                objectFit: 'cover',
-                                                borderRadius: '8px',
-                                                border: '1px solid #e0e0e0'
-                                            }}
-                                        />
-                                    )}
-                                </TableCell>
-                                <TableCell>
-                                    <Box sx={{ display: 'flex', gap: 1 }}>
-                                        <Button
-                                            variant="contained"
-                                            size="small"
-                                            sx={{
-                                                backgroundColor: '#003366',
-                                                '&:hover': {
-                                                    backgroundColor: '#002244'
-                                                },
-                                                '&:focus': {
-                                                    boxShadow: '0 0 0 3px rgba(0, 51, 102, 0.3)'
-                                                },
-                                                borderRadius: '6px'
-                                            }}
-                                            onClick={() => handleUpdate(index)}
-                                        >
-                                            Update
-                                        </Button>
-                                        <Button
-                                            variant="contained"
-                                            size="small"
-                                            sx={{
-                                                backgroundColor: '#DC3545',
-                                                '&:hover': {
-                                                    backgroundColor: '#BB2D3B'
-                                                },
-                                                '&:focus': {
-                                                    boxShadow: '0 0 0 3px rgba(220, 53, 69, 0.3)'
-                                                },
-                                                borderRadius: '6px'
-                                            }}
-                                            onClick={() => handleDelete(pet.id)}
-                                        >
-                                            Delete
-                                        </Button>
-                                    </Box>
+                        {pets.length > 0 ? (
+                            pets.map((pet, index) => (
+                                <TableRow
+                                    key={pet.id}
+                                    sx={{
+                                        '&:nth-of-type(odd)': { backgroundColor: '#f9f9f9' },
+                                        '&:hover': { backgroundColor: '#f0f7ff' }
+                                    }}
+                                >
+                                    <TableCell>{pet.id}</TableCell>
+                                    <TableCell>{pet.name}</TableCell>
+                                    <TableCell>{pet.petType}</TableCell>
+                                    <TableCell sx={{ fontWeight: 'medium' }}>{formatPrice(pet.price)}</TableCell>
+                                    <TableCell>{pet.breed}</TableCell>
+                                    <TableCell>{pet.birthYear}</TableCell>
+                                    <TableCell>{pet.gender}</TableCell>
+                                    <TableCell>
+                                        {pet.imageUrl && (
+                                            <img
+                                                src={pet.imageUrl}
+                                                alt={pet.name}
+                                                style={{
+                                                    width: '60px',
+                                                    height: '60px',
+                                                    objectFit: 'cover',
+                                                    borderRadius: '8px',
+                                                    border: '1px solid #e0e0e0'
+                                                }}
+                                            />
+                                        )}
+                                    </TableCell>
+                                    <TableCell>
+                                        <Box sx={{ display: 'flex', gap: 1 }}>
+                                            <Button
+                                                variant="contained"
+                                                size="small"
+                                                sx={{
+                                                    backgroundColor: '#003366',
+                                                    '&:hover': {
+                                                        backgroundColor: '#002244'
+                                                    },
+                                                    '&:focus': {
+                                                        boxShadow: '0 0 0 3px rgba(0, 51, 102, 0.3)'
+                                                    },
+                                                    borderRadius: '6px'
+                                                }}
+                                                onClick={() => handleUpdate(index)}
+                                            >
+                                                Update
+                                            </Button>
+                                            <Button
+                                                variant="contained"
+                                                size="small"
+                                                sx={{
+                                                    backgroundColor: '#DC3545',
+                                                    '&:hover': {
+                                                        backgroundColor: '#BB2D3B'
+                                                    },
+                                                    '&:focus': {
+                                                        boxShadow: '0 0 0 3px rgba(220, 53, 69, 0.3)'
+                                                    },
+                                                    borderRadius: '6px'
+                                                }}
+                                                onClick={() => handleDelete(pet.id)}
+                                            >
+                                                Delete
+                                            </Button>
+                                        </Box>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={9} align="center" sx={{ py: 4 }}>
+                                    <Typography variant="body1" color="textSecondary">
+                                        No pets found.
+                                    </Typography>
                                 </TableCell>
                             </TableRow>
-                        ))}
+                        )}
                     </TableBody>
                 </Table>
+            </TableContainer>
+
+            {/* Section Title for Users Table */}
+            <Typography
+                variant="h6"
+                component="h3"
+                sx={{
+                    width: '100%',
+                    mt: 4,
+                    mb: 2,
+                    color: themeColor,
+                    fontWeight: 'bold',
+                    textAlign: 'left'
+                }}
+            >
+                Registered Users
+            </Typography>
+
+            {/* Users Table */}
+            <TableContainer component={Paper} sx={{ borderRadius: '8px', boxShadow: 3, width: '100%' }}>
+                {isLoading ? (
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
+                        <CircularProgress />
+                    </Box>
+                ) : error ? (
+                    <Box sx={{ padding: '2rem', textAlign: 'center' }}>
+                        <Typography color="error">{error}</Typography>
+                        <Button
+                            variant="contained"
+                            sx={{
+                                mt: 2,
+                                bgcolor: themeColor,
+                                '&:hover': {
+                                    bgcolor: '#001c3d',
+                                }
+                            }}
+                            onClick={() => fetchUsers()}
+                        >
+                            Try Again
+                        </Button>
+                    </Box>
+                ) : (
+                    <Table>
+                        <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
+                            <TableRow>
+                                <TableCell sx={{ fontWeight: 'bold', color: themeColor, textAlign: 'center' }}>ID</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', color: themeColor, textAlign: 'center' }}>Name</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', color: themeColor, textAlign: 'center' }}>Email</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', color: themeColor, textAlign: 'center' }}>Phone</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', color: themeColor, textAlign: 'center' }}>Address</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', color: themeColor, textAlign: 'center' }}>Registered Date</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', color: themeColor, textAlign: 'center' }}>Actions</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {users.length > 0 ? (
+                                users.map((user) => (
+                                    <TableRow key={user.user_id} sx={{ '&:nth-of-type(odd)': { backgroundColor: '#f9f9f9' } }}>
+                                        <TableCell sx={{ textAlign: 'center' }}>{user.user_id}</TableCell>
+                                        <TableCell sx={{ textAlign: 'center' }}>{user.name}</TableCell>
+                                        <TableCell sx={{ textAlign: 'center' }}>{user.email}</TableCell>
+                                        <TableCell sx={{ textAlign: 'center' }}>{user.phone}</TableCell>
+                                        <TableCell sx={{ textAlign: 'center' }}>{user.address}</TableCell>
+                                        <TableCell sx={{ textAlign: 'center' }}>
+                                            {new Date(user.registered_date).toLocaleDateString()}
+                                        </TableCell>
+                                        <TableCell sx={{ textAlign: 'center' }}>
+                                            <Button
+                                                variant="contained"
+                                                sx={{
+                                                    marginRight: 1,
+                                                    textTransform: 'none',
+                                                    borderRadius: '4px',
+                                                    bgcolor: themeColor,
+                                                    '&:hover': {
+                                                        bgcolor: '#001c3d',
+                                                    },
+                                                }}
+                                                onClick={() => handleUserEdit(user)}
+                                            >
+                                                Edit
+                                            </Button>
+                                            <Button
+                                                variant="contained"
+                                                color="error"
+                                                sx={{ textTransform: 'none', borderRadius: '4px' }}
+                                                onClick={() => handleUserDelete(user)}
+                                            >
+                                                Delete
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={7} align="center" sx={{ py: 4 }}>
+                                        <Typography variant="body1" color="textSecondary">
+                                            No users found.
+                                        </Typography>
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                )}
             </TableContainer>
 
             <Snackbar

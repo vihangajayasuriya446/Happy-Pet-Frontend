@@ -5,11 +5,11 @@ export interface UserDetails {
     password?: string;
     phone?: string;
     address?: string;
+    message?: string; // Added message field for contact form
     role: string;
     active: boolean;
     registered_date: string;
 }
-
 
 export interface Pet {
     id: number;
@@ -58,4 +58,13 @@ export interface CheckoutResponse {
     message: string;
     total: number;
     orderId?: number;
+}
+
+// Contact form specific interface (optional, for clearer typing)
+export interface ContactFormData {
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    message: string;
 }

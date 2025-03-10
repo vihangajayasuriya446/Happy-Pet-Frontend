@@ -8,15 +8,18 @@ import {
     IconButton,
     Snackbar,
     Alert,
-    CircularProgress
+    CircularProgress,
+    Divider
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import EmailIcon from "@mui/icons-material/Email";
 import { useCart } from "../contexts/CartContext";
 import { Pet } from "../App"; // Import from App instead of ./types
+import { useNavigate } from "react-router-dom";
 
 interface PetCardProps {
-    pet: Pet;
+    pet: Pet & { enableContactOwner?: boolean }; // Extend Pet type to include enableContactOwner flag
     onAdopt?: () => void;
 }
 
@@ -27,6 +30,7 @@ const formatPriceLKR = (price: number | string): string => {
 };
 
 const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
+    const navigate = useNavigate();
     const [quantity, setQuantity] = useState(0);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [isAdding, setIsAdding] = useState(false);
@@ -83,6 +87,19 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                 setIsAdding(false);
             }
         }
+    };
+
+    // Handler for "Contact the owner" button - updated to pass pet information
+    const handleContactOwner = () => {
+        navigate('/contact-owner/' + pet.id, {
+            state: {
+                petId: pet.id,
+                petName: pet.name,
+                petBreed: pet.breed,
+                petPrice: pet.price,
+                petImage: resolvedImageUrl
+            }
+        });
     };
 
     const handleCloseSnackbar = () => {
@@ -143,7 +160,6 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                 boxShadow: '0 8px 16px rgba(0,0,0,0.15)'
             }
         }}>
-            {/* Rest of the component remains unchanged */}
             {/* Quick add button that appears on hover */}
             <Box sx={{
                 position: 'absolute',
@@ -256,6 +272,31 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                 >
                     Birth {pet.birthYear} ({calculateAge()} years old)
                 </Typography>
+
+                {/* Contact owner button - only show if enableContactOwner is true or undefined (default behavior) */}
+                {(pet.enableContactOwner !== false) && (
+                    <>
+                        <Button
+                            variant="outlined"
+                            startIcon={<EmailIcon />}
+                            onClick={handleContactOwner}
+                            fullWidth
+                            sx={{
+                                mt: 1,
+                                mb: 2,
+                                borderColor: '#003366',
+                                color: '#003366',
+                                '&:hover': {
+                                    borderColor: '#002244',
+                                    backgroundColor: 'rgba(0, 51, 102, 0.04)'
+                                }
+                            }}
+                        >
+                            Contact the owner
+                        </Button>
+                        <Divider sx={{ my: 1 }} />
+                    </>
+                )}
 
                 {/* Spacer to push controls to bottom */}
                 <Box sx={{ flexGrow: 1 }} />

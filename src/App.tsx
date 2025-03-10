@@ -7,6 +7,8 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import DrawerMenu from "./components/DrawerMenu";
 import Cart from "./components/Cart";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import UserDetailsDashboard from "./components/UserDetailsDashboard";
 
 // Types definitions with gender field added
 export interface Pet {
@@ -218,12 +220,19 @@ const AppContent: React.FC = () => {
     );
 };
 
-// Main App component that provides the cart context
+// Main App component with routing
 const App: React.FC = () => {
     return (
-        <CartProvider>
-            <AppContent />
-        </CartProvider>
+        <Router>
+            <CartProvider>
+                <Routes>
+                    <Route path="/" element={<AppContent />} />
+                    <Route path="/contact-owner/:petId" element={<UserDetailsDashboard />} />
+                    <Route path="/contact" element={<UserDetailsDashboard />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+            </CartProvider>
+        </Router>
     );
 };
 

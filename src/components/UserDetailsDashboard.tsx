@@ -1,118 +1,86 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Button, Snackbar, Alert, Typography, Paper } from '@mui/material';
-import UserDetailsTable from './UserDetailsTable';
-import UserDetailsForm from './UserDetailsForm';
+import React, { useState } from 'react';
+import {
+    Box,
+    Button,
+    Snackbar,
+    Alert,
+    Typography,
+    Paper,
+    CircularProgress
+} from '@mui/material';
+import UserDetailsForm, { UserDetails } from './UserDetailsForm';
 import { useNavigate } from 'react-router-dom';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import { UserService, UserDetails } from '../services/UserService';
+
+// Define interfaces
+interface SnackbarState {
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error';
+}
 
 const UserDetailsDashboard: React.FC = () => {
     const navigate = useNavigate();
-    const [users, setUsers] = useState<UserDetails[]>([]);
-    const [isEdit, setIsEdit] = useState<boolean>(false);
     const [selectedUser, setSelectedUser] = useState<UserDetails | null>(null);
     const [submitted, setSubmitted] = useState<boolean>(false);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-    const [snackbar, setSnackbar] = useState<{open: boolean, message: string, severity: 'success' | 'error'}>({
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [snackbar, setSnackbar] = useState<SnackbarState>({
         open: false,
         message: '',
         severity: 'success'
     });
 
-    // Fetch users on component mount
-    useEffect(() => {
-        fetchUsers();
-    }, []);
-
-    // Fetch all users from the API
-    const fetchUsers = async () => {
+    const addUser = async (formData: Omit<UserDetails, 'user_id'>) => {
         setIsLoading(true);
         try {
-            const fetchedUsers = await UserService.getAllUsers();
-            setUsers(fetchedUsers);
-            setError(null);
-        } catch (err) {
-            setError("Failed to load users. Please try again later.");
-            console.error("Error fetching users:", err);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+            // Here you would normally call your API service
+            // For example: await UserService.createUser(formData);
+            console.log('Adding user with data:', formData); // Use formData to remove the warning
 
-    // Add a user
-    const addUser = async (data: Omit<UserDetails, 'user_id'>) => {
-        setIsLoading(true);
-        try {
-            const newUser = await UserService.createUser(data);
-            setUsers([...users, newUser]);
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
             setSubmitted(true);
-            showSnackbar('User added successfully', 'success');
+            showSnackbar('Your message has been sent successfully', 'success');
             setTimeout(() => setSubmitted(false), 100);
         } catch (err) {
-            setError("Failed to add user");
-            showSnackbar('Failed to add user', 'error');
-            console.error("Error adding user:", err);
+            showSnackbar('Failed to send message', 'error');
+            console.error("Error sending message:", err);
         } finally {
             setIsLoading(false);
         }
     };
 
-    // Update a user
-    const updateUser = async (data: UserDetails) => {
+    const updateUser = async (formData: UserDetails) => {
         setIsLoading(true);
         try {
-            const updatedUser = await UserService.updateUser(data);
-            setUsers(users.map(user => user.user_id === updatedUser.user_id ? updatedUser : user));
+            // Here you would normally call your API service
+            // For example: await UserService.updateUser(formData);
+            console.log('Updating user with data:', formData); // Use formData to remove the warning
+
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
             setSubmitted(true);
-            setIsEdit(false);
-            showSnackbar('User updated successfully', 'success');
+            showSnackbar('Information updated successfully', 'success');
             setTimeout(() => setSubmitted(false), 100);
         } catch (err) {
-            setError("Failed to update user");
-            showSnackbar('Failed to update user', 'error');
-            console.error("Error updating user:", err);
+            showSnackbar('Failed to update information', 'error');
+            console.error("Error updating information:", err);
         } finally {
             setIsLoading(false);
         }
-    };
-
-    // Delete a user
-    const deleteUser = async (user: UserDetails) => {
-        if (window.confirm(`Are you sure you want to delete ${user.name}?`)) {
-            setIsLoading(true);
-            try {
-                await UserService.deleteUser(user.user_id);
-                setUsers(users.filter(u => u.user_id !== user.user_id));
-                showSnackbar('User deleted successfully', 'success');
-            } catch (err) {
-                setError("Failed to delete user");
-                showSnackbar('Failed to delete user', 'error');
-                console.error("Error deleting user:", err);
-            } finally {
-                setIsLoading(false);
-            }
-        }
-    };
-
-    // Handle selecting a user for editing
-    const handleSelectUser = (user: UserDetails) => {
-        setSelectedUser(user);
-        setIsEdit(true);
-    };
-
-    // Reset the form
-    const resetForm = () => {
-        setSelectedUser(null);
-        setIsEdit(false);
-        setSubmitted(false);
     };
 
     const goToPetManagementDashboard = () => {
         navigate('/admin/pets');
     };
 
-    // Show snackbar notification
+    const resetForm = () => {
+        setSelectedUser(null);
+        setSubmitted(false);
+    };
+
     const showSnackbar = (message: string, severity: 'success' | 'error') => {
         setSnackbar({
             open: true,
@@ -121,14 +89,12 @@ const UserDetailsDashboard: React.FC = () => {
         });
     };
 
-    // Handle closing the snackbar
     const handleCloseSnackbar = () => {
-        setSnackbar({...snackbar, open: false});
+        setSnackbar(prev => ({ ...prev, open: false }));
     };
 
     return (
         <Box sx={{ width: '100%', margin: 'auto', p: 2 }}>
-
             <Paper
                 elevation={3}
                 sx={{
@@ -149,9 +115,8 @@ const UserDetailsDashboard: React.FC = () => {
                         width: '100%'
                     }}
                 >
-                    User Management Dashboard
+                    Contact Us
                 </Typography>
-
 
                 <Box sx={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)' }}>
                     <Button
@@ -176,26 +141,21 @@ const UserDetailsDashboard: React.FC = () => {
                 </Box>
             </Paper>
 
-            <UserDetailsForm
-                addUser={addUser}
-                updateUser={updateUser}
-                submitted={submitted}
-                data={selectedUser || undefined}
-                isEdit={isEdit}
-                resetForm={resetForm}
-                includeRegisteredDate={true}
-            />
-            <Box sx={{ mt: 4 }}>
-                <UserDetailsTable
-                    rows={users}
-                    selectedUser={handleSelectUser}
-                    deleteUser={deleteUser}
-                    isLoading={isLoading}
-                    error={error}
+            {isLoading ? (
+                <Box display="flex" justifyContent="center" my={4}>
+                    <CircularProgress />
+                </Box>
+            ) : (
+                <UserDetailsForm
+                    addUser={addUser}
+                    updateUser={updateUser}
+                    submitted={submitted}
+                    data={selectedUser}
+                    isEdit={!!selectedUser}
+                    resetForm={resetForm}
                 />
-            </Box>
+            )}
 
-            {/* Snackbar for notifications */}
             <Snackbar
                 open={snackbar.open}
                 autoHideDuration={6000}

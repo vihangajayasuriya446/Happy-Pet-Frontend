@@ -21,8 +21,9 @@ interface PetListProps {
     searchQuery?: string;
     petType?: string;
     birthYear?: string;
-    PetCardComponent?: React.ComponentType<{ pet: Pet; onAdopt?: () => void }>;
+    PetCardComponent?: React.FC<{ pet: Pet; onAdopt?: () => void }>;
     isAdminView?: boolean;
+    enableContactOwner?: boolean; // New prop to control contact owner button visibility
 }
 
 const API_BASE_URL = 'http://localhost:8080';
@@ -32,8 +33,15 @@ const PETS_API_URL = `${API_BASE_URL}/api/v1/pets`;
 const PetCardWithHoverImage: React.FC<{
     pet: Pet;
     onAdopt?: () => void;
-    CardComponent: React.ComponentType<{ pet: Pet; onAdopt?: () => void }>;
-}> = ({ pet, onAdopt, CardComponent }) => {
+    CardComponent: React.FC<{ pet: Pet; onAdopt?: () => void }>;
+    enableContactOwner?: boolean; // Add this prop
+}> = ({ pet, onAdopt, CardComponent, enableContactOwner }) => {
+    // Create a new pet object with the enableContactOwner flag
+    const petWithContactFlag = {
+        ...pet,
+        enableContactOwner: enableContactOwner
+    };
+
     return (
         <Box
             sx={{
@@ -53,7 +61,7 @@ const PetCardWithHoverImage: React.FC<{
                 }
             }}
         >
-            <CardComponent pet={pet} onAdopt={onAdopt} />
+            <CardComponent pet={petWithContactFlag} onAdopt={onAdopt} />
         </Box>
     );
 };
@@ -63,7 +71,8 @@ const PetList: React.FC<PetListProps> = ({
                                              petType = 'all',
                                              birthYear = 'all',
                                              PetCardComponent,
-                                             isAdminView = false
+                                             isAdminView = false,
+                                             enableContactOwner = true // Default to true for backward compatibility
                                          }) => {
     const [petsData, setPetsData] = useState<PetDTO[]>([]);
     const [loading, setLoading] = useState(true);
@@ -252,6 +261,7 @@ const PetList: React.FC<PetListProps> = ({
                             // Only pass onAdopt if this is admin view
                             onAdopt={isAdminView ? () => handleAdopt(petDTO) : undefined}
                             CardComponent={CardComponent}
+                            enableContactOwner={enableContactOwner} // Pass the enableContactOwner prop
                         />
                     </Grid>
                 );
