@@ -1,15 +1,30 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Alert, TextField, Button, Typography, Container } from '@mui/material';
+import { 
+  Box, 
+  Alert, 
+  TextField, 
+  Button, 
+  Typography, 
+  Container 
+} from '@mui/material';
 
 const OwnerForm: React.FC = () => {
   const [owner, setOwner] = useState({ ownerName: '', address: '', contactNumber: '' });
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<boolean>(false); // State for success message
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSuccess(false); // Reset success message
+
+    // Input Validation
+    if (owner.contactNumber.length !== 10 || isNaN(Number(owner.contactNumber))) {
+      setError('Contact Number must be 10 digits.');
+      return; 
+    }
 
     try {
       const response = await fetch('http://localhost:8080/api/v1/addowner', {
@@ -21,9 +36,9 @@ const OwnerForm: React.FC = () => {
       });
 
       if (response.ok) {
-        // Don't navigate here, just handle success (e.g., show a success message)
         console.log('Owner added successfully!');
-        setOwner({ ownerName: '', address: '', contactNumber: '' }); // Reset the form
+        setOwner({ ownerName: '', address: '', contactNumber: '' }); // Reset form fields
+        setSuccess(true); // Show success message
       } else {
         const errorData = await response.json();
         setError(errorData.message || 'Failed to add owner');
@@ -58,7 +73,13 @@ const OwnerForm: React.FC = () => {
           Owner Details Form
         </Typography>
 
+        {/* Error and Success Messages */}
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+        {success && (
+          <Alert severity="success" sx={{ mb: 2 }}>
+            Request sent successfully!
+          </Alert>
+        )} 
 
         <form onSubmit={handleSubmit}>
           <TextField
