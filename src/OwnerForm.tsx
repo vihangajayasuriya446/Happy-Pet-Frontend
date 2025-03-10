@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react"; 
+
 import { useNavigate } from 'react-router-dom';
 import { 
   Box, 
@@ -13,14 +14,20 @@ const OwnerForm: React.FC = () => {
   const [owner, setOwner] = useState({ ownerName: '', address: '', contactNumber: '' });
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<boolean>(false); // State for success message
+  const [success, setSuccess] = useState<boolean>(false); 
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    setSuccess(false); // Reset success message
+    setSuccess(false); 
 
-    // Input Validation
+    
     if (owner.contactNumber.length !== 10 || isNaN(Number(owner.contactNumber))) {
       setError('Contact Number must be 10 digits.');
       return; 
@@ -37,8 +44,8 @@ const OwnerForm: React.FC = () => {
 
       if (response.ok) {
         console.log('Owner added successfully!');
-        setOwner({ ownerName: '', address: '', contactNumber: '' }); // Reset form fields
-        setSuccess(true); // Show success message
+        setOwner({ ownerName: '', address: '', contactNumber: '' }); 
+        setSuccess(true); 
       } else {
         const errorData = await response.json();
         setError(errorData.message || 'Failed to add owner');
@@ -53,7 +60,8 @@ const OwnerForm: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 8 }}>
+    <Container maxWidth="sm" sx={{ mt: 10 }}> 
+
       <Box
         sx={{
           backgroundColor: "#f5f5f5",
@@ -70,14 +78,14 @@ const OwnerForm: React.FC = () => {
           textAlign="center"
           sx={{ color: "#002855", mb: 4 }}
         >
-          Owner Details Form
+          Add New Owner
         </Typography>
 
         {/* Error and Success Messages */}
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
         {success && (
           <Alert severity="success" sx={{ mb: 2 }}>
-            Request sent successfully!
+            Owner added successfully!
           </Alert>
         )} 
 
