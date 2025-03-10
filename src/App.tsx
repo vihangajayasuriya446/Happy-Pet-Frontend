@@ -7,8 +7,9 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import DrawerMenu from "./components/DrawerMenu";
 import Cart from "./components/Cart";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate} from "react-router-dom";
 import UserDetailsDashboard from "./components/UserDetailsDashboard";
+import PetManagementDashboard from "./AddPetForm";
 
 // Types definitions with gender field added
 export interface Pet {
@@ -29,13 +30,26 @@ export interface CartItem {
     quantity: number;
 }
 
+// New interface for contact requests
+export interface ContactRequest {
+    userId: string;
+    userName: string;
+    userEmail: string;
+    userPhone: string;
+    message: string;
+    date: string;
+    petId: string | number;
+    petName: string;
+    petBreed: string;
+    petType: string;
+}
+
 // AppContent component that uses the cart context
 const AppContent: React.FC = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [cartOpen, setCartOpen] = useState(false);
     const [searchQuery] = useState('');
     const [petType, setPetType] = useState<string>('all');
-    // Removed gender state variable
     const { getItemCount } = useCart();
     const itemCount = getItemCount();
 
@@ -51,7 +65,6 @@ const AppContent: React.FC = () => {
         setPetType(event.target.value);
         console.log(`Pet type changed to: ${event.target.value}`);
     };
-
 
     return (
         <Box sx={{
@@ -142,8 +155,6 @@ const AppContent: React.FC = () => {
                                     <MenuItem value="cat">Cats</MenuItem>
                                 </Select>
                             </FormControl>
-
-                            {/* Gender Filter removed */}
                         </Box>
 
                         {/* Title in the center */}
@@ -220,17 +231,45 @@ const AppContent: React.FC = () => {
     );
 };
 
+// Create a ContactContext to share contact request data between components
+export const ContactContext = React.createContext<{
+    contactRequests: ContactRequest[];
+    addContactRequest: (request: ContactRequest) => void;
+}>({
+    contactRequests: [],
+    addContactRequest: () => {},
+});
+
+// ContactProvider component
+export const ContactProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const [contactRequests, setContactRequests] = useState<ContactRequest[]>([]);
+
+    const addContactRequest = (request: ContactRequest) => {
+        setContactRequests(prev => [...prev, request]);
+    };
+
+    return (
+        <ContactContext.Provider value={{ contactRequests, addContactRequest }}>
+            {children}
+        </ContactContext.Provider>
+    );
+};
+
 // Main App component with routing
 const App: React.FC = () => {
     return (
         <Router>
             <CartProvider>
-                <Routes>
-                    <Route path="/" element={<AppContent />} />
-                    <Route path="/contact-owner/:petId" element={<UserDetailsDashboard />} />
-                    <Route path="/contact" element={<UserDetailsDashboard />} />
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
+                <ContactProvider>
+                    <Routes>
+                        <Route path="/" element={<AppContent />} />
+                        <Route path="/contact-owner/:petId" element={<UserDetailsDashboard />} />
+                        <Route path="/contact" element={<UserDetailsDashboard />} />
+                        {/* Renamed component for clarity */}
+                        <Route path="/admin/pets" element={<PetManagementDashboard />} />
+                        <Route path="*" element={<Navigate to="/" replace />} />
+                    </Routes>
+                </ContactProvider>
             </CartProvider>
         </Router>
     );

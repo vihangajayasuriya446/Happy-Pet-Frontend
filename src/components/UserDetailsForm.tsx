@@ -17,6 +17,8 @@ export interface UserDetails {
     phone: string;
     address: string;
     message: string;
+    pet_id?: string; // Add this to store which pet they're inquiring about
+    submission_date?: string; // Add this to track when the request was made
 }
 
 interface UserDetailsFormProps {
@@ -26,6 +28,7 @@ interface UserDetailsFormProps {
     data: UserDetails | null;
     isEdit: boolean;
     resetForm: () => void;
+    petId?: string; // Add this prop
 }
 
 const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
@@ -34,7 +37,8 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
                                                              submitted,
                                                              data,
                                                              isEdit,
-                                                             resetForm
+                                                             resetForm,
+                                                             petId // Add this to the destructuring
                                                          }) => {
     const initialFormState: UserDetails = {
         name: '',
@@ -63,6 +67,16 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
             setFormData(initialFormState);
         }
     }, [data]);
+
+    // Optionally pre-populate message with pet info
+    useEffect(() => {
+        if (petId) {
+            setFormData(prev => ({
+                ...prev,
+                message: `I'm interested in learning more about the pet with ID: ${petId}`
+            }));
+        }
+    }, [petId]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -112,10 +126,16 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
             return;
         }
 
+        const userDataWithPet = {
+            ...formData,
+            pet_id: petId,
+            submission_date: new Date().toISOString()
+        };
+
         if (isEdit && formData.user_id) {
-            await updateUser(formData);
+            await updateUser(userDataWithPet);
         } else {
-            await addUser(formData);
+            await addUser(userDataWithPet);
         }
     };
 
@@ -128,7 +148,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
     return (
         <Paper elevation={3} sx={{ p: 3, borderRadius: '8px', bgcolor: '#f9f9f9' }}>
             <Typography variant="h6" gutterBottom>
-                {isEdit ? 'Edit Contact Information' : 'Contact Information'}
+                {isEdit ? 'Edit Contact Information' : petId ? `Contact About Pet #${petId}` : 'Contact Information'}
             </Typography>
 
             <Box component="form" onSubmit={handleSubmit} noValidate>

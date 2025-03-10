@@ -1,14 +1,12 @@
 export interface UserDetails {
-    user_id: number;
+    user_id?: number;
     name: string;
     email: string;
-    password?: string;
-    phone?: string;
-    address?: string;
-    message?: string; // Added message field for contact form
-    role: string;
-    active: boolean;
-    registered_date: string;
+    phone: string;
+    address: string;
+    message: string;
+    pet_id?: string;
+    submission_date?: string;
 }
 
 export interface Pet {

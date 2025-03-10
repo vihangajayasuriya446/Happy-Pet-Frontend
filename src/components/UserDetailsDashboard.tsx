@@ -72,7 +72,9 @@ const UserDetailsDashboard: React.FC = () => {
         }
     };
 
+    // Navigation function to the pet management dashboard
     const goToPetManagementDashboard = () => {
+        // Navigate to the route where AddPetForm is rendered
         navigate('/admin/pets');
     };
 

@@ -19,13 +19,26 @@ import {
     TableRow,
     Paper,
     SelectChangeEvent,
-    Alert,
-    Snackbar,
     Divider,
-    CircularProgress
+    CircularProgress,
+    Chip,
+    Tooltip
 } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
+import PetsIcon from '@mui/icons-material/Pets';
 import { UserDetails } from './components/types';
+
+// Extended interface to handle the registered_date property and pet inquiries
+interface ExtendedUserDetails extends UserDetails {
+    registered_date?: string;
+    registeredDate?: string;
+    inquiredPets?: {
+        pet_id: string;
+        pet_name: string;
+        inquiry_date: string;
+        message?: string;
+    }[];
+}
 
 interface PetData {
     id: string;
@@ -39,10 +52,14 @@ interface PetData {
     imageUrl?: string;
 }
 
+interface AddPetFormProps {
+    onSnackbarMessage?: (message: string, severity: 'success' | 'error' | 'info' | 'warning') => void;
+}
+
 const API_BASE_URL = 'http://localhost:8080/api/v1/pets';
 const USER_API_URL = 'http://localhost:8080/api/v1/users';
 
-const AddPetForm = () => {
+const AddPetForm: React.FC<AddPetFormProps> = ({ onSnackbarMessage }) => {
     const [formData, setFormData] = useState<PetData>({
         id: '',
         name: '',
@@ -55,15 +72,10 @@ const AddPetForm = () => {
     });
 
     const [pets, setPets] = useState<PetData[]>([]);
-    const [users, setUsers] = useState<UserDetails[]>([]);
+    const [users, setUsers] = useState<ExtendedUserDetails[]>([]);
     const [previewUrl, setPreviewUrl] = useState<string>('');
     const [editMode, setEditMode] = useState(false);
     const [editIndex, setEditIndex] = useState<number | null>(null);
-    const [snackbar, setSnackbar] = useState({
-        open: false,
-        message: '',
-        severity: 'success' as 'success' | 'error' | 'info' | 'warning'
-    });
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -77,8 +89,8 @@ const AddPetForm = () => {
         try {
             const response = await axios.get(API_BASE_URL);
             setPets(response.data);
-        } catch (error) {
-            console.error('Error fetching pets:', error);
+        } catch (err) {
+            console.error('Error fetching pets:', err);
             showSnackbar('Error fetching pets', 'error');
         }
     };
@@ -89,8 +101,8 @@ const AddPetForm = () => {
         try {
             const response = await axios.get(USER_API_URL);
             setUsers(response.data);
-        } catch (error) {
-            console.error('Error fetching users:', error);
+        } catch (err) {
+            console.error('Error fetching users:', err);
             setError('Failed to load users. Please try again.');
         } finally {
             setIsLoading(false);
@@ -124,11 +136,9 @@ const AddPetForm = () => {
     };
 
     const showSnackbar = (message: string, severity: 'success' | 'error' | 'info' | 'warning') => {
-        setSnackbar({
-            open: true,
-            message,
-            severity
-        });
+        if (onSnackbarMessage) {
+            onSnackbarMessage(message, severity);
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -165,8 +175,8 @@ const AddPetForm = () => {
 
             // Reset form
             resetForm();
-        } catch (error) {
-            console.error('Error saving pet:', error);
+        } catch (err) {
+            console.error('Error saving pet:', err);
             showSnackbar('Error saving pet', 'error');
         }
     };
@@ -187,25 +197,25 @@ const AddPetForm = () => {
             await axios.delete(`${API_BASE_URL}/${id}`);
             showSnackbar('Pet deleted successfully', 'success');
             fetchPets();
-        } catch (error) {
-            console.error('Error deleting pet:', error);
+        } catch (err) {
+            console.error('Error deleting pet:', err);
             showSnackbar('Error deleting pet', 'error');
         }
     };
 
-    const handleUserEdit = (user: UserDetails) => {
+    const handleUserEdit = (user: ExtendedUserDetails) => {
         // This would typically open a modal or navigate to edit user page
         console.log('Edit user:', user);
         showSnackbar('User edit functionality not implemented in this view', 'info');
     };
 
-    const handleUserDelete = async (user: UserDetails) => {
+    const handleUserDelete = async (user: ExtendedUserDetails) => {
         try {
             await axios.delete(`${USER_API_URL}/${user.user_id}`);
             showSnackbar('User deleted successfully', 'success');
             fetchUsers();
-        } catch (error) {
-            console.error('Error deleting user:', error);
+        } catch (err) {
+            console.error('Error deleting user:', err);
             showSnackbar('Error deleting user', 'error');
         }
     };
@@ -229,6 +239,16 @@ const AddPetForm = () => {
     const formatPrice = (price: string) => {
         if (!price) return 'LKR 0/=';
         return `LKR ${price}/=`;
+    };
+
+    // Helper function to safely format date
+    const formatDate = (dateString?: string) => {
+        if (!dateString) return 'N/A';
+        try {
+            return new Date(dateString).toLocaleDateString();
+        } catch {
+            return 'Invalid Date';
+        }
     };
 
     const inputStyle = {
@@ -255,6 +275,12 @@ const AddPetForm = () => {
     // Theme color for user table
     const themeColor = '#002855';
 
+    // Get pet name by ID (for displaying in inquiry details)
+    const getPetNameById = (petId: string): string => {
+        const pet = pets.find(p => p.id === petId);
+        return pet ? pet.name : 'Unknown Pet';
+    };
+
     return (
         <Box
             sx={{
@@ -270,21 +296,6 @@ const AddPetForm = () => {
                 margin: '-30px auto 20px'
             }}
         >
-            {/* Dashboard Heading */}
-            <Typography
-                variant="h5"
-                component="h1"
-                sx={{
-                    color: 'white',
-                    fontWeight: 'bold',
-                    width: '100%',
-                    textAlign: 'center',
-                    mb: 3
-                }}
-            >
-                Pet Buy Management Dashboard
-            </Typography>
-
             {/* Enhanced Card with better styling */}
             <Card
                 sx={{
@@ -642,10 +653,10 @@ const AddPetForm = () => {
                     textAlign: 'left'
                 }}
             >
-                Registered Users
+                Registered Users & Pet Inquiries
             </Typography>
 
-            {/* Users Table */}
+            {/* Users Table with Pet Inquiry Information */}
             <TableContainer component={Paper} sx={{ borderRadius: '8px', boxShadow: 3, width: '100%' }}>
                 {isLoading ? (
                     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
@@ -672,28 +683,58 @@ const AddPetForm = () => {
                     <Table>
                         <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                             <TableRow>
-                                <TableCell sx={{ fontWeight: 'bold', color: themeColor, textAlign: 'center' }}>ID</TableCell>
-                                <TableCell sx={{ fontWeight: 'bold', color: themeColor, textAlign: 'center' }}>Name</TableCell>
-                                <TableCell sx={{ fontWeight: 'bold', color: themeColor, textAlign: 'center' }}>Email</TableCell>
-                                <TableCell sx={{ fontWeight: 'bold', color: themeColor, textAlign: 'center' }}>Phone</TableCell>
-                                <TableCell sx={{ fontWeight: 'bold', color: themeColor, textAlign: 'center' }}>Address</TableCell>
-                                <TableCell sx={{ fontWeight: 'bold', color: themeColor, textAlign: 'center' }}>Registered Date</TableCell>
-                                <TableCell sx={{ fontWeight: 'bold', color: themeColor, textAlign: 'center' }}>Actions</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', color: themeColor }}>ID</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', color: themeColor }}>Name</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', color: themeColor }}>Email</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', color: themeColor }}>Phone</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', color: themeColor }}>Address</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', color: themeColor }}>Registered Date</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', color: themeColor }}>Inquired Pets</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', color: themeColor }}>Actions</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {users.length > 0 ? (
                                 users.map((user) => (
                                     <TableRow key={user.user_id} sx={{ '&:nth-of-type(odd)': { backgroundColor: '#f9f9f9' } }}>
-                                        <TableCell sx={{ textAlign: 'center' }}>{user.user_id}</TableCell>
-                                        <TableCell sx={{ textAlign: 'center' }}>{user.name}</TableCell>
-                                        <TableCell sx={{ textAlign: 'center' }}>{user.email}</TableCell>
-                                        <TableCell sx={{ textAlign: 'center' }}>{user.phone}</TableCell>
-                                        <TableCell sx={{ textAlign: 'center' }}>{user.address}</TableCell>
-                                        <TableCell sx={{ textAlign: 'center' }}>
-                                            {new Date(user.registered_date).toLocaleDateString()}
+                                        <TableCell>{user.user_id}</TableCell>
+                                        <TableCell>{user.name}</TableCell>
+                                        <TableCell>{user.email}</TableCell>
+                                        <TableCell>{user.phone}</TableCell>
+                                        <TableCell>{user.address}</TableCell>
+                                        <TableCell>{formatDate(user.registered_date || user.registeredDate)}</TableCell>
+                                        <TableCell>
+                                            {user.inquiredPets && user.inquiredPets.length > 0 ? (
+                                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                                                    {user.inquiredPets.map((inquiry, idx) => (
+                                                        <Tooltip
+                                                            key={idx}
+                                                            title={`Inquiry Date: ${formatDate(inquiry.inquiry_date)}${inquiry.message ? `\nMessage: ${inquiry.message}` : ''}`}
+                                                            arrow
+                                                        >
+                                                            <Chip
+                                                                icon={<PetsIcon fontSize="small" />}
+                                                                label={`${inquiry.pet_name || getPetNameById(inquiry.pet_id)} (ID: ${inquiry.pet_id})`}
+                                                                size="small"
+                                                                sx={{
+                                                                    bgcolor: '#e3f2fd',
+                                                                    border: '1px solid #90caf9',
+                                                                    '& .MuiChip-label': {
+                                                                        px: 1,
+                                                                        fontSize: '0.75rem'
+                                                                    }
+                                                                }}
+                                                            />
+                                                        </Tooltip>
+                                                    ))}
+                                                </Box>
+                                            ) : (
+                                                <Typography variant="body2" color="text.secondary">
+                                                    No inquiries
+                                                </Typography>
+                                            )}
                                         </TableCell>
-                                        <TableCell sx={{ textAlign: 'center' }}>
+                                        <TableCell>
                                             <Button
                                                 variant="contained"
                                                 sx={{
@@ -722,7 +763,7 @@ const AddPetForm = () => {
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={7} align="center" sx={{ py: 4 }}>
+                                    <TableCell colSpan={8} align="center" sx={{ py: 4 }}>
                                         <Typography variant="body1" color="textSecondary">
                                             No users found.
                                         </Typography>
@@ -733,21 +774,6 @@ const AddPetForm = () => {
                     </Table>
                 )}
             </TableContainer>
-
-            <Snackbar
-                open={snackbar.open}
-                autoHideDuration={6000}
-                onClose={() => setSnackbar({ ...snackbar, open: false })}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            >
-                <Alert
-                    onClose={() => setSnackbar({ ...snackbar, open: false })}
-                    severity={snackbar.severity}
-                    sx={{ width: '100%', boxShadow: '0 2px 10px rgba(0,0,0,0.2)' }}
-                >
-                    {snackbar.message}
-                </Alert>
-            </Snackbar>
         </Box>
     );
 };
