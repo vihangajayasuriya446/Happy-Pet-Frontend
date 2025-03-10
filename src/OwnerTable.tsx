@@ -62,3 +62,56 @@ const OwnerTable: React.FC = () => {
       console.error('Error deleting owner:', error);
     }
   };
+
+  return (
+    <Container maxWidth="lg" sx={{ mt: 8 }}>
+      <Typography variant="h4" gutterBottom fontWeight="bold" textAlign="center" sx={{ color: "#002855", mb: 4 }}>
+        Owners List
+      </Typography>
+      <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: '8px', overflow: 'hidden' }}>
+        <Table>
+          <TableHead sx={{ backgroundColor: '#f0f0f0' }}> 
+            <TableRow>
+              <TableCell sx={{ fontWeight: 'bold', padding: '16px' }}>ID</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', padding: '16px' }}>Name</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', padding: '16px' }}>Address</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', padding: '16px' }}>Contact Number</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', padding: '16px' }}>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={5} align="center">
+                  <CircularProgress /> 
+                </TableCell>
+              </TableRow>
+            ) : owners.length > 0 ? ( 
+              owners.map((owner) => (
+                <TableRow key={owner.id} sx={{ '&:nth-of-type(odd)': { backgroundColor: '#f9f9f9' }, '&:last-child td, &:last-child th': { border: 0 } }}>
+                  <TableCell component="th" scope="row" sx={{ padding: '12px' }}>{owner.id}</TableCell>
+                  <TableCell component="th" scope="row" sx={{ padding: '12px' }}>{owner.ownerName}</TableCell>
+                  <TableCell component="th" scope="row" sx={{ padding: '12px' }}>{owner.address}</TableCell>
+                  <TableCell component="th" scope="row" sx={{ padding: '12px' }}>{owner.contactNumber}</TableCell>
+                  <TableCell sx={{ padding: '12px' }}>
+                    <Button variant="contained" color="error" size="small" onClick={() => handleDelete(owner.id)}>
+                      Delete 
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                <TableCell component="th" scope="row" colSpan={5} align="center" sx={{ padding: '20px', fontWeight: 'bold', color: 'grey' }}>
+                  No Owners Found
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Container>
+  );
+};
+
+export default OwnerTable;
