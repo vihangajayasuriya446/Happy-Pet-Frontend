@@ -8,6 +8,7 @@ import Users from './Users';
 import HomePage from './HomePage';
 import ContactUsPage from './ContactUsPage';
 import OwnerForm from './OwnerForm';
+import OwnerTable from './OwnerTable';
 
 
 const App: React.FC = () => {
@@ -21,6 +22,7 @@ const App: React.FC = () => {
           <Route path="/matchmaking" element={<MainPage />} />
           <Route path="/contactus" element={<ContactUsPage />} />
           <Route path="/OwnerForm" element={<OwnerForm />} />
+          <Route path="/owners" element={<OwnerTable />} />
         </Routes>
         <Footer />
       </Box>
