@@ -105,7 +105,7 @@ const Navbar = () => {
           <Typography
             variant="body1"
             sx={{ mx: 2, cursor: "pointer" }}
-            onClick={() => handleNavigation("/aboutus")}
+            onClick={() => handleNavigation("/about")}
           >
             About Us
           </Typography>

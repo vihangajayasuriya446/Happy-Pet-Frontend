@@ -14,6 +14,9 @@ import AdminLogin from './AdminLogin';
 import AdminSignup from './AdminSignup';
 import TermsAndConditions from './TermsAndConditions';
 import PrivacyPolicy from './PrivacyPolicy';
+import AboutUs from './AboutUs';
+import OwnerTable from './OwnerTable';
+import OwnerForm from './OwnerForm';
 
 
 const App: React.FC = () => {
@@ -33,6 +36,10 @@ const App: React.FC = () => {
           <Route path="/adminsignup" element={<AdminSignup />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsAndConditions />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/ownertable" element={<OwnerTable />} />
+          <Route path="/ownerform" element={<OwnerForm />} />
+
         </Routes>
         <Footer />
       </Box>

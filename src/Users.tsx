@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import UserForm from "./UserForm";
 import UserTable from "./UserTable";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import Axios from "axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from 'react-router-dom';
 
 interface User {
   id: number;
@@ -21,6 +22,13 @@ const Users: React.FC = () => {
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
+
+  const navigate = useNavigate();
+  
+    const handleNavigation = (path: string) => {
+      navigate(path);
+      window.scrollTo(0, 0);
+  };
 
   const { data: users = [], refetch } = useQuery<User[]>({
     queryKey: ["users"],
@@ -132,6 +140,16 @@ const Users: React.FC = () => {
             selectedUser={handleSelectUser}
             deleteUser={deleteUser}
           />
+          <Button
+              variant="contained"
+              fullWidth
+              sx={{ mt: 2, bgcolor: "#002855", color: "white" }}
+              onClick={() => handleNavigation('/ownertable')}
+          >
+            Contact Owner
+          </Button>
+
+          
         </Box>
       </Box>
       <Box sx={{ width: "100%" }}></Box>

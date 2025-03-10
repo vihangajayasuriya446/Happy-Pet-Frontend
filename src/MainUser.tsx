@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
+
 import {
   Typography,
   Container,
@@ -31,6 +33,13 @@ const MainPage = () => {
   const [breed, setBreed] = useState<string>("");
   const [location, setLocation] = useState<string>("");
   const [pets, setPets] = useState<Pet[]>([]);
+  const navigate = useNavigate();
+
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    window.scrollTo(0, 0);
+};
+
 
   const breeds: { [key: string]: string[] } = {
     Dog: [
@@ -264,6 +273,7 @@ const MainPage = () => {
                           variant="contained"
                           fullWidth
                           sx={{ mt: 2, bgcolor: "#002855", color: "white" }}
+                          onClick={() => handleNavigation('/ownerform')}
                         >
                           Contact Owner
                         </Button>

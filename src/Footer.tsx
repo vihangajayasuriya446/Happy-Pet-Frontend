@@ -23,7 +23,7 @@ const Footer = () => {
           />
           <Box>
             <Typography variant="body1" sx={{ mb: 1, color: "black" }}>
-              <Link href="#" underline="hover" color="inherit">
+              <Link href="/about" underline="hover" color="inherit">
                 About Us
               </Link>
             </Typography>
