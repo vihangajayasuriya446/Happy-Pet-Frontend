@@ -78,14 +78,14 @@ const OwnerForm: React.FC = () => {
           textAlign="center"
           sx={{ color: "#002855", mb: 4 }}
         >
-          Add New Owner
+          Request Form
         </Typography>
 
         {/* Error and Success Messages */}
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
         {success && (
           <Alert severity="success" sx={{ mb: 2 }}>
-            Owner added successfully!
+            Request sent successfully!
           </Alert>
         )} 
 
