@@ -3,9 +3,10 @@ import UserForm from "./UserForm";
 import UserTable from "./UserTable";
 import Footer from "./Footer";
 import Navbar from "./Navbar";
-import { Box } from "@mui/material";
+import { Box,Button } from "@mui/material";
 import Axios from "axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from 'react-router-dom';
 
 interface User {
   id: number;
@@ -99,6 +100,11 @@ const Users: React.FC = () => {
     setIsEdit(false);
     setSubmitted(false); // Reset the submitted state
   };
+  const navigate = useNavigate(); // Initialize useNavigate
+
+  const handleViewOwnersTableClick = () => {
+    navigate('/Owners'); 
+  };
 
   return (
     <>
@@ -139,6 +145,20 @@ const Users: React.FC = () => {
       </Box>
       <Box sx={{ width: "100%" }}>
         
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}> 
+        <Button 
+            type="button" 
+            variant="contained" 
+            onClick={handleViewOwnersTableClick}
+            sx={{
+              marginBottom: '1rem', 
+              backgroundColor: 'blue',
+              color: 'white',
+            }}
+          >
+            View Requests
+          </Button>
       </Box>
     </>
   );
