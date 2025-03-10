@@ -5,9 +5,18 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding: 0;
+    background-color: #002855; /* Set body background color */
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+#root {
+  margin-top: 70px; /* Adjust this value to match the height of your navbar */
+  margin-bottom: 0;
+}
+
+
