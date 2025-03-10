@@ -7,7 +7,7 @@ import MainPage from './MainUser';
 import Users from './Users';
 import HomePage from './HomePage';
 import ContactUsPage from './ContactUsPage';
-import ContactOwner from './ContactOwner';
+import OwnerForm from './OwnerForm';
 
 
 const App: React.FC = () => {
@@ -20,7 +20,7 @@ const App: React.FC = () => {
           <Route path="/dashboard" element={<Users />} />
           <Route path="/matchmaking" element={<MainPage />} />
           <Route path="/contactus" element={<ContactUsPage />} />
-          <Route path="/contactowner" element={<ContactOwner />} />
+          <Route path="/OwnerForm" element={<OwnerForm />} />
         </Routes>
         <Footer />
       </Box>
