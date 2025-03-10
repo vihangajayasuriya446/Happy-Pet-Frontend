@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 import {
   Typography,
   Container,
@@ -29,8 +29,8 @@ const MainPage:React.FC = () => {
 
   const navigate = useNavigate();
 
-  const handleContactOwner = () => {
-    navigate('/contactowner');
+  const handleOwnerForm = () => {
+    navigate('/OwnerForm'); 
   };
 
   return (
@@ -139,13 +139,13 @@ const MainPage:React.FC = () => {
                       Birth {pet.birthYear} - {pet.location}
                     </Typography>
                     <Button 
-                      variant="contained" 
-                      fullWidth 
-                      sx={{ mt: 2, bgcolor: "#002855", color: "white" }}
-                      onClick={handleContactOwner} // Attach the navigation function
-                    >
-                      Contact Owner
-                    </Button>
+                variant="contained" 
+                fullWidth 
+                sx={{ mt: 2, bgcolor: "#002855", color: "white" }}
+                onClick={handleOwnerForm} 
+              >
+                Contact Owner
+              </Button>
                   </CardContent>
                 </Card>
               ))}
