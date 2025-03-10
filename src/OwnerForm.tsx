@@ -55,7 +55,7 @@ const OwnerForm: React.FC = () => {
           textAlign="center"
           sx={{ color: "#002855", mb: 4 }}
         >
-          Add New Owner
+          Owner Details Form
         </Typography>
 
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
