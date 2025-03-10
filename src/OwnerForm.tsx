@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"; 
 
-import { useNavigate } from 'react-router-dom';
+
 import { 
   Box, 
   Alert, 
@@ -12,7 +12,7 @@ import {
 
 const OwnerForm: React.FC = () => {
   const [owner, setOwner] = useState({ ownerName: '', address: '', contactNumber: '' });
-  const navigate = useNavigate();
+  
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false); 
 
@@ -55,9 +55,7 @@ const OwnerForm: React.FC = () => {
     }
   };
 
-  const handleViewOwnersClick = () => {
-    navigate('/owners');
-  };
+ 
 
   return (
     <Container maxWidth="sm" sx={{ mt: 10 }}> 
@@ -118,9 +116,7 @@ const OwnerForm: React.FC = () => {
             <Button type="submit" variant="contained" color="primary">
               Submit
             </Button>
-            <Button type="button" variant="outlined" onClick={handleViewOwnersClick}>
-              View Owners
-            </Button>
+            
           </Box>
         </form>
       </Box>
