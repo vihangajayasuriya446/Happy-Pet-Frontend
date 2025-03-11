@@ -1,77 +1,47 @@
 import axios from 'axios';
-import { UserDetails, UserAdoption } from './types';
+import { Adoption } from './types';
 
 const API_URL = 'http://localhost:8080';
 
-export const fetchAllUsers = async (): Promise<UserDetails[]> => {
+// Fetch all adoption applications
+export const fetchAllAdoptions = async (): Promise<Adoption[]> => {
   try {
-    const response = await axios.get<UserDetails[]>(`${API_URL}/api/v1/users`);
+    const response = await axios.get<Adoption[]>(`${API_URL}/api/v1/adoptions`);
     return response.data;
   } catch (error) {
-    console.error('Error fetching users:', error);
+    console.error('Error fetching adoption applications:', error);
     throw error;
   }
 };
 
-export const fetchUserById = async (id: number): Promise<UserDetails> => {
+// Fetch a specific adoption application by ID
+export const fetchAdoptionById = async (id: number): Promise<Adoption> => {
   try {
-    const response = await axios.get<UserDetails>(`${API_URL}/api/v1/users/${id}`);
+    const response = await axios.get<Adoption>(`${API_URL}/api/v1/adoptions/${id}`);
     return response.data;
   } catch (error) {
-    console.error(`Error fetching user with id ${id}:`, error);
+    console.error(`Error fetching adoption with id ${id}:`, error);
     throw error;
   }
 };
 
-export const createUser = async (user: UserDetails): Promise<UserDetails> => {
+// Update adoption status
+export const updateAdoptionStatus = async (adoption: Adoption): Promise<Adoption> => {
   try {
-    // Remove user_id when creating a new user (let the backend assign it)
-    const { ...userData } = user;
-    const response = await axios.post<UserDetails>(`${API_URL}/api/v1/users/add`, userData);
-    return response.data;
-  } catch (error) {
-    console.error('Error creating user:', error);
-    throw error;
-  }
-};
-
-export const updateUser = async (user: UserDetails): Promise<UserDetails> => {
-  try {
-    // Ensure user_id is a number
-    const userId = typeof user.user_id === 'string' ? parseInt(user.user_id) : user.user_id;
+    // Ensure adoption_id is a number
+    const adoptionId = typeof adoption.adoption_id === 'string' ? parseInt(adoption.adoption_id) : adoption.adoption_id;
     
-    // Create a clean copy of the user object to send to the server
-    const userData: {
-      user_id: number;
-      name: string;
-      email: string;
-      phone: string;
-      address: string;
-      role: string;
-      active: boolean;
-      registered_date: string;
-      password?: string;
-    } = {
-      user_id: userId,
-      name: user.name,
-      email: user.email,
-      phone: user.phone || '',
-      address: user.address || '',
-      role: user.role,
-      active: user.active,
-      registered_date: user.registered_date
+    // Create a payload with just the necessary information for updating status
+    const updateData = {
+      adoption_id: adoptionId,
+      status: adoption.status
     };
     
-    // Only include password if it's provided
-    if (user.password && user.password.trim() !== '') {
-      userData['password'] = user.password;
-    }
+    console.log('Sending adoption status update to server:', JSON.stringify(updateData));
     
-    console.log('Sending update to server:', JSON.stringify(userData));
-    
-    const response = await axios.put<UserDetails>(
-      `${API_URL}/api/v1/users/update/${userId}`, 
-      userData,
+    const response = await axios.put<Adoption>(
+      `${API_URL}/api/v1/adoptions/update/${adoptionId}`, 
+      updateData,
       {
         headers: {
           'Content-Type': 'application/json'
@@ -81,32 +51,68 @@ export const updateUser = async (user: UserDetails): Promise<UserDetails> => {
     
     return response.data;
   } catch (error) {
-    console.error(`Error updating user with id ${user.user_id}:`, error);
+    console.error(`Error updating adoption with id ${adoption.adoption_id}:`, error);
     throw error;
   }
 };
 
-export const deleteUser = async (id: number): Promise<boolean> => {
+// Delete an adoption application
+export const deleteAdoption = async (id: number): Promise<boolean> => {
   try {
     // Ensure ID is a number
-    const userId = typeof id === 'string' ? parseInt(id) : id;
-    console.log(`Attempting to delete user with ID: ${userId}`);
+    const adoptionId = typeof id === 'string' ? parseInt(id) : id;
+    console.log(`Attempting to delete adoption with ID: ${adoptionId}`);
     
-    await axios.delete(`${API_URL}/api/v1/users/delete/${userId}`);
+    await axios.delete(`${API_URL}/api/v1/adoptions/delete/${adoptionId}`);
     return true;
   } catch (error) {
-    console.error(`Error deleting user with id ${id}:`, error);
+    console.error(`Error deleting adoption with id ${id}:`, error);
     throw error;
   }
 };
 
-// For user adoption history
-export const fetchUserAdoptions = async (userId: number): Promise<UserAdoption[]> => {
+// Fetch adoptions for a specific pet
+export const fetchAdoptionsByPetId = async (petId: number): Promise<Adoption[]> => {
   try {
-    const response = await axios.get<UserAdoption[]>(`${API_URL}/api/v1/users/${userId}/adoptions`);
+    const response = await axios.get<Adoption[]>(`${API_URL}/api/v1/adoptions/pet/${petId}`);
     return response.data;
   } catch (error) {
-    console.error(`Error fetching adoptions for user ${userId}:`, error);
+    console.error(`Error fetching adoptions for pet ${petId}:`, error);
     throw error;
   }
+};
+
+// Submit a new adoption application (used by the adoption form)
+export const submitAdoption = async (adoptionData: {
+  petId: number;
+  userId?: number;
+  userName: string;
+  email: string;
+  phone: string;
+  address: string;
+}): Promise<Adoption> => {
+  try {
+    const response = await axios.post<Adoption>(
+      `${API_URL}/api/v1/adoptions/submit`, 
+      adoptionData,
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error submitting adoption application:', error);
+    throw error;
+  }
+};
+
+export default {
+  fetchAllAdoptions,
+  fetchAdoptionById,
+  updateAdoptionStatus,
+  deleteAdoption,
+  fetchAdoptionsByPetId,
+  submitAdoption
 };
