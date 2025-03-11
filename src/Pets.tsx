@@ -1,10 +1,15 @@
 import React, { useState } from "react";
+
+// Function to convert age number to string
+const ageNumberToString = (age: number): string => {
+  return age.toString();
+};
 import PetForm from "./AdoptionUserForm";
 import PetTable from "./AdoptionTable";
 import { Box } from "@mui/material";
 import axios from "axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Pet, ageNumberToString, ageStringToNumber, PetGender, PetStatus } from "./types";
+import { Pet, PetGender, PetStatus } from "./types";
 
 const Pets: React.FC = () => {
   const queryClient = useQueryClient();
@@ -148,3 +153,9 @@ const Pets: React.FC = () => {
 };
 
 export default Pets;
+
+function ageStringToNumber(pet_age: string): number {
+  return parseInt(pet_age, 10);
+}
+
+// Removed duplicate function implementation

@@ -1,18 +1,18 @@
 export interface Pet {
-  pet_id: number;              // Maps to pet_id in backend
-  pet_name: string;            // Maps to pet_name in backend
-  pet_species: string;            // Maps to pet_species in backend
-  pet_age: string;             // Maps to pet_age in backend (needs conversion)
-  pet_gender: string;          // Maps to pet_gender in backend
-  pet_breed: string;           // Maps to pet_breed in backend
-  pet_adoptionStatus: string;  // Maps to status in backend
-  pet_photo: File | string | null;  // For file uploads
-  pet_description?: string;    // Maps to pet_description in backend
-  image_url?: string;      // Image URL from backend
-  created_at?: string;     // Creation timestamp
+  pet_id: number;              
+  pet_name: string;            
+  pet_species: string;         
+  pet_age: string;            
+  pet_gender: string;          
+  pet_breed: string;           
+  pet_adoptionStatus: string;  
+  pet_photo: File | string | null;  
+  pet_description?: string;    
+  image_url?: string;          
+  created_at?: string;         
+  status: 'Pending' | 'Approved' | 'Rejected' | 'Available' | 'Adopted';
 }
 
-// Enum mappings to match backend
 export enum PetGender {
   Male = "Male",
   Female = "Female"
@@ -24,42 +24,37 @@ export enum PetStatus {
   Adopted = "Adopted"
 }
 
-// Age mapping helpers
-export const ageStringToNumber = (ageString: string): number => {
-  switch (ageString) {
-    case "Baby": return 0;
-    case "Young": return 1;
-    case "Adult": return 5;
-    case "Senior": return 10;
-    default: return parseInt(ageString) || 0;
-  }
-};
-
-export const ageNumberToString = (ageNumber: number): string => {
-  if (ageNumber < 1) return "Baby";
-  if (ageNumber < 5) return "Young";
-  if (ageNumber < 10) return "Adult";
-  return "Senior";
-};
-
+// For backwards compatibility
 export interface UserDetails {
   user_id: number;
   name: string;
   email: string;
-  password?: string; // Optional for updates
   phone?: string;
   address?: string;
   role: string;
   active: boolean;
   registered_date: string;
-  adoptions?: UserAdoption[]; // Optional relationship to adoptions
 }
 
+export interface Adoption {
+  adoption_id: number;
+  user_id: number;
+  pet_id: number;
+  status: 'Pending' | 'Approved' | 'Rejected';
+  applied_at: string;
+  user_name: string;
+  email: string;
+  address: string;
+  pet_name: string;
+}
+
+
+
+// For backwards compatibility
 export interface UserAdoption {
   adoption_id: number;
   pet_id: number;
   adoption_date: string;
   status: string;
-  pet_name?: string; // For display purposes
+  pet_name?: string;
 }
-

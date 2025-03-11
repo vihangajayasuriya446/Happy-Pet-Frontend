@@ -1,5 +1,4 @@
-// src/components/PetGrid.tsx
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Grid, Card, CardContent, CardMedia, Button, Typography, Box, CircularProgress } from '@mui/material';
 import AdoptionForm from './AdoptionForm';
 import { fetchAvailablePets } from './petService';
@@ -33,6 +32,8 @@ const PetGrid = () => {
         setSelectedPet(pet);
     };
 
+    
+
     const handleFormSubmit = (formData: {
         name: string;
         email: string;
@@ -42,6 +43,12 @@ const PetGrid = () => {
         // Here you would actually submit the adoption request to your backend
         console.log('Adoption Form Data:', formData);
         alert(`Thank you, ${formData.name}! Your adoption request for ${selectedPet?.pet_name} has been submitted.`);
+
+        // Remove the adopted pet from the pets list
+        if (selectedPet) {
+            setPets((prevPets) => prevPets.filter(pet => pet.pet_id !== selectedPet.pet_id));
+        }
+
         setSelectedPet(null); // Close the form after submission
     };
 
@@ -95,9 +102,9 @@ const PetGrid = () => {
 
             {/* Pet Grid */}
             <Grid container spacing={4}>
-                {pets.length > 0 ? (
-                    pets.map((pet) => (
-                        <Grid item xs={12} sm={6} md={4} lg={3} key={pet.pet_id}>
+    {pets.filter(pet => pet.status !== 'Adopted').length > 0 ? (
+        pets.filter(pet => pet.status !== 'Adopted').map((pet) => (
+            <Grid item xs={12} sm={6} md={4} lg={3} key={pet.pet_id}>
                             <Card sx={{
                                 height: '100%',
                                 display: 'flex',
@@ -157,7 +164,6 @@ const PetGrid = () => {
                                             mb: 1,
                                             color: '#555'
                                         }}
-                                    
                                     >
                                         <strong>Species:</strong> {pet.pet_species}
                                     </Typography>
@@ -176,8 +182,6 @@ const PetGrid = () => {
                                             mb: 2,
                                             color: '#555'
                                         }}
-
-                                        
                                     >
                                         <strong>Gender:</strong> {pet.pet_gender}
                                     </Typography>

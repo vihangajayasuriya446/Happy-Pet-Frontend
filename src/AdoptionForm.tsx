@@ -1,8 +1,9 @@
 import React from 'react';
-import { Box, Typography, TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions, Stepper, Step, StepLabel, CircularProgress } from '@mui/material';
+import { Box, Typography, TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions, Stepper, Step, StepLabel, CircularProgress, Fade } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import { Pet } from './types';
+import { submitAdoption } from './api'; // Import from your API service
 
 interface AdoptionFormProps {
     pet: Pet;
@@ -37,7 +38,6 @@ const AdoptionForm: React.FC<AdoptionFormProps> = ({ pet, onClose, onSubmit }) =
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
         
-        // Reset existing user status when email changes
         if (name === 'email') {
             setIsExistingUser(false);
             setUserId(0);
@@ -49,7 +49,7 @@ const AdoptionForm: React.FC<AdoptionFormProps> = ({ pet, onClose, onSubmit }) =
         
         setIsCheckingUser(true);
         try {
-            const response = await fetch(`/api/users/lookup?email=${encodeURIComponent(formData.email)}`);
+            const response = await fetch(`/api/v1/users/lookup?email=${encodeURIComponent(formData.email)}`);
             if (response.ok) {
                 const userData = await response.json();
                 setFormData({
@@ -61,7 +61,6 @@ const AdoptionForm: React.FC<AdoptionFormProps> = ({ pet, onClose, onSubmit }) =
                 setUserId(userData.user_id);
                 setIsExistingUser(true);
             } else {
-                // User not found - keep the entered email, but reset the flag
                 setIsExistingUser(false);
             }
         } catch (err) {
@@ -71,24 +70,15 @@ const AdoptionForm: React.FC<AdoptionFormProps> = ({ pet, onClose, onSubmit }) =
         }
     };
 
-    const handleNext = () => {
-        setActiveStep((prevStep) => prevStep + 1);
-    };
-
-    const handleBack = () => {
-        setActiveStep((prevStep) => prevStep - 1);
-    };
-
-    const handleAgree = () => {
-        handleNext();
-    };
+    const handleNext = () => setActiveStep((prevStep) => prevStep + 1);
+    const handleBack = () => setActiveStep((prevStep) => prevStep - 1);
+    const handleAgree = () => handleNext();
 
     const handleConfirmAdoption = async () => {
         setIsSubmitting(true);
         setError(null);
         
         try {
-            // Call onSubmit callback if provided (for any local state updates)
             if (onSubmit) {
                 onSubmit({
                     name: formData.userName,
@@ -98,31 +88,17 @@ const AdoptionForm: React.FC<AdoptionFormProps> = ({ pet, onClose, onSubmit }) =
                 });
             }
             
-            // Format request to match your backend DTO
             const adoptionRequest = {
                 petId: pet.pet_id,
-                userId: userId, // Use the userId state variable (0 for new users)
+                userId: userId || undefined, // Only send if > 0
                 userName: formData.userName,
                 email: formData.email,
                 phone: formData.phone,
                 address: formData.address
             };
             
-            // Send adoption request to backend
-            const response = await fetch('/api/adoptions/submit', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(adoptionRequest),
-            });
-            
-            if (!response.ok) {
-                const errorData = await response.text();
-                throw new Error(errorData || 'Failed to submit adoption request');
-            }
-            
-            const data = await response.json();
+            // Use the API service instead of direct fetch
+            const data = await submitAdoption(adoptionRequest);
             console.log('Adoption successful:', data);
             setAdoptionSuccess(true);
             
@@ -134,7 +110,6 @@ const AdoptionForm: React.FC<AdoptionFormProps> = ({ pet, onClose, onSubmit }) =
         }
     };
 
-    // Get pet image, with fallback
     const petImage = pet.image_url ? pet.image_url : '/default-pet-image.jpg';
 
     const renderStepContent = (step: number) => {
@@ -142,7 +117,7 @@ const AdoptionForm: React.FC<AdoptionFormProps> = ({ pet, onClose, onSubmit }) =
             case 0:
                 return (
                     <Box>
-                        <Typography variant="body1" sx={{ mb: 2, color: '#555', textAlign: 'center' }}>
+                        <Typography variant="body1" sx={{ mb: 3, color: '#555', textAlign: 'center' }}>
                             Please provide your details to proceed with the adoption.
                         </Typography>
                         <TextField
@@ -161,6 +136,7 @@ const AdoptionForm: React.FC<AdoptionFormProps> = ({ pet, onClose, onSubmit }) =
                                         onClick={checkExistingUser} 
                                         size="small"
                                         disabled={!formData.email || isCheckingUser}
+                                        sx={{ textTransform: 'none' }}
                                     >
                                         {isCheckingUser ? 'Checking...' : 'Check'}
                                     </Button>
@@ -212,7 +188,7 @@ const AdoptionForm: React.FC<AdoptionFormProps> = ({ pet, onClose, onSubmit }) =
             case 1:
                 return (
                     <Box>
-                        <Typography variant="h6" sx={{ mb: 2, color: '#003366', textAlign: 'center', fontWeight: 'bold' }}>
+                        <Typography variant="h6" sx={{ mb: 3, color: '#003366', textAlign: 'center', fontWeight: 'bold' }}>
                             Terms & Conditions
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 2, color: '#555' }}>
@@ -235,7 +211,8 @@ const AdoptionForm: React.FC<AdoptionFormProps> = ({ pet, onClose, onSubmit }) =
                                     color: 'white', 
                                     borderRadius: '12px',
                                     fontFamily: 'Nunito Sans',
-                                    '&:hover': { backgroundColor: '#002244' }
+                                    '&:hover': { backgroundColor: '#002244' },
+                                    transition: 'background-color 0.3s ease'
                                 }}
                                 onClick={handleAgree}
                             >
@@ -250,56 +227,62 @@ const AdoptionForm: React.FC<AdoptionFormProps> = ({ pet, onClose, onSubmit }) =
                         {isSubmitting ? (
                             <CircularProgress sx={{ color: '#003366' }} />
                         ) : error ? (
-                            <>
-                                <ErrorIcon sx={{ fontSize: '60px', color: '#f44336', mb: 2 }} />
-                                <Typography variant="h6" sx={{ mb: 2, color: '#f44336', fontWeight: 'bold' }}>
-                                    Error Processing Adoption
-                                </Typography>
-                                <Typography variant="body1" sx={{ mb: 2, color: '#555' }}>
-                                    {error}
-                                </Typography>
-                                <Button
-                                    variant="contained"
-                                    sx={{ 
-                                        backgroundColor: '#003366', 
-                                        color: 'white', 
-                                        borderRadius: '12px',
-                                        fontFamily: 'Nunito Sans',
-                                        '&:hover': { backgroundColor: '#002244' }
-                                    }}
-                                    onClick={onClose}
-                                >
-                                    Close
-                                </Button>
-                            </>
+                            <Fade in={true}>
+                                <Box>
+                                    <ErrorIcon sx={{ fontSize: '60px', color: '#f44336', mb: 2 }} />
+                                    <Typography variant="h6" sx={{ mb: 2, color: '#f44336', fontWeight: 'bold' }}>
+                                        Error Processing Adoption
+                                    </Typography>
+                                    <Typography variant="body1" sx={{ mb: 2, color: '#555' }}>
+                                        {error}
+                                    </Typography>
+                                    <Button
+                                        variant="contained"
+                                        sx={{ 
+                                            backgroundColor: '#003366', 
+                                            color: 'white', 
+                                            borderRadius: '12px',
+                                            fontFamily: 'Nunito Sans',
+                                            '&:hover': { backgroundColor: '#002244' },
+                                            transition: 'background-color 0.3s ease'
+                                        }}
+                                        onClick={onClose}
+                                    >
+                                        Close
+                                    </Button>
+                                </Box>
+                            </Fade>
                         ) : adoptionSuccess ? (
-                            <>
-                                <CheckCircleIcon sx={{ fontSize: '60px', color: '#4CAF50', mb: 2 }} />
-                                <Typography variant="h6" sx={{ mb: 2, color: '#003366', fontWeight: 'bold' }}>
-                                    Adoption Confirmed!
-                                </Typography>
-                                <Typography variant="body1" sx={{ mb: 2, color: '#555' }}>
-                                    Thank you for choosing to adopt {pet.pet_name}! 🎉
-                                </Typography>
-                                <Typography variant="body1" sx={{ mb: 2, color: '#555' }}>
-                                    We will deliver {pet.pet_name} to your doorstep within 3-5 business days.
-                                </Typography>
-                                <Button
-                                    variant="contained"
-                                    sx={{ 
-                                        backgroundColor: '#003366', 
-                                        color: 'white', 
-                                        borderRadius: '12px',
-                                        fontFamily: 'Nunito Sans',
-                                        '&:hover': { backgroundColor: '#002244' }
-                                    }}
-                                    onClick={onClose}
-                                >
-                                    Close
-                                </Button>
-                            </>
+                            <Fade in={true}>
+                                <Box>
+                                    <CheckCircleIcon sx={{ fontSize: '60px', color: '#4CAF50', mb: 2 }} />
+                                    <Typography variant="h6" sx={{ mb: 2, color: '#003366', fontWeight: 'bold' }}>
+                                        Adoption Confirmed!
+                                    </Typography>
+                                    <Typography variant="body1" sx={{ mb: 2, color: '#555' }}>
+                                        Thank you for choosing to adopt {pet.pet_name}! 🎉
+                                    </Typography>
+                                    <Typography variant="body1" sx={{ mb: 2, color: '#555' }}>
+                                        We will deliver {pet.pet_name} to your doorstep within 3-5 business days.
+                                    </Typography>
+                                    <Button
+                                        variant="contained"
+                                        sx={{ 
+                                            backgroundColor: '#003366', 
+                                            color: 'white', 
+                                            borderRadius: '12px',
+                                            fontFamily: 'Nunito Sans',
+                                            '&:hover': { backgroundColor: '#002244' },
+                                            transition: 'background-color 0.3s ease'
+                                        }}
+                                        onClick={onClose}
+                                    >
+                                        Close
+                                    </Button>
+                                </Box>
+                            </Fade>
                         ) : (
-                            <>
+                            <Box>
                                 <Typography variant="h6" sx={{ mb: 2, color: '#003366', fontWeight: 'bold' }}>
                                     Confirm Your Adoption
                                 </Typography>
@@ -317,13 +300,14 @@ const AdoptionForm: React.FC<AdoptionFormProps> = ({ pet, onClose, onSubmit }) =
                                         borderRadius: '12px',
                                         fontFamily: 'Nunito Sans',
                                         '&:hover': { backgroundColor: '#388E3C' },
-                                        mt: 2
+                                        mt: 2,
+                                        transition: 'background-color 0.3s ease'
                                     }}
                                     onClick={handleConfirmAdoption}
                                 >
                                     Confirm Adoption
                                 </Button>
-                            </>
+                            </Box>
                         )}
                     </Box>
                 );
@@ -363,7 +347,8 @@ const AdoptionForm: React.FC<AdoptionFormProps> = ({ pet, onClose, onSubmit }) =
                             color: 'white', 
                             borderRadius: '12px',
                             fontFamily: 'Nunito Sans',
-                            '&:hover': { backgroundColor: '#d32f2f' }
+                            '&:hover': { backgroundColor: '#d32f2f' },
+                            transition: 'background-color 0.3s ease'
                         }}
                         onClick={handleBack}
                     >
@@ -378,7 +363,8 @@ const AdoptionForm: React.FC<AdoptionFormProps> = ({ pet, onClose, onSubmit }) =
                             color: 'white', 
                             borderRadius: '12px',
                             fontFamily: 'Nunito Sans',
-                            '&:hover': { backgroundColor: '#002244' }
+                            '&:hover': { backgroundColor: '#002244' },
+                            transition: 'background-color 0.3s ease'
                         }}
                         onClick={handleNext}
                         disabled={!formData.userName || !formData.email || !formData.phone || !formData.address}

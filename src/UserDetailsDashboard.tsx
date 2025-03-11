@@ -3,16 +3,18 @@ import { Box, Typography, Button, Snackbar, Alert } from '@mui/material';
 import UserDetailsTable from './UserDetailsTable';
 import UserDetailsForm from './UserDetailsForm';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchAllUsers, createUser, updateUser, deleteUser } from './UserService';
-import { UserDetails } from './types';
+import { fetchAllAdoptions, updateAdoptionStatus, deleteAdoption } from './UserService';
+import { Adoption } from './types';
 import { useNavigate } from 'react-router-dom';
 
 const UserDetailsDashboard: React.FC = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [selectedUser, setSelectedUser] = useState<UserDetails | null>(null);
+  const [selectedAdoption, setSelectedAdoption] = useState<Adoption | null>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
+  
+
   
   // Add state for notifications
   const [notification, setNotification] = useState<{
@@ -25,93 +27,75 @@ const UserDetailsDashboard: React.FC = () => {
     severity: 'info'
   });
 
-  // Use fetchAllUsers from your service
-  const { data: users = [], isLoading, error } = useQuery<UserDetails[], Error>({
-    queryKey: ['users'],
-    queryFn: fetchAllUsers
+  // Use fetchAllAdoptions from your service
+  const { data: adoptions = [], isLoading, error } = useQuery<Adoption[], Error>({
+    queryKey: ['adoptions'],
+    queryFn: fetchAllAdoptions
   });
 
-  // Use createUser from your service
-  const addUserMutation = useMutation({
-    mutationFn: createUser,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      setSubmitted(true);
-      resetForm();
-      showNotification('User added successfully!', 'success');
-    },
-    onError: (error: { response?: { data?: { message?: string } } }) => {
-      console.error('Error adding user:', error);
-      const errorMessage = error.response?.data?.message || 'Failed to add user. Please try again.';
-      showNotification(errorMessage, 'error');
-    }
-  });
+  
 
-  // Use updateUser from your service
-  const updateUserMutation = useMutation({
-    mutationFn: updateUser,
+  // Use updateAdoptionStatus from your service
+  const updateAdoptionMutation = useMutation({
+    mutationFn: updateAdoptionStatus,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ['adoptions'] });
       setSubmitted(true);
       setIsEdit(false);
       resetForm();
-      showNotification('User updated successfully!', 'success');
+      showNotification('Adoption status updated successfully!', 'success');
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      console.error('Error updating user:', error);
-      const errorMessage = error.response?.data?.message || 'Failed to update user. Please try again.';
+      console.error('Error updating adoption:', error);
+      const errorMessage = error.response?.data?.message || 'Failed to update adoption. Please try again.';
       showNotification(errorMessage, 'error');
     }
   });
 
-  // Use deleteUser from your service
-  const deleteUserMutation = useMutation({
-    mutationFn: deleteUser,
+  // Use deleteAdoption from your service
+  const deleteAdoptionMutation = useMutation({
+    mutationFn: deleteAdoption,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      showNotification('User deleted successfully!', 'success');
+      queryClient.invalidateQueries({ queryKey: ['adoptions'] });
+      showNotification('Adoption request deleted successfully!', 'success');
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      console.error('Error deleting user:', error);
-      const errorMessage = error.response?.data?.message || 'Failed to delete user. Please try again.';
+      console.error('Error deleting adoption:', error);
+      const errorMessage = error.response?.data?.message || 'Failed to delete adoption. Please try again.';
       showNotification(errorMessage, 'error');
     }
   });
 
-  const addUser = (data: UserDetails) => {
-    addUserMutation.mutate(data);
-  };
-
-  const updateUserHandler = (data: UserDetails) => {
-    if (!data.user_id) {
-      console.error('Cannot update user without ID');
-      showNotification('User ID is missing. Cannot update.', 'error');
+  const updateAdoptionHandler = (data: Adoption) => {
+    if (!data.adoption_id) {
+      console.error('Cannot update adoption without ID');
+      showNotification('Adoption ID is missing. Cannot update.', 'error');
       return;
     }
-    updateUserMutation.mutate(data);
+    updateAdoptionMutation.mutate(data);
   };
 
-  const deleteUserHandler = (user: UserDetails) => {
-    if (!user || !user.user_id) {
-      console.error('Cannot delete user without ID');
-      showNotification('User ID is missing. Cannot delete.', 'error');
+  const deleteAdoptionHandler = (adoption: Adoption) => {
+    if (!adoption || !adoption.adoption_id) {
+      console.error('Cannot delete adoption without ID');
+      showNotification('Adoption ID is missing. Cannot delete.', 'error');
       return;
     }
     
-    if (window.confirm(`Are you sure you want to delete ${user.name}?`)) {
-      deleteUserMutation.mutate(Number(user.user_id));
+    if (window.confirm(`Are you sure you want to delete this adoption request from ${adoption.user_name}?`)) {
+      deleteAdoptionMutation.mutate(Number(adoption.adoption_id));
     }
   };
 
-  const handleSelectUser = (user: UserDetails) => {
-    console.log('Selected user for editing:', user);
+  const handleSelectAdoption = (adoption: Adoption) => {
+    console.log('Selected adoption for editing:', adoption);
     // Create a deep copy to avoid reference issues
-    setSelectedUser(JSON.parse(JSON.stringify(user)));
+    setSelectedAdoption(JSON.parse(JSON.stringify(adoption)));
     setIsEdit(true);
   };
 
   const resetForm = () => {
-    setSelectedUser(null);
+    setSelectedAdoption(null);
     setIsEdit(false);
     setSubmitted(false);
   };
@@ -155,7 +139,7 @@ const UserDetailsDashboard: React.FC = () => {
             fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' }
           }}
         >
-          User Management Dashboard
+          Adoption Applications Dashboard
         </Typography>
         <Button
           variant="contained"
@@ -167,22 +151,23 @@ const UserDetailsDashboard: React.FC = () => {
         </Button>
       </Box>
 
-      {/* Form */}
-      <UserDetailsForm
-        addUser={addUser}
-        updateUser={updateUserHandler}
-        submitted={submitted}
-        data={selectedUser || undefined}
-        isEdit={isEdit}
-        resetForm={resetForm}
-      />
+      {/* Form - Only for editing status */}
+      {isEdit && (
+        <UserDetailsForm
+          updateAdoption={updateAdoptionHandler}
+          submitted={submitted}
+          data={selectedAdoption || undefined}
+          isEdit={isEdit}
+          resetForm={resetForm}
+        />
+      )}
 
       {/* Table */}
       <Box sx={{ mt: 4, overflowX: 'auto' }}>
         <UserDetailsTable 
-          rows={users} 
-          selectedUser={handleSelectUser} 
-          deleteUser={deleteUserHandler}
+          rows={adoptions} 
+          selectedAdoption={handleSelectAdoption} 
+          deleteAdoption={deleteAdoptionHandler}
           isLoading={isLoading}
           error={error ? error.message : null} 
         />

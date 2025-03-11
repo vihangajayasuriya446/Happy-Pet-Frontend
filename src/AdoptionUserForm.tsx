@@ -87,7 +87,8 @@ const PetForm: React.FC<PetFormProps> = ({
       pet_adoptionStatus,
       pet_description,
       pet_photo,
-      image_url
+      image_url,
+      status: pet_adoptionStatus as "Available" | "Pending" | "Approved" | "Rejected" | "Adopted" // Assuming status is the same as pet_adoptionStatus
     };
 
     if (isEdit) {
@@ -103,6 +104,17 @@ const PetForm: React.FC<PetFormProps> = ({
         <Typography variant="h5" sx={{ mb: 3, color: "#002855", fontWeight: "bold", textAlign: "center" }}>
           {isEdit ? "Edit Pet" : "Add a New Pet for Adoption"}
         </Typography>
+
+        <Box>
+        <FormLabel sx={{ fontWeight: "bold", color: "#002855" }}>Pet ID</FormLabel>
+          <TextField
+          fullWidth
+          value={pet_id}
+          defaultValue={1}
+          disabled={isEdit}
+          onChange={(e) => setPetId(parseInt(e.target.value))}
+        />
+      </Box>
 
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <Box>
