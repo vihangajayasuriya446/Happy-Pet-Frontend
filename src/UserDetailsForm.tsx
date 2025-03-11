@@ -3,55 +3,40 @@ import {
   Button,
   FormLabel,
   Box,
-  Input,
   Typography,
   Select,
   MenuItem,
   Card,
   CardContent,
-  Switch,
-  FormControlLabel,
-  InputAdornment,
-  IconButton,
-  FormHelperText,
+  TextField, // Import TextField
 } from '@mui/material';
-import { UserDetails } from './types';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { Adoption, UserDetails } from './types';
+import axios from 'axios';
 
 interface UserDetailsFormProps {
-  addUser: (user: UserDetails) => void;
-  updateUser: (user: UserDetails) => void;
+  updateAdoption: (adoption: Adoption) => void;
   submitted: boolean;
-  data?: UserDetails;
+  data?: Adoption;
   isEdit: boolean;
   resetForm: () => void;
 }
 
 const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
-  addUser,
-  updateUser,
+  updateAdoption,
   submitted,
   data,
   isEdit,
   resetForm,
 }) => {
+  const [adoption_id, setAdoptionId] = useState<number>(0);
   const [user_id, setUserId] = useState<number>(0);
-  const [name, setName] = useState<string>('');
+  const [pet_id, setPetId] = useState<number>(0);
+  const [status, setStatus] = useState<'Pending' | 'Approved' | 'Rejected'>('Pending');
+  const [applied_at, setAppliedAt] = useState<string>('');
+  const [user_name, setUserName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [phone, setPhone] = useState<string>('');
   const [address, setAddress] = useState<string>('');
-  const [role, setRole] = useState<string>('USER');
-  const [active, setActive] = useState<boolean>(true);
-  const [registered_date, setRegisteredDate] = useState<string>(
-    new Date().toISOString().split('T')[0]
-  );
-  
-  // Form validation
-  const [emailError, setEmailError] = useState<string>('');
-  const [nameError, setNameError] = useState<string>('');
-  const [passwordError, setPasswordError] = useState<string>('');
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null); // State for user details
 
   useEffect(() => {
     if (submitted) {
@@ -62,221 +47,192 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
   useEffect(() => {
     if (isEdit && data) {
       populateForm(data);
+      fetchUserDetails(data.user_id); // Fetch user details on edit
     } else if (!isEdit) {
       resetFormState();
     }
   }, [data, isEdit]);
 
   const resetFormState = () => {
+    setAdoptionId(0);
     setUserId(0);
-    setName('');
+    setPetId(0);
+    setStatus('Pending');
+    setAppliedAt('');
+    setUserName('');
     setEmail('');
-    setPassword('');
-    setPhone('');
     setAddress('');
-    setRole('USER');
-    setActive(true);
-    setRegisteredDate(new Date().toISOString().split('T')[0]);
-    // Clear errors
-    setEmailError('');
-    setNameError('');
-    setPasswordError('');
+    setUserDetails(null);
     resetForm();
   };
 
-  const populateForm = (data: UserDetails) => {
+  const populateForm = (data: Adoption) => {
+    setAdoptionId(data.adoption_id);
     setUserId(data.user_id);
-    setName(data.name || '');
+    setPetId(data.pet_id);
+    setStatus(data.status);
+    setAppliedAt(data.applied_at);
+    setUserName(data.user_name || '');
     setEmail(data.email || '');
-    setPassword(''); // Don't show password for security reasons
-    setPhone(data.phone || '');
     setAddress(data.address || '');
-    setRole(data.role || 'USER');
-    setActive(data.active !== undefined ? data.active : true);
-    setRegisteredDate(
-      data.registered_date
-        ? new Date(data.registered_date).toISOString().split('T')[0]
-        : new Date().toISOString().split('T')[0]
-    );
   };
 
-  const validateForm = () => {
-    let isValid = true;
-    
-    // Name validation
-    if (!name.trim()) {
-      setNameError('Name is required');
-      isValid = false;
-    } else {
-      setNameError('');
+  const fetchUserDetails = async (userId: number) => {
+    try {
+      const response = await axios.get<UserDetails>(`http://localhost:8080/api/v1/users/${userId}`); // Replace with your actual endpoint
+      setUserDetails(response.data);
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+      // Handle error appropriately
     }
-    
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email.trim()) {
-      setEmailError('Email is required');
-      isValid = false;
-    } else if (!emailRegex.test(email)) {
-      setEmailError('Please enter a valid email address');
-      isValid = false;
-    } else {
-      setEmailError('');
-    }
-    
-    // Password validation (only for new users)
-    if (!isEdit && !password.trim()) {
-      setPasswordError('Password is required for new users');
-      isValid = false;
-    } else {
-      setPasswordError('');
-    }
-    
-    return isValid;
   };
 
-  const handleSubmit = () => {
-    if (!validateForm()) {
-      return;
-    }
-    
-    const userData: UserDetails = {
+  const handleSubmit = async () => {
+    const adoptionData: Adoption = {
+      adoption_id,
       user_id,
-      name,
+      pet_id,
+      status,
+      applied_at,
+      user_name,
       email,
-      password: password.trim() ? password : undefined, // Only include password if it's set
-      phone,
       address,
-      role,
-      active,
-      registered_date,
+      pet_name: data?.pet_name || ''
     };
 
-    console.log('Submitting user data:', userData);
-    
-    if (isEdit) {
-      updateUser(userData);
-    } else {
-      addUser(userData);
-    }
-  };
+    console.log('Updating adoption status:', adoptionData);
+    updateAdoption(adoptionData);
 
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const isFormValid = () => {
-    // Basic validation for button disable state
-    if (!name || !email) return false;
-    if (!isEdit && !password) return false; // Password required for new users
-    
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) return false;
-    
-    return true;
+    //Also update user Details
+       if (userDetails) {
+            try {
+                // Prepare user data for update
+                const userData = {
+                    user_id: user_id,
+                    name: user_name,
+                    email: email,
+                    address: address
+                };
+                
+                // Make PUT request to update user
+                const response = await axios.put(`http://localhost:8080/api/v1/users/update/${user_id}`, userData);
+                console.log('User details updated successfully:', response.data);
+                // Handle success
+            } catch (error) {
+                console.error('Error updating user details:', error);
+                // Handle error
+            }
+        }
   };
 
   return (
     <Card sx={{ maxWidth: 600, margin: 'auto', mt: 4, boxShadow: 3 }}>
       <CardContent>
         <Typography variant="h5" sx={{ mb: 3, color: '#002855', fontWeight: 'bold', textAlign: 'center' }}>
-          {isEdit ? 'Edit User' : 'Add a New User'}
+          Update Adoption Application Status
         </Typography>
 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Box>
-            <FormLabel sx={{ fontWeight: 'bold', color: '#002855' }}>Name*</FormLabel>
-            <Input 
-              fullWidth 
-              value={name} 
-              onChange={(e) => setName(e.target.value)} 
-              error={!!nameError}
-            />
-            {nameError && <FormHelperText error>{nameError}</FormHelperText>}
+          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+            <Box>
+              <FormLabel sx={{ fontWeight: 'bold', color: '#002855' }}>Adoption ID</FormLabel>
+              <TextField
+                fullWidth
+                type="number"
+                value={adoption_id}
+                onChange={(e) => setAdoptionId(Number(e.target.value))}
+                variant="outlined"
+                size="small"
+              />
+            </Box>
+            <Box>
+              <FormLabel sx={{ fontWeight: 'bold', color: '#002855' }}>Pet ID</FormLabel>
+              <TextField
+                fullWidth
+                type="number"
+                value={pet_id}
+                onChange={(e) => setPetId(Number(e.target.value))}
+                variant="outlined"
+                size="small"
+              />
+            </Box>
           </Box>
 
           <Box>
-            <FormLabel sx={{ fontWeight: 'bold', color: '#002855' }}>Email*</FormLabel>
-            <Input 
-              fullWidth 
-              type="email" 
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
-              error={!!emailError}
-            />
-            {emailError && <FormHelperText error>{emailError}</FormHelperText>}
-          </Box>
-
-          <Box>
-            <FormLabel sx={{ fontWeight: 'bold', color: '#002855' }}>
-              {isEdit ? 'Password (leave blank to keep unchanged)' : 'Password*'}
-            </FormLabel>
-            <Input
+            <FormLabel sx={{ fontWeight: 'bold', color: '#002855' }}>Applicant Name</FormLabel>
+            <TextField
               fullWidth
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              error={!!passwordError}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    edge="end"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              }
+              value={user_name}
+              onChange={(e) => setUserName(e.target.value)}
+              variant="outlined"
+              size="small"
             />
-            {passwordError && <FormHelperText error>{passwordError}</FormHelperText>}
           </Box>
 
           <Box>
-            <FormLabel sx={{ fontWeight: 'bold', color: '#002855' }}>Phone</FormLabel>
-            <Input fullWidth value={phone} onChange={(e) => setPhone(e.target.value)} />
+            <FormLabel sx={{ fontWeight: 'bold', color: '#002855' }}>Email</FormLabel>
+             <TextField
+              fullWidth
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              variant="outlined"
+              size="small"
+            />
           </Box>
 
           <Box>
             <FormLabel sx={{ fontWeight: 'bold', color: '#002855' }}>Address</FormLabel>
-            <Input 
-              fullWidth 
-              multiline 
-              rows={2} 
-              value={address} 
-              onChange={(e) => setAddress(e.target.value)} 
+            <TextField
+              fullWidth
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              variant="outlined"
+              size="small"
             />
           </Box>
 
           <Box>
-            <FormLabel sx={{ fontWeight: 'bold', color: '#002855' }}>Role</FormLabel>
-            <Select fullWidth value={role} onChange={(e) => setRole(e.target.value as string)}>
-              <MenuItem value="USER">User</MenuItem>
-              <MenuItem value="ADMIN">Admin</MenuItem>
+            <FormLabel sx={{ fontWeight: 'bold', color: '#002855' }}>Applied Date</FormLabel>
+            <TextField
+                fullWidth
+                type="text" // Consider using a date picker component
+                value={applied_at}
+                onChange={(e) => setAppliedAt(e.target.value)}
+                variant="outlined"
+                size="small"
+              />
+          </Box>
+
+          <Box>
+            <FormLabel sx={{ fontWeight: 'bold', color: '#002855' }}>Status*</FormLabel>
+            <Select
+              fullWidth
+              value={status}
+              onChange={(e) => setStatus(e.target.value as 'Pending' | 'Approved' | 'Rejected')}
+            >
+              <MenuItem value="Pending">Pending</MenuItem>
+              <MenuItem value="Approved">Approved</MenuItem>
+              <MenuItem value="Rejected">Rejected</MenuItem>
             </Select>
-          </Box>
-
-          <Box>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={active}
-                  onChange={(e) => setActive(e.target.checked)}
-                  color="primary"
-                />
-              }
-              label="Active Account"
-            />
           </Box>
 
           <Button
             variant="contained"
             color="primary"
             onClick={handleSubmit}
-            disabled={!isFormValid()}
             sx={{ mt: 2, textTransform: 'none', borderRadius: '4px' }}
           >
-            {isEdit ? 'Update User' : 'Add User'}
+            Update Status
+          </Button>
+
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={resetForm}
+            sx={{ textTransform: 'none', borderRadius: '4px' }}
+          >
+            Cancel
           </Button>
         </Box>
       </CardContent>
