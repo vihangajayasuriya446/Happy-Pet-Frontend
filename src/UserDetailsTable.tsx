@@ -14,32 +14,34 @@ import {
   CircularProgress,
   Stack,
 } from '@mui/material';
-import { UserDetails } from './types';
+import { Adoption } from './types';
 
 interface UserDetailsTableProps {
-  rows: UserDetails[];
-  selectedUser: (user: UserDetails) => void;
-  deleteUser: (user: UserDetails) => void;
+  rows: Adoption[];
+  selectedAdoption: (adoption: Adoption) => void;
+  deleteAdoption: (adoption: Adoption) => void;
   isLoading: boolean;
   error: string | null;
 }
 
 const UserDetailsTable: React.FC<UserDetailsTableProps> = ({
   rows,
-  selectedUser,
-  deleteUser,
+  selectedAdoption,
+  deleteAdoption,
   isLoading,
   error,
 }) => {
-  // Function to get role color
-  type RoleColor = 'primary' | 'secondary' | 'default';
+  // Function to get status color
+  type StatusColor = 'default' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
 
-  const getRoleColor = (role: string): RoleColor => {
-    switch (role) {
-      case 'ADMIN':
-        return 'primary';
-      case 'USER':
-        return 'secondary';
+  const getStatusColor = (status: string): StatusColor => {
+    switch (status) {
+      case 'Approved':
+        return 'success';
+      case 'Rejected':
+        return 'error';
+      case 'Pending':
+        return 'warning';
       default:
         return 'default';
     }
@@ -70,41 +72,35 @@ const UserDetailsTable: React.FC<UserDetailsTableProps> = ({
         <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
           <TableRow>
             <TableCell sx={{ fontWeight: 'bold', color: '#002855', textAlign: 'center' }}>ID</TableCell>
-            <TableCell sx={{ fontWeight: 'bold', color: '#002855', textAlign: 'center' }}>Name</TableCell>
+            <TableCell sx={{ fontWeight: 'bold', color: '#002855', textAlign: 'center' }}>Pet ID</TableCell>
+            <TableCell sx={{ fontWeight: 'bold', color: '#002855', textAlign: 'center' }}>Pet Name</TableCell>
+            <TableCell sx={{ fontWeight: 'bold', color: '#002855', textAlign: 'center' }}>Applicant Name</TableCell>
             <TableCell sx={{ fontWeight: 'bold', color: '#002855', textAlign: 'center' }}>Email</TableCell>
-            <TableCell sx={{ fontWeight: 'bold', color: '#002855', textAlign: 'center' }}>Phone</TableCell>
             <TableCell sx={{ fontWeight: 'bold', color: '#002855', textAlign: 'center' }}>Address</TableCell>
-            <TableCell sx={{ fontWeight: 'bold', color: '#002855', textAlign: 'center' }}>Role</TableCell>
             <TableCell sx={{ fontWeight: 'bold', color: '#002855', textAlign: 'center' }}>Status</TableCell>
-            <TableCell sx={{ fontWeight: 'bold', color: '#002855', textAlign: 'center' }}>Registered Date</TableCell>
+            <TableCell sx={{ fontWeight: 'bold', color: '#002855', textAlign: 'center' }}>Applied Date</TableCell>
             <TableCell sx={{ fontWeight: 'bold', color: '#002855', textAlign: 'center' }}>Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.length > 0 ? (
             rows.map((row) => (
-              <TableRow key={row.user_id} sx={{ '&:nth-of-type(odd)': { backgroundColor: '#f9f9f9' } }}>
-                <TableCell sx={{ textAlign: 'center' }}>{row.user_id}</TableCell>
-                <TableCell sx={{ textAlign: 'center' }}>{row.name}</TableCell>
+              <TableRow key={row.adoption_id} sx={{ '&:nth-of-type(odd)': { backgroundColor: '#f9f9f9' } }}>
+                <TableCell sx={{ textAlign: 'center' }}>{row.adoption_id}</TableCell>
+                <TableCell sx={{ textAlign: 'center' }}>{row.pet_id}</TableCell>
+                 <TableCell sx={{ textAlign: 'center' }}>{row.pet_name}</TableCell>
+                <TableCell sx={{ textAlign: 'center' }}>{row.user_name}</TableCell>
                 <TableCell sx={{ textAlign: 'center' }}>{row.email}</TableCell>
-                <TableCell sx={{ textAlign: 'center' }}>{row.phone}</TableCell>
                 <TableCell sx={{ textAlign: 'center' }}>{row.address}</TableCell>
                 <TableCell sx={{ textAlign: 'center' }}>
                   <Chip
-                    label={row.role}
-                    color={getRoleColor(row.role)}
+                    label={row.status}
+                    color={getStatusColor(row.status)}
                     size="small"
                   />
                 </TableCell>
                 <TableCell sx={{ textAlign: 'center' }}>
-                  <Chip
-                    label={row.active ? 'Active' : 'Inactive'}
-                    color={row.active ? 'success' : 'error'}
-                    size="small"
-                  />
-                </TableCell>
-                <TableCell sx={{ textAlign: 'center' }}>
-                  {new Date(row.registered_date).toLocaleDateString()}
+                  {new Date(row.applied_at).toLocaleDateString()}
                 </TableCell>
                 <TableCell>
                   <Stack direction="row" spacing={1} justifyContent="center">
@@ -115,10 +111,10 @@ const UserDetailsTable: React.FC<UserDetailsTableProps> = ({
                       sx={{ textTransform: 'none', borderRadius: '4px' }}
                       onClick={(e) => {
                         e.stopPropagation();
-                        selectedUser(row);
+                        selectedAdoption(row);
                       }}
                     >
-                      Edit
+                      Update
                     </Button>
                     <Button
                       variant="contained"
@@ -127,7 +123,7 @@ const UserDetailsTable: React.FC<UserDetailsTableProps> = ({
                       sx={{ textTransform: 'none', borderRadius: '4px' }}
                       onClick={(e) => {
                         e.stopPropagation();
-                        deleteUser(row);
+                        deleteAdoption(row);
                       }}
                     >
                       Delete
@@ -138,9 +134,9 @@ const UserDetailsTable: React.FC<UserDetailsTableProps> = ({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={9} align="center" sx={{ py: 4 }}>
+              <TableCell colSpan={8} align="center" sx={{ py: 4 }}>
                 <Typography variant="body1" color="textSecondary">
-                  No users found.
+                  No adoption applications found.
                 </Typography>
               </TableCell>
             </TableRow>
