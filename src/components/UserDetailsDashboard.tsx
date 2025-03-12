@@ -8,9 +8,11 @@ import {
     Paper,
     CircularProgress
 } from '@mui/material';
-import UserDetailsForm, { UserDetails } from './UserDetailsForm';
 import { useNavigate } from 'react-router-dom';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import { InquiryService } from '../services/InquiryService';
+import UserDetailsForm, { UserInquiry } from './UserDetailsForm';
+
 
 // Define interfaces
 interface SnackbarState {
@@ -21,7 +23,7 @@ interface SnackbarState {
 
 const UserDetailsDashboard: React.FC = () => {
     const navigate = useNavigate();
-    const [selectedUser, setSelectedUser] = useState<UserDetails | null>(null);
+    const [selectedInquiry, setSelectedInquiry] = useState<UserInquiry | null>(null);
     const [submitted, setSubmitted] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [snackbar, setSnackbar] = useState<SnackbarState>({
@@ -30,43 +32,40 @@ const UserDetailsDashboard: React.FC = () => {
         severity: 'success'
     });
 
-    const addUser = async (formData: Omit<UserDetails, 'user_id'>) => {
+    const addInquiry = async (formData: Omit<UserInquiry, 'id'>) => {
         setIsLoading(true);
         try {
-            // Here you would normally call your API service
-            // For example: await UserService.createUser(formData);
-            console.log('Adding user with data:', formData); // Use formData to remove the warning
-
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            // Call the API service to create a new inquiry
+            await InquiryService.createInquiry(formData);
 
             setSubmitted(true);
-            showSnackbar('Your message has been sent successfully', 'success');
+            showSnackbar('Your inquiry has been sent successfully', 'success');
             setTimeout(() => setSubmitted(false), 100);
         } catch (err) {
-            showSnackbar('Failed to send message', 'error');
-            console.error("Error sending message:", err);
+            showSnackbar('Failed to send inquiry', 'error');
+            console.error("Error sending inquiry:", err);
         } finally {
             setIsLoading(false);
         }
     };
 
-    const updateUser = async (formData: UserDetails) => {
+    const updateInquiry = async (formData: UserInquiry) => {
         setIsLoading(true);
         try {
-            // Here you would normally call your API service
-            // For example: await UserService.updateUser(formData);
-            console.log('Updating user with data:', formData); // Use formData to remove the warning
+            if (!formData.id) {
+                throw new Error('Inquiry ID is required for updates');
+            }
 
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            // Call the API service to update an existing inquiry
+            await InquiryService.updateInquiry(formData);
 
             setSubmitted(true);
-            showSnackbar('Information updated successfully', 'success');
+            showSnackbar('Inquiry updated successfully', 'success');
             setTimeout(() => setSubmitted(false), 100);
+            setSelectedInquiry(null);
         } catch (err) {
-            showSnackbar('Failed to update information', 'error');
-            console.error("Error updating information:", err);
+            showSnackbar('Failed to update inquiry', 'error');
+            console.error("Error updating inquiry:", err);
         } finally {
             setIsLoading(false);
         }
@@ -79,7 +78,7 @@ const UserDetailsDashboard: React.FC = () => {
     };
 
     const resetForm = () => {
-        setSelectedUser(null);
+        setSelectedInquiry(null);
         setSubmitted(false);
     };
 
@@ -149,11 +148,11 @@ const UserDetailsDashboard: React.FC = () => {
                 </Box>
             ) : (
                 <UserDetailsForm
-                    addUser={addUser}
-                    updateUser={updateUser}
+                    addInquiry={addInquiry}
+                    updateInquiry={updateInquiry}
                     submitted={submitted}
-                    data={selectedUser}
-                    isEdit={!!selectedUser}
+                    data={selectedInquiry}
+                    isEdit={!!selectedInquiry}
                     resetForm={resetForm}
                 />
             )}

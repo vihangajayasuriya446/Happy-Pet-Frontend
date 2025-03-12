@@ -15,11 +15,11 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import EmailIcon from "@mui/icons-material/Email";
 import { useCart } from "../contexts/CartContext";
-import { Pet } from "../App"; // Import from App instead of ./types
+import { Pet } from "../App";
 import { useNavigate } from "react-router-dom";
 
 interface PetCardProps {
-    pet: Pet & { enableContactOwner?: boolean }; // Extend Pet type to include enableContactOwner flag
+    pet: Pet & { enableContactOwner?: boolean };
     onAdopt?: () => void;
 }
 
@@ -91,15 +91,19 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
 
     // Handler for "Contact the owner" button - updated to pass pet information
     const handleContactOwner = () => {
-        navigate('/contact-owner/' + pet.id, {
-            state: {
-                petId: pet.id,
-                petName: pet.name,
-                petBreed: pet.breed,
-                petPrice: pet.price,
-                petImage: resolvedImageUrl
-            }
-        });
+        // Store pet information in localStorage
+        localStorage.setItem('selectedPet', JSON.stringify({
+            id: pet.id,
+            name: pet.name,
+            breed: pet.breed,
+            price: pet.price,
+            gender: pet.gender,
+            birthYear: pet.birthYear,
+            imageUrl: resolvedImageUrl
+        }));
+
+        // Navigate to contact form
+        navigate('/contact');
     };
 
     const handleCloseSnackbar = () => {
@@ -224,7 +228,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                         variant="h6"
                         fontWeight="bold"
                         color="primary"
-                        sx={{ fontSize: '1.1rem' }} // Slightly reduced font size from h6 default
+                        sx={{ fontSize: '1.1rem' }}
                     >
                         {pet.name}
                     </Typography>
@@ -232,7 +236,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                         variant="h6"
                         fontWeight="bold"
                         color="primary"
-                        sx={{ fontSize: '1.1rem' }} // Matching reduced font size
+                        sx={{ fontSize: '1.1rem' }}
                     >
                         {formatPriceLKR(pet.price)}
                     </Typography>
