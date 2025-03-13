@@ -74,7 +74,17 @@ const Navbar = () => {
 
   return (
     <>
-      <AppBar position="fixed" sx={{ bgcolor: "white", color: "black", px: 2 }}>
+      <AppBar
+        position="fixed"
+        sx={{
+          bgcolor: "rgba(248, 249, 250, 0.9)", // Soft gray background
+          backdropFilter: "blur(10px)", // Glass morphism effect
+          color: "#333333",
+          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+          px: 2,
+          borderBottom: "1px solid rgba(0, 0, 0, 0.1)", // Subtle border
+        }}
+      >
         <Toolbar>
           <Box
             component="img"
@@ -84,34 +94,55 @@ const Navbar = () => {
           />
           <Typography
             variant="h6"
-            sx={{ fontWeight: "bold", color: "#002855", flexGrow: 1 }}
+            sx={{
+              fontWeight: "bold",
+              color: "#002855",
+              flexGrow: 1,
+              fontSize: "1.5rem",
+            }}
           >
             HappyPet
           </Typography>
           <Typography
             variant="body1"
-            sx={{ mx: 2, cursor: "pointer" }}
+            sx={{
+              mx: 2,
+              cursor: "pointer",
+              "&:hover": { color: "#007BFF", transition: "color 0.3s ease" },
+            }}
             onClick={() => handleNavigation("/")}
           >
             Home
           </Typography>
           <Typography
             variant="body1"
-            sx={{ mx: 2, cursor: "pointer" }}
+            sx={{
+              mx: 2,
+              cursor: "pointer",
+              "&:hover": { color: "#007BFF", transition: "color 0.3s ease" },
+            }}
             onClick={() => handleNavigation("/services")}
           >
             Services
           </Typography>
           <Typography
             variant="body1"
-            sx={{ mx: 2, cursor: "pointer" }}
-            onClick={() => handleNavigation("/aboutus")}
+            sx={{
+              mx: 2,
+              cursor: "pointer",
+              "&:hover": { color: "#007BFF", transition: "color 0.3s ease" },
+            }}
+            onClick={() => handleNavigation("/about")}
           >
             About Us
           </Typography>
           <Typography
             variant="body1"
-            sx={{ mx: 2, cursor: "pointer" }}
+            sx={{
+              mx: 2,
+              cursor: "pointer",
+              "&:hover": { color: "#007BFF", transition: "color 0.3s ease" },
+            }}
             onClick={() => handleNavigation("/contactus")}
           >
             Contact Us
@@ -120,31 +151,33 @@ const Navbar = () => {
             sx={{
               display: "flex",
               alignItems: "center",
-              bgcolor: "#f1f1f1",
+              bgcolor: "rgba(241, 241, 241, 0.8)", // Semi-transparent background
               p: "5px 10px",
               borderRadius: "20px",
               mx: 2,
+              "&:hover": { boxShadow: "0 0 8px rgba(0, 0, 0, 0.1)" },
             }}
           >
             <SearchIcon sx={{ color: "gray" }} />
             <InputBase placeholder="Search" sx={{ ml: 1 }} />
           </Box>
           <IconButton sx={{ ml: 2 }} onClick={handleAccountClick}>
-          {userDetails ? (
-            <Avatar
-              sx={{
-                bgcolor: "primary.main", // Use primary color for the avatar background
-                width: 25, // Adjust size to match the icon
-                height: 25,
-                fontSize: 15, // Adjust font size for the character
-              }}
-            >
-              {userDetails.firstName.charAt(0).toUpperCase()} {/* Display first character */}
-            </Avatar>
-          ) : (
-            <AccountCircle /> // Default icon when no user is logged in
-          )}
-        </IconButton>
+            {userDetails ? (
+              <Avatar
+                sx={{
+                  bgcolor: "#007BFF",
+                  width: 25,
+                  height: 25,
+                  fontSize: 15,
+                  "&:hover": { transform: "scale(1.1)", transition: "transform 0.3s ease" },
+                }}
+              >
+                {userDetails.firstName.charAt(0).toUpperCase()}
+              </Avatar>
+            ) : (
+              <AccountCircle />
+            )}
+          </IconButton>
           <IconButton onClick={toggleDrawer}>
             <MenuIcon />
           </IconButton>
@@ -166,12 +199,13 @@ const Navbar = () => {
         }}
         PaperProps={{
           style: {
-            minWidth: '280px', // Slightly wider for better readability
-            padding: '20px', // More padding for a spacious feel
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)', // Softer shadow
-            borderRadius: '12px', // More rounded corners
-            border: '1px solid #e0e0e0', // Subtle border for definition
-            backgroundColor: '#ffffff', // Ensure white background
+            minWidth: "300px",
+            padding: "24px",
+            boxShadow: "0 8px 24px rgba(0, 0, 0, 0.1)",
+            borderRadius: "16px",
+            border: "1px solid rgba(0, 0, 0, 0.1)", // Subtle border
+            backgroundColor: "rgba(248, 249, 250, 0.95)", // Soft gray background
+            backdropFilter: "blur(10px)", // Glass morphism effect
           },
         }}
       >
@@ -180,29 +214,30 @@ const Navbar = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: '12px', // Consistent spacing between elements
+            gap: "16px",
           }}
         >
           {userDetails ? (
             <>
               <Avatar
                 sx={{
-                  bgcolor: "primary.main",
-                  width: '64px', // Larger avatar
-                  height: '64px',
-                  fontSize: '24px', // Larger font for initials
-                  mb: 2, // More space below the avatar
+                  bgcolor: "linear-gradient(135deg, #007BFF, #00BFFF)",
+                  width: "80px",
+                  height: "80px",
+                  fontSize: "32px",
+                  mb: 3,
+                  boxShadow: "0 4px 12px rgba(0, 123, 255, 0.3)",
                 }}
               >
                 {userDetails.firstName.charAt(0).toUpperCase()}
               </Avatar>
               <Typography
-                variant="body1"
+                variant="h6"
                 sx={{
-                  fontWeight: '600', // Bold for emphasis
-                  fontSize: '18px', // Slightly larger font
-                  color: '#333333', // Darker text for better readability
-                  textAlign: 'center', // Center-aligned text
+                  fontWeight: "700",
+                  fontSize: "20px",
+                  color: "#333333",
+                  textAlign: "center",
                 }}
               >
                 {userDetails.firstName} {userDetails.lastName}
@@ -210,9 +245,9 @@ const Navbar = () => {
               <Typography
                 variant="body2"
                 sx={{
-                  color: '#666666', // Lighter text for less emphasis
-                  fontSize: '14px', // Smaller font for secondary info
-                  textAlign: 'center',
+                  color: "#666666",
+                  fontSize: "14px",
+                  textAlign: "center",
                 }}
               >
                 {userDetails.email}
@@ -220,42 +255,45 @@ const Navbar = () => {
               <Typography
                 variant="body2"
                 sx={{
-                  color: '#666666',
-                  fontSize: '14px',
-                  textAlign: 'center',
-                  mb: 2, // Space above the button
+                  color: "#666666",
+                  fontSize: "14px",
+                  textAlign: "center",
+                  mb: 3,
                 }}
               >
                 Role: {userDetails.role}
               </Typography>
               <Button
-              variant="contained"
-              color="secondary" // Standard secondary color
-              onClick={handleLogout}
-              sx={{
-                width: '100%',
-                padding: '10px',
-                borderRadius: '8px',
-                fontWeight: '600',
-                textTransform: 'none',
-                fontSize: '16px',
-                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                '&:hover': {
-                  backgroundColor: '#9c27b0', // Darker shade of secondary color on hover
-                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-                },
-              }}
-            >
-              Sign Out
-            </Button>
+                variant="contained"
+                color="secondary"
+                onClick={handleLogout}
+                sx={{
+                  width: "100%",
+                  padding: "12px",
+                  borderRadius: "12px",
+                  fontWeight: "600",
+                  textTransform: "none",
+                  fontSize: "16px",
+                  background: "linear-gradient(135deg, #9c27b0, #e91e63)",
+                  boxShadow: "0 4px 8px rgba(156, 39, 176, 0.2)",
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    background: "linear-gradient(135deg, #e91e63, #9c27b0)",
+                    boxShadow: "0 6px 12px rgba(156, 39, 176, 0.3)",
+                    transform: "translateY(-2px)",
+                  },
+                }}
+              >
+                Sign Out
+              </Button>
             </>
           ) : (
             <Typography
               variant="body1"
               sx={{
-                color: '#666666',
-                fontSize: '16px',
-                textAlign: 'center',
+                color: "#666666",
+                fontSize: "16px",
+                textAlign: "center",
               }}
             >
               No user details available
@@ -290,6 +328,10 @@ const DrawerMenu = ({ open, toggleDrawer }: DrawerMenuProps) => {
         "& .MuiDrawer-paper": {
           width: 250,
           boxSizing: "border-box",
+          bgcolor: "rgba(248, 249, 250, 0.95)", // Soft gray background
+          backdropFilter: "blur(10px)", // Glass morphism effect
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+          borderRight: "1px solid rgba(0, 0, 0, 0.1)", // Subtle border
         },
       }}
     >
@@ -297,28 +339,28 @@ const DrawerMenu = ({ open, toggleDrawer }: DrawerMenuProps) => {
         <ListItem
           key={"Home"}
           onClick={() => handleNavigation("/")}
-          sx={{ cursor: "pointer" }}
+          sx={{ cursor: "pointer", "&:hover": { bgcolor: "#f1f1f1" } }}
         >
           <ListItemText primary={"Home"} />
         </ListItem>
         <ListItem
           key={"Services"}
           onClick={() => handleNavigation("/services")}
-          sx={{ cursor: "pointer" }}
+          sx={{ cursor: "pointer", "&:hover": { bgcolor: "#f1f1f1" } }}
         >
           <ListItemText primary={"Services"} />
         </ListItem>
         <ListItem
           key={"About Us"}
           onClick={() => handleNavigation("/aboutus")}
-          sx={{ cursor: "pointer" }}
+          sx={{ cursor: "pointer", "&:hover": { bgcolor: "#f1f1f1" } }}
         >
           <ListItemText primary={"About Us"} />
         </ListItem>
         <ListItem
           key={"Contact Us"}
           onClick={() => handleNavigation("/contactus")}
-          sx={{ cursor: "pointer" }}
+          sx={{ cursor: "pointer", "&:hover": { bgcolor: "#f1f1f1" } }}
         >
           <ListItemText primary={"Contact Us"} />
         </ListItem>

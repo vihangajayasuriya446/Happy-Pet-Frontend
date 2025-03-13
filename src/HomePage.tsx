@@ -1,12 +1,14 @@
-import { Box, Button, Typography, Card, AppBar, Toolbar, IconButton, styled } from "@mui/material";
-import MenuIcon from '@mui/icons-material/Menu';
+import { Box, Button, Typography, Card, styled, CardContent, CardMedia } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
+import axios from "axios";
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
   const role = localStorage.getItem('role');
+  const [pets, setPets] = useState<any[]>([]);
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -18,6 +20,17 @@ const HomePage: React.FC = () => {
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8080/api/v1/getusers") // Adjust URL based on backend
+      .then((response) => {
+        setPets(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching pets:", error);
+      });
   }, []);
 
   const handleNavigation = (path: string) => {
@@ -42,182 +55,247 @@ const HomePage: React.FC = () => {
     backgroundColor: "grey.100",
   });
 
-  const FullWidthBackgroundImage = styled(Box)({
-    position: "relative",
-    width: "100%",
-    display: "flex",
-    justifyContent: "center",
-    flexGrow: 1,
-    "& img": {
-      width: "100%",
-      height: "100%",
-      objectFit: "cover",
-    },
-  });
-
   return (
     <FullHeightBox>
+      {/* Main Content Container */}
       <Box
+        component="div"
         sx={{
-          backgroundColor: "#3f51b5",
-          color: "white",
-          textAlign: "center",
-          py: 4,
           width: "100%",
-          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-          position: "relative",
+          maxWidth: "1200px", // Limit max width for better readability
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 6, // Adds spacing between text and cards
+          padding: 2,
+          mt: 8, // Add margin to account for the navbar
         }}
       >
-        <Typography variant="h6" fontWeight="bold">
-          "Bringing Joy, One Paw at a Time – Where Happy Pets Meet Loving Homes!"
-        </Typography>
-        {/* Sign Up and Login Buttons */}
-        {!token && (
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              right: "16px",
-              transform: "translateY(-50%)",
-              display: "flex",
-              gap: "8px",
-              zIndex: 1,
-            }}
-          >
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{
-                borderRadius: "20px",
-                textTransform: "none",
-                fontSize: "0.875rem",
-                padding: "8px 24px",
-                fontWeight: "bold",
-                backgroundColor: "#ff4081",
-                "&:hover": {
-                  backgroundColor: "#e91e63",
-                },
-              }}
-              onClick={() => navigate("/signup")}
-            >
-              Sign Up
-            </Button>
-            <Button
-              variant="outlined"
-              color="inherit"
-              sx={{
-                borderRadius: "20px",
-                textTransform: "none",
-                fontSize: "0.875rem",
-                padding: "8px 24px",
-                fontWeight: "bold",
-                borderColor: "white",
-                color: "white",
-                "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.1)",
-                },
-              }}
-              onClick={() => navigate("/login")}
-            >
-              Login
-            </Button>
-          </Box>
-        )}
-      </Box>
-
-      <FullWidthBackgroundImage>
-        <img src="/src/assets/backgroundimghome.png" alt="Background" />
+        {/* Modernized Text Overlay */}
+        <Box
+  component="div"
+  sx={{
+    textAlign: "center",
+    backdropFilter: "blur(16px) saturate(180%)",
+    backgroundColor: "rgba(17, 25, 40, 0.6)",
+    boxShadow: "0 10px 25px rgba(0, 0, 0, 0.2)",
+    borderRadius: "32px",
+    padding: { xs: 4, sm: 5, md: 6 },
+    border: "1px solid rgba(255, 255, 255, 0.1)",
+    animation: "fadeIn 1s ease-out",
+    maxWidth: "85%",
+    mx: "auto",
+    my: 5,
+    transition: "transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+    "&:hover": {
+      transform: "scale(1.03)",
+      boxShadow: "0 15px 35px rgba(0, 0, 0, 0.3)",
+    },
+  }}
+>
+  <Typography
+    variant="h2"
+    sx={{
+      color: "#667eea", // Solid color or static gradient
+      fontWeight: 700,
+      fontSize: { xs: "2.2rem", sm: "2.8rem", md: "3.2rem" },
+      textShadow: "2px 3px 10px rgba(0, 0, 0, 0.7)",
+      lineHeight: 1.1,
+      mb: 3,
+      WebkitFontSmoothing: "antialiased", // Ensures crisp text rendering
+      textRendering: "optimizeLegibility", // Improves text clarity
+      animation: "fadeIn 1s ease-out", // Fade-in animation only
+      "@keyframes fadeIn": {
+        "from": { opacity: 0, transform: "translateY(30px)" },
+        "to": { opacity: 1, transform: "translateY(0)" },
+      },
+    }}
+  >
+    Bringing Joy, One Paw at a Time
+  </Typography>
+  <Typography
+    variant="h4"
+    sx={{
+      color: "rgba(220, 220, 220, 0.9)",
+      fontWeight: 500,
+      fontSize: { xs: "1.4rem", sm: "1.7rem", md: "2rem" },
+      textShadow: "1px 2px 5px rgba(0, 0, 0, 0.6)",
+      mt: 3,
+      lineHeight: 1.4,
+      letterSpacing: "0.02em",
+    }}
+  >
+    Where Happy Pets Meet Loving Homes!
+  </Typography>
+</Box>
+        {/* Cards Container */}
         <Box
           component="div"
-          position="absolute"
-          top="50%"
-          left="50%"
           sx={{
-            transform: "translate(-50%, -50%)",
             display: "flex",
             gap: 4,
+            flexWrap: "wrap",
+            justifyContent: "center",
+            width: "100%",
           }}
         >
+          {/* Buy a Pet Card */}
           <Card
             sx={{
-              width: 180,
-              height: 200,
+              width: 240,
+              height: 300,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              boxShadow: 3,
-              transition: "transform 0.3s ease",
+              backdropFilter: "blur(16px) saturate(180%)",
+              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.2)",
+              transition: "transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease",
               "&:hover": {
-                transform: "scale(1.05)",
+                transform: "translateY(-10px)",
+                boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
+                background: "rgba(255, 255, 255, 0.1)",
+                backdropFilter: "blur(10px)",
               },
               cursor: "pointer",
+              borderRadius: "24px",
+              backgroundColor: "rgba(255, 255, 255, 0.05)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
             }}
             onClick={() => handleCardClick("/buy")}
           >
-            <Box sx={{ width: 80, height: 80, mb: 2 }}>
+            <Box
+              sx={{
+                width: 120,
+                height: 120,
+                mb: 3,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "50%",
+                background: "linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%)",
+                boxShadow: "0 4px 12px rgba(255, 154, 158, 0.3)",
+              }}
+            >
               <img
-                src="/src/assets/buy_pet_icon.png"
+                src="/src/assets/buy-pet.png"
                 alt="Buy Pet Icon"
-                style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                style={{ width: "60%", height: "60%", objectFit: "contain" }}
               />
             </Box>
-            <Typography variant="h6">Buy a Pet</Typography>
+            <Typography variant="h6" fontWeight="bold" align="center" sx={{ color: "text.primary" }}>
+              Buy a Pet
+            </Typography>
+            <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 1 }}>
+              Find your perfect pet to bring home.
+            </Typography>
           </Card>
+
+          {/* Adopt a Pet Card */}
           <Card
             sx={{
-              width: 180,
-              height: 200,
+              width: 240,
+              height: 300,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              boxShadow: 3,
-              transition: "transform 0.3s ease",
+              backdropFilter: "blur(16px) saturate(180%)",
+              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.2)",
+              transition: "transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease",
               "&:hover": {
-                transform: "scale(1.05)",
+                transform: "translateY(-10px)",
+                boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
+                background: "rgba(255, 255, 255, 0.1)",
+                backdropFilter: "blur(10px)",
               },
               cursor: "pointer",
+              borderRadius: "24px",
+              backgroundColor: "rgba(255, 255, 255, 0.05)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
             }}
             onClick={() => handleCardClick("/adopt")}
           >
-            <Box sx={{ width: 80, height: 80, mb: 2 }}>
+            <Box
+              sx={{
+                width: 120,
+                height: 120,
+                mb: 3,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "50%",
+                background: "linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)",
+                boxShadow: "0 4px 12px rgba(161, 196, 253, 0.3)",
+              }}
+            >
               <img
                 src="/src/assets/adopt_pet_icon.png"
                 alt="Adopt Pet Icon"
-                style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                style={{ width: "60%", height: "60%", objectFit: "contain" }}
               />
             </Box>
-            <Typography variant="h6">Adopt a Pet</Typography>
+            <Typography variant="h6" fontWeight="bold" align="center" sx={{ color: "text.primary" }}>
+              Adopt a Pet
+            </Typography>
+            <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 1 }}>
+              Give a loving home to a pet in need.
+            </Typography>
           </Card>
+
+          {/* Matchmaking Card */}
           <Card
             sx={{
-              width: 180,
-              height: 200,
+              width: 240,
+              height: 300,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              boxShadow: 3,
-              transition: "transform 0.3s ease",
+              backdropFilter: "blur(16px) saturate(180%)",
+              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.2)",
+              transition: "transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease",
               "&:hover": {
-                transform: "scale(1.05)",
+                transform: "translateY(-10px)",
+                boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
+                background: "rgba(255, 255, 255, 0.1)",
+                backdropFilter: "blur(10px)",
               },
               cursor: "pointer",
+              borderRadius: "24px",
+              backgroundColor: "rgba(255, 255, 255, 0.05)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
             }}
             onClick={() => handleCardClick("/matchmaking")}
           >
-            <Box sx={{ width: 80, height: 80, mb: 2 }}>
+            <Box
+              sx={{
+                width: 120,
+                height: 120,
+                mb: 3,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "50%",
+                background: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
+                boxShadow: "0 4px 12px rgba(255, 236, 210, 0.3)",
+              }}
+            >
               <img
                 src="/src/assets/matchmaking_icon.png"
                 alt="Matchmaking Icon"
-                style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                style={{ width: "60%", height: "60%", objectFit: "contain" }}
               />
             </Box>
-            <Typography variant="h6">Matchmaking</Typography>
+            <Typography variant="h6" fontWeight="bold" align="center" sx={{ color: "text.primary" }}>
+              Matchmaking
+            </Typography>
+            <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 1 }}>
+              Find the perfect match for your lifestyle.
+            </Typography>
           </Card>
         </Box>
-      </FullWidthBackgroundImage>
+      </Box>
 
       <Button
         variant="contained"
@@ -244,6 +322,316 @@ const HomePage: React.FC = () => {
           Admin Dashboard
         </Button>
       )}
+
+      <Box sx={{ mt: 8, px: { xs: 2, md: 4 }, textAlign: "center" }}>
+        <Typography variant="h3" fontWeight="bold" mb={4} sx={{ color: "text.primary" }}>
+          Planning to Adopt a Pet?
+        </Typography>
+
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)" },
+            gap: 4,
+            justifyContent: "center",
+            maxWidth: "1200px",
+            margin: "0 auto",
+          }}
+        >
+          {/* Checklist Card */}
+          <Card
+            sx={{
+              borderRadius: "16px",
+              backdropFilter: "blur(10px)",
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+              transition: "transform 0.3s ease, box-shadow 0.3s ease",
+              "&:hover": {
+                transform: "translateY(-8px)",
+                boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
+              },
+              cursor: "pointer",
+              p: 3,
+              textAlign: "center",
+            }}
+          >
+            <Box
+              sx={{
+                width: 80,
+                height: 80,
+                mb: 3,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "50%",
+                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                backdropFilter: "blur(10px)",
+              }}
+            >
+              <img
+                src="/src/assets/checklist.png"
+                alt="Checklist Icon"
+                style={{ width: "60%", height: "60%", objectFit: "contain" }}
+              />
+            </Box>
+            <Typography variant="h5" fontWeight="bold" sx={{ color: "text.primary", mb: 2 }}>
+              Checklist for New Pet Lovers
+            </Typography>
+            <Typography variant="body1" sx={{ color: "text.secondary", mb: 3 }}>
+              Make the pet adoption, pet buy, and pet matchmaking transition as smooth as possible.
+            </Typography>
+            <Button
+              variant="outlined"
+              sx={{
+                borderRadius: "20px",
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "primary.main",
+                borderColor: "primary.main",
+                "&:hover": {
+                  backgroundColor: "primary.main",
+                  color: "white",
+                },
+              }}
+            >
+              Learn More
+            </Button>
+          </Card>
+
+          {/* Pet Age Card */}
+          <Card
+            sx={{
+              borderRadius: "16px",
+              backdropFilter: "blur(10px)",
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+              transition: "transform 0.3s ease, box-shadow 0.3s ease",
+              "&:hover": {
+                transform: "translateY(-8px)",
+                boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
+              },
+              cursor: "pointer",
+              p: 3,
+              textAlign: "center",
+            }}
+          >
+            <Box
+              sx={{
+                width: 80,
+                height: 80,
+                mb: 3,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "50%",
+                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                backdropFilter: "blur(10px)",
+              }}
+            >
+              <img
+                src="/src/assets/pet-care.png"
+                alt="Pet Care Icon"
+                style={{ width: "60%", height: "60%", objectFit: "contain" }}
+              />
+            </Box>
+            <Typography variant="h5" fontWeight="bold" sx={{ color: "text.primary", mb: 2 }}>
+              How Old Are Pets in Human Years?
+            </Typography>
+            <Typography variant="body1" sx={{ color: "text.secondary", mb: 3 }}>
+              Learn to translate pet years to human years just for fun, and vice versa.
+            </Typography>
+            <Button
+              variant="outlined"
+              sx={{
+                borderRadius: "20px",
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "primary.main",
+                borderColor: "primary.main",
+                "&:hover": {
+                  backgroundColor: "primary.main",
+                  color: "white",
+                },
+              }}
+            >
+              Learn More
+            </Button>
+          </Card>
+
+          {/* FAQ Card */}
+          <Card
+            sx={{
+              borderRadius: "16px",
+              backdropFilter: "blur(10px)",
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+              transition: "transform 0.3s ease, box-shadow 0.3s ease",
+              "&:hover": {
+                transform: "translateY(-8px)",
+                boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
+              },
+              cursor: "pointer",
+              p: 3,
+              textAlign: "center",
+            }}
+          >
+            <Box
+              sx={{
+                width: 80,
+                height: 80,
+                mb: 3,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "50%",
+                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                backdropFilter: "blur(10px)",
+              }}
+            >
+              <img
+                src="/src/assets/help.png"
+                alt="FAQ Icon"
+                style={{ width: "60%", height: "60%", objectFit: "contain" }}
+              />
+            </Box>
+            <Typography variant="h5" fontWeight="bold" sx={{ color: "text.primary", mb: 2 }}>
+              Pet Adoption, Buy, and Matchmaking FAQs
+            </Typography>
+            <Typography variant="body1" sx={{ color: "text.secondary", mb: 3 }}>
+              Get answers to all the questions you haven't thought of for your adoption.
+            </Typography>
+            <Button
+              variant="outlined"
+              sx={{
+                borderRadius: "20px",
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "primary.main",
+                borderColor: "primary.main",
+                "&:hover": {
+                  backgroundColor: "primary.main",
+                  color: "white",
+                },
+              }}
+            >
+              Learn More
+            </Button>
+          </Card>
+        </Box>
+      </Box>
+
+      <Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2 }}>
+        <Typography variant="h4" fontWeight="bold" mt={4} mb={4}>
+          Available Pets for Matchmaking
+        </Typography>
+
+        <Box
+          display="grid"
+          gridTemplateColumns="repeat(auto-fit, minmax(250px, 1fr))"
+          gap={4}
+          justifyContent="center"
+          width="100%"
+          maxWidth="1200px"
+        >
+          {/* Display only 3 pets */}
+          {pets.slice(0, 3).map((pet) => (
+  <Card
+    key={pet.id}
+    sx={{
+      borderRadius: "24px", // Rounded corners for a modern look
+      transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out", // Smooth transitions
+      "&:hover": {
+        transform: "translateY(-10px)", // Lift card on hover
+        boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)", // Enhanced shadow on hover
+      },
+      display: "flex",
+      flexDirection: "column",
+      height: "100%",
+      backgroundColor: "rgba(255, 255, 255, 0.05)", // Semi-transparent background
+      border: "1px solid rgba(255, 255, 255, 0.1)", // Subtle border for depth
+      backdropFilter: "blur(10px)", // Always blur the card
+    }}
+  >
+    <CardMedia
+      component="img"
+      sx={{ height: 200, width: "100%", objectFit: "cover", borderRadius: "24px 24px 0 0" }} // Rounded top corners
+      image={`data:image/jpeg;base64,${pet.photo}`}
+      alt={pet.name}
+    />
+    <CardContent sx={{ flexGrow: 1, textAlign: "center", p: 3 }}>
+      <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ color: "text.primary" }}>
+        {pet.name}
+      </Typography>
+      {pet.breed && (
+        <Typography variant="body2" color="text.secondary">
+          <strong>Breed:</strong> {pet.breed}
+        </Typography>
+      )}
+      {pet.age && (
+        <Typography variant="body2" color="text.secondary">
+          <strong>Age:</strong> {pet.age}
+        </Typography>
+      )}
+      {pet.location && (
+        <Typography variant="body2" color="text.secondary">
+          <strong>Location:</strong> {pet.location}
+        </Typography>
+      )}
+    </CardContent>
+  </Card>
+))}
+
+          {/* "More Pets" Card */}
+          <Card
+            sx={{
+              borderRadius: "24px",
+              transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background 0.3s ease",
+              "&:hover": {
+                transform: "translateY(-10px)",
+                boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
+                background: "rgba(255, 255, 255, 0.1)",
+                backdropFilter: "blur(10px)",
+              },
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "#9c27b0",
+              color: "white",
+              textAlign: "center",
+              height: "100%",
+              border: "1px solid rgba(255, 255, 255, 0.1)", // Subtle border for depth
+            }}
+            onClick={() => handleNavigation("/matchmaking")}
+          >
+            <Box sx={{ p: 3 }}>
+              <FavoriteBorderIcon sx={{ fontSize: 60, mb: 2, color: "white" }} />
+              <Typography variant="h6" fontWeight="bold" gutterBottom>
+                {pets.length - 3} more pets
+              </Typography>
+              <Typography variant="body2" mb={2}>
+                on HappyPet
+              </Typography>
+              <Button
+                variant="contained"
+                color="inherit"
+                sx={{
+                  bgcolor: "white",
+                  color: "#9c27b0",
+                  "&:hover": {
+                    bgcolor: "#f0f0f0",
+                  },
+                }}
+              >
+                MEET THEM
+              </Button>
+            </Box>
+          </Card>
+        </Box>
+      </Box>
     </FullHeightBox>
   );
 };

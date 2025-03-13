@@ -37,9 +37,9 @@ const MainPage = () => {
       "Labrador Retriever",
       "German Shepherd",
       "Golden Retriever",
-      "Bulldog (English/French)",
+      "Bulldog",
       "Beagle",
-      "Poodle (Standard, Miniature, Toy)",
+      "Poodle",
       "Boxer",
       "Rottweiler",
       "Dachshund",
@@ -68,15 +68,15 @@ const MainPage = () => {
       "Oriental Shorthair",
     ],
     Bird: [
-      "Budgerigar (Budgie)",
+      "Budgerigar",
       "Cockatiel",
       "African Grey Parrot",
-      "Macaw (Blue-and-Gold, Scarlet, etc.)",
+      "Macaw",
       "Lovebird",
       "Canary",
-      "Finch (Zebra Finch, Gouldian Finch)",
-      "Conure (Sun Conure, Green-cheeked Conure)",
-      "Amazon Parrot (Yellow-naped, Blue-fronted)",
+      "Finch",
+      "Conure",
+      "Amazon Parrot",
       "Eclectus Parrot",
       "Parakeet",
       "Quaker Parrot",
@@ -118,7 +118,7 @@ const MainPage = () => {
   };
 
   return (
-    <Box sx={{ bgcolor: "#002855", minHeight: "100vh", py: 4, marginTop: "50px", }}>
+    <Box sx={{ minHeight: "100vh", py: 4, marginTop: "50px", }}>
       <Container maxWidth="lg" sx={{ mt: 8 , marginTop: "10px",}}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={4}>

@@ -105,7 +105,6 @@ const Users: React.FC = () => {
           width: "100%",
           margin: "auto",
           marginTop: "80px",
-          bgcolor: "#002855",
           paddingBottom: "50px",
         }}
       >
