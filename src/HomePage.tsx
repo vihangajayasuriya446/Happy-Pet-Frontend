@@ -323,205 +323,205 @@ const HomePage: React.FC = () => {
         </Button>
       )}
 
-      <Box sx={{ mt: 8, px: { xs: 2, md: 4 }, textAlign: "center" }}>
-        <Typography variant="h3" fontWeight="bold" mb={4} sx={{ color: "text.primary" }}>
-          Planning to Adopt a Pet?
-        </Typography>
+<Box sx={{ mt: 8, px: { xs: 2, md: 4 }, textAlign: "center" }}>
+  <Typography variant="h3" fontWeight="bold" mb={4} sx={{ color: "text.primary" }}>
+    Planning to Adopt a Pet?
+  </Typography>
 
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)" },
-            gap: 4,
-            justifyContent: "center",
-            maxWidth: "1200px",
-            margin: "0 auto",
-          }}
-        >
-          {/* Checklist Card */}
-          <Card
-            sx={{
-              borderRadius: "16px",
-              backdropFilter: "blur(10px)",
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
-              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
-              transition: "transform 0.3s ease, box-shadow 0.3s ease",
-              "&:hover": {
-                transform: "translateY(-8px)",
-                boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
-              },
-              cursor: "pointer",
-              p: 3,
-              textAlign: "center",
-            }}
-          >
-            <Box
-              sx={{
-                width: 80,
-                height: 80,
-                mb: 3,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius: "50%",
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
-                backdropFilter: "blur(10px)",
-              }}
-            >
-              <img
-                src="/src/assets/checklist.png"
-                alt="Checklist Icon"
-                style={{ width: "60%", height: "60%", objectFit: "contain" }}
-              />
-            </Box>
-            <Typography variant="h5" fontWeight="bold" sx={{ color: "text.primary", mb: 2 }}>
-              Checklist for New Pet Lovers
-            </Typography>
-            <Typography variant="body1" sx={{ color: "text.secondary", mb: 3 }}>
-              Make the pet adoption, pet buy, and pet matchmaking transition as smooth as possible.
-            </Typography>
-            <Button
-              variant="outlined"
-              sx={{
-                borderRadius: "20px",
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "primary.main",
-                borderColor: "primary.main",
-                "&:hover": {
-                  backgroundColor: "primary.main",
-                  color: "white",
-                },
-              }}
-            >
-              Learn More
-            </Button>
-          </Card>
-
-          {/* Pet Age Card */}
-          <Card
-            sx={{
-              borderRadius: "16px",
-              backdropFilter: "blur(10px)",
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
-              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
-              transition: "transform 0.3s ease, box-shadow 0.3s ease",
-              "&:hover": {
-                transform: "translateY(-8px)",
-                boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
-              },
-              cursor: "pointer",
-              p: 3,
-              textAlign: "center",
-            }}
-          >
-            <Box
-              sx={{
-                width: 80,
-                height: 80,
-                mb: 3,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius: "50%",
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
-                backdropFilter: "blur(10px)",
-              }}
-            >
-              <img
-                src="/src/assets/pet-care.png"
-                alt="Pet Care Icon"
-                style={{ width: "60%", height: "60%", objectFit: "contain" }}
-              />
-            </Box>
-            <Typography variant="h5" fontWeight="bold" sx={{ color: "text.primary", mb: 2 }}>
-              How Old Are Pets in Human Years?
-            </Typography>
-            <Typography variant="body1" sx={{ color: "text.secondary", mb: 3 }}>
-              Learn to translate pet years to human years just for fun, and vice versa.
-            </Typography>
-            <Button
-              variant="outlined"
-              sx={{
-                borderRadius: "20px",
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "primary.main",
-                borderColor: "primary.main",
-                "&:hover": {
-                  backgroundColor: "primary.main",
-                  color: "white",
-                },
-              }}
-            >
-              Learn More
-            </Button>
-          </Card>
-
-          {/* FAQ Card */}
-          <Card
-            sx={{
-              borderRadius: "16px",
-              backdropFilter: "blur(10px)",
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
-              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
-              transition: "transform 0.3s ease, box-shadow 0.3s ease",
-              "&:hover": {
-                transform: "translateY(-8px)",
-                boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
-              },
-              cursor: "pointer",
-              p: 3,
-              textAlign: "center",
-            }}
-          >
-            <Box
-              sx={{
-                width: 80,
-                height: 80,
-                mb: 3,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius: "50%",
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
-                backdropFilter: "blur(10px)",
-              }}
-            >
-              <img
-                src="/src/assets/help.png"
-                alt="FAQ Icon"
-                style={{ width: "60%", height: "60%", objectFit: "contain" }}
-              />
-            </Box>
-            <Typography variant="h5" fontWeight="bold" sx={{ color: "text.primary", mb: 2 }}>
-              Pet Adoption, Buy, and Matchmaking FAQs
-            </Typography>
-            <Typography variant="body1" sx={{ color: "text.secondary", mb: 3 }}>
-              Get answers to all the questions you haven't thought of for your adoption.
-            </Typography>
-            <Button
-              variant="outlined"
-              sx={{
-                borderRadius: "20px",
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "primary.main",
-                borderColor: "primary.main",
-                "&:hover": {
-                  backgroundColor: "primary.main",
-                  color: "white",
-                },
-              }}
-            >
-              Learn More
-            </Button>
-          </Card>
-        </Box>
+  <Box
+    sx={{
+      display: "grid",
+      gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)" },
+      gap: 4,
+      justifyContent: "center",
+      maxWidth: "1200px",
+      margin: "0 auto",
+    }}
+  >
+    {/* Checklist Card */}
+    <Card
+      sx={{
+        borderRadius: "16px",
+        backdropFilter: "blur(10px)",
+        backgroundColor: "rgba(255, 255, 255, 0.6)", // Increased opacity for better readability
+        border: "1px solid rgba(0, 0, 0, 0.1)", // Subtle border for definition
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+        "&:hover": {
+          transform: "translateY(-8px)",
+          boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
+        },
+        cursor: "pointer",
+        p: 3,
+        textAlign: "center",
+      }}
+    >
+      <Box
+        sx={{
+          width: 80,
+          height: 80,
+          mb: 3,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: "50%",
+          backgroundColor: "rgba(0, 123, 255, 0.1)", // Soft blue background for icon
+          backdropFilter: "blur(10px)",
+        }}
+      >
+        <img
+          src="/src/assets/checklist.png"
+          alt="Checklist Icon"
+          style={{ width: "60%", height: "60%", objectFit: "contain" }}
+        />
       </Box>
+      <Typography variant="h5" fontWeight="bold" sx={{ color: "text.primary", mb: 2 }}>
+        Checklist for New Pet Lovers
+      </Typography>
+      <Typography variant="body1" sx={{ color: "text.secondary", mb: 3 }}>
+        Make the pet adoption, pet buy, and pet matchmaking transition as smooth as possible.
+      </Typography>
+      <Button
+        variant="outlined"
+        sx={{
+          borderRadius: "20px",
+          textTransform: "none",
+          fontWeight: "bold",
+          color: "primary.main",
+          borderColor: "primary.main",
+          "&:hover": {
+            backgroundColor: "primary.main",
+            color: "white",
+          },
+        }}
+      >
+        Learn More
+      </Button>
+    </Card>
+
+    {/* Pet Age Card */}
+    <Card
+      sx={{
+        borderRadius: "16px",
+        backdropFilter: "blur(10px)",
+        backgroundColor: "rgba(255, 255, 255, 0.6)", // Increased opacity for better readability
+        border: "1px solid rgba(0, 0, 0, 0.1)", // Subtle border for definition
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+        "&:hover": {
+          transform: "translateY(-8px)",
+          boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
+        },
+        cursor: "pointer",
+        p: 3,
+        textAlign: "center",
+      }}
+    >
+      <Box
+        sx={{
+          width: 80,
+          height: 80,
+          mb: 3,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: "50%",
+          backgroundColor: "rgba(255, 193, 7, 0.1)", // Soft yellow background for icon
+          backdropFilter: "blur(10px)",
+        }}
+      >
+        <img
+          src="/src/assets/pet-care.png"
+          alt="Pet Care Icon"
+          style={{ width: "60%", height: "60%", objectFit: "contain" }}
+        />
+      </Box>
+      <Typography variant="h5" fontWeight="bold" sx={{ color: "text.primary", mb: 2 }}>
+        How Old Are Pets in Human Years?
+      </Typography>
+      <Typography variant="body1" sx={{ color: "text.secondary", mb: 3 }}>
+        Learn to translate pet years to human years just for fun, and vice versa.
+      </Typography>
+      <Button
+        variant="outlined"
+        sx={{
+          borderRadius: "20px",
+          textTransform: "none",
+          fontWeight: "bold",
+          color: "primary.main",
+          borderColor: "primary.main",
+          "&:hover": {
+            backgroundColor: "primary.main",
+            color: "white",
+          },
+        }}
+      >
+        Learn More
+      </Button>
+    </Card>
+
+    {/* FAQ Card */}
+    <Card
+      sx={{
+        borderRadius: "16px",
+        backdropFilter: "blur(10px)",
+        backgroundColor: "rgba(255, 255, 255, 0.6)", // Increased opacity for better readability
+        border: "1px solid rgba(0, 0, 0, 0.1)", // Subtle border for definition
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+        "&:hover": {
+          transform: "translateY(-8px)",
+          boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
+        },
+        cursor: "pointer",
+        p: 3,
+        textAlign: "center",
+      }}
+    >
+      <Box
+        sx={{
+          width: 80,
+          height: 80,
+          mb: 3,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: "50%",
+          backgroundColor: "rgba(156, 39, 176, 0.1)", // Soft purple background for icon
+          backdropFilter: "blur(10px)",
+        }}
+      >
+        <img
+          src="/src/assets/help.png"
+          alt="FAQ Icon"
+          style={{ width: "60%", height: "60%", objectFit: "contain" }}
+        />
+      </Box>
+      <Typography variant="h5" fontWeight="bold" sx={{ color: "text.primary", mb: 2 }}>
+        Pet Adoption, Buy, and Matchmaking FAQs
+      </Typography>
+      <Typography variant="body1" sx={{ color: "text.secondary", mb: 3 }}>
+        Get answers to all the questions you haven't thought of for your adoption.
+      </Typography>
+      <Button
+        variant="outlined"
+        sx={{
+          borderRadius: "20px",
+          textTransform: "none",
+          fontWeight: "bold",
+          color: "primary.main",
+          borderColor: "primary.main",
+          "&:hover": {
+            backgroundColor: "primary.main",
+            color: "white",
+          },
+        }}
+      >
+        Learn More
+      </Button>
+    </Card>
+  </Box>
+</Box>
 
       <Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2 }}>
         <Typography variant="h4" fontWeight="bold" mt={4} mb={4}>
@@ -550,7 +550,7 @@ const HomePage: React.FC = () => {
       display: "flex",
       flexDirection: "column",
       height: "100%",
-      backgroundColor: "rgba(255, 255, 255, 0.05)", // Semi-transparent background
+      backgroundColor: "rgba(255, 255, 255, 0.6)", // Semi-transparent background
       border: "1px solid rgba(255, 255, 255, 0.1)", // Subtle border for depth
       backdropFilter: "blur(10px)", // Always blur the card
     }}
