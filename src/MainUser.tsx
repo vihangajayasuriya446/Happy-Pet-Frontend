@@ -118,21 +118,44 @@ const MainPage = () => {
   };
 
   return (
-    <Box sx={{ minHeight: "100vh", py: 4, marginTop: "50px", }}>
-      <Container maxWidth="lg" sx={{ mt: 8 , marginTop: "10px",}}>
-        <Grid container spacing={3}>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        py: 4,
+        paddingTop: "15px"
+      }}
+    >
+      <Container maxWidth="lg" sx={{ mt: 8 }}>
+        <Grid container spacing={4}>
+          {/* Search Filters Section */}
           <Grid item xs={12} md={4}>
-            <Box bgcolor="white" p={4} borderRadius={2} boxShadow={2}>
-              <Typography variant="h5" fontWeight="bold" gutterBottom color="#002855">
+            <Box
+              bgcolor="rgba(255, 255, 255, 0.8)"
+              p={4}
+              borderRadius={4}
+              boxShadow="0 8px 32px rgba(0, 0, 0, 0.1)"
+              sx={{ backdropFilter: "blur(10px)" }}
+            >
+              <Typography
+                variant="h5"
+                fontWeight="bold"
+                gutterBottom
+                color="#002855"
+              >
                 Yay, We Love to hear about the Pet you prefer to Match Make!
               </Typography>
               <Typography variant="body2" color="textSecondary" gutterBottom>
                 Please give your pet details to find a perfect match...
               </Typography>
 
-              <FormControl fullWidth sx={{ mb: 2 }}>
+              {/* Pet Type Dropdown */}
+              <FormControl fullWidth sx={{ mb: 3 }}>
                 <InputLabel>Pet Type</InputLabel>
-                <Select value={petType} onChange={(e) => setPetType(e.target.value)}>
+                <Select
+                  value={petType}
+                  onChange={(e) => setPetType(e.target.value)}
+                  sx={{ borderRadius: "8px" }}
+                >
                   <MenuItem value="">Select</MenuItem>
                   <MenuItem value="Dog">Dog</MenuItem>
                   <MenuItem value="Cat">Cat</MenuItem>
@@ -140,9 +163,14 @@ const MainPage = () => {
                 </Select>
               </FormControl>
 
-              <FormControl fullWidth sx={{ mb: 2 }}>
+              {/* Age Dropdown */}
+              <FormControl fullWidth sx={{ mb: 3 }}>
                 <InputLabel>Age</InputLabel>
-                <Select value={age} onChange={(e) => setAge(e.target.value)}>
+                <Select
+                  value={age}
+                  onChange={(e) => setAge(e.target.value)}
+                  sx={{ borderRadius: "8px" }}
+                >
                   <MenuItem value="">Select</MenuItem>
                   <MenuItem value="Baby">Baby</MenuItem>
                   <MenuItem value="Young">Young</MenuItem>
@@ -151,21 +179,28 @@ const MainPage = () => {
                 </Select>
               </FormControl>
 
-              <FormControl fullWidth sx={{ mb: 2 }}>
+              {/* Gender Dropdown */}
+              <FormControl fullWidth sx={{ mb: 3 }}>
                 <InputLabel>Gender</InputLabel>
-                <Select value={gender} onChange={(e) => setGender(e.target.value)}>
+                <Select
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                  sx={{ borderRadius: "8px" }}
+                >
                   <MenuItem value="">Select</MenuItem>
                   <MenuItem value="Male">Male</MenuItem>
                   <MenuItem value="Female">Female</MenuItem>
                 </Select>
               </FormControl>
 
-              <FormControl fullWidth sx={{ mb: 2 }}>
+              {/* Breed Dropdown */}
+              <FormControl fullWidth sx={{ mb: 3 }}>
                 <InputLabel shrink>Breed</InputLabel>
                 <Select
                   value={breed}
                   onChange={(e) => setBreed(e.target.value)}
                   disabled={!petType}
+                  sx={{ borderRadius: "8px" }}
                 >
                   <MenuItem value="">Select</MenuItem>
                   {petType &&
@@ -177,9 +212,14 @@ const MainPage = () => {
                 </Select>
               </FormControl>
 
-              <FormControl fullWidth sx={{ mb: 2 }}>
+              {/* Location Dropdown */}
+              <FormControl fullWidth sx={{ mb: 3 }}>
                 <InputLabel>Your Location</InputLabel>
-                <Select value={location} onChange={(e) => setLocation(e.target.value)}>
+                <Select
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  sx={{ borderRadius: "8px" }}
+                >
                   <MenuItem value="">Select</MenuItem>
                   <MenuItem value="Ampara">Ampara</MenuItem>
                   <MenuItem value="Anuradhapura">Anuradhapura</MenuItem>
@@ -209,10 +249,18 @@ const MainPage = () => {
                 </Select>
               </FormControl>
 
+              {/* Search Button */}
               <Button
                 variant="contained"
                 fullWidth
-                sx={{ bgcolor: "#002855", color: "white", fontWeight: "bold" }}
+                sx={{
+                  bgcolor: "#002855",
+                  color: "white",
+                  fontWeight: "bold",
+                  borderRadius: "8px",
+                  py: 1.5,
+                  "&:hover": { bgcolor: "#001f4d" },
+                }}
                 onClick={fetchPets}
               >
                 Search
@@ -220,12 +268,19 @@ const MainPage = () => {
             </Box>
           </Grid>
 
+          {/* Results Section */}
           <Grid item xs={12} md={8}>
-            <Box bgcolor="#002855" p={4} borderRadius={2} color="white">
-              <Typography variant="h4" fontWeight="bold" gutterBottom>
+            <Box
+              bgcolor="rgba(255, 255, 255, 0.8)"
+              p={4}
+              borderRadius={4}
+              boxShadow="0 8px 32px rgba(0, 0, 0, 0.1)"
+              sx={{ backdropFilter: "blur(10px)" }}
+            >
+              <Typography variant="h4" fontWeight="bold" gutterBottom color="#002855">
                 Pet Match Making
               </Typography>
-              <Typography variant="body2" gutterBottom>
+              <Typography variant="body2" color="textSecondary" gutterBottom>
                 Below displays the results of best matches according to provided details by you!
               </Typography>
               <Grid container spacing={3} mt={2}>
@@ -235,9 +290,10 @@ const MainPage = () => {
                       <Card
                         sx={{
                           borderRadius: 2,
-                          transition: "transform 0.3s ease-in-out",
+                          transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
                           "&:hover": {
-                            transform: "scale(1.2)",
+                            transform: "translateY(-8px)",
+                            boxShadow: "0 12px 24px rgba(0, 0, 0, 0.2)",
                           },
                         }}
                       >
@@ -248,33 +304,38 @@ const MainPage = () => {
                           alt={pet.name}
                         />
                         <CardContent>
-                        <Typography variant="h6" fontWeight="bold">
-                          {pet.name}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {pet.gender} • {pet.breed}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          Age: {pet.age}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          Location: {pet.location}
-                        </Typography>
-                        <Button
-                          variant="contained"
-                          fullWidth
-                          sx={{ mt: 2, bgcolor: "#002855", color: "white" }}
-                        >
-                          Contact Owner
-                        </Button>
-                      </CardContent>
-
+                          <Typography variant="h6" fontWeight="bold">
+                            {pet.name}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {pet.gender} • {pet.breed}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            Age: {pet.age}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            Location: {pet.location}
+                          </Typography>
+                          <Button
+                            variant="contained"
+                            fullWidth
+                            sx={{
+                              mt: 2,
+                              bgcolor: "#002855",
+                              color: "white",
+                              borderRadius: "8px",
+                              "&:hover": { bgcolor: "#001f4d" },
+                            }}
+                          >
+                            Contact Owner
+                          </Button>
+                        </CardContent>
                       </Card>
                     </Grid>
                   ))
                 ) : (
                   <Grid item xs={12}>
-                    <Typography variant="body2" color="white">
+                    <Typography variant="body2" color="textSecondary">
                       No matches found. Try adjusting your search criteria.
                     </Typography>
                   </Grid>
