@@ -26,7 +26,6 @@ const AdminDashboardNav: React.FC = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        
         p: 3,
       }}
     >
@@ -34,11 +33,16 @@ const AdminDashboardNav: React.FC = () => {
         maxWidth="sm"
         sx={{
           textAlign: "center",
-          bgcolor: "rgba(255, 255, 255, 0.8)",
-          backdropFilter: "blur(10px)",
+          bgcolor: "rgba(255, 255, 255, 0.8)", // Semi-transparent background
+          backdropFilter: "blur(10px)", // Glass morphism effect
           borderRadius: "16px",
-          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)", // Soft shadow
           p: 4,
+          transition: "transform 0.3s ease, box-shadow 0.1s ease",
+          "&:hover": {
+            transform: "scale(1.02)", // Slight scale on hover
+            boxShadow: "0 12px 40px rgba(0, 0, 0, 0.1)",
+          },
         }}
       >
         <Typography
@@ -48,6 +52,7 @@ const AdminDashboardNav: React.FC = () => {
             color: "#002855",
             mb: 4,
             fontSize: isMobile ? "1.75rem" : "2rem",
+            fontFamily: "'Poppins', sans-serif", // Modern font
           }}
         >
           Admin Dashboard
