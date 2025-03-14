@@ -1,4 +1,4 @@
-import { Box, Button, Typography, Card, styled, CardContent, CardMedia, CircularProgress } from "@mui/material";
+import { Box, Button, Typography, Card, styled, CardContent, CardMedia, CircularProgress, Snackbar, Alert } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -9,7 +9,9 @@ const HomePage: React.FC = () => {
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
   const role = localStorage.getItem('role');
   const [pets, setPets] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(false); // Loading state
+  const [loading, setLoading] = useState<boolean>(false);
+  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -25,7 +27,7 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/v1/getusers") // Adjust URL based on backend
+      .get("http://localhost:8080/api/v1/getusers")
       .then((response) => {
         setPets(response.data);
       })
@@ -34,13 +36,28 @@ const HomePage: React.FC = () => {
       });
   }, []);
 
+  useEffect(() => {
+    // Check if the user just signed up
+    const justSignedUp = localStorage.getItem('justSignedUp');
+    if (justSignedUp === 'true') {
+      setSnackbarMessage(role === 'ADMIN' ? 'ADMIN Logged in' : 
+        'User Logged in');
+      setSnackbarOpen(true);
+      localStorage.removeItem('justSignedUp'); // Clear the flag
+    }
+  }, [role]);
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
+
   const handleNavigation = (path: string) => {
-    setLoading(true); // Set loading to true before navigation
+    setLoading(true);
     setTimeout(() => {
       navigate(path);
       window.scrollTo(0, 0);
-      setLoading(false); // Reset loading after navigation
-    }, 1000); // Simulate a 1-second delay for the loading indicator
+      setLoading(false);
+    }, 1000);
   };
 
   const handleCardClick = (path: string) => {
@@ -48,12 +65,12 @@ const HomePage: React.FC = () => {
       alert("Please log in or sign up to access this feature.");
       return;
     }
-    setLoading(true); // Set loading to true before navigation
+    setLoading(true);
     setTimeout(() => {
       navigate(path);
       window.scrollTo(0, 0);
-      setLoading(false); // Reset loading after navigation
-    }, 1000); // Simulate a 1-second delay for the loading indicator
+      setLoading(false);
+    }, 1000);
   };
 
   const FullHeightBox = styled(Box)({
@@ -78,27 +95,39 @@ const HomePage: React.FC = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "rgba(255, 255, 255, 0.1)", // Semi-transparent background
-            backdropFilter: "blur(10px)", // Glass morphism effect
-            zIndex: 9999, // Ensure it's on top of everything
+            backgroundColor: "rgba(255, 255, 255, 0.1)",
+            backdropFilter: "blur(10px)",
+            zIndex: 9999,
           }}
         >
-          <CircularProgress size={60} sx={{ color: "#002855" }} /> {/* Loading spinner */}
+          <CircularProgress size={60} sx={{ color: "#002855" }} />
         </Box>
       )}
+
+      {/* Snackbar for showing signup success message */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
 
       {/* Main Content Container */}
       <Box
         component="div"
         sx={{
           width: "100%",
-          maxWidth: "1200px", // Limit max width for better readability
+          maxWidth: "1200px",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          gap: 6, // Adds spacing between text and cards
+          gap: 6,
           padding: 2,
-          mt: 8, // Add margin to account for the navbar
+          mt: 8,
         }}
       >
         {/* Modernized Text Overlay */}
@@ -126,15 +155,15 @@ const HomePage: React.FC = () => {
           <Typography
             variant="h2"
             sx={{
-              color: "#667eea", // Solid color or static gradient
+              color: "#667eea",
               fontWeight: 700,
               fontSize: { xs: "2.2rem", sm: "2.8rem", md: "3.2rem" },
               textShadow: "2px 3px 10px rgba(0, 0, 0, 0.7)",
               lineHeight: 1.1,
               mb: 3,
-              WebkitFontSmoothing: "antialiased", // Ensures crisp text rendering
-              textRendering: "optimizeLegibility", // Improves text clarity
-              animation: "fadeIn 1s ease-out", // Fade-in animation only
+              WebkitFontSmoothing: "antialiased",
+              textRendering: "optimizeLegibility",
+              animation: "fadeIn 1s ease-out",
               "@keyframes fadeIn": {
                 "from": { opacity: 0, transform: "translateY(30px)" },
                 "to": { opacity: 1, transform: "translateY(0)" },
@@ -158,6 +187,7 @@ const HomePage: React.FC = () => {
             Where Happy Pets Meet Loving Homes!
           </Typography>
         </Box>
+
         {/* Cards Container */}
         <Box
           component="div"
@@ -373,8 +403,8 @@ const HomePage: React.FC = () => {
             sx={{
               borderRadius: "16px",
               backdropFilter: "blur(10px)",
-              backgroundColor: "rgba(255, 255, 255, 0.6)", // Increased opacity for better readability
-              border: "1px solid rgba(0, 0, 0, 0.1)", // Subtle border for definition
+              backgroundColor: "rgba(255, 255, 255, 0.6)",
+              border: "1px solid rgba(0, 0, 0, 0.1)",
               boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
               transition: "transform 0.3s ease, box-shadow 0.3s ease",
               "&:hover": {
@@ -395,7 +425,7 @@ const HomePage: React.FC = () => {
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: "50%",
-                backgroundColor: "rgba(0, 123, 255, 0.1)", // Soft blue background for icon
+                backgroundColor: "rgba(0, 123, 255, 0.1)",
                 backdropFilter: "blur(10px)",
               }}
             >
@@ -434,8 +464,8 @@ const HomePage: React.FC = () => {
             sx={{
               borderRadius: "16px",
               backdropFilter: "blur(10px)",
-              backgroundColor: "rgba(255, 255, 255, 0.6)", // Increased opacity for better readability
-              border: "1px solid rgba(0, 0, 0, 0.1)", // Subtle border for definition
+              backgroundColor: "rgba(255, 255, 255, 0.6)",
+              border: "1px solid rgba(0, 0, 0, 0.1)",
               boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
               transition: "transform 0.3s ease, box-shadow 0.3s ease",
               "&:hover": {
@@ -456,7 +486,7 @@ const HomePage: React.FC = () => {
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: "50%",
-                backgroundColor: "rgba(255, 193, 7, 0.1)", // Soft yellow background for icon
+                backgroundColor: "rgba(255, 193, 7, 0.1)",
                 backdropFilter: "blur(10px)",
               }}
             >
@@ -495,8 +525,8 @@ const HomePage: React.FC = () => {
             sx={{
               borderRadius: "16px",
               backdropFilter: "blur(10px)",
-              backgroundColor: "rgba(255, 255, 255, 0.6)", // Increased opacity for better readability
-              border: "1px solid rgba(0, 0, 0, 0.1)", // Subtle border for definition
+              backgroundColor: "rgba(255, 255, 255, 0.6)",
+              border: "1px solid rgba(0, 0, 0, 0.1)",
               boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
               transition: "transform 0.3s ease, box-shadow 0.3s ease",
               "&:hover": {
@@ -517,7 +547,7 @@ const HomePage: React.FC = () => {
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: "50%",
-                backgroundColor: "rgba(156, 39, 176, 0.1)", // Soft purple background for icon
+                backgroundColor: "rgba(156, 39, 176, 0.1)",
                 backdropFilter: "blur(10px)",
               }}
             >
@@ -571,23 +601,23 @@ const HomePage: React.FC = () => {
             <Card
               key={pet.id}
               sx={{
-                borderRadius: "24px", // Rounded corners for a modern look
-                transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out", // Smooth transitions
+                borderRadius: "24px",
+                transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
                 "&:hover": {
-                  transform: "translateY(-10px)", // Lift card on hover
-                  boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)", // Enhanced shadow on hover
+                  transform: "translateY(-10px)",
+                  boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
                 },
                 display: "flex",
                 flexDirection: "column",
                 height: "100%",
-                backgroundColor: "rgba(255, 255, 255, 0.6)", // Semi-transparent background
-                border: "1px solid rgba(255, 255, 255, 0.1)", // Subtle border for depth
-                backdropFilter: "blur(10px)", // Always blur the card
+                backgroundColor: "rgba(255, 255, 255, 0.6)",
+                border: "1px solid rgba(255, 255, 255, 0.1)",
+                backdropFilter: "blur(10px)",
               }}
             >
               <CardMedia
                 component="img"
-                sx={{ height: 200, width: "100%", objectFit: "cover", borderRadius: "24px 24px 0 0" }} // Rounded top corners
+                sx={{ height: 200, width: "100%", objectFit: "cover", borderRadius: "24px 24px 0 0" }}
                 image={`data:image/jpeg;base64,${pet.photo}`}
                 alt={pet.name}
               />
@@ -616,66 +646,66 @@ const HomePage: React.FC = () => {
 
           {/* "More Pets" Card */}
           <Card
-      sx={{
-        borderRadius: "16px",
-        backdropFilter: "blur(10px)",
-        backgroundColor: "rgba(255, 255, 255, 0.6)", // Increased opacity for better readability
-        border: "1px solid rgba(0, 0, 0, 0.1)", // Subtle border for definition
-        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
-        transition: "transform 0.3s ease, box-shadow 0.3s ease",
-        "&:hover": {
-          transform: "translateY(-8px)",
-          boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
-        },
-        cursor: "pointer",
-        p: 4, // Increased padding for better spacing
-        textAlign: "center",
-        maxWidth: "400px", // Constrain card width for better readability
-        margin: "auto", // Center the card
-      }}
-      onClick={() => handleNavigation("/matchmaking")}
-    >
-      <Box sx={{ p: 3 }}>
-        <FavoriteBorderIcon
-          sx={{
-            fontSize: 80, // Larger icon for emphasis
-            mb: 3, // Increased margin for better spacing
-            color: "primary.main", // Modern pink/purple accent color
-            filter: "drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1))", // Subtle shadow for depth
-          }}
-        />
-        <Typography
-          variant="h5" // Larger typography for better hierarchy
-          fontWeight="bold"
-          gutterBottom
-          sx={{ color: "#333", mb: 2 }} // Darker text for better readability
-        >
-          {pets.length - 3} more pets
-        </Typography>
-        <Typography
-          variant="body1" // Slightly larger body text
-          sx={{ color: "#666", mb: 3 }} // Softer text color
-        >
-          on HappyPet
-        </Typography>
-        <Button
-              variant="outlined"
-              sx={{
-                borderRadius: "20px",
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "primary.main",
-                borderColor: "primary.main",
-                "&:hover": {
-                  backgroundColor: "primary.main",
-                  color: "white",
-                },
-              }}
-            >
-              Meet Them
-            </Button>
-      </Box>
-    </Card>
+            sx={{
+              borderRadius: "16px",
+              backdropFilter: "blur(10px)",
+              backgroundColor: "rgba(255, 255, 255, 0.6)",
+              border: "1px solid rgba(0, 0, 0, 0.1)",
+              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+              transition: "transform 0.3s ease, box-shadow 0.3s ease",
+              "&:hover": {
+                transform: "translateY(-8px)",
+                boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
+              },
+              cursor: "pointer",
+              p: 4,
+              textAlign: "center",
+              maxWidth: "400px",
+              margin: "auto",
+            }}
+            onClick={() => handleNavigation("/matchmaking")}
+          >
+            <Box sx={{ p: 3 }}>
+              <FavoriteBorderIcon
+                sx={{
+                  fontSize: 80,
+                  mb: 3,
+                  color: "primary.main",
+                  filter: "drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1))",
+                }}
+              />
+              <Typography
+                variant="h5"
+                fontWeight="bold"
+                gutterBottom
+                sx={{ color: "#333", mb: 2 }}
+              >
+                {pets.length - 3} more pets
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{ color: "#666", mb: 3 }}
+              >
+                on HappyPet
+              </Typography>
+              <Button
+                variant="outlined"
+                sx={{
+                  borderRadius: "20px",
+                  textTransform: "none",
+                  fontWeight: "bold",
+                  color: "primary.main",
+                  borderColor: "primary.main",
+                  "&:hover": {
+                    backgroundColor: "primary.main",
+                    color: "white",
+                  },
+                }}
+              >
+                Meet Them
+              </Button>
+            </Box>
+          </Card>
         </Box>
       </Box>
 
@@ -699,8 +729,8 @@ const HomePage: React.FC = () => {
             sx={{
               borderRadius: "16px",
               backdropFilter: "blur(10px)",
-              backgroundColor: "rgba(255, 255, 255, 0.6)", // Increased opacity for better readability
-              border: "1px solid rgba(0, 0, 0, 0.1)", // Subtle border for definition
+              backgroundColor: "rgba(255, 255, 255, 0.6)",
+              border: "1px solid rgba(0, 0, 0, 0.1)",
               boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
               transition: "transform 0.3s ease, box-shadow 0.3s ease",
               "&:hover": {
@@ -721,7 +751,7 @@ const HomePage: React.FC = () => {
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: "50%",
-                backgroundColor: "rgba(0, 123, 255, 0.1)", // Soft blue background for icon
+                backgroundColor: "rgba(0, 123, 255, 0.1)",
                 backdropFilter: "blur(10px)",
               }}
             >
@@ -760,8 +790,8 @@ const HomePage: React.FC = () => {
             sx={{
               borderRadius: "16px",
               backdropFilter: "blur(10px)",
-              backgroundColor: "rgba(255, 255, 255, 0.6)", // Increased opacity for better readability
-              border: "1px solid rgba(0, 0, 0, 0.1)", // Subtle border for definition
+              backgroundColor: "rgba(255, 255, 255, 0.6)",
+              border: "1px solid rgba(0, 0, 0, 0.1)",
               boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
               transition: "transform 0.3s ease, box-shadow 0.3s ease",
               "&:hover": {
@@ -782,7 +812,7 @@ const HomePage: React.FC = () => {
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: "50%",
-                backgroundColor: "rgba(255, 193, 7, 0.1)", // Soft yellow background for icon
+                backgroundColor: "rgba(255, 193, 7, 0.1)",
                 backdropFilter: "blur(10px)",
               }}
             >
@@ -821,8 +851,8 @@ const HomePage: React.FC = () => {
             sx={{
               borderRadius: "16px",
               backdropFilter: "blur(10px)",
-              backgroundColor: "rgba(255, 255, 255, 0.6)", // Increased opacity for better readability
-              border: "1px solid rgba(0, 0, 0, 0.1)", // Subtle border for definition
+              backgroundColor: "rgba(255, 255, 255, 0.6)",
+              border: "1px solid rgba(0, 0, 0, 0.1)",
               boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
               transition: "transform 0.3s ease, box-shadow 0.3s ease",
               "&:hover": {
@@ -843,7 +873,7 @@ const HomePage: React.FC = () => {
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: "50%",
-                backgroundColor: "rgba(156, 39, 176, 0.1)", // Soft purple background for icon
+                backgroundColor: "rgba(156, 39, 176, 0.1)",
                 backdropFilter: "blur(10px)",
               }}
             >

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Typography,
   Container,
@@ -13,6 +13,8 @@ import {
   Box,
   Grid,
   CircularProgress,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 
 interface Pet {
@@ -33,6 +35,8 @@ const MainPage = () => {
   const [location, setLocation] = useState<string>("");
   const [pets, setPets] = useState<Pet[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
 
   const breeds: { [key: string]: string[] } = {
     Dog: [
@@ -90,6 +94,7 @@ const MainPage = () => {
 
   const fetchPets = async () => {
     setLoading(true);
+    setError(null);
     try {
       const queryParams = new URLSearchParams({
         type: petType,
@@ -100,7 +105,7 @@ const MainPage = () => {
       });
 
       // Simulate a delay to show loading spinner
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       const response = await fetch(
         `http://localhost:8080/api/v1/getfetchedusers?${queryParams.toString()}`,
@@ -120,9 +125,15 @@ const MainPage = () => {
       setPets(data);
     } catch (error) {
       console.error("Error fetching pets:", error);
+      setError("Failed to fetch pets. Please try again later.");
+      setSnackbarOpen(true);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
@@ -130,7 +141,7 @@ const MainPage = () => {
       sx={{
         minHeight: "100vh",
         py: 4,
-        paddingTop: "15px"
+        paddingTop: "15px",
       }}
     >
       <Container maxWidth="lg" sx={{ mt: 8 }}>
@@ -360,6 +371,15 @@ const MainPage = () => {
           </Grid>
         </Grid>
       </Container>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: "100%" }}>
+          {error}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

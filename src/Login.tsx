@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash, faCircleNotch } from '@fortawesome/free-solid-svg-icons'; // Replace faSpinner with faCircleNotch
+import { faEye, faEyeSlash, faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 
 const Login: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -10,7 +10,7 @@ const Login: React.FC = () => {
     const [emailError, setEmailError] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [isSignUpLoading, setIsSignUpLoading] = useState(false); // New state for Sign Up loading
+    const [isSignUpLoading, setIsSignUpLoading] = useState(false);
     const navigate = useNavigate();
 
     const validateEmail = (email: string): boolean => {
@@ -49,6 +49,7 @@ const Login: React.FC = () => {
             const data = await response.json();
             localStorage.setItem('token', data.token);
             localStorage.setItem('role', data.role);
+            localStorage.setItem('justSignedUp', 'true'); // Set flag for snackbar
 
             // Simulate a 2-second delay before navigating
             setTimeout(() => {
@@ -76,7 +77,7 @@ const Login: React.FC = () => {
         >
             <div
                 style={{
-                    background: 'white',
+                    background: 'rgba(255, 255, 255, 0.9)', // Semi-transparent white
                     padding: '2.5rem',
                     borderRadius: '12px',
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
@@ -84,6 +85,8 @@ const Login: React.FC = () => {
                     maxWidth: '400px',
                     textAlign: 'center',
                     marginTop: 0,
+                    backdropFilter: 'blur(10px)', // Adjust the blur radius as needed
+                    WebkitBackdropFilter: 'blur(10px)', // For Safari support
                 }}
             >
                 <h2
@@ -229,7 +232,7 @@ const Login: React.FC = () => {
                                 fontWeight: '500',
                             }}
                             onClick={() => {
-                                setIsSignUpLoading(true); // Use isSignUpLoading instead of isLoading
+                                setIsSignUpLoading(true);
                                 setTimeout(() => {
                                     setIsSignUpLoading(false);
                                     navigate('/signup');
@@ -239,7 +242,6 @@ const Login: React.FC = () => {
                             {isSignUpLoading ? (
                                 <>
                                     <FontAwesomeIcon icon={faCircleNotch} spin /> {/* Use faCircleNotch */}
-    
                                 </>
                             ) : (
                                 'Sign Up'

@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { ClipLoader } from 'react-spinners';
 import styled from 'styled-components';
+import { Box, Typography, TextField, Button, CircularProgress } from '@mui/material';
 
 const Container = styled.div`
   display: flex;
@@ -12,49 +13,86 @@ const Container = styled.div`
   min-height: 100vh;
   font-family: 'Inter', sans-serif;
   padding: 20px;
+  
 `;
 
 const FormContainer = styled.div`
-  background: white;
+  background: rgba(255, 255, 255, 0.9);
   padding: 2.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
   width: 100%;
-  max-width: 400px;
+  max-width: 450px;
   text-align: center;
-`;
+  animation: fadeIn 0.5s ease-in-out;
 
-const Input = styled.input`
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 1rem;
-  width: 100%;
-  transition: border-color 0.3s ease;
-
-  &:focus {
-    border-color: #007bff;
-    outline: none;
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 `;
 
-const Button = styled.button<{ isLoading?: boolean }>`
+const Input = styled(TextField)`
+  width: 100%;
+  margin-bottom: 1.25rem;
+
+  & .MuiOutlinedInput-root {
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  & .Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: #007bff;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+  }
+`;
+
+const StyledButton = styled(Button)<{ isLoading?: boolean }>`
+  width: 100%;
   padding: 0.75rem;
+  font-size: 1rem;
+  border-radius: 12px;
   background-color: ${({ isLoading }) => (isLoading ? '#6c757d' : '#007bff')};
   color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
   transition: all 0.3s ease;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 123, 255, 0.2);
 
   &:hover:not(:disabled) {
     background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
+    color: white;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+`;
+
+const AdminButton = styled(Button)<{ isLoading?: boolean }>`
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border-radius: 12px;
+  background-color: ${({ isLoading }) => (isLoading ? '#6c757d' : '#28a745')};
+  color: white;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+  box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2);
+
+  &:hover:not(:disabled) {
+    background-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(40, 167, 69, 0.3);
+    color: white;
   }
 
   &:disabled {
@@ -64,169 +102,183 @@ const Button = styled.button<{ isLoading?: boolean }>`
 `;
 
 const Signup: React.FC = () => {
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const [emailError, setEmailError] = useState('');
-    const [passwordVisible, setPasswordVisible] = useState(false);
-    const [isSignupLoading, setIsSignupLoading] = useState(false);
-    const [isAdminSignupLoading, setIsAdminSignupLoading] = useState(false);
-    const [isLoginNavigating, setIsLoginNavigating] = useState(false);
-    const navigate = useNavigate();
+  const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', password: '' });
+  const [errors, setErrors] = useState({ general: '', email: '' });
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [isSignupLoading, setIsSignupLoading] = useState(false); // For signup button loading
+  const [isLoginLinkLoading, setIsLoginLinkLoading] = useState(false); // For login link loading
+  const [isAdminLoading, setIsAdminLoading] = useState(false); // For admin button loading
+  const [isSuccess, setIsSuccess] = useState(false); // For successful signup loading
+  const navigate = useNavigate();
 
-    const validateEmail = (email: string): boolean => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    };
+  const validateEmail = (email: string): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-    const handleSignup = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError('');
-        setEmailError('');
-        setIsSignupLoading(true);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    setErrors({ ...errors, [name]: '' });
+  };
 
-        if (!validateEmail(email)) {
-            setEmailError('Please enter a valid email address.');
-            setIsSignupLoading(false);
-            return;
-        }
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrors({ general: '', email: '' });
+    setIsSignupLoading(true);
 
-        try {
-            const response = await fetch('http://localhost:8080/api/auth/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ firstName, lastName, email, password }),
-            });
+    if (!validateEmail(formData.email)) {
+      setErrors((prev) => ({ ...prev, email: 'Please enter a valid email address.' }));
+      setIsSignupLoading(false);
+      return;
+    }
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                setError(errorData.message || 'Signup failed. Please try again.');
-                return;
-            }
+    try {
+      const response = await fetch('http://localhost:8080/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, role: 'user' }), // Default role is 'user'
+      });
 
-            const data = await response.json();
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('role', data.role);
+      if (!response.ok) {
+        const errorData = await response.json();
+        setErrors((prev) => ({ ...prev, general: errorData.message || 'Signup failed. Please try again.' }));
+        return;
+      }
 
-            // Add 2-second delay before navigation
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            navigate('/');
-        } catch (error) {
-            console.error('Error during signup:', error);
-            setError('An error occurred during signup. Please try again.');
-        } finally {
-            setIsSignupLoading(false);
-        }
-    };
+      const data = await response.json();
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('role', data.role);
+      localStorage.setItem('justSignedUp', 'true');
 
-    const handleAdminSignup = async () => {
-        setIsAdminSignupLoading(true);
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        navigate('/adminsignup');
-        setIsAdminSignupLoading(false);
-    };
+      setIsSuccess(true); // Show loading spinner for successful signup
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // 2-second delay
+      navigate('/'); // Navigate to homepage
+    } catch (error) {
+      console.error('Error during signup:', error);
+      setErrors((prev) => ({ ...prev, general: 'An error occurred during signup. Please try again.' }));
+    } finally {
+      setIsSignupLoading(false);
+      setIsSuccess(false); // Reset success state
+    }
+  };
 
-    const handleLoginNavigation = async () => {
-        setIsLoginNavigating(true);
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        navigate('/login');
-        setIsLoginNavigating(false);
-    };
+  const handleNavigateToLogin = async () => {
+    setIsLoginLinkLoading(true); // Show loading spinner for login link
+    await new Promise((resolve) => setTimeout(resolve, 2000)); // 2-second delay
+    navigate('/login');
+  };
 
-    return (
-        <Container>
-            <FormContainer>
-                <h2 style={{ fontSize: '2rem', marginBottom: '1.5rem', color: '#333', fontWeight: '600' }}>
-                    Sign Up
-                </h2>
-                {error && (
-                    <div style={{ color: '#dc3545', backgroundColor: '#f8d7da', padding: '0.75rem', borderRadius: '8px', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
-                        {error}
-                    </div>
-                )}
-                {emailError && (
-                    <div style={{ color: '#dc3545', backgroundColor: '#f8d7da', padding: '0.75rem', borderRadius: '8px', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
-                        {emailError}
-                    </div>
-                )}
-                <form onSubmit={handleSignup} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                    <Input
-                        type="text"
-                        placeholder="First Name"
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
-                        required
-                    />
-                    <Input
-                        type="text"
-                        placeholder="Last Name"
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
-                        required
-                    />
-                    <Input
-                        type="email"
-                        placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
-                    <div style={{ position: 'relative' }}>
-                        <Input
-                            type={passwordVisible ? 'text' : 'password'}
-                            placeholder="Password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                        <span
-                            style={{
-                                position: 'absolute',
-                                right: '10px',
-                                top: '50%',
-                                transform: 'translateY(-50%)',
-                                cursor: 'pointer',
-                            }}
-                            onClick={() => setPasswordVisible(!passwordVisible)}
-                        >
-                            <FontAwesomeIcon icon={passwordVisible ? faEyeSlash : faEye} />
-                        </span>
-                    </div>
-                    <Button type="submit" disabled={isSignupLoading || isLoginNavigating}>
-                        {isSignupLoading ? <ClipLoader size={20} color="#ffffff" /> : 'Sign Up'}
-                    </Button>
-                    <Button
-                        type="button"
-                        onClick={handleAdminSignup}
-                        disabled={isAdminSignupLoading || isLoginNavigating}
-                        style={{ backgroundColor: '#6c757d' }}
-                    >
-                        {isAdminSignupLoading ? <ClipLoader size={20} color="#ffffff" /> : 'Signup as Admin'}
-                    </Button>
-                </form>
-                <div style={{ marginTop: '1.5rem', fontSize: '0.9rem', color: '#666' }}>
-                    <p>
-                        Already have an account?{' '}
-                        <span
-                            style={{
-                                color: '#007bff',
-                                cursor: 'pointer',
-                                textDecoration: 'underline',
-                                fontWeight: '500',
-                            }}
-                            onClick={handleLoginNavigation}
-                        >
-                            {isLoginNavigating ? <ClipLoader size={15} color="#007bff" /> : 'Login'}
-                        </span>
-                    </p>
-                </div>
-            </FormContainer>
-        </Container>
-    );
+  const handleNavigateToAdminSignup = async () => {
+    setIsAdminLoading(true); // Show loading spinner for admin button
+    await new Promise((resolve) => setTimeout(resolve, 2000)); // 2-second delay
+    navigate('/AdminSignup'); // Navigate to the admin signup page
+  };
+
+  return (
+    <Container>
+      <FormContainer>
+        <Typography variant="h4" component="h2" sx={{ mb: 3, fontWeight: 600, color: '#333' }}>
+          Sign Up
+        </Typography>
+        {errors.general && (
+          <Box sx={{ color: '#dc3545', backgroundColor: '#f8d7da', padding: '0.75rem', borderRadius: '12px', mb: 2 }}>
+            {errors.general}
+          </Box>
+        )}
+        {errors.email && (
+          <Box sx={{ color: '#dc3545', backgroundColor: '#f8d7da', padding: '0.75rem', borderRadius: '12px', mb: 2 }}>
+            {errors.email}
+          </Box>
+        )}
+        {isSuccess ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
+            <CircularProgress size={60} color="primary" /> {/* Loading spinner */}
+          </Box>
+        ) : (
+          <form onSubmit={handleSignup}>
+            <Box sx={{ mb: 2 }}>
+              <Input
+                label="First Name"
+                name="firstName"
+                variant="outlined"
+                value={formData.firstName}
+                onChange={handleChange}
+                required
+              />
+            </Box>
+            <Box sx={{ mb: 2 }}>
+              <Input
+                label="Last Name"
+                name="lastName"
+                variant="outlined"
+                value={formData.lastName}
+                onChange={handleChange}
+                required
+              />
+            </Box>
+            <Box sx={{ mb: 2 }}>
+              <Input
+                label="Email"
+                name="email"
+                type="email"
+                variant="outlined"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+            </Box>
+            <Box sx={{ mb: 3, position: 'relative' }}>
+              <Input
+                label="Password"
+                name="password"
+                type={passwordVisible ? 'text' : 'password'}
+                variant="outlined"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+              <Box
+                sx={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  cursor: 'pointer',
+                }}
+                onClick={() => setPasswordVisible(!passwordVisible)}
+                aria-label="Toggle password visibility"
+              >
+                <FontAwesomeIcon icon={passwordVisible ? faEyeSlash : faEye} />
+              </Box>
+            </Box>
+            <Box sx={{ mb: 2 }}>
+              <StyledButton type="submit" disabled={isSignupLoading || isLoginLinkLoading || isAdminLoading}>
+                {isSignupLoading ? <CircularProgress size={24} color="inherit" /> : 'Sign Up'}
+              </StyledButton>
+            </Box>
+            <Box sx={{ mb: 2 }}>
+              <AdminButton
+                onClick={handleNavigateToAdminSignup}
+                disabled={isSignupLoading || isLoginLinkLoading || isAdminLoading}
+                isLoading={isAdminLoading}
+              >
+                {isAdminLoading ? <CircularProgress size={24} color="inherit" /> : 'Sign Up as Admin'}
+              </AdminButton>
+            </Box>
+          </form>
+        )}
+        {!isSuccess && (
+          <Typography variant="body2" sx={{ mt: 2, color: '#666' }}>
+            Already have an account?{' '}
+            <span
+              style={{ color: '#007bff', cursor: 'pointer', textDecoration: 'underline', fontWeight: 500 }}
+              onClick={handleNavigateToLogin}
+            >
+              {isLoginLinkLoading ? <ClipLoader size={15} color="#007bff" /> : 'Login'}
+            </span>
+          </Typography>
+        )}
+      </FormContainer>
+    </Container>
+  );
 };
 
 export default Signup;

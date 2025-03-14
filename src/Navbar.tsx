@@ -293,20 +293,7 @@ const Navbar = () => {
               >
                 {userDetails.email}
               </Typography>
-
-              {/* User Role */}
-              <Typography
-                variant="body2"
-                sx={{
-                  color: "#4a4a4a",
-                  fontSize: "16px",
-                  textAlign: "center",
-                  mb: 3,
-                }}
-              >
-                Role: {userDetails.role}
-              </Typography>
-
+              
               {/* Sign Out Button */}
               <Button
                 variant="contained"
