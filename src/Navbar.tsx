@@ -13,6 +13,7 @@ import {
   Popover,
   Button,
   Avatar,
+  CircularProgress,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
@@ -30,12 +31,19 @@ interface UserDetails {
 const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [signupLoading, setSignupLoading] = useState(false); // Separate loading state for Sign Up
+  const [loginLoading, setLoginLoading] = useState(false); // Separate loading state for Login
+  const [navigationLoading, setNavigationLoading] = useState(false); // Loading state for navigation
   const navigate = useNavigate();
 
   const toggleDrawer = () => setDrawerOpen(!drawerOpen);
 
   const handleNavigation = (path: string) => {
-    navigate(path);
+    setNavigationLoading(true);
+    setTimeout(() => {
+      navigate(path);
+      setNavigationLoading(false);
+    }, 500);
   };
 
   const handleAccountClick = (event: MouseEvent<HTMLElement>) => {
@@ -47,9 +55,29 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    navigate("/login");
+    setNavigationLoading(true);
+    setTimeout(() => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      navigate("/login");
+      setNavigationLoading(false);
+    }, 2000);
+  };
+
+  const handleSignup = () => {
+    setSignupLoading(true); // Set loading state for Sign Up
+    setTimeout(() => {
+      navigate("/signup");
+      setSignupLoading(false); // Reset loading state after navigation
+    }, 2000);
+  };
+
+  const handleLogin = () => {
+    setLoginLoading(true); // Set loading state for Login
+    setTimeout(() => {
+      navigate("/login");
+      setLoginLoading(false); // Reset loading state after navigation
+    }, 2000);
   };
 
   const open = Boolean(anchorEl);
@@ -199,13 +227,15 @@ const Navbar = () => {
         }}
         PaperProps={{
           style: {
-            minWidth: "300px",
+            minWidth: "320px",
             padding: "24px",
-            boxShadow: "0 8px 24px rgba(0, 0, 0, 0.1)",
-            borderRadius: "16px",
-            border: "1px solid rgba(0, 0, 0, 0.1)", // Subtle border
-            backgroundColor: "rgba(248, 249, 250, 0.95)", // Soft gray background
-            backdropFilter: "blur(10px)", // Glass morphism effect
+            boxShadow: "0 12px 32px rgba(0, 0, 0, 0.2)",
+            borderRadius: "20px",
+            border: "1px solid rgba(255, 255, 255, 0.2)", // Subtle border for glass effect
+            backgroundColor: "rgba(255, 255, 255, 0.85)", // Semi-transparent white
+            backdropFilter: "blur(20px)", // Enhanced glass morphism
+            backgroundImage: "linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.6))", // Gradient overlay
+            overflow: "hidden",
           },
         }}
       >
@@ -214,90 +244,159 @@ const Navbar = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: "16px",
+            gap: "20px",
           }}
         >
           {userDetails ? (
             <>
+              {/* Avatar with gradient background */}
               <Avatar
                 sx={{
-                  bgcolor: "linear-gradient(135deg, #007BFF, #00BFFF)",
-                  width: "80px",
-                  height: "80px",
-                  fontSize: "32px",
+                  background: "linear-gradient(135deg, #6a11cb, #2575fc)",
+                  width: "100px",
+                  height: "100px",
+                  fontSize: "36px",
                   mb: 3,
-                  boxShadow: "0 4px 12px rgba(0, 123, 255, 0.3)",
+                  boxShadow: "0 8px 16px rgba(106, 17, 203, 0.3)",
+                  transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                  "&:hover": {
+                    transform: "scale(1.05)",
+                    boxShadow: "0 12px 24px rgba(106, 17, 203, 0.4)",
+                  },
                 }}
               >
                 {userDetails.firstName.charAt(0).toUpperCase()}
               </Avatar>
+
+              {/* User Name */}
               <Typography
                 variant="h6"
                 sx={{
-                  fontWeight: "700",
-                  fontSize: "20px",
-                  color: "#333333",
+                  fontWeight: "800",
+                  fontSize: "24px",
+                  color: "#1a1a1a",
                   textAlign: "center",
+                  letterSpacing: "-0.5px",
                 }}
               >
                 {userDetails.firstName} {userDetails.lastName}
               </Typography>
+
+              {/* User Email */}
               <Typography
                 variant="body2"
                 sx={{
-                  color: "#666666",
-                  fontSize: "14px",
+                  color: "#4a4a4a",
+                  fontSize: "16px",
                   textAlign: "center",
                 }}
               >
                 {userDetails.email}
               </Typography>
+
+              {/* User Role */}
               <Typography
                 variant="body2"
                 sx={{
-                  color: "#666666",
-                  fontSize: "14px",
+                  color: "#4a4a4a",
+                  fontSize: "16px",
                   textAlign: "center",
                   mb: 3,
                 }}
               >
                 Role: {userDetails.role}
               </Typography>
+
+              {/* Sign Out Button */}
               <Button
                 variant="contained"
-                color="secondary"
                 onClick={handleLogout}
+                disabled={navigationLoading}
                 sx={{
                   width: "100%",
-                  padding: "12px",
-                  borderRadius: "12px",
-                  fontWeight: "600",
+                  padding: "14px",
+                  borderRadius: "14px",
+                  fontWeight: "700",
                   textTransform: "none",
                   fontSize: "16px",
-                  background: "linear-gradient(135deg, #9c27b0, #e91e63)",
-                  boxShadow: "0 4px 8px rgba(156, 39, 176, 0.2)",
+                  background: "linear-gradient(135deg, #ff416c, #ff4b2b)",
+                  boxShadow: "0 6px 12px rgba(255, 65, 108, 0.3)",
                   transition: "all 0.3s ease",
                   "&:hover": {
-                    background: "linear-gradient(135deg, #e91e63, #9c27b0)",
-                    boxShadow: "0 6px 12px rgba(156, 39, 176, 0.3)",
+                    background: "linear-gradient(135deg, #ff4b2b, #ff416c)",
+                    boxShadow: "0 8px 16px rgba(255, 75, 43, 0.4)",
                     transform: "translateY(-2px)",
                   },
                 }}
               >
-                Sign Out
+                {navigationLoading ? <CircularProgress size={24} sx={{ color: "white" }} /> : "Sign Out"}
               </Button>
             </>
           ) : (
-            <Typography
-              variant="body1"
-              sx={{
-                color: "#666666",
-                fontSize: "16px",
-                textAlign: "center",
-              }}
-            >
-              No user details available
-            </Typography>
+            <>
+              {/* No User Details Message */}
+              <Typography
+                variant="body1"
+                sx={{
+                  color: "#4a4a4a",
+                  fontSize: "18px",
+                  textAlign: "center",
+                  mb: 3,
+                }}
+              >
+                Please sign in to the system
+              </Typography>
+
+              {/* Sign Up Button */}
+              <Button
+                variant="contained"
+                onClick={handleSignup}
+                disabled={signupLoading} // Use signupLoading state
+                sx={{
+                  width: "100%",
+                  padding: "14px",
+                  borderRadius: "14px",
+                  fontWeight: "700",
+                  textTransform: "none",
+                  fontSize: "16px",
+                  background: "linear-gradient(135deg, #6a11cb, #2575fc)",
+                  boxShadow: "0 6px 12px rgba(106, 17, 203, 0.3)",
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    background: "linear-gradient(135deg, #2575fc, #6a11cb)",
+                    boxShadow: "0 8px 16px rgba(37, 117, 252, 0.4)",
+                    transform: "translateY(-2px)",
+                  },
+                }}
+              >
+                {signupLoading ? <CircularProgress size={24} sx={{ color: "white" }} /> : "Sign Up"}
+              </Button>
+
+              {/* Login Button */}
+              <Button
+                variant="contained"
+                onClick={handleLogin}
+                disabled={loginLoading} // Use loginLoading state
+                sx={{
+                  width: "100%",
+                  padding: "14px",
+                  borderRadius: "14px",
+                  fontWeight: "700",
+                  textTransform: "none",
+                  fontSize: "16px",
+                  background: "linear-gradient(135deg, #00c6ff, #0072ff)",
+                  boxShadow: "0 6px 12px rgba(0, 198, 255, 0.3)",
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    background: "linear-gradient(135deg, #0072ff, #00c6ff)",
+                    boxShadow: "0 8px 16px rgba(0, 114, 255, 0.4)",
+                    transform: "translateY(-2px)",
+                  },
+                }}
+              >
+                {loginLoading ? <CircularProgress size={24} sx={{ color: "white" }} /> : "Login"}
+              </Button>
+            </>
           )}
         </Box>
       </Popover>
@@ -313,10 +412,17 @@ interface DrawerMenuProps {
 
 const DrawerMenu = ({ open, toggleDrawer }: DrawerMenuProps) => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
   const handleNavigation = (path: string) => {
-    toggleDrawer();
-    navigate(path);
+    setLoading(true);
+    setTimeout(() => {
+      toggleDrawer();
+      navigate(path);
+      setLoading(false);
+    }, 2000);
   };
+
   return (
     <Drawer
       anchor="left"

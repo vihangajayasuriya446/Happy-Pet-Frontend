@@ -1,4 +1,4 @@
-import { Box, Button, Typography, Card, styled, CardContent, CardMedia } from "@mui/material";
+import { Box, Button, Typography, Card, styled, CardContent, CardMedia, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -9,6 +9,7 @@ const HomePage: React.FC = () => {
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
   const role = localStorage.getItem('role');
   const [pets, setPets] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(false); // Loading state
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -34,8 +35,12 @@ const HomePage: React.FC = () => {
   }, []);
 
   const handleNavigation = (path: string) => {
-    navigate(path);
-    window.scrollTo(0, 0);
+    setLoading(true); // Set loading to true before navigation
+    setTimeout(() => {
+      navigate(path);
+      window.scrollTo(0, 0);
+      setLoading(false); // Reset loading after navigation
+    }, 1000); // Simulate a 1-second delay for the loading indicator
   };
 
   const handleCardClick = (path: string) => {
@@ -43,8 +48,12 @@ const HomePage: React.FC = () => {
       alert("Please log in or sign up to access this feature.");
       return;
     }
-    navigate(path);
-    window.scrollTo(0, 0);
+    setLoading(true); // Set loading to true before navigation
+    setTimeout(() => {
+      navigate(path);
+      window.scrollTo(0, 0);
+      setLoading(false); // Reset loading after navigation
+    }, 1000); // Simulate a 1-second delay for the loading indicator
   };
 
   const FullHeightBox = styled(Box)({
@@ -57,6 +66,27 @@ const HomePage: React.FC = () => {
 
   return (
     <FullHeightBox>
+      {/* Loading Overlay */}
+      {loading && (
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(255, 255, 255, 0.1)", // Semi-transparent background
+            backdropFilter: "blur(10px)", // Glass morphism effect
+            zIndex: 9999, // Ensure it's on top of everything
+          }}
+        >
+          <CircularProgress size={60} sx={{ color: "#002855" }} /> {/* Loading spinner */}
+        </Box>
+      )}
+
       {/* Main Content Container */}
       <Box
         component="div"

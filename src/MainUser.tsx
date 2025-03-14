@@ -12,6 +12,7 @@ import {
   InputLabel,
   Box,
   Grid,
+  CircularProgress,
 } from "@mui/material";
 
 interface Pet {
@@ -31,6 +32,7 @@ const MainPage = () => {
   const [breed, setBreed] = useState<string>("");
   const [location, setLocation] = useState<string>("");
   const [pets, setPets] = useState<Pet[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const breeds: { [key: string]: string[] } = {
     Dog: [
@@ -87,6 +89,7 @@ const MainPage = () => {
   };
 
   const fetchPets = async () => {
+    setLoading(true);
     try {
       const queryParams = new URLSearchParams({
         type: petType,
@@ -95,6 +98,9 @@ const MainPage = () => {
         breed: breed,
         location: location,
       });
+
+      // Simulate a delay to show loading spinner
+      await new Promise(resolve => setTimeout(resolve, 2000));
 
       const response = await fetch(
         `http://localhost:8080/api/v1/getfetchedusers?${queryParams.toString()}`,
@@ -114,6 +120,8 @@ const MainPage = () => {
       setPets(data);
     } catch (error) {
       console.error("Error fetching pets:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -262,8 +270,9 @@ const MainPage = () => {
                   "&:hover": { bgcolor: "#001f4d" },
                 }}
                 onClick={fetchPets}
+                disabled={loading}
               >
-                Search
+                {loading ? <CircularProgress size={24} color="inherit" /> : "Search"}
               </Button>
             </Box>
           </Grid>
@@ -283,64 +292,70 @@ const MainPage = () => {
               <Typography variant="body2" color="textSecondary" gutterBottom>
                 Below displays the results of best matches according to provided details by you!
               </Typography>
-              <Grid container spacing={3} mt={2}>
-                {pets.length > 0 ? (
-                  pets.map((pet) => (
-                    <Grid item xs={12} sm={6} md={4} key={pet.id}>
-                      <Card
-                        sx={{
-                          borderRadius: 2,
-                          transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
-                          "&:hover": {
-                            transform: "translateY(-8px)",
-                            boxShadow: "0 12px 24px rgba(0, 0, 0, 0.2)",
-                          },
-                        }}
-                      >
-                        <CardMedia
-                          component="img"
-                          sx={{ height: 200, width: "100%", objectFit: "cover" }}
-                          image={`data:image/jpeg;base64,${pet.photo}`}
-                          alt={pet.name}
-                        />
-                        <CardContent>
-                          <Typography variant="h6" fontWeight="bold">
-                            {pet.name}
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            {pet.gender} • {pet.breed}
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            Age: {pet.age}
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            Location: {pet.location}
-                          </Typography>
-                          <Button
-                            variant="contained"
-                            fullWidth
-                            sx={{
-                              mt: 2,
-                              bgcolor: "#002855",
-                              color: "white",
-                              borderRadius: "8px",
-                              "&:hover": { bgcolor: "#001f4d" },
-                            }}
-                          >
-                            Contact Owner
-                          </Button>
-                        </CardContent>
-                      </Card>
+              {loading ? (
+                <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+                  <CircularProgress />
+                </Box>
+              ) : (
+                <Grid container spacing={3} mt={2}>
+                  {pets.length > 0 ? (
+                    pets.map((pet) => (
+                      <Grid item xs={12} sm={6} md={4} key={pet.id}>
+                        <Card
+                          sx={{
+                            borderRadius: 2,
+                            transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+                            "&:hover": {
+                              transform: "translateY(-8px)",
+                              boxShadow: "0 12px 24px rgba(0, 0, 0, 0.2)",
+                            },
+                          }}
+                        >
+                          <CardMedia
+                            component="img"
+                            sx={{ height: 200, width: "100%", objectFit: "cover" }}
+                            image={`data:image/jpeg;base64,${pet.photo}`}
+                            alt={pet.name}
+                          />
+                          <CardContent>
+                            <Typography variant="h6" fontWeight="bold">
+                              {pet.name}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              {pet.gender} • {pet.breed}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              Age: {pet.age}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              Location: {pet.location}
+                            </Typography>
+                            <Button
+                              variant="contained"
+                              fullWidth
+                              sx={{
+                                mt: 2,
+                                bgcolor: "#002855",
+                                color: "white",
+                                borderRadius: "8px",
+                                "&:hover": { bgcolor: "#001f4d" },
+                              }}
+                            >
+                              Contact Owner
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      </Grid>
+                    ))
+                  ) : (
+                    <Grid item xs={12}>
+                      <Typography variant="body2" color="textSecondary">
+                        No matches found. Try adjusting your search criteria.
+                      </Typography>
                     </Grid>
-                  ))
-                ) : (
-                  <Grid item xs={12}>
-                    <Typography variant="body2" color="textSecondary">
-                      No matches found. Try adjusting your search criteria.
-                    </Typography>
-                  </Grid>
-                )}
-              </Grid>
+                  )}
+                </Grid>
+              )}
             </Box>
           </Grid>
         </Grid>

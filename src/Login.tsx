@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash, faCircleNotch } from '@fortawesome/free-solid-svg-icons'; // Replace faSpinner with faCircleNotch
 
 const Login: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -9,6 +9,8 @@ const Login: React.FC = () => {
     const [error, setError] = useState('');
     const [emailError, setEmailError] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isSignUpLoading, setIsSignUpLoading] = useState(false); // New state for Sign Up loading
     const navigate = useNavigate();
 
     const validateEmail = (email: string): boolean => {
@@ -26,6 +28,8 @@ const Login: React.FC = () => {
             return;
         }
 
+        setIsLoading(true);
+
         try {
             const response = await fetch('http://localhost:8080/api/auth/authenticate', {
                 method: 'POST',
@@ -38,16 +42,23 @@ const Login: React.FC = () => {
             if (!response.ok) {
                 const errorText = await response.text();
                 setError(errorText || 'Login failed. Please check your credentials.');
+                setIsLoading(false);
                 return;
             }
 
             const data = await response.json();
             localStorage.setItem('token', data.token);
             localStorage.setItem('role', data.role);
-            navigate('/');
+
+            // Simulate a 2-second delay before navigating
+            setTimeout(() => {
+                setIsLoading(false);
+                navigate('/');
+            }, 2000);
         } catch (error) {
             console.error('Error during login:', error);
             setError('An error occurred during login. Please try again.');
+            setIsLoading(false);
         }
     };
 
@@ -58,7 +69,6 @@ const Login: React.FC = () => {
                 justifyContent: 'center',
                 alignItems: 'center',
                 minHeight: '100vh',
-                backgroundColor: '#f8f9fa',
                 fontFamily: 'Arial, sans-serif',
                 padding: '20px',
                 marginTop: '-70px',
@@ -137,8 +147,8 @@ const Login: React.FC = () => {
                             fontSize: '1rem',
                             outline: 'none',
                             transition: 'border-color 0.3s ease',
-                            width: '100%', // Ensure email input takes full width
-                            boxSizing: 'border-box', // Ensure padding doesn't affect width
+                            width: '100%',
+                            boxSizing: 'border-box',
                         }}
                     />
                     <div style={{ position: 'relative', width: '100%', boxSizing: 'border-box' }}>
@@ -155,8 +165,8 @@ const Login: React.FC = () => {
                                 fontSize: '1rem',
                                 outline: 'none',
                                 transition: 'border-color 0.3s ease',
-                                width: '100%', // Ensure password input takes full width
-                                boxSizing: 'border-box', // Ensure padding doesn't affect width
+                                width: '100%',
+                                boxSizing: 'border-box',
                             }}
                         />
                         <span
@@ -183,11 +193,23 @@ const Login: React.FC = () => {
                             fontSize: '1rem',
                             cursor: 'pointer',
                             transition: 'background-color 0.3s ease',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            gap: '0.5rem',
                         }}
                         onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')}
                         onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}
+                        disabled={isLoading}
                     >
-                        Login
+                        {isLoading ? (
+                            <>
+                                <FontAwesomeIcon icon={faCircleNotch} spin /> {/* Use faCircleNotch */}
+                                Loading...
+                            </>
+                        ) : (
+                            'Login'
+                        )}
                     </button>
                 </form>
                 <div
@@ -206,9 +228,22 @@ const Login: React.FC = () => {
                                 textDecoration: 'underline',
                                 fontWeight: '500',
                             }}
-                            onClick={() => navigate('/signup')}
+                            onClick={() => {
+                                setIsSignUpLoading(true); // Use isSignUpLoading instead of isLoading
+                                setTimeout(() => {
+                                    setIsSignUpLoading(false);
+                                    navigate('/signup');
+                                }, 2000);
+                            }}
                         >
-                            Sign Up
+                            {isSignUpLoading ? (
+                                <>
+                                    <FontAwesomeIcon icon={faCircleNotch} spin /> {/* Use faCircleNotch */}
+    
+                                </>
+                            ) : (
+                                'Sign Up'
+                            )}
                         </span>
                     </p>
                 </div>
