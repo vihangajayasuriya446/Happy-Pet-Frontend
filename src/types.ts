@@ -27,7 +27,7 @@ export enum PetStatus {
 // For backwards compatibility
 export interface UserDetails {
   user_id: number;
-  name: string;
+  user_name: string;
   email: string;
   phone?: string;
   address?: string;
@@ -36,19 +36,19 @@ export interface UserDetails {
   registered_date: string;
 }
 
+//types.ts
 export interface Adoption {
   adoption_id: number;
-  user_id: number;
   pet_id: number;
-  status: 'Pending' | 'Approved' | 'Rejected';
-  applied_at: string;
+  user_id: number;
+  status: 'Pending' | 'Approved' | 'Rejected' | 'Available' | 'Adopted';
+  applied_at: string; 
   user_name: string;
   email: string;
   address: string;
+  phone: string;
   pet_name: string;
 }
-
-
 
 // For backwards compatibility
 export interface UserAdoption {

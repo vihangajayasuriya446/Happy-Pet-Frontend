@@ -8,7 +8,7 @@ import {
   MenuItem,
   Card,
   CardContent,
-  TextField, // Import TextField
+  TextField,
 } from '@mui/material';
 import { Adoption, UserDetails } from './types';
 import axios from 'axios';
@@ -31,12 +31,14 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
   const [adoption_id, setAdoptionId] = useState<number>(0);
   const [user_id, setUserId] = useState<number>(0);
   const [pet_id, setPetId] = useState<number>(0);
-  const [status, setStatus] = useState<'Pending' | 'Approved' | 'Rejected'>('Pending');
+  const [status, setStatus] = useState<'Pending' | 'Approved' | 'Rejected' | 'Available' | 'Adopted'>('Pending');
   const [applied_at, setAppliedAt] = useState<string>('');
   const [user_name, setUserName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [address, setAddress] = useState<string>('');
-  const [userDetails, setUserDetails] = useState<UserDetails | null>(null); // State for user details
+  const [pet_name, setPetName] = useState<string>('');
+  const [phone, setPhone] = useState<string>('');
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
 
   useEffect(() => {
     if (submitted) {
@@ -47,7 +49,9 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
   useEffect(() => {
     if (isEdit && data) {
       populateForm(data);
-      fetchUserDetails(data.user_id); // Fetch user details on edit
+      if (data.user_id) {
+        fetchUserDetails(data.user_id);
+      }
     } else if (!isEdit) {
       resetFormState();
     }
@@ -62,6 +66,8 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
     setUserName('');
     setEmail('');
     setAddress('');
+    setPetName('');
+    setPhone('');
     setUserDetails(null);
     resetForm();
   };
@@ -70,16 +76,18 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
     setAdoptionId(data.adoption_id);
     setUserId(data.user_id);
     setPetId(data.pet_id);
-    setStatus(data.status);
-    setAppliedAt(data.applied_at);
+    setStatus(data.status as 'Pending' | 'Approved' | 'Rejected' | 'Available' | 'Adopted');
+    setAppliedAt(data.applied_at || '');
     setUserName(data.user_name || '');
     setEmail(data.email || '');
     setAddress(data.address || '');
+    setPetName(data.pet_name || '');
+    setPhone(data.phone || '');
   };
 
   const fetchUserDetails = async (userId: number) => {
     try {
-      const response = await axios.get<UserDetails>(`http://localhost:8080/api/v1/users/${userId}`); // Replace with your actual endpoint
+      const response = await axios.get<UserDetails>(`http://localhost:8080/api/v1/users/${userId}`);
       setUserDetails(response.data);
     } catch (error) {
       console.error('Error fetching user details:', error);
@@ -97,32 +105,34 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
       user_name,
       email,
       address,
-      pet_name: data?.pet_name || ''
+      phone,
+      pet_name
     };
 
     console.log('Updating adoption status:', adoptionData);
     updateAdoption(adoptionData);
 
-    //Also update user Details
-       if (userDetails) {
-            try {
-                // Prepare user data for update
-                const userData = {
-                    user_id: user_id,
-                    name: user_name,
-                    email: email,
-                    address: address
-                };
-                
-                // Make PUT request to update user
-                const response = await axios.put(`http://localhost:8080/api/v1/users/update/${user_id}`, userData);
-                console.log('User details updated successfully:', response.data);
-                // Handle success
-            } catch (error) {
-                console.error('Error updating user details:', error);
-                // Handle error
-            }
-        }
+    // Also update user Details
+    if (userDetails && user_id) {
+      try {
+        // Prepare user data for update
+        const userData = {
+          user_id: user_id,
+          name: user_name,
+          email: email,
+          address: address,
+          phone: phone
+        };
+        
+        // Make PUT request to update user
+        const response = await axios.put(`http://localhost:8080/api/v1/users/update/${user_id}`, userData);
+        console.log('User details updated successfully:', response.data);
+        // Handle success
+      } catch (error) {
+        console.error('Error updating user details:', error);
+        // Handle error
+      }
+    }
   };
 
   return (
@@ -143,6 +153,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
                 onChange={(e) => setAdoptionId(Number(e.target.value))}
                 variant="outlined"
                 size="small"
+                disabled={isEdit} // Disable editing if in edit mode
               />
             </Box>
             <Box>
@@ -154,8 +165,20 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
                 onChange={(e) => setPetId(Number(e.target.value))}
                 variant="outlined"
                 size="small"
+                disabled={isEdit} // Disable editing if in edit mode
               />
             </Box>
+          </Box>
+
+          <Box>
+            <FormLabel sx={{ fontWeight: 'bold', color: '#002855' }}>Pet Name</FormLabel>
+            <TextField
+              fullWidth
+              value={pet_name}
+              onChange={(e) => setPetName(e.target.value)}
+              variant="outlined"
+              size="small"
+            />
           </Box>
 
           <Box>
@@ -171,11 +194,22 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
 
           <Box>
             <FormLabel sx={{ fontWeight: 'bold', color: '#002855' }}>Email</FormLabel>
-             <TextField
+            <TextField
               fullWidth
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              variant="outlined"
+              size="small"
+            />
+          </Box>
+
+          <Box>
+            <FormLabel sx={{ fontWeight: 'bold', color: '#002855' }}>Phone</FormLabel>
+            <TextField
+              fullWidth
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
               variant="outlined"
               size="small"
             />
@@ -195,13 +229,14 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
           <Box>
             <FormLabel sx={{ fontWeight: 'bold', color: '#002855' }}>Applied Date</FormLabel>
             <TextField
-                fullWidth
-                type="text" // Consider using a date picker component
-                value={applied_at}
-                onChange={(e) => setAppliedAt(e.target.value)}
-                variant="outlined"
-                size="small"
-              />
+              fullWidth
+              type="text" // Consider using a date picker component
+              value={applied_at}
+              onChange={(e) => setAppliedAt(e.target.value)}
+              variant="outlined"
+              size="small"
+              disabled={isEdit} // Disable editing if in edit mode
+            />
           </Box>
 
           <Box>
@@ -209,11 +244,12 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
             <Select
               fullWidth
               value={status}
-              onChange={(e) => setStatus(e.target.value as 'Pending' | 'Approved' | 'Rejected')}
+              onChange={(e) => setStatus(e.target.value as 'Pending' | 'Approved' | 'Rejected' | 'Available' | 'Adopted')}
             >
               <MenuItem value="Pending">Pending</MenuItem>
               <MenuItem value="Approved">Approved</MenuItem>
               <MenuItem value="Rejected">Rejected</MenuItem>
+              <MenuItem value="Adopted">Adopted</MenuItem>
             </Select>
           </Box>
 

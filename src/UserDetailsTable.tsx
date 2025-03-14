@@ -71,7 +71,7 @@ const UserDetailsTable: React.FC<UserDetailsTableProps> = ({
       <Table>
         <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
           <TableRow>
-            <TableCell sx={{ fontWeight: 'bold', color: '#002855', textAlign: 'center' }}>ID</TableCell>
+            <TableCell sx={{ fontWeight: 'bold', color: '#002855', textAlign: 'center' }}>Adoption ID</TableCell>
             <TableCell sx={{ fontWeight: 'bold', color: '#002855', textAlign: 'center' }}>Pet ID</TableCell>
             <TableCell sx={{ fontWeight: 'bold', color: '#002855', textAlign: 'center' }}>Pet Name</TableCell>
             <TableCell sx={{ fontWeight: 'bold', color: '#002855', textAlign: 'center' }}>Applicant Name</TableCell>
@@ -88,7 +88,7 @@ const UserDetailsTable: React.FC<UserDetailsTableProps> = ({
               <TableRow key={row.adoption_id} sx={{ '&:nth-of-type(odd)': { backgroundColor: '#f9f9f9' } }}>
                 <TableCell sx={{ textAlign: 'center' }}>{row.adoption_id}</TableCell>
                 <TableCell sx={{ textAlign: 'center' }}>{row.pet_id}</TableCell>
-                 <TableCell sx={{ textAlign: 'center' }}>{row.pet_name}</TableCell>
+                <TableCell sx={{ textAlign: 'center' }}>{row.pet_name}</TableCell>
                 <TableCell sx={{ textAlign: 'center' }}>{row.user_name}</TableCell>
                 <TableCell sx={{ textAlign: 'center' }}>{row.email}</TableCell>
                 <TableCell sx={{ textAlign: 'center' }}>{row.address}</TableCell>
@@ -134,7 +134,7 @@ const UserDetailsTable: React.FC<UserDetailsTableProps> = ({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={8} align="center" sx={{ py: 4 }}>
+              <TableCell colSpan={9} align="center" sx={{ py: 4 }}>
                 <Typography variant="body1" color="textSecondary">
                   No adoption applications found.
                 </Typography>
