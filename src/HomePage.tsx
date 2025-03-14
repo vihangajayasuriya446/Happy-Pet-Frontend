@@ -616,50 +616,66 @@ const HomePage: React.FC = () => {
 
           {/* "More Pets" Card */}
           <Card
-            sx={{
-              borderRadius: "24px",
-              transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background 0.3s ease",
-              "&:hover": {
-                transform: "translateY(-10px)",
-                boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
-                background: "rgba(255, 255, 255, 0.1)",
-                backdropFilter: "blur(10px)",
-              },
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "#9c27b0",
-              color: "white",
-              textAlign: "center",
-              height: "100%",
-              border: "1px solid rgba(255, 255, 255, 0.1)", // Subtle border for depth
-            }}
-            onClick={() => handleNavigation("/matchmaking")}
-          >
-            <Box sx={{ p: 3 }}>
-              <FavoriteBorderIcon sx={{ fontSize: 60, mb: 2, color: "white" }} />
-              <Typography variant="h6" fontWeight="bold" gutterBottom>
-                {pets.length - 3} more pets
-              </Typography>
-              <Typography variant="body2" mb={2}>
-                on HappyPet
-              </Typography>
-              <Button
-                variant="contained"
-                color="inherit"
-                sx={{
-                  bgcolor: "white",
-                  color: "#9c27b0",
-                  "&:hover": {
-                    bgcolor: "#f0f0f0",
-                  },
-                }}
-              >
-                MEET THEM
-              </Button>
-            </Box>
-          </Card>
+      sx={{
+        borderRadius: "16px",
+        backdropFilter: "blur(10px)",
+        backgroundColor: "rgba(255, 255, 255, 0.6)", // Increased opacity for better readability
+        border: "1px solid rgba(0, 0, 0, 0.1)", // Subtle border for definition
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+        "&:hover": {
+          transform: "translateY(-8px)",
+          boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
+        },
+        cursor: "pointer",
+        p: 4, // Increased padding for better spacing
+        textAlign: "center",
+        maxWidth: "400px", // Constrain card width for better readability
+        margin: "auto", // Center the card
+      }}
+      onClick={() => handleNavigation("/matchmaking")}
+    >
+      <Box sx={{ p: 3 }}>
+        <FavoriteBorderIcon
+          sx={{
+            fontSize: 80, // Larger icon for emphasis
+            mb: 3, // Increased margin for better spacing
+            color: "primary.main", // Modern pink/purple accent color
+            filter: "drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1))", // Subtle shadow for depth
+          }}
+        />
+        <Typography
+          variant="h5" // Larger typography for better hierarchy
+          fontWeight="bold"
+          gutterBottom
+          sx={{ color: "#333", mb: 2 }} // Darker text for better readability
+        >
+          {pets.length - 3} more pets
+        </Typography>
+        <Typography
+          variant="body1" // Slightly larger body text
+          sx={{ color: "#666", mb: 3 }} // Softer text color
+        >
+          on HappyPet
+        </Typography>
+        <Button
+              variant="outlined"
+              sx={{
+                borderRadius: "20px",
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "primary.main",
+                borderColor: "primary.main",
+                "&:hover": {
+                  backgroundColor: "primary.main",
+                  color: "white",
+                },
+              }}
+            >
+              Meet Them
+            </Button>
+      </Box>
+    </Card>
         </Box>
       </Box>
 
