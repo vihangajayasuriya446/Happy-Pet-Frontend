@@ -29,6 +29,65 @@ const formatPriceLKR = (price: number | string): string => {
     return `LKR ${numericPrice.toFixed(0)}/=`;
 };
 
+// Helper function to derive pet type from breed
+const derivePetTypeFromBreed = (breed: string): string => {
+    if (!breed) return 'Pet';
+
+    const breedLower = breed.toLowerCase();
+
+    // Check for common dog breeds/terms
+    if (breedLower.includes('dog') ||
+        breedLower.includes('puppy') ||
+        breedLower.includes('retriever') ||
+        breedLower.includes('shepherd') ||
+        breedLower.includes('terrier') ||
+        breedLower.includes('bulldog') ||
+        breedLower.includes('poodle') ||
+        breedLower.includes('labrador') ||
+        breedLower.includes('beagle') ||
+        breedLower.includes('rottweiler')) {
+        return 'Dog';
+    }
+
+    // Check for common cat breeds/terms
+    if (breedLower.includes('cat') ||
+        breedLower.includes('kitten') ||
+        breedLower.includes('persian') ||
+        breedLower.includes('siamese') ||
+        breedLower.includes('bengal') ||
+        breedLower.includes('ragdoll') ||
+        breedLower.includes('maine coon') ||
+        breedLower.includes('sphynx') ||
+        breedLower.includes('british shorthair')) {
+        return 'Cat';
+    }
+
+    // Check for other pet types
+    if (breedLower.includes('bird') || breedLower.includes('parrot') || breedLower.includes('finch')) {
+        return 'Bird';
+    }
+
+    if (breedLower.includes('fish') || breedLower.includes('goldfish')) {
+        return 'Fish';
+    }
+
+    if (breedLower.includes('rabbit') || breedLower.includes('bunny')) {
+        return 'Rabbit';
+    }
+
+    if (breedLower.includes('hamster') || breedLower.includes('guinea pig') || breedLower.includes('gerbil')) {
+        return 'Small Pet';
+    }
+
+    if (breedLower.includes('reptile') || breedLower.includes('snake') || breedLower.includes('lizard') || breedLower.includes('turtle')) {
+        return 'Reptile';
+    }
+
+    // Default to the first word of the breed as a fallback
+    const firstWord = breed.split(' ')[0];
+    return firstWord || 'Pet';
+};
+
 const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
     const navigate = useNavigate();
     const [quantity, setQuantity] = useState(0);
@@ -39,7 +98,10 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
     // Store the resolved image URL in state to ensure consistency
     const [resolvedImageUrl, setResolvedImageUrl] = useState<string>('');
 
-    // Resolve the image URL once when component mounts
+    // Determine pet type based on available information
+    const [petType, setPetType] = useState<string>('');
+
+    // Resolve the image URL and determine pet type when component mounts
     useEffect(() => {
         // Get the correct image URL with fallback
         const imageSource = pet.imageUrl || pet.image || '/default-pet-image.jpg';
@@ -52,7 +114,13 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
         });
 
         setResolvedImageUrl(imageSource);
-    }, [pet.imageUrl, pet.image, pet.id, pet.name]);
+
+        // Determine pet type from pet object or derive from breed
+        // Use only petType property or derive from breed (removed the 'type' property reference)
+        const type = pet.petType || derivePetTypeFromBreed(pet.breed);
+        console.log(`Determined pet type for ${pet.name}: ${type}`);
+        setPetType(type);
+    }, [pet.imageUrl, pet.image, pet.id, pet.name, pet.petType, pet.breed]);
 
     // Updated to explicitly increment by 1
     const handleIncrement = () => {
@@ -74,11 +142,12 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                     petId: pet.id,
                     petName: pet.name,
                     imageUrl: resolvedImageUrl,
+                    petType: petType,
                     quantity: quantity
                 });
 
-                // Pass the entire pet object
-                await addToCart(pet, quantity);
+                // Pass the entire pet object with type information
+                await addToCart({...pet, petType}, quantity);
                 setSnackbarOpen(true);
                 setQuantity(0);
             } catch (error) {
@@ -89,9 +158,9 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
         }
     };
 
-    // Handler for "Contact the owner" button - updated to pass pet information
+    // Handler for "Contact the owner" button - updated to store pet type information
     const handleContactOwner = () => {
-        // Store pet information in localStorage
+        // Store pet information in localStorage with pet type
         localStorage.setItem('selectedPet', JSON.stringify({
             id: pet.id,
             name: pet.name,
@@ -99,8 +168,11 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
             price: pet.price,
             gender: pet.gender,
             birthYear: pet.birthYear,
-            imageUrl: resolvedImageUrl
+            imageUrl: resolvedImageUrl,
+            petType: petType  // Include the determined pet type
         }));
+
+        console.log(`Stored pet ${pet.name} in localStorage with type: ${petType}`);
 
         // Navigate to contact form
         navigate('/contact');
@@ -117,11 +189,12 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
             console.log("Quick adding pet to cart with image:", {
                 petId: pet.id,
                 petName: pet.name,
-                imageUrl: resolvedImageUrl
+                imageUrl: resolvedImageUrl,
+                petType: petType
             });
 
-            // Pass the entire pet object
-            await addToCart(pet, 1);
+            // Pass the entire pet object with type information
+            await addToCart({...pet, petType}, 1);
             setSnackbarOpen(true);
         } catch (error) {
             console.error("Error adding to pet bag:", error);
@@ -242,7 +315,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                     </Typography>
                 </Box>
 
-                {/* Breed - darker gray and consistent size */}
+                {/* Pet Type and Breed - darker gray and consistent size */}
                 <Typography
                     sx={{
                         color: '#555555',
@@ -250,7 +323,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                         mb: 0.5
                     }}
                 >
-                    {pet.breed}
+                    {petType}: {pet.breed}
                 </Typography>
 
                 {/* Gender - without icon, matching styling */}

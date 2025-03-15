@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-    Container,
     Typography,
     Paper,
     Tab,
@@ -9,12 +8,36 @@ import {
     Alert,
     Snackbar,
     useTheme,
-    useMediaQuery
+    useMediaQuery,
+    Drawer,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    IconButton,
+    ListItemButton,
+    Divider,
+    AppBar,
+    Toolbar,
+    Badge,
+    Menu,
+    MenuItem,
+    Avatar,
+    Tooltip
 } from '@mui/material';
 import PetsIcon from '@mui/icons-material/Pets';
 import PeopleIcon from '@mui/icons-material/People';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import MenuIcon from '@mui/icons-material/Menu';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import SettingsIcon from '@mui/icons-material/Settings';
+import LogoutIcon from '@mui/icons-material/Logout';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import AddPetForm from '../AddPetForm';
 import RegisteredUsersTable from '../components/RegisteredUsersTable';
+import AdminDashboard from '../components/AdminDashboard';
+import { InquiryService } from '../services/InquiryService';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -49,16 +72,56 @@ function a11yProps(index: number) {
     };
 }
 
+// Type for snackbar state
+interface SnackbarState {
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error' | 'info' | 'warning';
+}
+
+const drawerWidth = 240;
+
 const AdminPage: React.FC = () => {
     const [tabValue, setTabValue] = useState(0);
-    const [snackbar, setSnackbar] = useState({
+    const [snackbar, setSnackbar] = useState<SnackbarState>({
         open: false,
         message: '',
-        severity: 'success' as 'success' | 'error' | 'info' | 'warning'
+        severity: 'success'
     });
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [notifications, setNotifications] = useState<number>(0);
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [notificationAnchorEl, setNotificationAnchorEl] = useState<null | HTMLElement>(null);
+    const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+
+    // Fetch notifications count on mount
+    useEffect(() => {
+        fetchNotificationsCount();
+
+        // Set up interval to check for new notifications
+        const interval = setInterval(fetchNotificationsCount, 60000); // Check every minute
+
+        return () => clearInterval(interval);
+    }, []);
+
+    const fetchNotificationsCount = async () => {
+        try {
+            // Try to get new inquiries count
+            const contactInquiries = await InquiryService.getAllContactInquiries();
+            const newCount = contactInquiries.filter(inquiry =>
+                inquiry.status?.toUpperCase() === 'NEW'
+            ).length;
+
+            setNotifications(newCount);
+            setLastUpdated(new Date());
+        } catch (error) {
+            console.error('Error fetching notifications:', error);
+        }
+    };
 
     const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
         setTabValue(newValue);
@@ -79,105 +142,336 @@ const AdminPage: React.FC = () => {
         setSnackbar({ ...snackbar, open: false });
     };
 
-    return (
-        <Container
-            maxWidth="xl"
-            sx={{
-                py: { xs: 2, md: 4 },
-                backgroundColor: '#003366',
-                minHeight: '100vh',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'flex-start'
-            }}
-        >
-            <Paper
-                elevation={3}
-                sx={{
-                    borderRadius: '12px',
-                    backgroundColor: '#f5f7fa',
-                    overflow: 'hidden',
-                    width: '100%',
-                    maxWidth: '1400px',
-                    mb: 4
-                }}
-            >
-                <Box
-                    sx={{
-                        p: { xs: 2, md: 3 },
-                        backgroundColor: '#002244',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center'
-                    }}
-                >
-                    <Typography
-                        variant={isMobile ? "h5" : "h4"}
-                        sx={{
-                            color: 'white',
-                            fontWeight: 'bold',
-                            textAlign: 'center',
-                            textShadow: '1px 1px 2px rgba(0,0,0,0.3)'
-                        }}
-                    >
-                        Pet Buy Management Dashboard
-                    </Typography>
-                    <Typography
-                        variant="subtitle1"
-                        sx={{
-                            color: 'rgba(255,255,255,0.8)',
-                            mt: 1
-                        }}
-                    >
-                        Manage your pets and user inquiries in one place
-                    </Typography>
-                </Box>
+    const handleDrawerToggle = () => {
+        setDrawerOpen(!drawerOpen);
+    };
 
-                <Box sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: '#e8eaf6' }}>
-                    <Tabs
-                        value={tabValue}
-                        onChange={handleTabChange}
-                        variant={isMobile ? "fullWidth" : "standard"}
+    const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleNotificationMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+        setNotificationAnchorEl(event.currentTarget);
+        // Reset notification count when opening the menu
+        setNotifications(0);
+    };
+
+    const handleNotificationMenuClose = () => {
+        setNotificationAnchorEl(null);
+    };
+
+    const handleNavigation = (index: number) => {
+        setTabValue(index);
+        if (isMobile) {
+            setDrawerOpen(false);
+        }
+    };
+
+    // Drawer content
+    const drawer = (
+        <Box>
+            <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                p: 2,
+                bgcolor: '#002244'
+            }}>
+                <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
+                    Pet Buy Admin
+                </Typography>
+                {isMobile && (
+                    <IconButton onClick={handleDrawerToggle} sx={{ color: 'white' }}>
+                        <ChevronLeftIcon />
+                    </IconButton>
+                )}
+            </Box>
+            <Divider />
+            <List>
+                <ListItem disablePadding>
+                    <ListItemButton
+                        selected={tabValue === 0}
+                        onClick={() => handleNavigation(0)}
                         sx={{
-                            '& .MuiTab-root': {
-                                fontSize: { xs: '0.875rem', sm: '1rem' },
-                                fontWeight: 'medium',
-                                color: '#003366',
-                                transition: 'all 0.2s ease',
-                                '&.Mui-selected': {
-                                    color: '#001a33',
-                                    fontWeight: 'bold'
-                                },
+                            '&.Mui-selected': {
+                                backgroundColor: 'rgba(0, 51, 102, 0.08)',
+                                borderRight: '3px solid #003366',
                                 '&:hover': {
-                                    backgroundColor: 'rgba(0, 51, 102, 0.04)'
+                                    backgroundColor: 'rgba(0, 51, 102, 0.12)',
                                 }
-                            },
-                            '& .MuiTabs-indicator': {
-                                backgroundColor: '#003366',
-                                height: 3
                             }
                         }}
                     >
-                        <Tab
-                            icon={<PetsIcon />}
-                            iconPosition="start"
-                            label="Pet Management"
-                            {...a11yProps(0)}
-                        />
-                        <Tab
-                            icon={<PeopleIcon />}
-                            iconPosition="start"
-                            label="User Inquiries"
-                            {...a11yProps(1)}
-                        />
-                    </Tabs>
+                        <ListItemIcon>
+                            <DashboardIcon color={tabValue === 0 ? 'primary' : 'inherit'} />
+                        </ListItemIcon>
+                        <ListItemText primary="Dashboard" />
+                    </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                    <ListItemButton
+                        selected={tabValue === 1}
+                        onClick={() => handleNavigation(1)}
+                        sx={{
+                            '&.Mui-selected': {
+                                backgroundColor: 'rgba(0, 51, 102, 0.08)',
+                                borderRight: '3px solid #003366',
+                                '&:hover': {
+                                    backgroundColor: 'rgba(0, 51, 102, 0.12)',
+                                }
+                            }
+                        }}
+                    >
+                        <ListItemIcon>
+                            <PetsIcon color={tabValue === 1 ? 'primary' : 'inherit'} />
+                        </ListItemIcon>
+                        <ListItemText primary="Pet Management" />
+                    </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                    <ListItemButton
+                        selected={tabValue === 2}
+                        onClick={() => handleNavigation(2)}
+                        sx={{
+                            '&.Mui-selected': {
+                                backgroundColor: 'rgba(0, 51, 102, 0.08)',
+                                borderRight: '3px solid #003366',
+                                '&:hover': {
+                                    backgroundColor: 'rgba(0, 51, 102, 0.12)',
+                                }
+                            }
+                        }}
+                    >
+                        <ListItemIcon>
+                            <Badge badgeContent={notifications} color="error">
+                                <PeopleIcon color={tabValue === 2 ? 'primary' : 'inherit'} />
+                            </Badge>
+                        </ListItemIcon>
+                        <ListItemText primary="User Inquiries" />
+                    </ListItemButton>
+                </ListItem>
+            </List>
+            <Divider />
+            <List>
+                <ListItem disablePadding>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <SettingsIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Settings" />
+                    </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <LogoutIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Logout" />
+                    </ListItemButton>
+                </ListItem>
+            </List>
+            {lastUpdated && (
+                <Box sx={{ p: 2, mt: 2 }}>
+                    <Typography variant="caption" color="text.secondary">
+                        Last updated: {lastUpdated.toLocaleTimeString()}
+                    </Typography>
                 </Box>
+            )}
+        </Box>
+    );
 
+    return (
+        <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+            {/* App Bar */}
+            <AppBar
+                position="fixed"
+                sx={{
+                    zIndex: theme.zIndex.drawer + 1,
+                    bgcolor: '#003366',
+                    boxShadow: 3
+                }}
+            >
+                <Toolbar>
+                    <IconButton
+                        color="inherit"
+                        aria-label="open drawer"
+                        edge="start"
+                        onClick={handleDrawerToggle}
+                        sx={{ mr: 2 }}
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                    <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+                        Pet Buy Management Dashboard
+                    </Typography>
+
+                    {/* Notification Icon */}
+                    <Tooltip title="Notifications">
+                        <IconButton
+                            color="inherit"
+                            onClick={handleNotificationMenuOpen}
+                        >
+                            <Badge badgeContent={notifications} color="error">
+                                <NotificationsIcon />
+                            </Badge>
+                        </IconButton>
+                    </Tooltip>
+
+                    {/* User Menu */}
+                    <Tooltip title="Account settings">
+                        <IconButton
+                            onClick={handleMenuOpen}
+                            size="small"
+                            sx={{ ml: 2 }}
+                            aria-controls={anchorEl ? 'account-menu' : undefined}
+                            aria-haspopup="true"
+                            aria-expanded={anchorEl ? 'true' : undefined}
+                        >
+                            <Avatar sx={{ width: 32, height: 32, bgcolor: '#001a33' }}>
+                                <AccountCircleIcon />
+                            </Avatar>
+                        </IconButton>
+                    </Tooltip>
+                </Toolbar>
+            </AppBar>
+
+            {/* Notification Menu */}
+            <Menu
+                anchorEl={notificationAnchorEl}
+                id="notification-menu"
+                open={Boolean(notificationAnchorEl)}
+                onClose={handleNotificationMenuClose}
+                onClick={handleNotificationMenuClose}
+                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            >
+                <MenuItem onClick={() => handleNavigation(2)}>
+                    <ListItemIcon>
+                        <PeopleIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>
+                        {notifications > 0 ?
+                            `${notifications} new user inquiries` :
+                            'No new notifications'
+                        }
+                    </ListItemText>
+                </MenuItem>
+            </Menu>
+
+            {/* User Menu */}
+            <Menu
+                anchorEl={anchorEl}
+                id="account-menu"
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+                onClick={handleMenuClose}
+                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            >
+                <MenuItem>
+                    <ListItemIcon>
+                        <AccountCircleIcon fontSize="small" />
+                    </ListItemIcon>
+                    Profile
+                </MenuItem>
+                <MenuItem>
+                    <ListItemIcon>
+                        <SettingsIcon fontSize="small" />
+                    </ListItemIcon>
+                    Settings
+                </MenuItem>
+                <Divider />
+                <MenuItem>
+                    <ListItemIcon>
+                        <LogoutIcon fontSize="small" />
+                    </ListItemIcon>
+                    Logout
+                </MenuItem>
+            </Menu>
+
+            {/* Drawer */}
+            <Drawer
+                variant={isDesktop ? "permanent" : "temporary"}
+                open={isDesktop || drawerOpen}
+                onClose={handleDrawerToggle}
+                sx={{
+                    width: drawerWidth,
+                    flexShrink: 0,
+                    '& .MuiDrawer-paper': {
+                        width: drawerWidth,
+                        boxSizing: 'border-box',
+                    },
+                }}
+            >
+                {drawer}
+            </Drawer>
+
+            {/* Main Content */}
+            <Box component="main" sx={{
+                flexGrow: 1,
+                p: 3,
+                bgcolor: '#f5f7fa',
+                minHeight: '100vh',
+                mt: '64px' // Height of AppBar
+            }}>
+                {/* Mobile Tabs - only show on mobile when drawer is closed */}
+                {isMobile && !drawerOpen && (
+                    <Paper sx={{ mb: 3 }}>
+                        <Tabs
+                            value={tabValue}
+                            onChange={handleTabChange}
+                            variant="fullWidth"
+                            sx={{
+                                '& .MuiTab-root': {
+                                    fontSize: '0.875rem',
+                                    fontWeight: 'medium',
+                                    color: '#003366',
+                                    '&.Mui-selected': {
+                                        color: '#001a33',
+                                        fontWeight: 'bold'
+                                    }
+                                },
+                                '& .MuiTabs-indicator': {
+                                    backgroundColor: '#003366',
+                                    height: 3
+                                }
+                            }}
+                        >
+                            <Tab
+                                icon={<DashboardIcon />}
+                                aria-label="Dashboard"
+                                {...a11yProps(0)}
+                            />
+                            <Tab
+                                icon={<PetsIcon />}
+                                aria-label="Pet Management"
+                                {...a11yProps(1)}
+                            />
+                            <Tab
+                                icon={
+                                    <Badge badgeContent={notifications} color="error">
+                                        <PeopleIcon />
+                                    </Badge>
+                                }
+                                aria-label="User Inquiries"
+                                {...a11yProps(2)}
+                            />
+                        </Tabs>
+                    </Paper>
+                )}
+
+                {/* Tab Panels */}
                 <TabPanel value={tabValue} index={0}>
-                    <AddPetForm onSnackbarMessage={handleSnackbar} />
+                    <AdminDashboard onSnackbarMessage={handleSnackbar} />
                 </TabPanel>
                 <TabPanel value={tabValue} index={1}>
+                    <AddPetForm onSnackbarMessage={handleSnackbar} />
+                </TabPanel>
+                <TabPanel value={tabValue} index={2}>
                     <RegisteredUsersTable onSnackbarMessage={handleSnackbar} />
                 </TabPanel>
 
@@ -202,8 +496,8 @@ const AdminPage: React.FC = () => {
                         {snackbar.message}
                     </Alert>
                 </Snackbar>
-            </Paper>
-        </Container>
+            </Box>
+        </Box>
     );
 };
 

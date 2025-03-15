@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Typography, Container, IconButton, Badge, FormControl, Select, MenuItem, SelectChangeEvent } from "@mui/material";
+import { Box, Typography, Container, IconButton, Badge, FormControl, Select, MenuItem, SelectChangeEvent, Button } from "@mui/material";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import { CartProvider, useCart } from "./contexts/CartContext";
 import PetList from "./components/PetList";
@@ -7,9 +7,10 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import DrawerMenu from "./components/DrawerMenu";
 import Cart from "./components/Cart";
-import { BrowserRouter as Router, Routes, Route, Navigate} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import UserDetailsDashboard from "./components/UserDetailsDashboard";
 import PetManagementDashboard from "./AddPetForm";
+import AddIcon from "@mui/icons-material/Add"; // Import Add icon
 
 // Types definitions with gender field added
 export interface Pet {
@@ -52,6 +53,7 @@ const AppContent: React.FC = () => {
     const [petType, setPetType] = useState<string>('all');
     const { getItemCount } = useCart();
     const itemCount = getItemCount();
+    const navigate = useNavigate(); // Add useNavigate hook
 
     const toggleDrawer = () => {
         setDrawerOpen(!drawerOpen);
@@ -64,6 +66,11 @@ const AppContent: React.FC = () => {
     const handlePetTypeChange = (event: SelectChangeEvent<string>) => {
         setPetType(event.target.value);
         console.log(`Pet type changed to: ${event.target.value}`);
+    };
+
+    // Add navigation function to go to pet management dashboard
+    const goToPetManagement = () => {
+        navigate('/admin/pets');
     };
 
     return (
@@ -93,7 +100,7 @@ const AppContent: React.FC = () => {
                         display: 'flex',
                         flexDirection: { xs: 'column', sm: 'row' },
                         alignItems: 'center',
-                        justifyContent: 'center',
+                        justifyContent: 'space-between', // Changed to space-between for better layout
                         mb: { xs: 3, sm: 4 },
                         position: 'relative'
                     }}>
@@ -102,10 +109,6 @@ const AppContent: React.FC = () => {
                             sx={{
                                 display: 'flex',
                                 alignItems: 'center',
-                                position: { xs: 'static', sm: 'absolute' },
-                                left: { xs: 'auto', sm: 25 },
-                                top: '180%',
-                                transform: { xs: 'none', sm: 'translateY(-50%)' },
                                 order: { xs: 2, sm: 1 },
                                 mt: { xs: 2, sm: 0 },
                                 gap: 2
@@ -153,6 +156,7 @@ const AppContent: React.FC = () => {
                                     <MenuItem value="all">All Pets</MenuItem>
                                     <MenuItem value="dog">Dogs</MenuItem>
                                     <MenuItem value="cat">Cats</MenuItem>
+                                    <MenuItem value="bird">Birds</MenuItem>
                                 </Select>
                             </FormControl>
                         </Box>
@@ -167,11 +171,37 @@ const AppContent: React.FC = () => {
                                 fontFamily: '"Nunito", sans-serif',
                                 textAlign: 'center',
                                 order: { xs: 1, sm: 2 },
-                                mx: 'auto'
                             }}
                         >
                             Buy a Pet
                         </Typography>
+
+                        {/* Add Pet Button on the right */}
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'flex-end',
+                                order: { xs: 3, sm: 3 },
+                                mt: { xs: 2, sm: 0 },
+                            }}
+                        >
+                            <Button
+                                variant="contained"
+                                startIcon={<AddIcon />}
+                                onClick={goToPetManagement}
+                                sx={{
+                                    bgcolor: '#ffffff',
+                                    color: '#003366',
+                                    fontWeight: 'bold',
+                                    '&:hover': {
+                                        bgcolor: '#f0f0f0',
+                                    }
+                                }}
+                            >
+                                Add A Pet
+                            </Button>
+                        </Box>
                     </Box>
 
                     {/* Shopping Bag Icon positioned at the right edge */}
@@ -255,6 +285,11 @@ export const ContactProvider: React.FC<{ children: React.ReactNode }> = ({ child
     );
 };
 
+// We need to wrap AppContent with a NavigationWrapper to use useNavigate
+const NavigationWrapper: React.FC = () => {
+    return <AppContent />;
+};
+
 // Main App component with routing
 const App: React.FC = () => {
     return (
@@ -262,7 +297,7 @@ const App: React.FC = () => {
             <CartProvider>
                 <ContactProvider>
                     <Routes>
-                        <Route path="/" element={<AppContent />} />
+                        <Route path="/" element={<NavigationWrapper />} />
                         <Route path="/contact-owner/:petId" element={<UserDetailsDashboard />} />
                         <Route path="/contact" element={<UserDetailsDashboard />} />
                         {/* Renamed component for clarity */}

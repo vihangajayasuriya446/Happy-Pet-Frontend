@@ -72,6 +72,7 @@ const PetFilter: React.FC<PetFilterProps> = ({ onPetTypeChange }) => {
                                 <MenuItem value="all">All Pets</MenuItem>
                                 <MenuItem value="dog">Dogs</MenuItem>
                                 <MenuItem value="cat">Cats</MenuItem>
+                                <MenuItem value="bird">Birds</MenuItem>
                             </Select>
                         </FormControl>
                     </Box>

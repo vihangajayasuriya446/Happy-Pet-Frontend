@@ -11,16 +11,20 @@ import {
     Divider
 } from '@mui/material';
 
-// Updated interface to match backend model
+// Updated interface to match backend PetInquiry model and InquiryService.ts
 export interface UserInquiry {
     id?: number;
-    name: string;
-    email: string;
-    phone: string;
+    userName: string;
+    userEmail: string;
+    userPhone: string;
     address: string;
-    message: string;
+    userMessage: string;
     petId?: number;
-    submissionDate?: string;
+    petName?: string;
+    petType?: string;
+    petBreed?: string;
+    inquiryDate?: string;
+    status?: 'NEW' | 'IN_PROGRESS' | 'RESOLVED';
 }
 
 // Interface for pet data from localStorage
@@ -32,6 +36,7 @@ interface PetData {
     gender?: string;
     birthYear: number | string;
     imageUrl: string;
+    petType?: string;
 }
 
 interface UserDetailsFormProps {
@@ -42,6 +47,7 @@ interface UserDetailsFormProps {
     isEdit: boolean;
     resetForm: () => void;
     petId?: number;
+    onSubmit?: (success: boolean) => void;
 }
 
 const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
@@ -51,19 +57,59 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
                                                              data,
                                                              isEdit,
                                                              resetForm,
-                                                             petId
+                                                             petId,
+                                                             onSubmit
                                                          }) => {
     const initialFormState: UserInquiry = {
-        name: '',
-        email: '',
-        phone: '',
+        userName: '',
+        userEmail: '',
+        userPhone: '',
         address: '',
-        message: ''
+        userMessage: ''
     };
 
     const [formData, setFormData] = useState<UserInquiry>(initialFormState);
     const [errors, setErrors] = useState<Partial<Record<keyof UserInquiry, string>>>({});
     const [selectedPet, setSelectedPet] = useState<PetData | null>(null);
+
+    // Enhanced function to derive pet type from breed
+    const derivePetTypeFromBreed = (breed: string): string => {
+        if (!breed) return 'Pet';
+
+        const breedLower = breed.toLowerCase();
+
+        // Check for common dog breeds/terms
+        if (breedLower.includes('dog') ||
+            breedLower.includes('puppy') ||
+            breedLower.includes('retriever') ||
+            breedLower.includes('shepherd') ||
+            breedLower.includes('terrier') ||
+            breedLower.includes('bulldog') ||
+            breedLower.includes('poodle') ||
+            breedLower.includes('labrador') ||
+            breedLower.includes('beagle') ||
+            breedLower.includes('rottweiler')) {
+            return 'Dog';
+        }
+
+        // Check for common cat breeds/terms
+        if (breedLower.includes('cat') ||
+            breedLower.includes('kitten') ||
+            breedLower.includes('persian') ||
+            breedLower.includes('siamese') ||
+            breedLower.includes('bengal') ||
+            breedLower.includes('ragdoll') ||
+            breedLower.includes('maine coon') ||
+            breedLower.includes('sphynx') ||
+            breedLower.includes('british shorthair')) {
+            return 'Cat';
+        }
+
+
+        // Default to the first word of the breed as a fallback
+        const firstWord = breed.split(' ')[0];
+        return firstWord || 'Pet';
+    };
 
     // Load pet data from localStorage on component mount
     useEffect(() => {
@@ -73,11 +119,18 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
                 const petData = JSON.parse(petDataString) as PetData;
                 setSelectedPet(petData);
 
-                // Pre-populate message with pet info
+                // Derive pet type if not available
+                const petType = petData.petType || derivePetTypeFromBreed(petData.breed);
+                console.log(`Derived pet type: ${petType} from breed: ${petData.breed}`);
+
+                // Pre-populate message with pet info and store pet details
                 setFormData(prev => ({
                     ...prev,
                     petId: petData.id,
-                    message: `I'm interested in adopting ${petData.name}, the ${petData.breed}. Please contact me with more information.`
+                    petName: petData.name,
+                    petBreed: petData.breed,
+                    petType: petType,
+                    userMessage: `I'm interested in  buying ${petData.name}, the ${petData.breed}. Please contact me with more information.`
                 }));
             } catch (error) {
                 console.error('Error parsing pet data from localStorage:', error);
@@ -99,35 +152,70 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
     // Update form data when editing an existing inquiry
     useEffect(() => {
         if (data) {
-            setFormData(data);
-        } else if (!selectedPet) {
+            // Map backend field names to form fields if needed
+            setFormData({
+                ...data,
+                // If data comes from backend with different field names, map them here
+                userName: data.userName || '',
+                userEmail: data.userEmail || '',
+                userPhone: data.userPhone || '',
+                userMessage: data.userMessage || ''
+            });
+
+            // If we're editing and there's no petType but there is a petBreed, derive the type
+            if (data.petBreed && !data.petType) {
+                const derivedType = derivePetTypeFromBreed(data.petBreed);
+                setFormData(prev => ({
+                    ...prev,
+                    petType: derivedType
+                }));
+                console.log(`When editing, derived pet type: ${derivedType} from breed: ${data.petBreed}`);
+            }
+        } else if (!selectedPet && !petId) {
             setFormData(initialFormState);
         }
-    }, [data]);
+    }, [data, selectedPet, petId]);
 
     // Optionally pre-populate message with pet info from props
     useEffect(() => {
-        if (petId && !selectedPet) {
+        if (petId && !selectedPet && !data) {
             setFormData(prev => ({
                 ...prev,
                 petId: petId,
-                message: `I'm interested in learning more about the pet with ID: ${petId}`
+                userMessage: prev.userMessage || `I'm interested in learning more about the pet with ID: ${petId}`
             }));
         }
-    }, [petId, selectedPet]);
+    }, [petId, selectedPet, data]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
+
+        // Map form field names to backend field names
+        let fieldName = name;
+        if (name === 'name') fieldName = 'userName';
+        else if (name === 'email') fieldName = 'userEmail';
+        else if (name === 'phone') fieldName = 'userPhone';
+        else if (name === 'message') fieldName = 'userMessage';
+
         setFormData(prev => ({
             ...prev,
-            [name]: value
+            [fieldName]: value
         }));
 
         // Clear error when field is modified
-        if (errors[name as keyof UserInquiry]) {
+        if (errors[fieldName as keyof UserInquiry]) {
             setErrors(prev => ({
                 ...prev,
-                [name]: ''
+                [fieldName]: ''
+            }));
+        }
+
+        // If changing breed, update pet type automatically
+        if (name === 'petBreed') {
+            const derivedType = derivePetTypeFromBreed(value);
+            setFormData(prev => ({
+                ...prev,
+                petType: derivedType
             }));
         }
     };
@@ -135,22 +223,22 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
     const validateForm = (): boolean => {
         const newErrors: Partial<Record<keyof UserInquiry, string>> = {};
 
-        if (!formData.name.trim()) {
-            newErrors.name = 'Name is required';
+        if (!formData.userName?.trim()) {
+            newErrors.userName = 'Name is required';
         }
 
-        if (!formData.email.trim()) {
-            newErrors.email = 'Email is required';
-        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-            newErrors.email = 'Email is invalid';
+        if (!formData.userEmail?.trim()) {
+            newErrors.userEmail = 'Email is required';
+        } else if (!/\S+@\S+\.\S+/.test(formData.userEmail)) {
+            newErrors.userEmail = 'Email is invalid';
         }
 
-        if (!formData.phone.trim()) {
-            newErrors.phone = 'Phone number is required';
+        if (!formData.userPhone?.trim()) {
+            newErrors.userPhone = 'Phone number is required';
         }
 
-        if (!formData.message.trim()) {
-            newErrors.message = 'Message is required';
+        if (!formData.userMessage?.trim()) {
+            newErrors.userMessage = 'Message is required';
         }
 
         setErrors(newErrors);
@@ -164,15 +252,63 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
             return;
         }
 
-        const inquiryData = {
-            ...formData,
-            petId: selectedPet?.id || petId,
-        };
+        // Ensure we're using the correct petId in the submission
+        const finalPetId = selectedPet?.id ? parseInt(selectedPet.id.toString()) :
+            formData.petId ? formData.petId :
+                petId;
 
-        if (isEdit && formData.id) {
-            await updateInquiry(inquiryData);
-        } else {
-            await addInquiry(inquiryData);
+        if (!finalPetId && (selectedPet || petId)) {
+            setErrors(prev => ({
+                ...prev,
+                userMessage: 'No pet selected. Please select a pet first.'
+            }));
+            return;
+        }
+
+        try {
+            console.log("Submitting inquiry data with petId:", finalPetId);
+
+            // Format the data according to what your backend expects
+            const inquiryData = {
+                ...formData,
+                petId: finalPetId,
+                // Include pet details if available
+                petName: selectedPet?.name || formData.petName,
+                petBreed: selectedPet?.breed || formData.petBreed,
+                petType: selectedPet?.petType || formData.petType ||
+                    (selectedPet?.breed ? derivePetTypeFromBreed(selectedPet.breed) :
+                        (formData.petBreed ? derivePetTypeFromBreed(formData.petBreed) : 'Pet')),
+                // Set default status for new inquiries
+                status: isEdit ? formData.status : 'NEW'
+            };
+
+            console.log("Formatted inquiry data:", inquiryData);
+
+            if (isEdit && formData.id) {
+                await updateInquiry(inquiryData);
+            } else {
+                // For new inquiries, create a new object without the id property
+                const inquiryDataWithoutId = { ...inquiryData };
+                delete inquiryDataWithoutId.id;
+                await addInquiry(inquiryDataWithoutId);
+            }
+
+            // Notify parent component of successful submission
+            if (onSubmit) {
+                onSubmit(true);
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            // Show error message to user
+            setErrors(prev => ({
+                ...prev,
+                userMessage: 'Failed to submit inquiry. Please try again.'
+            }));
+
+            // Notify parent component of failed submission
+            if (onSubmit) {
+                onSubmit(false);
+            }
         }
     };
 
@@ -187,6 +323,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
     // Helper function to format price
     const formatPriceLKR = (price: number | string): string => {
         const numericPrice = typeof price === 'string' ? parseFloat(price) : price;
+        if (isNaN(numericPrice)) return 'Price not available';
         return `LKR ${numericPrice.toFixed(0)}/=`;
     };
 
@@ -233,7 +370,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
                                 {selectedPet.name}
                             </Typography>
                             <Typography variant="body1" sx={{ color: '#555555' }}>
-                                {selectedPet.breed}
+                                {selectedPet.petType || derivePetTypeFromBreed(selectedPet.breed)}: {selectedPet.breed}
                             </Typography>
                             {selectedPet.gender && (
                                 <Typography variant="body2" sx={{ color: '#555555' }}>
@@ -252,6 +389,16 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
                 </Box>
             )}
 
+            {/* Display petId if no pet data but petId is available */}
+            {!selectedPet && petId && (
+                <Box sx={{ mb: 3, p: 2, bgcolor: '#f0f7ff', borderRadius: '8px' }}>
+                    <Typography variant="body1">
+                        You are inquiring about pet with ID: <strong>{petId}</strong>
+                    </Typography>
+                    <Divider sx={{ my: 2 }} />
+                </Box>
+            )}
+
             <Box component="form" onSubmit={handleSubmit} noValidate>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
@@ -261,10 +408,10 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
                             id="name"
                             name="name"
                             label="Name"
-                            value={formData.name}
+                            value={formData.userName}
                             onChange={handleChange}
-                            error={!!errors.name}
-                            helperText={errors.name}
+                            error={!!errors.userName}
+                            helperText={errors.userName}
                             margin="normal"
                             variant="outlined"
                         />
@@ -278,10 +425,10 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
                             name="email"
                             label="Email"
                             type="email"
-                            value={formData.email}
+                            value={formData.userEmail}
                             onChange={handleChange}
-                            error={!!errors.email}
-                            helperText={errors.email}
+                            error={!!errors.userEmail}
+                            helperText={errors.userEmail}
                             margin="normal"
                             variant="outlined"
                         />
@@ -294,10 +441,10 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
                             id="phone"
                             name="phone"
                             label="Phone Number"
-                            value={formData.phone}
+                            value={formData.userPhone}
                             onChange={handleChange}
-                            error={!!errors.phone}
-                            helperText={errors.phone}
+                            error={!!errors.userPhone}
+                            helperText={errors.userPhone}
                             margin="normal"
                             variant="outlined"
                         />
@@ -327,10 +474,10 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
                             label="Message"
                             multiline
                             rows={4}
-                            value={formData.message}
+                            value={formData.userMessage}
                             onChange={handleChange}
-                            error={!!errors.message}
-                            helperText={errors.message}
+                            error={!!errors.userMessage}
+                            helperText={errors.userMessage}
                             margin="normal"
                             variant="outlined"
                         />
@@ -338,7 +485,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
                 </Grid>
 
                 <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-                    {(isEdit || selectedPet) && (
+                    {(isEdit || selectedPet || petId) && (
                         <Button
                             variant="outlined"
                             color="secondary"
