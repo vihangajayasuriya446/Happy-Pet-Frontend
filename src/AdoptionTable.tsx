@@ -31,34 +31,35 @@ const PetTable: React.FC<PetTableProps> = ({ rows, selectedPet, deletePet }) => 
   return (
     <>
       {/* Header with navigation button */}
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center', 
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           flexWrap: 'wrap', // Ensures button wraps on small screens
           gap: 2, // Adds spacing when wrapped
           mb: 2, // Adjust margin-bottom for better spacing
-          p: 2 // Padding for spacing
+          p: 2, // Padding for spacing
+          pr: 4, // padding right for spacing
         }}
       >
-        <Typography 
-          variant="h5" 
-          sx={{ 
-            color: "#002855", 
-            fontWeight: "bold", 
+        <Typography
+          variant="h5"
+          sx={{
+            color: "#002855",
+            fontWeight: "bold",
             flex: "1 1 auto" // Ensures text takes space and button moves correctly
           }}
         >
           Pet Management Dashboard
         </Typography>
-        
+
         <Button
           variant="contained"
           color="primary"
           onClick={goToUserDetailsDashboard}
-          sx={{ 
-            textTransform: "none", 
+          sx={{
+            textTransform: "none",
             borderRadius: "4px",
             flexShrink: 0 // Prevents button from shrinking too much
           }}
@@ -68,10 +69,10 @@ const PetTable: React.FC<PetTableProps> = ({ rows, selectedPet, deletePet }) => 
       </Box>
 
       {/* Table with full responsiveness */}
-      <TableContainer component={Paper} 
-        sx={{ 
-          borderRadius: "8px", 
-          boxShadow: 3, 
+      <TableContainer component={Paper}
+        sx={{
+          borderRadius: "8px",
+          boxShadow: 3,
           overflowX: "auto", // Enables scrolling on small screens
           width: "100%" // Makes table take full width
         }}
@@ -93,30 +94,30 @@ const PetTable: React.FC<PetTableProps> = ({ rows, selectedPet, deletePet }) => 
           <TableBody>
             {rows.length > 0 ? (
               rows.map((row) => (
-                <TableRow key={row.pet_id} sx={{ "&:nth-of-type(odd)": { backgroundColor: "#f9f9f9" } }}>
-                  <TableCell sx={{ textAlign: "center" }}>{row.pet_id}</TableCell>
-                  <TableCell sx={{ textAlign: "center" }}>
+                <TableRow key={row.pet_id} sx={{ "&:nth-of-type(odd)": { backgroundColor: '#f9f9f9' } }}>
+                  <TableCell sx={{ textAlign: 'center' }}>{row.pet_id}</TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}>
                     {row.image_url && (
                       <Avatar
                         alt={row.pet_name}
-                        src={row.image_url}
+                        src={`http://localhost:8080${row.image_url}`}
                         sx={{ width: 50, height: 50, margin: "0 auto" }}
                       />
                     )}
                   </TableCell>
-                  <TableCell sx={{ textAlign: "center" }}>{row.pet_name}</TableCell>
-                  <TableCell sx={{ textAlign: "center" }}>{row.pet_species}</TableCell>
-                  <TableCell sx={{ textAlign: "center" }}>{row.pet_age}</TableCell>
-                  <TableCell sx={{ textAlign: "center" }}>{row.pet_gender}</TableCell>
-                  <TableCell sx={{ textAlign: "center" }}>{row.pet_breed}</TableCell>
-                  <TableCell sx={{ textAlign: "center" }}>
-                    <Chip 
-                      label={row.pet_adoptionStatus} 
-                      color={getStatusColor(row.pet_adoptionStatus) as "default" | "success" | "warning"} 
-                      size="small" 
+                  <TableCell sx={{ textAlign: 'center' }}>{row.pet_name}</TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}>{row.pet_species}</TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}>{row.pet_age}</TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}>{row.pet_gender}</TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}>{row.pet_breed}</TableCell>
+                  <TableCell sx={{ textAlign: 'center' }}>
+                    <Chip
+                      label={row.pet_adoptionStatus}
+                      color={getStatusColor(row.pet_adoptionStatus) as "default" | "success" | "warning"}
+                      size="small"
                     />
                   </TableCell>
-                  <TableCell sx={{ textAlign: "center" }}>
+                  <TableCell sx={{ textAlign: 'center' }}>
                     <Button
                       variant="contained"
                       color="primary"

@@ -1,20 +1,53 @@
-import { useState, useEffect } from 'react';
-import { Grid, Card, CardContent, CardMedia, Button, Typography, Box, CircularProgress } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import {
+    Grid,
+    Card,
+    CardContent,
+    CardMedia,
+    Button,
+    Typography,
+    Box,
+    CircularProgress,
+    Modal
+} from '@mui/material';
 import AdoptionForm from './AdoptionForm';
 import { fetchAvailablePets } from './petService';
 import { Pet } from './types';
+import { styled } from '@mui/system';
+
+// Styled Card for Hover Effect
+const StyledCard = styled(Card)(({ theme }) => ({
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    backgroundColor: '#ffffff',
+    borderRadius: '16px',
+    boxShadow: Array.isArray(theme.shadows) && theme.shadows.length > 3 ? theme.shadows[3] : 'none',
+    overflow: 'hidden',
+    transition: 'transform 0.2s ease-in-out',
+    '&:hover': {
+        transform: 'scale(1.05)',
+        boxShadow: Array.isArray(theme.shadows) && theme.shadows.length > 5 ? theme.shadows[5] : 'none',
+    },
+}));
 
 const PetGrid = () => {
     const [pets, setPets] = useState<Pet[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
+    const [open, setOpen] = React.useState(false); // Modal open state
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
 
     useEffect(() => {
         const loadPets = async () => {
             try {
                 setLoading(true);
                 const availablePets = await fetchAvailablePets();
+                console.log("Fetched pets:", availablePets);
                 setPets(availablePets);
                 setError(null);
             } catch (err) {
@@ -30,9 +63,8 @@ const PetGrid = () => {
 
     const handleAdoptClick = (pet: Pet) => {
         setSelectedPet(pet);
+        handleOpen(); // Open the modal
     };
-
-    
 
     const handleFormSubmit = (formData: {
         name: string;
@@ -40,20 +72,20 @@ const PetGrid = () => {
         phone: string;
         address: string;
     }) => {
-        // Here you would actually submit the adoption request to your backend
         console.log('Adoption Form Data:', formData);
         alert(`Thank you, ${formData.name}! Your adoption request for ${selectedPet?.pet_name} has been submitted.`);
 
-        // Remove the adopted pet from the pets list
         if (selectedPet) {
             setPets((prevPets) => prevPets.filter(pet => pet.pet_id !== selectedPet.pet_id));
         }
 
-        setSelectedPet(null); // Close the form after submission
+        setSelectedPet(null);
+        handleClose(); // Close the modal after submission
     };
 
     const handleFormClose = () => {
-        setSelectedPet(null); // Close the form
+        setSelectedPet(null);
+        handleClose(); // Close the modal
     };
 
     if (loading) {
@@ -68,8 +100,8 @@ const PetGrid = () => {
         return (
             <Box sx={{ padding: '2rem', textAlign: 'center' }}>
                 <Typography color="error">{error}</Typography>
-                <Button 
-                    variant="contained" 
+                <Button
+                    variant="contained"
                     sx={{ mt: 2 }}
                     onClick={() => window.location.reload()}
                 >
@@ -80,13 +112,12 @@ const PetGrid = () => {
     }
 
     return (
-        <Box sx={{ 
-            padding: '2rem', 
-            maxWidth: '1500px', 
-            margin: '0 auto', 
-            paddingTop: '80px' // Add padding to avoid Navbar overlap
+        <Box sx={{
+            padding: '2rem',
+            maxWidth: '1500px',
+            margin: '0 auto',
+            paddingTop: '80px'
         }}>
-            {/* Add "Adopt a Pet" Topic */}
             <Typography
                 variant="h3"
                 sx={{
@@ -94,35 +125,25 @@ const PetGrid = () => {
                     fontWeight: 'bold',
                     color: 'white',
                     mb: 4,
-                    fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' } // Responsive font size
+                    fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' }
                 }}
             >
                 Adopt a Pet
             </Typography>
 
-            {/* Pet Grid */}
             <Grid container spacing={4}>
-    {pets.filter(pet => pet.status !== 'Adopted').length > 0 ? (
-        pets.filter(pet => pet.status !== 'Adopted').map((pet) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={pet.pet_id}>
-                            <Card sx={{
-                                height: '100%',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'space-between',
-                                backgroundColor: '#ffffff',
-                                borderRadius: '16px',
-                                boxShadow: 3,
-                                overflow: 'hidden'
-                            }}>
+                {pets.filter(pet => pet.status !== 'Adopted').length > 0 ? (
+                    pets.filter(pet => pet.status !== 'Adopted').map((pet) => (
+                        <Grid item xs={12} sm={6} md={4} lg={3} key={pet.pet_id}>
+                            <StyledCard>
                                 <CardMedia
                                     component="img"
                                     sx={{
-                                        height: '200px',
+                                        height: '400px',
                                         objectFit: 'cover',
                                         width: '100%'
                                     }}
-                                    image={pet.image_url}
+                                    image={`http://localhost:8080${pet.image_url}`}
                                     alt={pet.pet_name}
                                 />
                                 <CardContent>
@@ -199,13 +220,13 @@ const PetGrid = () => {
                                         Adopt Me
                                     </Button>
                                 </CardContent>
-                            </Card>
+                            </StyledCard>
                         </Grid>
                     ))
                 ) : (
                     <Grid item xs={12}>
-                        <Typography 
-                            variant="h6" 
+                        <Typography
+                            variant="h6"
                             sx={{ textAlign: 'center', color: 'white', mt: 4 }}
                         >
                             No pets available for adoption at the moment.
@@ -215,13 +236,32 @@ const PetGrid = () => {
             </Grid>
 
             {/* Adoption Form Popup */}
-            {selectedPet && (
-                <AdoptionForm
-                    pet={selectedPet}
-                    onClose={handleFormClose}
-                    onSubmit={handleFormSubmit}
-                />
-            )}
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="adoption-form-title"
+                aria-describedby="adoption-form-description"
+            >
+                <Box sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 400,
+                    bgcolor: 'background.paper',
+                    border: '2px solid #000',
+                    boxShadow: 24,
+                    p: 4,
+                }}>
+                    {selectedPet && (
+                        <AdoptionForm
+                            pet={selectedPet}
+                            onClose={handleFormClose}
+                            onSubmit={handleFormSubmit}
+                        />
+                    )}
+                </Box>
+            </Modal>
         </Box>
     );
 };

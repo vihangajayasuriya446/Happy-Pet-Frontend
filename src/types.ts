@@ -1,15 +1,15 @@
 export interface Pet {
-  pet_id: number;              
-  pet_name: string;            
-  pet_species: string;         
-  pet_age: string;            
-  pet_gender: string;          
-  pet_breed: string;           
-  pet_adoptionStatus: string;  
-  pet_photo: File | string | null;  
-  pet_description?: string;    
-  image_url?: string;          
-  created_at?: string;         
+  pet_id: number;
+  pet_name: string;
+  pet_species: string;
+  pet_age: string;
+  pet_gender: string;
+  pet_breed: string;
+  pet_adoptionStatus: string;
+  pet_photo: File | string | null;
+  pet_description?: string;
+  image_url?: string;  //This is what we want to load
+  created_at?: string;
   status: 'Pending' | 'Approved' | 'Rejected' | 'Available' | 'Adopted';
 }
 
@@ -42,7 +42,7 @@ export interface Adoption {
   pet_id: number;
   user_id: number;
   status: 'Pending' | 'Approved' | 'Rejected' | 'Available' | 'Adopted';
-  applied_at: string; 
+  applied_at: string;
   user_name: string;
   email: string;
   address: string;

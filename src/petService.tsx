@@ -1,4 +1,3 @@
-// src/services/petService.ts
 import axios from 'axios';
 import { Pet } from './types';
 
@@ -7,6 +6,7 @@ const API_URL = 'http://localhost:8080';
 export const fetchAvailablePets = async (): Promise<Pet[]> => {
   try {
     const response = await axios.get<Pet[]>(`${API_URL}/api/pets/available`);
+    console.log("Response from /api/pets/available:", response); // Debugging
     return response.data;
   } catch (error) {
     console.error('Error fetching pets:', error);
