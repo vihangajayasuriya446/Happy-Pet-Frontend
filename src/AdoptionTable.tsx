@@ -39,8 +39,7 @@ const PetTable: React.FC<PetTableProps> = ({ rows, selectedPet, deletePet }) => 
           flexWrap: 'wrap', // Ensures button wraps on small screens
           gap: 2, // Adds spacing when wrapped
           mb: 2, // Adjust margin-bottom for better spacing
-          p: 2, // Padding for spacing
-          pr: 4, // padding right for spacing
+          p: 2 // Padding for spacing
         }}
       >
         <Typography

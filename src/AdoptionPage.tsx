@@ -8,7 +8,8 @@ import {
     Typography,
     Box,
     CircularProgress,
-    Modal
+    Modal,
+    useTheme
 } from '@mui/material';
 import AdoptionForm from './AdoptionForm';
 import { fetchAvailablePets } from './petService';
@@ -40,6 +41,9 @@ const PetGrid = () => {
     const [open, setOpen] = React.useState(false); // Modal open state
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    // Access the theme
+    const theme = useTheme();
 
 
     useEffect(() => {
@@ -152,9 +156,10 @@ const PetGrid = () => {
                                         variant="h5"
                                         component="div"
                                         sx={{
-                                            color: '#003366',
+                                            color: theme.palette.primary.main, // Use primary color
                                             fontWeight: 'bold',
-                                            textAlign: 'center'
+                                            textAlign: 'center',
+                                            fontSize: { xs: '1.2rem', sm: '1.3rem', md: '1.5rem' } // Responsive font size
                                         }}
                                     >
                                         {pet.pet_name}
@@ -165,7 +170,9 @@ const PetGrid = () => {
                                         sx={{
                                             mb: 2,
                                             textAlign: 'justify',
-                                            hyphens: 'auto'
+                                            hyphens: 'auto',
+                                            fontSize: { xs: '0.8rem', sm: '0.9rem', md: '1rem' }, // Responsive font size
+                                            color: theme.palette.text.secondary // Use theme's secondary text color
                                         }}
                                     >
                                         {pet.pet_description || `Hi I am ${pet.pet_name}. I'm a ${pet.pet_age} year old ${pet.pet_breed} ${pet.pet_species.toLowerCase()}. If you'd like to adopt me, click the button below.`}
@@ -174,7 +181,8 @@ const PetGrid = () => {
                                         variant="body2"
                                         sx={{
                                             mb: 1,
-                                            color: '#555'
+                                            color: theme.palette.text.secondary, // Use theme's secondary text color
+                                            fontSize: { xs: '0.7rem', sm: '0.8rem', md: '0.9rem' } // Responsive font size
                                         }}
                                     >
                                         <strong>Age:</strong> {pet.pet_age} years
@@ -183,7 +191,8 @@ const PetGrid = () => {
                                         variant="body2"
                                         sx={{
                                             mb: 1,
-                                            color: '#555'
+                                            color: theme.palette.text.secondary, // Use theme's secondary text color
+                                            fontSize: { xs: '0.7rem', sm: '0.8rem', md: '0.9rem' } // Responsive font size
                                         }}
                                     >
                                         <strong>Species:</strong> {pet.pet_species}
@@ -192,7 +201,8 @@ const PetGrid = () => {
                                         variant="body2"
                                         sx={{
                                             mb: 1,
-                                            color: '#555'
+                                            color: theme.palette.text.secondary, // Use theme's secondary text color
+                                            fontSize: { xs: '0.7rem', sm: '0.8rem', md: '0.9rem' } // Responsive font size
                                         }}
                                     >
                                         <strong>Breed:</strong> {pet.pet_breed}
@@ -201,7 +211,8 @@ const PetGrid = () => {
                                         variant="body2"
                                         sx={{
                                             mb: 2,
-                                            color: '#555'
+                                            color: theme.palette.text.secondary, // Use theme's secondary text color
+                                            fontSize: { xs: '0.7rem', sm: '0.8rem', md: '0.9rem' } // Responsive font size
                                         }}
                                     >
                                         <strong>Gender:</strong> {pet.pet_gender}
@@ -211,9 +222,9 @@ const PetGrid = () => {
                                         variant="contained"
                                         sx={{
                                             mt: 2,
-                                            backgroundColor: '#003366',
+                                            backgroundColor: theme.palette.primary.main, // Use primary color
                                             color: '#ffffff',
-                                            '&:hover': { backgroundColor: '#002244' }
+                                            '&:hover': { backgroundColor: theme.palette.primary.dark } // Use darker shade on hover
                                         }}
                                         onClick={() => handleAdoptClick(pet)}
                                     >

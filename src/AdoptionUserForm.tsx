@@ -77,6 +77,12 @@ const PetForm: React.FC<PetFormProps> = ({
   };
 
   const handleSubmit = () => {
+    // Validate age
+    if (!pet_age || isNaN(Number(pet_age))) {
+      alert("Please enter a valid number for the pet's age.");
+      return;
+    }
+
     const petData: Pet = {
       pet_id,
       pet_name,
@@ -131,13 +137,14 @@ const PetForm: React.FC<PetFormProps> = ({
           </Box>
 
           <Box>
-            <FormLabel sx={{ fontWeight: "bold", color: "#002855" }}>Age</FormLabel>
-            <Select fullWidth value={pet_age} onChange={(e) => setPetAge(e.target.value as string)}>
-              <MenuItem value="Baby">Baby</MenuItem>
-              <MenuItem value="Young">Young</MenuItem>
-              <MenuItem value="Adult">Adult</MenuItem>
-              <MenuItem value="Senior">Senior</MenuItem>
-            </Select>
+          <FormLabel sx={{ fontWeight: "bold", color: "#002855" }}>Age</FormLabel>
+            <TextField
+              fullWidth
+              type="number"
+              value={pet_age}
+              onChange={(e) => setPetAge(e.target.value)}
+              placeholder="Enter pet age"
+            />
           </Box>
 
           <Box>
