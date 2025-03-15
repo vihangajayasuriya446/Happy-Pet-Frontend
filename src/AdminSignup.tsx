@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { Box, Typography, TextField, Button, CircularProgress, Link } from '@mui/material';
 
 const AdminSignup: React.FC = () => {
     const [firstName, setFirstName] = useState('');
@@ -12,6 +13,8 @@ const AdminSignup: React.FC = () => {
     const [error, setError] = useState('');
     const [emailError, setEmailError] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);
+    const [isSignupLoading, setIsSignupLoading] = useState(false);
+    const [isLoginLoading, setIsLoginLoading] = useState(false);
     const navigate = useNavigate();
 
     const validateEmail = (email: string): boolean => {
@@ -29,6 +32,8 @@ const AdminSignup: React.FC = () => {
             return;
         }
 
+        setIsSignupLoading(true);
+
         try {
             const response = await fetch('http://localhost:8080/api/auth/register-admin?secretKey=vihanga-2022', {
                 method: 'POST',
@@ -41,72 +46,137 @@ const AdminSignup: React.FC = () => {
             if (!response.ok) {
                 const errorText = await response.text();
                 setError(errorText || 'Signup failed. Please try again.');
+                setIsSignupLoading(false);
                 return;
             }
 
             const data = await response.json();
             localStorage.setItem('token', data.token);
             localStorage.setItem('role', data.role);
-            navigate('/admindb');
+
+            // Simulate 2-second delay before navigating
+            setTimeout(() => {
+                setIsSignupLoading(false);
+                navigate('/admindb');
+            }, 2000);
         } catch (error) {
             console.error('Error during signup:', error);
             setError('An error occurred during signup. Please try again.');
+            setIsSignupLoading(false);
         }
     };
 
+    const handleLoginNavigation = () => {
+        setIsLoginLoading(true);
+        setTimeout(() => {
+            setIsLoginLoading(false);
+            navigate('/login');
+        }, 2000);
+    };
+
     return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh',  fontFamily: 'Arial, sans-serif' }}>
-            <div style={{ background: 'rgba(255, 255, 255, 0.9)', padding: '2rem', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', width: '100%', maxWidth: '400px', textAlign: 'center' }}>
-                <h2 style={{ fontSize: '2rem', marginBottom: '1.5rem', color: '#333' }}>Admin Sign Up</h2>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', fontFamily: 'Arial, sans-serif' }}>
+            <Box sx={{ background: 'rgba(255, 255, 255, 0.9)', padding: '2.5rem', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', width: '100%', maxWidth: '450px', textAlign: 'center' }}>
+                <Typography variant="h4" component="h2" sx={{ mb: 3, fontWeight: 600, color: '#333' }}>
+                    Admin Sign Up
+                </Typography>
                 {error && (
-                    <div style={{ color: '#dc3545', backgroundColor: '#f8d7da', padding: '0.75rem', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.9rem' }}>
+                    <Box sx={{ color: '#dc3545', backgroundColor: '#f8d7da', padding: '0.75rem', borderRadius: '12px', mb: 2 }}>
                         {error}
-                    </div>
+                    </Box>
                 )}
                 {emailError && (
-                    <div style={{ color: '#dc3545', backgroundColor: '#f8d7da', padding: '0.75rem', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.9rem' }}>
+                    <Box sx={{ color: '#dc3545', backgroundColor: '#f8d7da', padding: '0.75rem', borderRadius: '12px', mb: 2 }}>
                         {emailError}
-                    </div>
+                    </Box>
                 )}
-                <form onSubmit={handleAdminSignup} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <input type="text" placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} required style={{ padding: '0.75rem', border: '1px solid #ddd', borderRadius: '8px', fontSize: '1rem', outline: 'none' }} />
-                    <input type="text" placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} required style={{ padding: '0.75rem', border: '1px solid #ddd', borderRadius: '8px', fontSize: '1rem', outline: 'none' }} />
-                    <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required style={{ padding: '0.75rem', border: '1px solid #ddd', borderRadius: '8px', fontSize: '1rem', outline: 'none' }} />
-                    <div style={{ position: 'relative' }}>
-                        <input type={passwordVisible ? 'text' : 'password'} placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required style={{ padding: '0.75rem', border: '1px solid #ddd', borderRadius: '8px', fontSize: '1rem', outline: 'none', width: '100%', boxSizing: 'border-box' }} />
-                        <span style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer' }} onClick={() => setPasswordVisible(!passwordVisible)}>
-                            <FontAwesomeIcon icon={passwordVisible ? faEyeSlash : faEye} />
-                        </span>
-                    </div>
-                    <input type="text" placeholder="Secret Key" value={secretKey} onChange={(e) => setSecretKey(e.target.value)} required style={{ padding: '0.75rem', border: '1px solid #ddd', borderRadius: '8px', fontSize: '1rem', outline: 'none' }} />
-                    <button type="submit" style={{ padding: '0.75rem', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '8px', fontSize: '1rem', cursor: 'pointer', transition: 'background-color 0.3s ease' }} onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')} onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}>
-                        Sign Up
-                    </button>
-                </form>
-                <div
-                    style={{
-                        marginTop: '1.5rem',
-                        fontSize: '0.9rem',
-                        color: '#666',
-                    }}
-                >
-                    <p>
-                        Already have an account?{' '}
-                        <span
-                            style={{
-                                color: '#007bff',
+                <form onSubmit={handleAdminSignup}>
+                    <TextField
+                        label="First Name"
+                        variant="outlined"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        required
+                        fullWidth
+                        sx={{ mb: 2 }}
+                    />
+                    <TextField
+                        label="Last Name"
+                        variant="outlined"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        required
+                        fullWidth
+                        sx={{ mb: 2 }}
+                    />
+                    <TextField
+                        label="Email"
+                        type="email"
+                        variant="outlined"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        fullWidth
+                        sx={{ mb: 2 }}
+                    />
+                    <Box sx={{ mb: 2, position: 'relative' }}>
+                        <TextField
+                            label="Password"
+                            type={passwordVisible ? 'text' : 'password'}
+                            variant="outlined"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            fullWidth
+                        />
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                right: '10px',
+                                top: '50%',
+                                transform: 'translateY(-50%)',
                                 cursor: 'pointer',
-                                textDecoration: 'underline',
-                                fontWeight: '500',
                             }}
-                            onClick={() => navigate('/login')}
+                            onClick={() => setPasswordVisible(!passwordVisible)}
+                            aria-label="Toggle password visibility"
                         >
-                            Login
-                        </span>
-                    </p>
-                </div>
-            </div>
-        </div>
+                            <FontAwesomeIcon icon={passwordVisible ? faEyeSlash : faEye} />
+                        </Box>
+                    </Box>
+                    <TextField
+                        label="Secret Key"
+                        variant="outlined"
+                        value={secretKey}
+                        onChange={(e) => setSecretKey(e.target.value)}
+                        required
+                        fullWidth
+                        sx={{ mb: 2 }}
+                    />
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        disabled={isSignupLoading}
+                        fullWidth
+                        sx={{ padding: '0.75rem', borderRadius: '12px', mb: 2 }}
+                    >
+                        {isSignupLoading ? <CircularProgress size={24} color="inherit" /> : 'Sign Up'}
+                    </Button>
+                </form>
+                <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Typography variant="body2">
+                        Already have an account?{' '}
+                    </Typography>
+                    <Link
+                        component="button"
+                        onClick={handleLoginNavigation}
+                        sx={{ color: '#1976d2', textDecoration: 'none', cursor: 'pointer', ml: 1 }}
+                    >
+                        Login
+                    </Link>
+                    {isLoginLoading && <CircularProgress size={16} sx={{ ml: 1 }} />}
+                </Box>
+            </Box>
+        </Box>
     );
 };
 

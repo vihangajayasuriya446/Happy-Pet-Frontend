@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash, faCircleNotch } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { Box, Typography, TextField, Button, CircularProgress, Link } from '@mui/material';
 
 const Login: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -51,7 +52,7 @@ const Login: React.FC = () => {
             localStorage.setItem('role', data.role);
             localStorage.setItem('justSignedUp', 'true'); // Set flag for snackbar
 
-            // Simulate a 2-second delay before navigating
+            // Simulate 2-second delay before navigating
             setTimeout(() => {
                 setIsLoading(false);
                 navigate('/');
@@ -63,117 +64,53 @@ const Login: React.FC = () => {
         }
     };
 
+    const handleSignUpNavigation = () => {
+        setIsSignUpLoading(true);
+        setTimeout(() => {
+            setIsSignUpLoading(false);
+            navigate('/signup');
+        }, 2000);
+    };
+
     return (
-        <div
-            style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minHeight: '100vh',
-                fontFamily: 'Arial, sans-serif',
-                padding: '20px',
-                marginTop: '-70px',
-            }}
-        >
-            <div
-                style={{
-                    background: 'rgba(255, 255, 255, 0.9)', // Semi-transparent white
-                    padding: '2.5rem',
-                    borderRadius: '12px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                    width: '100%',
-                    maxWidth: '400px',
-                    textAlign: 'center',
-                    marginTop: 0,
-                    backdropFilter: 'blur(10px)', // Adjust the blur radius as needed
-                    WebkitBackdropFilter: 'blur(10px)', // For Safari support
-                }}
-            >
-                <h2
-                    style={{
-                        fontSize: '2rem',
-                        marginBottom: '1.5rem',
-                        color: '#333',
-                        fontWeight: '600',
-                        marginTop: 0,
-                    }}
-                >
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', fontFamily: 'Arial, sans-serif' }}>
+            <Box sx={{ background: 'rgba(255, 255, 255, 0.9)', padding: '2.5rem', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', width: '100%', maxWidth: '450px', textAlign: 'center' }}>
+                <Typography variant="h4" component="h2" sx={{ mb: 3, fontWeight: 600, color: '#333' }}>
                     Login
-                </h2>
+                </Typography>
                 {error && (
-                    <div
-                        style={{
-                            color: '#dc3545',
-                            backgroundColor: '#f8d7da',
-                            padding: '0.75rem',
-                            borderRadius: '8px',
-                            marginBottom: '1.5rem',
-                            fontSize: '0.9rem',
-                        }}
-                    >
+                    <Box sx={{ color: '#dc3545', backgroundColor: '#f8d7da', padding: '0.75rem', borderRadius: '12px', mb: 2 }}>
                         {error}
-                    </div>
+                    </Box>
                 )}
                 {emailError && (
-                    <div
-                        style={{
-                            color: '#dc3545',
-                            backgroundColor: '#f8d7da',
-                            padding: '0.75rem',
-                            borderRadius: '8px',
-                            marginBottom: '1.5rem',
-                            fontSize: '0.9rem',
-                        }}
-                    >
+                    <Box sx={{ color: '#dc3545', backgroundColor: '#f8d7da', padding: '0.75rem', borderRadius: '12px', mb: 2 }}>
                         {emailError}
-                    </div>
+                    </Box>
                 )}
-                <form
-                    onSubmit={handleLogin}
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '1.25rem',
-                        marginTop: 0,
-                    }}
-                >
-                    <input
+                <form onSubmit={handleLogin}>
+                    <TextField
+                        label="Email"
                         type="email"
-                        placeholder="Email"
+                        variant="outlined"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        style={{
-                            padding: '0.75rem',
-                            border: '1px solid #ddd',
-                            borderRadius: '8px',
-                            fontSize: '1rem',
-                            outline: 'none',
-                            transition: 'border-color 0.3s ease',
-                            width: '100%',
-                            boxSizing: 'border-box',
-                        }}
+                        fullWidth
+                        sx={{ mb: 2 }}
                     />
-                    <div style={{ position: 'relative', width: '100%', boxSizing: 'border-box' }}>
-                        <input
+                    <Box sx={{ mb: 3, position: 'relative' }}>
+                        <TextField
+                            label="Password"
                             type={passwordVisible ? 'text' : 'password'}
-                            placeholder="Password"
+                            variant="outlined"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
-                            style={{
-                                padding: '0.75rem',
-                                border: '1px solid #ddd',
-                                borderRadius: '8px',
-                                fontSize: '1rem',
-                                outline: 'none',
-                                transition: 'border-color 0.3s ease',
-                                width: '100%',
-                                boxSizing: 'border-box',
-                            }}
+                            fullWidth
                         />
-                        <span
-                            style={{
+                        <Box
+                            sx={{
                                 position: 'absolute',
                                 right: '10px',
                                 top: '50%',
@@ -181,76 +118,36 @@ const Login: React.FC = () => {
                                 cursor: 'pointer',
                             }}
                             onClick={() => setPasswordVisible(!passwordVisible)}
+                            aria-label="Toggle password visibility"
                         >
                             <FontAwesomeIcon icon={passwordVisible ? faEyeSlash : faEye} />
-                        </span>
-                    </div>
-                    <button
+                        </Box>
+                    </Box>
+                    <Button
                         type="submit"
-                        style={{
-                            padding: '0.75rem',
-                            backgroundColor: '#007bff',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '8px',
-                            fontSize: '1rem',
-                            cursor: 'pointer',
-                            transition: 'background-color 0.3s ease',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            gap: '0.5rem',
-                        }}
-                        onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')}
-                        onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}
+                        variant="contained"
                         disabled={isLoading}
+                        fullWidth
+                        sx={{ padding: '0.75rem', borderRadius: '12px', mb: 2 }}
                     >
-                        {isLoading ? (
-                            <>
-                                <FontAwesomeIcon icon={faCircleNotch} spin /> {/* Use faCircleNotch */}
-                                Loading...
-                            </>
-                        ) : (
-                            'Login'
-                        )}
-                    </button>
+                        {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
+                    </Button>
                 </form>
-                <div
-                    style={{
-                        marginTop: '1.5rem',
-                        fontSize: '0.9rem',
-                        color: '#666',
-                    }}
-                >
-                    <p>
+                <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Typography variant="body2">
                         Don't have an account?{' '}
-                        <span
-                            style={{
-                                color: '#007bff',
-                                cursor: 'pointer',
-                                textDecoration: 'underline',
-                                fontWeight: '500',
-                            }}
-                            onClick={() => {
-                                setIsSignUpLoading(true);
-                                setTimeout(() => {
-                                    setIsSignUpLoading(false);
-                                    navigate('/signup');
-                                }, 2000);
-                            }}
-                        >
-                            {isSignUpLoading ? (
-                                <>
-                                    <FontAwesomeIcon icon={faCircleNotch} spin /> {/* Use faCircleNotch */}
-                                </>
-                            ) : (
-                                'Sign Up'
-                            )}
-                        </span>
-                    </p>
-                </div>
-            </div>
-        </div>
+                    </Typography>
+                    <Link
+                        component="button"
+                        onClick={handleSignUpNavigation}
+                        sx={{ color: '#1976d2', textDecoration: 'none', cursor: 'pointer', ml: 1 }}
+                    >
+                        Sign Up
+                    </Link>
+                    {isSignUpLoading && <CircularProgress size={16} sx={{ ml: 1 }} />}
+                </Box>
+            </Box>
+        </Box>
     );
 };
 
