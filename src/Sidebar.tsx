@@ -7,7 +7,7 @@ import {
     ListItemText,
     Typography, 
     Collapse,
-    
+    Box
 } from '@mui/material';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
@@ -40,87 +40,173 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
             open={open}
             onClose={onClose} 
             sx={{
-                width: 280, // Increased sidebar width 
+                width: 280, 
                 flexShrink: 0,
                 '& .MuiDrawer-paper': {
-                    width: 280, // Increased sidebar width
+                    width: 280,
                     boxSizing: 'border-box',
+                    top: '64px',
+                    height: 'calc(100vh - 80px)', // Adjust 60px if needed
+                    backgroundColor: 'transparent', // Fully transparent background
+                    backdropFilter: 'blur(10px)', // Blur effect for glass-like appearance
+                    borderRight: '1px solid rgba(0, 0, 0, 0.12)', // Subtle border
+                    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)', // Soft shadow
+                    background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.8) 30%, rgba(255, 255, 255, 0.5) 70%, rgba(255, 255, 255, 0) 100%)', // Seamless bottom-fading effect
                 },
             }}
         >
-            <Typography variant="h5" component="div" sx={{ p: 2, fontWeight: 'bold' }}>
-                Admin Dashboard
-            </Typography>
-            <List>
-                {/* Pet Store */}
-                <ListItemButton onClick={() => setOpenPetStore(!openPetStore)}> 
-                    <ListItemIcon>
-                        <StorefrontIcon sx={{ color: 'black', fontSize: '2rem' }}/> 
-                    </ListItemIcon>
-                    <ListItemText primary="Pet Store" primaryTypographyProps={{ fontWeight: 'bold' }} />
-                    {openPetStore ? <ExpandLess /> : <ExpandMore />}
-                </ListItemButton>
-                <Collapse in={openPetStore} timeout="auto" unmountOnExit> 
-                    <List component="div" disablePadding>
-                        <ListItemButton sx={{ pl: 4, display: 'flex', justifyContent: 'center' }} 
-                            onClick={() => handleNavigation('/add-new-pets')}
-                        > 
-                            <ListItemText primary="Add New Pets" />
-                        </ListItemButton>
-                        <ListItemButton sx={{ pl: 4, display: 'flex', justifyContent: 'center'  }} 
-                            onClick={() => handleNavigation('/view-pets-for-sale')}
-                        > 
-                            <ListItemText primary="View Current Pets for Sale" /> 
-                        </ListItemButton>
-                    </List>
-                </Collapse>
+            <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}> 
+                <Box sx={{ p: 3, fontWeight: 'bold', backgroundColor: 'rgba(255, 255, 255, 0.6)', borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}> 
+                    <Typography variant="h5" component="div" sx={{ color: '#333', fontWeight: 'bold' }}>
+                        Admin Dashboard
+                    </Typography>
+                </Box>
+                <List sx={{ flexGrow: 1, overflowY: 'auto', p: 2 }}>
+                    {/* Pet Store */}
+                    <ListItemButton 
+                        onClick={() => setOpenPetStore(!openPetStore)} 
+                        sx={{ 
+                            borderRadius: '8px', 
+                            mb: 1,
+                            backgroundColor: 'rgba(255, 255, 255, 0.6)', // Semi-transparent background
+                            '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.05)' } // Subtle hover effect
+                        }}
+                    > 
+                        <ListItemIcon>
+                            <StorefrontIcon sx={{ color: '#333', fontSize: '1.5rem' }}/> 
+                        </ListItemIcon>
+                        <ListItemText 
+                            primary="Pet Store" 
+                            primaryTypographyProps={{ fontWeight: 'bold', color: '#333' }} 
+                        />
+                        {openPetStore ? <ExpandLess sx={{ color: '#333' }} /> : <ExpandMore sx={{ color: '#333' }} />}
+                    </ListItemButton>
+                    <Collapse in={openPetStore} timeout="auto" unmountOnExit> 
+                        <List component="div" disablePadding>
+                            <ListItemButton 
+                                sx={{ 
+                                    pl: 4, 
+                                    borderRadius: '8px', 
+                                    mb: 1,
+                                    backgroundColor: 'rgba(255, 255, 255, 0.6)', // Semi-transparent background
+                                    '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.05)' } // Subtle hover effect
+                                }}
+                                onClick={() => handleNavigation('/add-new-pets')}
+                            > 
+                                <ListItemText primary="Add New Pets" primaryTypographyProps={{ color: '#555' }} />
+                            </ListItemButton>
+                            <ListItemButton 
+                                sx={{ 
+                                    pl: 4, 
+                                    borderRadius: '8px', 
+                                    mb: 1,
+                                    backgroundColor: 'rgba(255, 255, 255, 0.6)', // Semi-transparent background
+                                    '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.05)' } // Subtle hover effect
+                                }}
+                                onClick={() => handleNavigation('/view-pets-for-sale')}
+                            > 
+                                <ListItemText primary="View Current Pets for Sale" primaryTypographyProps={{ color: '#555' }} /> 
+                            </ListItemButton>
+                        </List>
+                    </Collapse>
 
-                {/* Adopt Pets */}
-                <ListItemButton onClick={() => setOpenAdoptPets(!openAdoptPets)}>
-                    <ListItemIcon>
-                        <HomeIcon sx={{ color: 'black' }}/> 
-                    </ListItemIcon>
-                    <ListItemText primary="Adopt Pets" primaryTypographyProps={{ fontWeight: 'bold' }} />
-                    {openAdoptPets ? <ExpandLess /> : <ExpandMore />}
-                </ListItemButton>
-                <Collapse in={openAdoptPets} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                        <ListItemButton sx={{ pl: 4, display: 'flex', justifyContent: 'center' }} 
-                            onClick={() => handleNavigation('/dashboard')}
-                        > 
-                            <ListItemText primary="Add New Pets" /> 
-                        </ListItemButton>
-                        <ListItemButton sx={{ pl: 4, display: 'flex', justifyContent: 'center'  }} 
-                            onClick={() => handleNavigation('/owners')}
-                        > 
-                            <ListItemText primary="View Pets for Adoption" /> 
-                        </ListItemButton>
-                    </List>
-                </Collapse>
+                    {/* Adopt Pets */}
+                    <ListItemButton 
+                        onClick={() => setOpenAdoptPets(!openAdoptPets)}
+                        sx={{ 
+                            borderRadius: '8px', 
+                            mb: 1,
+                            backgroundColor: 'rgba(255, 255, 255, 0.6)', // Semi-transparent background
+                            '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.05)' } // Subtle hover effect
+                        }}
+                    >
+                        <ListItemIcon>
+                            <HomeIcon sx={{ color: '#333' }}/> 
+                        </ListItemIcon>
+                        <ListItemText 
+                            primary="Adopt Pets" 
+                            primaryTypographyProps={{ fontWeight: 'bold', color: '#333' }} 
+                        />
+                        {openAdoptPets ? <ExpandLess sx={{ color: '#333' }} /> : <ExpandMore sx={{ color: '#333' }} />}
+                    </ListItemButton>
+                    <Collapse in={openAdoptPets} timeout="auto" unmountOnExit>
+                        <List component="div" disablePadding>
+                            <ListItemButton 
+                                sx={{ 
+                                    pl: 4, 
+                                    borderRadius: '8px', 
+                                    mb: 1,
+                                    backgroundColor: 'rgba(255, 255, 255, 0.6)', // Semi-transparent background
+                                    '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.05)' } // Subtle hover effect
+                                }}
+                                onClick={() => handleNavigation('/dashboard')}
+                            > 
+                                <ListItemText primary="Add New Pets" primaryTypographyProps={{ color: '#555' }} /> 
+                            </ListItemButton>
+                            <ListItemButton 
+                                sx={{ 
+                                    pl: 4, 
+                                    borderRadius: '8px', 
+                                    mb: 1,
+                                    backgroundColor: 'rgba(255, 255, 255, 0.6)', // Semi-transparent background
+                                    '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.05)' } // Subtle hover effect
+                                }}
+                                onClick={() => handleNavigation('/owners')}
+                            > 
+                                <ListItemText primary="View Pets for Adoption" primaryTypographyProps={{ color: '#555' }} /> 
+                            </ListItemButton>
+                        </List>
+                    </Collapse>
 
-                {/* Matchmaking */}
-                <ListItemButton onClick={() => setOpenMatchmaking(!openMatchmaking)}> 
-                    <ListItemIcon>
-                        <PetsIcon sx={{ color: 'black'  }}/> 
-                    </ListItemIcon>
-                    <ListItemText primary="Matchmaking" primaryTypographyProps={{ fontWeight: 'bold' }} />
-                    {openMatchmaking ? <ExpandLess /> : <ExpandMore />}
-                </ListItemButton>
-                <Collapse in={openMatchmaking} timeout="auto" unmountOnExit> 
-                    <List component="div" disablePadding>
-                        <ListItemButton sx={{ pl: 4, display: 'flex', justifyContent: 'center'  }}
-                            onClick={() => handleNavigation('/dashboard')}
-                        >
-                            <ListItemText primary="Add New Pets" />
-                        </ListItemButton>
-                        <ListItemButton sx={{ pl: 4, display: 'flex', justifyContent: 'center' }} 
-                            onClick={() => handleNavigation('/owners')}
-                        > 
-                            <ListItemText primary="View Matchmaking Requests" /> 
-                        </ListItemButton>
-                    </List>
-                </Collapse> 
-            </List>
+                    {/* Matchmaking */}
+                    <ListItemButton 
+                        onClick={() => setOpenMatchmaking(!openMatchmaking)}
+                        sx={{ 
+                            borderRadius: '8px', 
+                            mb: 1,
+                            backgroundColor: 'rgba(255, 255, 255, 0.6)', // Semi-transparent background
+                            '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.05)' } // Subtle hover effect
+                        }}
+                    > 
+                        <ListItemIcon>
+                            <PetsIcon sx={{ color: '#333' }}/> 
+                        </ListItemIcon>
+                        <ListItemText 
+                            primary="Matchmaking" 
+                            primaryTypographyProps={{ fontWeight: 'bold', color: '#333' }} 
+                        />
+                        {openMatchmaking ? <ExpandLess sx={{ color: '#333' }} /> : <ExpandMore sx={{ color: '#333' }} />}
+                    </ListItemButton>
+                    <Collapse in={openMatchmaking} timeout="auto" unmountOnExit> 
+                        <List component="div" disablePadding>
+                            <ListItemButton 
+                                sx={{ 
+                                    pl: 4, 
+                                    borderRadius: '8px', 
+                                    mb: 1,
+                                    backgroundColor: 'rgba(255, 255, 255, 0.6)', // Semi-transparent background
+                                    '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.05)' } // Subtle hover effect
+                                }}
+                                onClick={() => handleNavigation('/dashboard')}
+                            >
+                                <ListItemText primary="Add New Pets" primaryTypographyProps={{ color: '#555' }} />
+                            </ListItemButton>
+                            <ListItemButton 
+                                sx={{ 
+                                    pl: 4, 
+                                    borderRadius: '8px', 
+                                    mb: 1,
+                                    backgroundColor: 'rgba(255, 255, 255, 0.6)', // Semi-transparent background
+                                    '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.05)' } // Subtle hover effect
+                                }}
+                                onClick={() => handleNavigation('/owners')}
+                            > 
+                                <ListItemText primary="View Matchmaking Requests" primaryTypographyProps={{ color: '#555' }} /> 
+                            </ListItemButton>
+                        </List>
+                    </Collapse> 
+                </List>
+            </Box>
         </Drawer>
     );
 };
