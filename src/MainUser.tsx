@@ -34,8 +34,8 @@ const MainPage = () => {
   const [pets, setPets] = useState<Pet[]>([]);
   const navigate = useNavigate();
 
-  const handleOwnerForm = () => {
-    navigate('/OwnerForm'); 
+  const handleOwnerForm = (petId: number) => {
+    navigate(`/OwnerForm/${petId}`);
   };
 
   const breeds: { [key: string]: string[] } = {
@@ -254,11 +254,11 @@ const MainPage = () => {
                           <Typography variant="body2" color="textSecondary">
                             Age: {pet.age} - {pet.location}
                           </Typography>
-                          <Button 
-                variant="contained" 
-                fullWidth 
+                          <Button
+                variant="contained"
+                fullWidth
                 sx={{ mt: 2, bgcolor: "#002855", color: "white" }}
-                onClick={handleOwnerForm} 
+                onClick={() => handleOwnerForm(pet.id)} 
               >
                 Contact Owner
               </Button>
