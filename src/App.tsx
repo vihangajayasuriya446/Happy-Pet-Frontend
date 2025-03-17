@@ -21,7 +21,7 @@ const App: React.FC = () => {
           <Route path="/dashboard" element={<Users />} />
           <Route path="/matchmaking" element={<MainPage />} />
           <Route path="/contactus" element={<ContactUsPage />} />
-          <Route path="/OwnerForm" element={<OwnerForm />} />
+          <Route path="/OwnerForm/:petId" element={<OwnerForm />} /> 
           <Route path="/owners" element={<OwnerTable />} />
         </Routes>
         <Footer />

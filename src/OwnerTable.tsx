@@ -13,6 +13,8 @@ import {
   Typography, 
   Switch, 
   FormControlLabel,
+  Grid,
+  Box
 } from '@mui/material';
 
 interface Owner {
@@ -87,11 +89,41 @@ const OwnerTable: React.FC = () => {
     }
   };
 
+  // Calculate request summary
+  const totalRequests = owners.length;
+  const confirmedRequests = owners.filter(owner => owner.confirmation === 'Yes').length;
+  const unconfirmedRequests = totalRequests - confirmedRequests;
+
   return (
-    <Container maxWidth="lg" sx={{ mt: 8 }}>
-      <Typography variant="h4" gutterBottom fontWeight="bold" textAlign="center" sx={{ color: "#002855", mb: 4 }}>
-        Owners List
+    <Container maxWidth="lg" sx={{ mt: 12, mb: 12 }}> {/* Increased top/bottom margin */}
+      {/* Matchmaking Requests Heading */}
+      <Typography variant="h4" gutterBottom fontWeight="bold" textAlign="left" sx={{ color: "#fafafa", mb: 4 }}>
+        Matchmaking Requests
       </Typography>
+
+      {/* Request Summary Box */}
+      <Grid container spacing={3} mb={4}> 
+        <Grid item xs={12} sm={4}>
+          <Box sx={{ bgcolor: '#fff', p: 3, borderRadius: 2,opacity: 0.6, textAlign: 'center' }}> 
+            <Typography variant="h6">Total Requests</Typography>
+            <Typography variant="h5" fontWeight="bold">{totalRequests}</Typography>
+          </Box>
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <Box sx={{ bgcolor: '#a0bce8', p: 3, borderRadius: 2,opacity: 0.6, textAlign: 'center' }}> 
+            <Typography variant="h6">Confirmed</Typography>
+            <Typography variant="h5" fontWeight="bold">{confirmedRequests}</Typography>
+          </Box>
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <Box sx={{ bgcolor: '#eff283', p: 3, borderRadius: 2,opacity: 0.6, textAlign: 'center' }}> 
+            <Typography variant="h6">Unconfirmed</Typography>
+            <Typography variant="h5" fontWeight="bold">{unconfirmedRequests}</Typography>
+          </Box>
+        </Grid>
+      </Grid> 
+
+      {/* Table */}
       <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: '8px', overflow: 'hidden' }}>
         <Table>
           <TableHead sx={{ backgroundColor: '#f0f0f0' }}> 
