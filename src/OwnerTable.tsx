@@ -14,8 +14,12 @@ import {
   Switch, 
   FormControlLabel,
   Grid,
-  Box
+  Box,
+  Menu,
+  MenuItem,
+  IconButton, 
 } from '@mui/material';
+import FilterListIcon from '@mui/icons-material/FilterList';
 
 interface Owner {
   id: number;
@@ -29,6 +33,8 @@ interface Owner {
 const OwnerTable: React.FC = () => {
   const [owners, setOwners] = useState<Owner[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [sortBy, setSortBy] = useState<string>('none'); // 'none', 'id', 'confirmed', 'unconfirmed'
 
   useEffect(() => {
     const fetchOwners = async () => {
@@ -89,13 +95,40 @@ const OwnerTable: React.FC = () => {
     }
   };
 
+  // Sorting Functions
+  const handleSort = (sortType: string) => {
+    setSortBy(sortType);
+    setAnchorEl(null); 
+  };
+
+  const sortedOwners = [...owners].sort((a, b) => {
+    switch (sortBy) {
+      case 'id': // Sort by ID (latest added first)
+        return b.id - a.id; 
+      case 'confirmed':
+        return a.confirmation.localeCompare(b.confirmation); 
+      case 'unconfirmed':
+        return b.confirmation.localeCompare(a.confirmation);
+      default:
+        return 0; // No sorting
+    }
+  });
+
   // Calculate request summary
-  const totalRequests = owners.length;
-  const confirmedRequests = owners.filter(owner => owner.confirmation === 'Yes').length;
+  const totalRequests = sortedOwners.length;
+  const confirmedRequests = sortedOwners.filter(owner => owner.confirmation === 'Yes').length;
   const unconfirmedRequests = totalRequests - confirmedRequests;
 
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
-    <Container maxWidth="lg" sx={{ mt: 12, mb: 12 }}> {/* Increased top/bottom margin */}
+    <Container maxWidth="lg" sx={{ mt: 12, mb: 12 }}> 
       {/* Matchmaking Requests Heading */}
       <Typography variant="h4" gutterBottom fontWeight="bold" textAlign="left" sx={{ color: "#fafafa", mb: 4 }}>
         Matchmaking Requests
@@ -125,12 +158,29 @@ const OwnerTable: React.FC = () => {
 
       {/* Table */}
       <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: '8px', overflow: 'hidden' }}>
+        <Box display="flex" justifyContent="flex-end" p={1}>
+          {/* Filter Icon */}
+          <IconButton onClick={handleClick}> 
+            <FilterListIcon />
+          </IconButton>
+          <Menu 
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+          >
+            <MenuItem onClick={() => handleSort('none')}>None</MenuItem>
+            <MenuItem onClick={() => handleSort('id')}>Sort by Time Added</MenuItem> 
+            <MenuItem onClick={() => handleSort('confirmed')}>Confirmed Requests First</MenuItem>
+            <MenuItem onClick={() => handleSort('unconfirmed')}>Unconfirmed Requests First</MenuItem>
+          </Menu>
+        </Box>
+
         <Table>
           <TableHead sx={{ backgroundColor: '#f0f0f0' }}> 
             <TableRow>
               <TableCell sx={{ fontWeight: 'bold', padding: '16px' }}>ID</TableCell>
               <TableCell sx={{ fontWeight: 'bold', padding: '16px' }}>Name</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', padding: '16px' }}>Address</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', padding: '16px',width: '15%' }}>Address</TableCell>
               <TableCell sx={{ fontWeight: 'bold', padding: '16px' }}>Contact Number</TableCell>
               <TableCell sx={{ fontWeight: 'bold', padding: '16px' }}>Pet ID</TableCell>
               <TableCell sx={{ fontWeight: 'bold', padding: '16px' }}>Confirmation</TableCell>
@@ -144,8 +194,8 @@ const OwnerTable: React.FC = () => {
                   <CircularProgress /> 
                 </TableCell>
               </TableRow>
-            ) : owners.length > 0 ? ( 
-              owners.map((owner) => (
+            ) : sortedOwners.length > 0 ? ( 
+              sortedOwners.map((owner) => (
                 <TableRow key={owner.id} 
                   sx={{ '&:nth-of-type(odd)': { backgroundColor: '#f9f9f9' }, '&:last-child td, &:last-child th': { border: 0 } }}
                 >
@@ -188,4 +238,3 @@ const OwnerTable: React.FC = () => {
 };
 
 export default OwnerTable;
-
