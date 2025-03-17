@@ -71,7 +71,7 @@ const OwnerForm: React.FC = () => {
 
   return (
     <Container maxWidth="sm" sx={{ mt: 10 }}>
-      <Box> 
+      <Box>
         <Modal open={open} onClose={handleAgree}>
           <Box
             sx={{
@@ -79,29 +79,30 @@ const OwnerForm: React.FC = () => {
               top: '50%',
               left: '50%',
               transform: 'translate(-50%, -50%)',
-              bgcolor: 'white',
+              bgcolor: '#fff', 
               boxShadow: 24,
               p: 4,
-              borderRadius: 2,
+              borderRadius: 3,
               textAlign: 'center',
+              outline: 'none', 
             }}
           >
-            <Typography variant="h6" fontWeight="bold" gutterBottom>
+            <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ color: '#002855' }}>
               Pet Matchmaking Policy & Terms
             </Typography>
-            <Typography variant="body2" paragraph>
+            <Typography variant="body1" paragraph sx={{ color: '#333' }}>
               Happypet’s Pet Matchmaking feature connects pet owners seeking
               breeding partners. We solely facilitate contact and do not
               participate in the breeding process. Users are responsible for
               verifying pet health, compatibility, and compliance with legal and
               ethical standards.
             </Typography>
-            <Typography variant="body2" paragraph>
+            <Typography variant="body1" paragraph sx={{ color: '#333' }}> 
               Happypet is not liable for any disputes, health issues, or outcomes
               arising from these arrangements. Use of this feature is at the
               user’s own discretion and risk.
             </Typography>
-            <Box mt={2} display="flex" justifyContent="center"> 
+            <Box mt={3} display="flex" justifyContent="center">
               <Button variant="contained" color="primary" onClick={handleBack} sx={{ mr: 2 }}>
                 Back
               </Button>
@@ -112,14 +113,15 @@ const OwnerForm: React.FC = () => {
           </Box>
         </Modal>
 
-        <Box 
+        <Box
           sx={{
-            backgroundColor: "#f5f5f5",
-            padding: "32px",
-            borderRadius: "8px",
-            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-            border: "1px solid #e0e0e0",
-            mt: 4, 
+            backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+            padding: '2rem', 
+            borderRadius: 3,
+            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', 
+            border: 'none', 
+            mt: 15,
+            mb: 8, 
           }}
         >
           <Typography
@@ -127,9 +129,12 @@ const OwnerForm: React.FC = () => {
             gutterBottom
             fontWeight="bold"
             textAlign="center"
-            sx={{ color: "#002855", mb: 4 }}
+            sx={{ color: "#002855", mb: 3 }} 
           >
-            Request Form
+            Matchmaking Request Form
+          </Typography>
+          <Typography variant="body1" textAlign="center" sx={{ color: '#555', mb: 2 }}> 
+            Fill required details to send a matchmaking request.
           </Typography>
 
           {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
@@ -137,7 +142,7 @@ const OwnerForm: React.FC = () => {
             <Alert severity="success" sx={{ mb: 2 }}>
               Request sent successfully!
             </Alert>
-          )} 
+          )}
 
           <form onSubmit={handleSubmit}>
             <TextField
@@ -165,9 +170,9 @@ const OwnerForm: React.FC = () => {
               required
             />
             {/* Hidden field for petId */}
-            <input type="hidden" name="petId" value={owner.petId} /> 
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
-              <Button type="submit" variant="contained" color="primary">
+            <input type="hidden" name="petId" value={owner.petId} />
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4 }}>
+              <Button type="submit" variant="contained" color="primary" sx={{ px: 4, py: 1 }}> 
                 Submit
               </Button>
             </Box>
