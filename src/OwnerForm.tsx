@@ -72,6 +72,7 @@ const OwnerForm: React.FC = () => {
   return (
     <Container maxWidth="sm" sx={{ mt: 10 }}>
       <Box>
+        {/* Policy Modal (Unchanged) */}
         <Modal open={open} onClose={handleAgree}>
           <Box
             sx={{
@@ -79,49 +80,52 @@ const OwnerForm: React.FC = () => {
               top: '50%',
               left: '50%',
               transform: 'translate(-50%, -50%)',
-              bgcolor: '#fff', 
+              bgcolor: '#fff',
               boxShadow: 24,
               p: 4,
               borderRadius: 3,
               textAlign: 'center',
-              outline: 'none', 
+              outline: 'none',
+              maxWidth: '500px',
+              width: '90%',
             }}
           >
             <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ color: '#002855' }}>
               Pet Matchmaking Policy & Terms
             </Typography>
-            <Typography variant="body1" paragraph sx={{ color: '#333' }}>
+            <Typography variant="body1" paragraph sx={{ color: '#555' }}>
               Happypet’s Pet Matchmaking feature connects pet owners seeking
               breeding partners. We solely facilitate contact and do not
               participate in the breeding process. Users are responsible for
               verifying pet health, compatibility, and compliance with legal and
               ethical standards.
             </Typography>
-            <Typography variant="body1" paragraph sx={{ color: '#333' }}> 
+            <Typography variant="body1" paragraph sx={{ color: '#555' }}>
               Happypet is not liable for any disputes, health issues, or outcomes
               arising from these arrangements. Use of this feature is at the
               user’s own discretion and risk.
             </Typography>
-            <Box mt={3} display="flex" justifyContent="center">
-              <Button variant="contained" color="primary" onClick={handleBack} sx={{ mr: 2 }}>
+            <Box mt={3} display="flex" justifyContent="center" gap={2}>
+              <Button variant="outlined" color="primary" onClick={handleBack} sx={{ px: 4 }}>
                 Back
               </Button>
-              <Button variant="contained" color="primary" onClick={handleAgree}>
+              <Button variant="contained" color="primary" onClick={handleAgree} sx={{ px: 4 }}>
                 Agree
               </Button>
             </Box>
           </Box>
         </Modal>
 
+        {/* Form Container (Updated) */}
         <Box
           sx={{
-            backgroundColor: 'rgba(255, 255, 255, 0.8)', 
-            padding: '2rem', 
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            padding: '2.5rem',
             borderRadius: 3,
-            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', 
-            border: 'none', 
+            boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+            border: '1px solid rgba(0, 0, 0, 0.1)',
             mt: 15,
-            mb: 8, 
+            mb: 8,
           }}
         >
           <Typography
@@ -129,21 +133,23 @@ const OwnerForm: React.FC = () => {
             gutterBottom
             fontWeight="bold"
             textAlign="center"
-            sx={{ color: "#002855", mb: 3 }} 
+            sx={{ color: '#002855', mb: 3 }}
           >
             Matchmaking Request Form
           </Typography>
-          <Typography variant="body1" textAlign="center" sx={{ color: '#555', mb: 2 }}> 
+          <Typography variant="body1" textAlign="center" sx={{ color: '#555', mb: 4 }}>
             Fill required details to send a matchmaking request.
           </Typography>
 
-          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+          {/* Error/Success Alerts */}
+          {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
           {success && (
-            <Alert severity="success" sx={{ mb: 2 }}>
+            <Alert severity="success" sx={{ mb: 3 }}>
               Request sent successfully!
             </Alert>
           )}
 
+          {/* Form */}
           <form onSubmit={handleSubmit}>
             <TextField
               label="Owner Name"
@@ -152,6 +158,8 @@ const OwnerForm: React.FC = () => {
               onChange={(e) => setOwner({ ...owner, ownerName: e.target.value })}
               margin="normal"
               required
+              sx={{ mb: 3 }}
+              variant="outlined"
             />
             <TextField
               label="Address"
@@ -160,6 +168,8 @@ const OwnerForm: React.FC = () => {
               onChange={(e) => setOwner({ ...owner, address: e.target.value })}
               margin="normal"
               required
+              sx={{ mb: 3 }}
+              variant="outlined"
             />
             <TextField
               label="Contact Number"
@@ -168,11 +178,29 @@ const OwnerForm: React.FC = () => {
               onChange={(e) => setOwner({ ...owner, contactNumber: e.target.value })}
               margin="normal"
               required
+              sx={{ mb: 4 }}
+              variant="outlined"
             />
             {/* Hidden field for petId */}
             <input type="hidden" name="petId" value={owner.petId} />
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4 }}>
-              <Button type="submit" variant="contained" color="primary" sx={{ px: 4, py: 1 }}> 
+              <Button 
+                type="submit" 
+                variant="contained" 
+                color="primary" 
+                sx={{ 
+                  px: 5, 
+                  py: 1.5, 
+                  borderRadius: 2, 
+                  textTransform: 'none', 
+                  fontSize: '1rem', 
+                  fontWeight: 'bold',
+                  boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
+                  '&:hover': {
+                    boxShadow: '0px 6px 8px rgba(0, 0, 0, 0.2)',
+                  },
+                }}
+              >
                 Submit
               </Button>
             </Box>
