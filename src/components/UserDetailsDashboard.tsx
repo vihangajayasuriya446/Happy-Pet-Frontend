@@ -4,12 +4,10 @@ import {
     Button,
     Snackbar,
     Alert,
-    Typography,
-    Paper,
-    CircularProgress
+    CircularProgress,
 } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
-import DashboardIcon from '@mui/icons-material/Dashboard';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { InquiryService } from '../services/InquiryService';
 import UserDetailsForm, { UserInquiry } from './UserDetailsForm';
 
@@ -255,9 +253,13 @@ const UserDetailsDashboard: React.FC = () => {
         }
     };
 
+    // Navigation function to go back to the "Buy a Pet" page
+    const goBackToPetList = () => {
+        navigate('/');
+    };
+
     // Navigation function to the pet management dashboard
     const goToPetManagementDashboard = () => {
-        // Navigate to the route where AddPetForm is rendered
         navigate('/admin/pets');
     };
 
@@ -338,23 +340,6 @@ const UserDetailsDashboard: React.FC = () => {
     const handleFormSubmit = async (formData: Omit<UserInquiry, 'id'>) => {
         setIsLoading(true);
         try {
-            // First try the contact-form endpoint for pet inquiries
-            // if (formData.petId) {
-            //     const contactFormSuccess = await tryContactFormEndpoint(formData);
-            //     if (contactFormSuccess) {
-            //         setSubmitted(true);
-            //         showSnackbar('Your inquiry has been sent successfully', 'success');
-            //         localStorage.removeItem('selectedPet');
-            //         if (petId) {
-            //             navigate('/contact', { replace: true });
-            //             setPetId(undefined);
-            //         }
-            //         setTimeout(() => setSubmitted(false), 100);
-            //         setIsLoading(false);
-            //         return;
-            //     }
-            // }
-
             // Fall back to the standard endpoint
             await addInquiry(formData);
         } catch (error) {
@@ -374,55 +359,24 @@ const UserDetailsDashboard: React.FC = () => {
 
     return (
         <Box sx={{ width: '100%', margin: 'auto', p: 2 }}>
-            <Paper
-                elevation={3}
-                sx={{
-                    bgcolor: '#002855',
-                    color: 'white',
-                    p: 2,
-                    mb: 3,
-                    borderRadius: '8px',
-                    position: 'relative',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    flexWrap: { xs: 'wrap', sm: 'nowrap' },
-                    gap: 2
-                }}
-            >
-                <Typography
-                    variant="h5"
-                    component="h1"
-                    sx={{
-                        fontWeight: 'bold',
-                        textAlign: { xs: 'center', sm: 'left' },
-                        width: { xs: '100%', sm: 'auto' }
-                    }}
-                >
-                    {getPageTitle()}
-                </Typography>
-
+            {/* Back button to return to the pet list - now with white styling */}
+            <Box sx={{ mb: 3 }}>
                 <Button
                     variant="contained"
-                    onClick={goToPetManagementDashboard}
-                    startIcon={<DashboardIcon />}
+                    startIcon={<ArrowBackIcon />}
+                    onClick={goBackToPetList}
                     sx={{
-                        bgcolor: 'white',
+                        backgroundColor: 'white',
                         color: '#003366',
+                        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
                         '&:hover': {
-                            bgcolor: '#f5f5f5',
-                            color: '#002244',
-                        },
-                        textTransform: 'none',
-                        fontWeight: 'medium',
-                        px: 2,
-                        borderRadius: '4px',
-                        width: { xs: '100%', sm: 'auto' }
+                            backgroundColor: '#f5f5f5',
+                        }
                     }}
                 >
-                    Pet Buy Management Dashboard
+                    Back
                 </Button>
-            </Paper>
+            </Box>
 
             {isLoading ? (
                 <Box display="flex" justifyContent="center" my={4}>
@@ -460,4 +414,3 @@ const UserDetailsDashboard: React.FC = () => {
 };
 
 export default UserDetailsDashboard;
-

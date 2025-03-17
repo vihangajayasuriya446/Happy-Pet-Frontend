@@ -46,6 +46,88 @@ const DEFAULT_IMAGE = '/default-pet-image.png';
 // Global image cache to persist across component re-renders
 const globalImageCache: Record<string, string> = {};
 
+// Helper function to determine pet type
+const determinePetType = (pet: any): string => {
+    // First check if petType is already set
+    if (pet.petType) {
+        // Convert to lowercase for case-insensitive comparison
+        const petTypeLower = pet.petType.toLowerCase();
+
+        // Handle the three main pet types
+        if (petTypeLower === 'dog') return 'Dog';
+        if (petTypeLower === 'cat') return 'Cat';
+        if (petTypeLower === 'bird') return 'Bird';
+
+        // If it's not one of the main types but has a value, return it capitalized
+        return pet.petType.charAt(0).toUpperCase() + pet.petType.slice(1);
+    }
+
+    // Check for category property that might be used in API responses
+    if (pet.category) {
+        const categoryLower = pet.category.toLowerCase();
+        if (categoryLower === 'dog') return 'Dog';
+        if (categoryLower === 'cat') return 'Cat';
+        if (categoryLower === 'bird') return 'Bird';
+        return pet.category.charAt(0).toUpperCase() + pet.category.slice(1);
+    }
+
+    // Check if there's a "type" field in the pet object
+    if (pet.type) {
+        const typeLower = pet.type.toLowerCase();
+        if (typeLower === 'dog') return 'Dog';
+        if (typeLower === 'cat') return 'Cat';
+        if (typeLower === 'bird') return 'Bird';
+        return pet.type.charAt(0).toUpperCase() + pet.type.slice(1);
+    }
+
+    // Look for bird indicators in the breed or name
+    if (pet.breed) {
+        const breedLower = pet.breed.toLowerCase();
+        if (
+            breedLower.includes('parrot') ||
+            breedLower.includes('amazon') ||
+            breedLower.includes('canary') ||
+            breedLower.includes('finch') ||
+            breedLower.includes('bird') ||
+            breedLower.includes('cockatiel') ||
+            breedLower.includes('cockatoo') ||
+            breedLower.includes('macaw')
+        ) {
+            return 'Bird';
+        }
+    }
+
+    // Check name for bird indicators
+    if (pet.name) {
+        const nameLower = pet.name.toLowerCase();
+        if (
+            nameLower.includes('bird') ||
+            nameLower.includes('parrot') ||
+            nameLower.includes('tweet') ||
+            nameLower.includes('wing')
+        ) {
+            return 'Bird';
+        }
+    }
+
+    // If we have a description field, check that too
+    if (pet.description) {
+        const descLower = pet.description.toLowerCase();
+        if (
+            descLower.includes('bird') ||
+            descLower.includes('parrot') ||
+            descLower.includes('feather') ||
+            descLower.includes('fly') ||
+            descLower.includes('beak')
+        ) {
+            return 'Bird';
+        }
+    }
+
+    // Default to Unknown if we can't determine the type
+    return 'Unknown';
+};
+
 // Helper function to get image with fallbacks for different formats
 const getImageWithFallbacks = (
     baseImageUrl: string | undefined | null,  // Updated to accept null
@@ -105,6 +187,9 @@ const mapCartItemResponseToCartItem = (item: CartItemResponse): CartItem => {
         globalImageCache[petIdString] = imageUrl;
     }
 
+    // Determine the pet type using our helper function
+    const petType = determinePetType(item.pet);
+
     // Ensure we have the pet data properly structured
     const pet: Pet = {
         id: item.pet.id,
@@ -112,14 +197,14 @@ const mapCartItemResponseToCartItem = (item: CartItemResponse): CartItem => {
         breed: item.pet.breed,
         price: item.pet.price,
         birthYear: item.pet.birthYear,
-        petType: item.pet.petType.toLowerCase() === 'dog' ? 'dog' : 'cat',
+        petType: petType, // Use our determined pet type
         imageUrl: imageUrl,
         image: imageUrl, // Set both imageUrl and image for compatibility
         gender: item.pet.gender // Include gender from the API response
     };
 
     // Log the processed pet data with image URL
-    console.log(`Processed pet ${pet.name} (ID: ${pet.id}) with image: ${imageUrl}`);
+    console.log(`Processed pet ${pet.name} (ID: ${pet.id}) with image: ${imageUrl}, type: ${petType}`);
 
     return {
         id: item.id,
@@ -370,6 +455,15 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             const petId = ensureNumber(pet.id);
             const petIdString = String(petId);
 
+            // Determine pet type
+            const petType = determinePetType(pet);
+
+            // Create a pet object with the determined type
+            const processedPet = {
+                ...pet,
+                petType: petType
+            };
+
             // Process and cache the pet's image URL
             let imageUrl = pet.imageUrl || pet.image || '';
             // Handle null values
@@ -397,11 +491,11 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 img.src = imageUrl;
             }
 
-            // Cache the original pet data with image
+            // Cache the original pet data with image and determined type
             setPetCache(prev => {
                 const newCache = new Map(prev);
                 newCache.set(petId, {
-                    ...pet,
+                    ...processedPet,
                     imageUrl: imageUrl,
                     image: imageUrl
                 });

@@ -9,14 +9,20 @@ import {
     Snackbar,
     Alert,
     CircularProgress,
+    Chip,
+    Tooltip,
     Divider
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import EmailIcon from "@mui/icons-material/Email";
+import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+import MaleIcon from '@mui/icons-material/Male';
+import FemaleIcon from '@mui/icons-material/Female';
 import { useCart } from "../contexts/CartContext";
 import { Pet } from "../App";
 import { useNavigate } from "react-router-dom";
+import { alpha } from "@mui/material/styles";
 
 interface PetCardProps {
     pet: Pet & { enableContactOwner?: boolean };
@@ -94,12 +100,12 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [isAdding, setIsAdding] = useState(false);
     const { addToCart, loading } = useCart();
-
-    // Store the resolved image URL in state to ensure consistency
     const [resolvedImageUrl, setResolvedImageUrl] = useState<string>('');
-
-    // Determine pet type based on available information
     const [petType, setPetType] = useState<string>('');
+    const [isHovered, setIsHovered] = useState(false);
+
+    // Dark blue theme color for all pet types
+    const themeColor = '#003366';
 
     // Resolve the image URL and determine pet type when component mounts
     useEffect(() => {
@@ -138,7 +144,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
         if (quantity > 0) {
             setIsAdding(true);
             try {
-                console.log("Adding pet to cart with image:", {
+                console.log("Adding pet to bag with image:", {
                     petId: pet.id,
                     petName: pet.name,
                     imageUrl: resolvedImageUrl,
@@ -151,7 +157,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                 setSnackbarOpen(true);
                 setQuantity(0);
             } catch (error) {
-                console.error("Error adding to cart:", error);
+                console.error("Error adding to bag:", error);
             } finally {
                 setIsAdding(false);
             }
@@ -186,7 +192,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
     const handleQuickAdd = async () => {
         setIsAdding(true);
         try {
-            console.log("Quick adding pet to cart with image:", {
+            console.log("Quick adding pet to bag with image:", {
                 petId: pet.id,
                 petName: pet.name,
                 imageUrl: resolvedImageUrl,
@@ -221,70 +227,109 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
     }, [resolvedImageUrl]);
 
     return (
-        <Card sx={{
-            borderRadius: 4,
-            overflow: 'hidden',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-            transition: 'transform 0.3s, box-shadow 0.3s',
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            position: 'relative',
-            maxWidth: '100%',
-            width: '100%',
-            '&:hover': {
-                transform: 'translateY(-5px)',
-                boxShadow: '0 8px 16px rgba(0,0,0,0.15)'
-            }
-        }}>
-            {/* Quick add button that appears on hover */}
-            <Box sx={{
-                position: 'absolute',
-                top: 12,
-                right: 12,
-                opacity: 0,
-                transition: 'opacity 0.2s',
-                '.MuiCard-root:hover &': {
-                    opacity: 1
-                },
-                zIndex: 1
-            }}>
+        <Card
+            sx={{
+                borderRadius: '20px',
+                overflow: 'hidden',
+                boxShadow: isHovered
+                    ? `0 16px 32px ${alpha(themeColor, 0.15)}, 0 8px 16px ${alpha(themeColor, 0.1)}`
+                    : '0 8px 16px rgba(0,0,0,0.06)',
+                transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                position: 'relative',
+                maxWidth: '100%',
+                width: '100%',
+                transform: isHovered ? 'translateY(-8px) scale(1.02)' : 'translateY(0) scale(1)',
+                backgroundColor: '#ffffff',
+                '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '4px',
+                    background: themeColor,
+                    transition: 'height 0.3s ease',
+                    opacity: isHovered ? 1 : 0.7,
+                }
+            }}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
+            {/* Price chip */}
+            <Chip
+                label={formatPriceLKR(pet.price)}
+                sx={{
+                    position: 'absolute',
+                    top: 12,
+                    right: 12,
+                    zIndex: 2,
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    backdropFilter: 'blur(8px)',
+                    borderRadius: '16px',
+                    fontWeight: 600,
+                    color: themeColor,
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                    transition: 'transform 0.3s ease',
+                    transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
+                    border: `1px solid ${alpha(themeColor, 0.2)}`,
+                    '& .MuiChip-label': {
+                        px: 1.5
+                    }
+                }}
+            />
+
+            {/* Quick add button */}
+            <Tooltip title="Add to bag" arrow placement="left">
                 <IconButton
                     onClick={handleQuickAdd}
                     disabled={isAdding || loading}
                     sx={{
-                        bgcolor: 'white',
-                        boxShadow: 2,
+                        position: 'absolute',
+                        top: 12,
+                        left: 12,
+                        zIndex: 2,
+                        bgcolor: 'rgba(255, 255, 255, 0.9)',
+                        backdropFilter: 'blur(8px)',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                        width: 40,
+                        height: 40,
+                        transition: 'all 0.3s ease',
+                        opacity: isHovered ? 1 : 0,
+                        transform: isHovered ? 'scale(1) rotate(0deg)' : 'scale(0.8) rotate(-90deg)',
+                        border: `1px solid ${alpha(themeColor, 0.2)}`,
                         '&:hover': {
-                            bgcolor: '#f5f5f5',
+                            bgcolor: alpha(themeColor, 0.1),
+                            transform: 'scale(1.1) rotate(0deg)'
                         }
                     }}
                 >
-                    {isAdding ? <CircularProgress size={24} /> : <AddIcon />}
+                    {isAdding ?
+                        <CircularProgress size={20} sx={{ color: themeColor }} /> :
+                        <ShoppingBagOutlinedIcon sx={{ color: themeColor }} />
+                    }
                 </IconButton>
-            </Box>
+            </Tooltip>
 
+            {/* Image section */}
             <Box sx={{
-                backgroundColor: '#e0e0e0',
-                height: 240,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
+                height: 220,
                 overflow: 'hidden',
-                width: '100%'
+                width: '100%',
+                position: 'relative'
             }}>
                 <CardMedia
                     component="img"
-                    height={240}
+                    height={220}
                     image={resolvedImageUrl}
                     alt={pet.name}
                     sx={{
                         objectFit: "cover",
-                        transition: 'transform 0.3s ease-in-out',
+                        transition: 'transform 0.7s ease',
                         width: '100%',
-                        '&:hover': {
-                            transform: 'scale(1.05)'
-                        }
+                        transform: isHovered ? 'scale(1.12)' : 'scale(1.05)',
                     }}
                     onError={(e) => {
                         console.error(`Image failed to load for pet ${pet.name}:`, resolvedImageUrl);
@@ -292,116 +337,201 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                         setResolvedImageUrl('/default-pet-image.jpg');
                     }}
                 />
+                {/* Gradient overlay */}
+                <Box sx={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: '30%',
+                    background: `linear-gradient(to top, ${alpha(themeColor, 0.8)} 0%, transparent 100%)`,
+                    opacity: isHovered ? 0.9 : 0.7,
+                    transition: 'opacity 0.3s ease',
+                    zIndex: 1
+                }} />
+
+                {/* Pet name overlay */}
+                <Typography
+                    variant="h6"
+                    sx={{
+                        position: 'absolute',
+                        bottom: 12,
+                        left: 16,
+                        color: 'white',
+                        fontWeight: 700,
+                        fontSize: '1.25rem',
+                        textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                        zIndex: 2,
+                        transition: 'transform 0.3s ease',
+                        transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
+                    }}
+                >
+                    {pet.name}
+                </Typography>
             </Box>
 
-            <Box sx={{ p: 2, flexGrow: 1, display: 'flex', flexDirection: 'column', width: '100%' }}>
-                {/* Name and price on the same line - name first, price after - both with same styling */}
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                    <Typography
-                        variant="h6"
-                        fontWeight="bold"
-                        color="primary"
-                        sx={{ fontSize: '1.1rem' }}
-                    >
-                        {pet.name}
-                    </Typography>
-                    <Typography
-                        variant="h6"
-                        fontWeight="bold"
-                        color="primary"
-                        sx={{ fontSize: '1.1rem' }}
-                    >
-                        {formatPriceLKR(pet.price)}
-                    </Typography>
-                </Box>
+            {/* Content section - improved layout */}
+            <Box sx={{
+                p: 2.5,
+                flexGrow: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                width: '100%'
+            }}>
+                {/* Pet details - cleaner layout */}
+                <Box sx={{ mb: 1.5 }}>
+                    {/* Type and breed with gender icon */}
+                    <Box sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        mb: 0.75,
+                        justifyContent: 'space-between'
+                    }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Typography
+                                sx={{
+                                    fontWeight: 600,
+                                    color: themeColor,
+                                    fontSize: '1rem',
+                                    mr: 0.75
+                                }}
+                            >
+                                {petType}
+                            </Typography>
 
-                {/* Pet Type and Breed - darker gray and consistent size */}
-                <Typography
-                    sx={{
-                        color: '#555555',
-                        fontSize: '0.9rem',
-                        mb: 0.5
-                    }}
-                >
-                    {petType}: {pet.breed}
-                </Typography>
+                            {/* Gender icon */}
+                            {pet.gender && pet.gender.toLowerCase() === "male" && (
+                                <MaleIcon sx={{ color: "#1976d2", fontSize: 18 }} />
+                            )}
+                            {pet.gender && pet.gender.toLowerCase() === "female" && (
+                                <FemaleIcon sx={{ color: "#d81b60", fontSize: 18 }} />
+                            )}
+                        </Box>
+                    </Box>
 
-                {/* Gender - without icon, matching styling */}
-                {pet.gender && (
+                    {/* Breed */}
                     <Typography
                         sx={{
-                            color: '#555555',
-                            fontSize: '0.9rem',
-                            mb: 0.5
+                            fontSize: '0.875rem',
+                            color: '#555',
+                            mb: 1.25
                         }}
                     >
-                        {pet.gender}
+                        {pet.breed}
                     </Typography>
-                )}
 
-                {/* Birth year - matching the breed styling */}
-                <Typography
-                    sx={{
-                        color: '#555555',
-                        fontSize: '0.9rem',
-                        mb: 1
-                    }}
-                >
-                    Birth {pet.birthYear} ({calculateAge()} years old)
-                </Typography>
+                    {/* Subtle divider */}
+                    <Divider sx={{ mb: 1.25, opacity: 0.6 }} />
 
-                {/* Contact owner button - only show if enableContactOwner is true or undefined (default behavior) */}
+                    {/* Age information */}
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Typography
+                                component="span"
+                                sx={{
+                                    fontSize: '0.875rem',
+                                    fontWeight: 600,
+                                    color: themeColor,
+                                    mr: 0.5
+                                }}
+                            >
+                                Birth:
+                            </Typography>
+                            <Typography
+                                component="span"
+                                sx={{
+                                    fontSize: '0.875rem',
+                                    color: '#555'
+                                }}
+                            >
+                                {new Date().getFullYear() - calculateAge()}
+                            </Typography>
+                        </Box>
+
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Typography
+                                component="span"
+                                sx={{
+                                    fontSize: '0.875rem',
+                                    fontWeight: 600,
+                                    color: themeColor,
+                                    mr: 0.5
+                                }}
+                            >
+                                Age:
+                            </Typography>
+                            <Typography
+                                component="span"
+                                sx={{
+                                    fontSize: '0.875rem',
+                                    color: '#555'
+                                }}
+                            >
+                                {calculateAge()} years
+                            </Typography>
+                        </Box>
+                    </Box>
+                </Box>
+
+                {/* Contact owner button */}
                 {(pet.enableContactOwner !== false) && (
-                    <>
-                        <Button
-                            variant="outlined"
-                            startIcon={<EmailIcon />}
-                            onClick={handleContactOwner}
-                            fullWidth
-                            sx={{
-                                mt: 1,
-                                mb: 2,
-                                borderColor: '#003366',
-                                color: '#003366',
-                                '&:hover': {
-                                    borderColor: '#002244',
-                                    backgroundColor: 'rgba(0, 51, 102, 0.04)'
-                                }
-                            }}
-                        >
-                            Contact the owner
-                        </Button>
-                        <Divider sx={{ my: 1 }} />
-                    </>
+                    <Button
+                        variant="outlined"
+                        startIcon={<EmailIcon />}
+                        onClick={handleContactOwner}
+                        fullWidth
+                        sx={{
+                            borderColor: alpha(themeColor, 0.5),
+                            color: themeColor,
+                            borderRadius: '12px',
+                            padding: '8px 0',
+                            fontWeight: 600,
+                            textTransform: 'none',
+                            transition: 'all 0.3s ease',
+                            mb: 1,
+                            '&:hover': {
+                                borderColor: themeColor,
+                                backgroundColor: alpha(themeColor, 0.05),
+                                transform: 'translateY(-2px)'
+                            }
+                        }}
+                    >
+                        Contact the owner
+                    </Button>
                 )}
 
-                {/* Spacer to push controls to bottom */}
+                {/* Spacer */}
                 <Box sx={{ flexGrow: 1 }} />
 
-                {/* Quantity controls and Add to Cart button with same height */}
+                {/* Quantity controls and Add to Cart button */}
                 <Box sx={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    mt: 2,
-                    width: '100%'
+                    width: '100%',
+                    mt: 1
                 }}>
-                    {/* Quantity control box */}
+                    {/* Quantity control */}
                     <Box sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        bgcolor: '#f5f5f5',
-                        borderRadius: 2,
+                        bgcolor: alpha(themeColor, 0.05),
+                        borderRadius: '12px',
                         overflow: 'hidden',
-                        height: 36
+                        height: 42,
+                        border: `1px solid ${alpha(themeColor, 0.2)}`,
+                        transition: 'all 0.2s ease',
+                        '&:hover': {
+                            boxShadow: `0 2px 8px ${alpha(themeColor, 0.2)}`
+                        }
                     }}>
                         <IconButton
                             size="small"
                             onClick={handleDecrement}
                             disabled={quantity === 0 || isAdding || loading}
                             sx={{
-                                color: quantity === 0 ? 'rgba(0,0,0,0.3)' : 'inherit',
-                                padding: '4px'
+                                color: quantity === 0 ? alpha(themeColor, 0.3) : themeColor,
+                                padding: '6px'
                             }}
                         >
                             <RemoveIcon fontSize="small" />
@@ -409,8 +539,11 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
 
                         <Typography sx={{
                             px: 2,
-                            minWidth: '24px',
-                            textAlign: 'center'
+                            minWidth: '28px',
+                            textAlign: 'center',
+                            fontWeight: 600,
+                            fontSize: '0.95rem',
+                            color: themeColor
                         }}>
                             {quantity}
                         </Typography>
@@ -419,7 +552,10 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                             size="small"
                             onClick={handleIncrement}
                             disabled={isAdding || loading}
-                            sx={{ padding: '4px' }}
+                            sx={{
+                                padding: '6px',
+                                color: themeColor
+                            }}
                         >
                             <AddIcon fontSize="small" />
                         </IconButton>
@@ -430,16 +566,24 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                         onClick={onAdopt || handleAddToCart}
                         disabled={(!onAdopt && quantity === 0) || isAdding || loading}
                         sx={{
-                            bgcolor: '#003366',
-                            '&:hover': { bgcolor: '#002244' },
-                            '&.Mui-disabled': {
-                                bgcolor: 'rgba(0,0,0,0.12)',
+                            background: themeColor,
+                            '&:hover': {
+                                background: '#00264d',
+                                boxShadow: `0 6px 12px ${alpha(themeColor, 0.4)}`,
+                                transform: 'translateY(-2px)'
                             },
-                            height: 36,
-                            ml: 2,
-                            px: 2,
-                            fontSize: '0.875rem',
-                            fontWeight: 600
+                            '&.Mui-disabled': {
+                                background: alpha(themeColor, 0.3),
+                            },
+                            height: 42,
+                            ml: 1.5,
+                            px: 3,
+                            fontSize: '0.95rem',
+                            fontWeight: 600,
+                            borderRadius: '12px',
+                            textTransform: 'none',
+                            boxShadow: `0 4px 8px ${alpha(themeColor, 0.25)}`,
+                            transition: 'all 0.3s ease'
                         }}
                     >
                         {isAdding ? (
@@ -461,7 +605,11 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                 <Alert
                     onClose={handleCloseSnackbar}
                     severity="success"
-                    sx={{ width: '100%' }}
+                    sx={{
+                        width: '100%',
+                        borderRadius: '12px',
+                        boxShadow: '0 8px 16px rgba(0,0,0,0.1)'
+                    }}
                 >
                     {pet.name} added successfully!
                 </Alert>

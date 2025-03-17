@@ -8,8 +8,18 @@ import {
     Typography,
     Card,
     CardMedia,
-    Divider
+    InputAdornment,
+    useTheme,
+    useMediaQuery,
+    alpha,
+    Container
 } from '@mui/material';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import EmailOutlineIcon from '@mui/icons-material/EmailOutlined';
+import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import MessageOutlinedIcon from '@mui/icons-material/MessageOutlined';
+import PetsOutlinedIcon from '@mui/icons-material/PetsOutlined';
 
 // Updated interface to match backend PetInquiry model and InquiryService.ts
 export interface UserInquiry {
@@ -60,6 +70,9 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
                                                              petId,
                                                              onSubmit
                                                          }) => {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
     const initialFormState: UserInquiry = {
         userName: '',
         userEmail: '',
@@ -71,6 +84,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
     const [formData, setFormData] = useState<UserInquiry>(initialFormState);
     const [errors, setErrors] = useState<Partial<Record<keyof UserInquiry, string>>>({});
     const [selectedPet, setSelectedPet] = useState<PetData | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Enhanced function to derive pet type from breed
     const derivePetTypeFromBreed = (breed: string): string => {
@@ -105,6 +119,19 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
             return 'Cat';
         }
 
+        // Enhanced bird detection
+        if (breedLower.includes('bird') ||
+            breedLower.includes('parrot') ||
+            breedLower.includes('finch') ||
+            breedLower.includes('canary') ||
+            breedLower.includes('budgie') ||
+            breedLower.includes('parakeet') ||
+            breedLower.includes('cockatiel') ||
+            breedLower.includes('cockatoo') ||
+            breedLower.includes('macaw') ||
+            breedLower.includes('lovebird')) {
+            return 'Bird';
+        }
 
         // Default to the first word of the breed as a fallback
         const firstWord = breed.split(' ')[0];
@@ -130,7 +157,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
                     petName: petData.name,
                     petBreed: petData.breed,
                     petType: petType,
-                    userMessage: `I'm interested in  buying ${petData.name}, the ${petData.breed}. Please contact me with more information.`
+                    userMessage: `I'm interested in buying ${petData.name}, the ${petData.breed}. Please contact me with more information.`
                 }));
             } catch (error) {
                 console.error('Error parsing pet data from localStorage:', error);
@@ -252,6 +279,8 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
             return;
         }
 
+        setIsSubmitting(true);
+
         // Ensure we're using the correct petId in the submission
         const finalPetId = selectedPet?.id ? parseInt(selectedPet.id.toString()) :
             formData.petId ? formData.petId :
@@ -262,6 +291,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
                 ...prev,
                 userMessage: 'No pet selected. Please select a pet first.'
             }));
+            setIsSubmitting(false);
             return;
         }
 
@@ -309,6 +339,8 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
             if (onSubmit) {
                 onSubmit(false);
             }
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -327,190 +359,373 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
         return `LKR ${numericPrice.toFixed(0)}/=`;
     };
 
+    // Helper function to get pet emoji
+    const getPetEmoji = (petType: string | undefined): string => {
+        const type = petType?.toLowerCase() || '';
+        if (type.includes('dog')) return '🐕';
+        if (type.includes('cat')) return '🐈';
+        if (type.includes('bird')) return '🦜';
+        return '🐾';
+    };
+
     return (
-        <Paper elevation={3} sx={{ p: 3, borderRadius: '8px', bgcolor: '#f9f9f9' }}>
-            <Typography variant="h6" gutterBottom>
-                {isEdit ? 'Edit Contact Information' :
-                    selectedPet ? `Contact About ${selectedPet.name}` :
-                        petId ? `Contact About Pet #${petId}` : 'Contact Information'}
-            </Typography>
-
-            {/* Display pet information if available */}
-            {selectedPet && (
-                <Box sx={{ mb: 3 }}>
-                    <Card sx={{
-                        display: 'flex',
-                        flexDirection: { xs: 'column', sm: 'row' },
-                        alignItems: 'center',
-                        p: 2,
-                        mb: 2,
-                        bgcolor: '#f0f7ff',
-                        borderRadius: '8px'
-                    }}>
-                        <CardMedia
-                            component="img"
-                            sx={{
-                                width: { xs: '100%', sm: 120 },
-                                height: { xs: 160, sm: 120 },
-                                borderRadius: '8px',
-                                objectFit: 'cover',
-                                mr: { sm: 2 }
-                            }}
-                            image={selectedPet.imageUrl || '/default-pet-image.jpg'}
-                            alt={selectedPet.name}
-                        />
-                        <Box sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            mt: { xs: 2, sm: 0 },
-                            width: { xs: '100%', sm: 'auto' }
-                        }}>
-                            <Typography variant="h6" color="primary" sx={{ fontWeight: 'bold' }}>
-                                {selectedPet.name}
-                            </Typography>
-                            <Typography variant="body1" sx={{ color: '#555555' }}>
-                                {selectedPet.petType || derivePetTypeFromBreed(selectedPet.breed)}: {selectedPet.breed}
-                            </Typography>
-                            {selectedPet.gender && (
-                                <Typography variant="body2" sx={{ color: '#555555' }}>
-                                    {selectedPet.gender}
-                                </Typography>
-                            )}
-                            <Typography variant="body2" sx={{ color: '#555555' }}>
-                                Birth Year: {selectedPet.birthYear}
-                            </Typography>
-                            <Typography variant="body1" sx={{ fontWeight: 'bold', mt: 1 }}>
-                                {formatPriceLKR(selectedPet.price)}
-                            </Typography>
-                        </Box>
-                    </Card>
-                    <Divider sx={{ my: 2 }} />
-                </Box>
-            )}
-
-            {/* Display petId if no pet data but petId is available */}
-            {!selectedPet && petId && (
-                <Box sx={{ mb: 3, p: 2, bgcolor: '#f0f7ff', borderRadius: '8px' }}>
-                    <Typography variant="body1">
-                        You are inquiring about pet with ID: <strong>{petId}</strong>
-                    </Typography>
-                    <Divider sx={{ my: 2 }} />
-                </Box>
-            )}
-
-            <Box component="form" onSubmit={handleSubmit} noValidate>
-                <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            required
-                            fullWidth
-                            id="name"
-                            name="name"
-                            label="Name"
-                            value={formData.userName}
-                            onChange={handleChange}
-                            error={!!errors.userName}
-                            helperText={errors.userName}
-                            margin="normal"
-                            variant="outlined"
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            required
-                            fullWidth
-                            id="email"
-                            name="email"
-                            label="Email"
-                            type="email"
-                            value={formData.userEmail}
-                            onChange={handleChange}
-                            error={!!errors.userEmail}
-                            helperText={errors.userEmail}
-                            margin="normal"
-                            variant="outlined"
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            required
-                            fullWidth
-                            id="phone"
-                            name="phone"
-                            label="Phone Number"
-                            value={formData.userPhone}
-                            onChange={handleChange}
-                            error={!!errors.userPhone}
-                            helperText={errors.userPhone}
-                            margin="normal"
-                            variant="outlined"
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            fullWidth
-                            id="address"
-                            name="address"
-                            label="Address"
-                            value={formData.address}
-                            onChange={handleChange}
-                            error={!!errors.address}
-                            helperText={errors.address}
-                            margin="normal"
-                            variant="outlined"
-                        />
-                    </Grid>
-
-                    <Grid item xs={12}>
-                        <TextField
-                            required
-                            fullWidth
-                            id="message"
-                            name="message"
-                            label="Message"
-                            multiline
-                            rows={4}
-                            value={formData.userMessage}
-                            onChange={handleChange}
-                            error={!!errors.userMessage}
-                            helperText={errors.userMessage}
-                            margin="normal"
-                            variant="outlined"
-                        />
-                    </Grid>
-                </Grid>
-
-                <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-                    {(isEdit || selectedPet || petId) && (
-                        <Button
-                            variant="outlined"
-                            color="secondary"
-                            onClick={handleCancel}
-                        >
-                            Cancel
-                        </Button>
-                    )}
-
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
+        <Box sx={{ bgcolor: '#003366', minHeight: '100vh', padding: 2 }}>
+            <Container maxWidth="lg">
+                <Paper
+                    elevation={3}
+                    sx={{
+                        p: { xs: 2, md: 4 },
+                        borderRadius: '16px',
+                        bgcolor: '#ffffff',
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
+                        overflow: 'hidden',
+                        position: 'relative'
+                    }}
+                >
+                    {/* Decorative accent */}
+                    <Box
                         sx={{
-                            bgcolor: '#003366',
-                            '&:hover': {
-                                bgcolor: '#002244',
-                            }
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            height: '6px',
+                            background: 'linear-gradient(90deg, #003366 0%, #0066cc 100%)'
+                        }}
+                    />
+
+                    <Typography
+                        variant="h5"
+                        gutterBottom
+                        sx={{
+                            fontWeight: 600,
+                            color: '#003366',
+                            mb: 3,
+                            mt: 1,
+                            position: 'relative'
                         }}
                     >
-                        {isEdit ? 'Update' : 'Submit'}
-                    </Button>
-                </Box>
-            </Box>
-        </Paper>
+                        {isEdit ? 'Edit Contact Information' :
+                            selectedPet ? `Contact About ${selectedPet.name}` :
+                                petId ? `Contact About Pet #${petId}` : 'Contact Us'}
+                    </Typography>
+
+                    {/* Display pet information if available */}
+                    {selectedPet && (
+                        <Box sx={{ mb: 4 }}>
+                            <Card sx={{
+                                display: 'flex',
+                                flexDirection: { xs: 'column', sm: 'row' },
+                                alignItems: 'center',
+                                p: 0,
+                                mb: 3,
+                                bgcolor: 'transparent',
+                                borderRadius: '12px',
+                                overflow: 'hidden',
+                                border: '1px solid',
+                                borderColor: alpha(theme.palette.primary.main, 0.2)
+                            }}>
+                                <Box sx={{
+                                    width: { xs: '100%', sm: '40%' },
+                                    height: { xs: 200, sm: 180 },
+                                    position: 'relative',
+                                    overflow: 'hidden'
+                                }}>
+                                    <CardMedia
+                                        component="img"
+                                        sx={{
+                                            width: '100%',
+                                            height: '100%',
+                                            objectFit: 'cover',
+                                        }}
+                                        image={selectedPet.imageUrl || '/default-pet-image.jpg'}
+                                        alt={selectedPet.name}
+                                    />
+                                    <Box sx={{
+                                        position: 'absolute',
+                                        top: 10,
+                                        left: 10,
+                                        bgcolor: alpha('#000', 0.6),
+                                        color: 'white',
+                                        px: 1.5,
+                                        py: 0.5,
+                                        borderRadius: '12px',
+                                        fontSize: '0.875rem',
+                                        fontWeight: 600,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: 0.5
+                                    }}>
+                                        <span>{getPetEmoji(selectedPet.petType || derivePetTypeFromBreed(selectedPet.breed))}</span>
+                                        {selectedPet.petType || derivePetTypeFromBreed(selectedPet.breed)}
+                                    </Box>
+                                </Box>
+                                <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center',
+                                    p: 3,
+                                    width: { xs: '100%', sm: '60%' }
+                                }}>
+                                    <Typography variant="h6" color="primary" sx={{ fontWeight: 700, mb: 1 }}>
+                                        {selectedPet.name}
+                                    </Typography>
+                                    <Typography variant="body1" sx={{ color: '#555555', mb: 0.5 }}>
+                                        <strong>Breed:</strong> {selectedPet.breed}
+                                    </Typography>
+                                    {selectedPet.gender && (
+                                        <Typography variant="body2" sx={{ color: '#555555', mb: 0.5 }}>
+                                            <strong>Gender:</strong> {selectedPet.gender}
+                                        </Typography>
+                                    )}
+                                    <Typography variant="body2" sx={{ color: '#555555', mb: 1 }}>
+                                        <strong>Birth Year:</strong> {selectedPet.birthYear}
+                                    </Typography>
+                                    <Typography
+                                        variant="h6"
+                                        sx={{
+                                            fontWeight: 'bold',
+                                            mt: 1,
+                                            color: theme.palette.primary.main
+                                        }}
+                                    >
+                                        {formatPriceLKR(selectedPet.price)}
+                                    </Typography>
+                                </Box>
+                            </Card>
+                        </Box>
+                    )}
+
+                    {/* Display petId if no pet data but petId is available */}
+                    {!selectedPet && petId && (
+                        <Box sx={{
+                            mb: 4,
+                            p: 3,
+                            bgcolor: alpha(theme.palette.primary.main, 0.05),
+                            borderRadius: '12px',
+                            border: '1px solid',
+                            borderColor: alpha(theme.palette.primary.main, 0.2)
+                        }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <PetsOutlinedIcon color="primary" />
+                                <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                                    You are inquiring about pet with ID: <strong>{petId}</strong>
+                                </Typography>
+                            </Box>
+                        </Box>
+                    )}
+
+                    <Box component="form" onSubmit={handleSubmit} noValidate>
+                        <Grid container spacing={3}>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id="name"
+                                    name="name"
+                                    label="Your Name"
+                                    value={formData.userName}
+                                    onChange={handleChange}
+                                    error={!!errors.userName}
+                                    helperText={errors.userName}
+                                    variant="outlined"
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <PersonOutlineIcon color="primary" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: '10px',
+                                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: theme.palette.primary.main,
+                                                borderWidth: '2px'
+                                            }
+                                        }
+                                    }}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id="email"
+                                    name="email"
+                                    label="Email Address"
+                                    type="email"
+                                    value={formData.userEmail}
+                                    onChange={handleChange}
+                                    error={!!errors.userEmail}
+                                    helperText={errors.userEmail}
+                                    variant="outlined"
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <EmailOutlineIcon color="primary" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: '10px',
+                                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: theme.palette.primary.main,
+                                                borderWidth: '2px'
+                                            }
+                                        }
+                                    }}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id="phone"
+                                    name="phone"
+                                    label="Phone Number"
+                                    value={formData.userPhone}
+                                    onChange={handleChange}
+                                    error={!!errors.userPhone}
+                                    helperText={errors.userPhone}
+                                    variant="outlined"
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <PhoneOutlinedIcon color="primary" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: '10px',
+                                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: theme.palette.primary.main,
+                                                borderWidth: '2px'
+                                            }
+                                        }
+                                    }}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    fullWidth
+                                    id="address"
+                                    name="address"
+                                    label="Address"
+                                    value={formData.address}
+                                    onChange={handleChange}
+                                    error={!!errors.address}
+                                    helperText={errors.address}
+                                    variant="outlined"
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <HomeOutlinedIcon color="primary" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: '10px',
+                                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: theme.palette.primary.main,
+                                                borderWidth: '2px'
+                                            }
+                                        }
+                                    }}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id="message"
+                                    name="message"
+                                    label="Your Message"
+                                    multiline
+                                    rows={4}
+                                    value={formData.userMessage}
+                                    onChange={handleChange}
+                                    error={!!errors.userMessage}
+                                    helperText={errors.userMessage}
+                                    variant="outlined"
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start" sx={{ alignSelf: 'flex-start', mt: 1.5, mr: 1 }}>
+                                                <MessageOutlinedIcon color="primary" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            borderRadius: '10px',
+                                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: theme.palette.primary.main,
+                                                borderWidth: '2px'
+                                            }
+                                        }
+                                    }}
+                                />
+                            </Grid>
+                        </Grid>
+
+                        <Box sx={{
+                            mt: 4,
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            gap: 2,
+                            flexDirection: isMobile ? 'column' : 'row'
+                        }}>
+                            {(isEdit || selectedPet || petId) && (
+                                <Button
+                                    variant="outlined"
+                                    color="secondary"
+                                    onClick={handleCancel}
+                                    fullWidth={isMobile}
+                                    sx={{
+                                        borderRadius: '10px',
+                                        py: 1.2,
+                                        borderWidth: '2px',
+                                        '&:hover': {
+                                            borderWidth: '2px'
+                                        }
+                                    }}
+                                >
+                                    Cancel
+                                </Button>
+                            )}
+
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                disabled={isSubmitting}
+                                fullWidth={isMobile}
+                                sx={{
+                                    bgcolor: theme.palette.primary.main,
+                                    color: 'white',
+                                    borderRadius: '10px',
+                                    py: 1.2,
+                                    fontWeight: 600,
+                                    boxShadow: '0 4px 10px rgba(0,51,102,0.2)',
+                                    '&:hover': {
+                                        bgcolor: '#002244',
+                                        boxShadow: '0 6px 15px rgba(0,51,102,0.3)',
+                                    }
+                                }}
+                            >
+                                {isSubmitting ? 'Submitting...' : (isEdit ? 'Update' : 'Send Message')}
+                            </Button>
+                        </Box>
+                    </Box>
+                </Paper>
+            </Container>
+        </Box>
     );
 };
 

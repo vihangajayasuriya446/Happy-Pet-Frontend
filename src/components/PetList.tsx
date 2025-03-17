@@ -15,6 +15,7 @@ interface PetDTO {
     gender: string;
     imageUrl?: string;
     purchased?: boolean;
+    description?: string;
 }
 
 interface PetListProps {
@@ -23,11 +24,162 @@ interface PetListProps {
     birthYear?: string;
     PetCardComponent?: React.FC<{ pet: Pet; onAdopt?: () => void }>;
     isAdminView?: boolean;
-    enableContactOwner?: boolean; // New prop to control contact owner button visibility
+    enableContactOwner?: boolean;
 }
 
 const API_BASE_URL = 'http://localhost:8080';
 const PETS_API_URL = `${API_BASE_URL}/api/v1/pets`;
+
+// Helper function to determine pet type with equal consideration for dog, cat, and bird
+const determinePetType = (pet: PetDTO): string => {
+    // First check if petType is already set
+    if (pet.petType) {
+        const petTypeLower = pet.petType.toLowerCase();
+
+        // Handle the three main pet types
+        if (petTypeLower === 'dog' || petTypeLower === 'dogs') return 'dog';
+        if (petTypeLower === 'cat' || petTypeLower === 'cats') return 'cat';
+        if (petTypeLower === 'bird' || petTypeLower === 'birds') return 'bird';
+
+        // If it's not one of the main types but has a value, return it as is
+        return petTypeLower;
+    }
+
+    // Check breed for indicators of each pet type
+    if (pet.breed) {
+        const breedLower = pet.breed.toLowerCase();
+
+        // Dog breed indicators
+        if (
+            breedLower.includes('terrier') ||
+            breedLower.includes('shepherd') ||
+            breedLower.includes('retriever') ||
+            breedLower.includes('bulldog') ||
+            breedLower.includes('poodle') ||
+            breedLower.includes('hound') ||
+            breedLower.includes('spaniel') ||
+            breedLower.includes('husky') ||
+            breedLower.includes('collie') ||
+            breedLower.includes('mastiff')
+        ) {
+            return 'dog';
+        }
+
+        // Cat breed indicators
+        if (
+            breedLower.includes('siamese') ||
+            breedLower.includes('persian') ||
+            breedLower.includes('bengal') ||
+            breedLower.includes('maine coon') ||
+            breedLower.includes('ragdoll') ||
+            breedLower.includes('sphynx') ||
+            breedLower.includes('british shorthair') ||
+            breedLower.includes('abyssinian') ||
+            breedLower.includes('burmese') ||
+            breedLower.includes('tabby')
+        ) {
+            return 'cat';
+        }
+
+        // Bird breed/species indicators
+        if (
+            breedLower.includes('parrot') ||
+            breedLower.includes('amazon') ||
+            breedLower.includes('canary') ||
+            breedLower.includes('finch') ||
+            breedLower.includes('cockatiel') ||
+            breedLower.includes('cockatoo') ||
+            breedLower.includes('macaw') ||
+            breedLower.includes('budgie') ||
+            breedLower.includes('parakeet') ||
+            breedLower.includes('lovebird')
+        ) {
+            return 'bird';
+        }
+    }
+
+    // Check name for pet type indicators
+    if (pet.name) {
+        const nameLower = pet.name.toLowerCase();
+
+        // Check for dog indicators in name
+        if (
+            nameLower.includes('dog') ||
+            nameLower.includes('puppy') ||
+            nameLower.includes('pup') ||
+            nameLower.includes('fido') ||
+            nameLower.includes('rover')
+        ) {
+            return 'dog';
+        }
+
+        // Check for cat indicators in name
+        if (
+            nameLower.includes('cat') ||
+            nameLower.includes('kitty') ||
+            nameLower.includes('kitten') ||
+            nameLower.includes('meow') ||
+            nameLower.includes('whiskers')
+        ) {
+            return 'cat';
+        }
+
+        // Check for bird indicators in name
+        if (
+            nameLower.includes('bird') ||
+            nameLower.includes('parrot') ||
+            nameLower.includes('tweet') ||
+            nameLower.includes('wing') ||
+            nameLower.includes('polly')
+        ) {
+            return 'bird';
+        }
+    }
+
+    // If we have a description field, check that too
+    if (pet.description) {
+        const descLower = pet.description.toLowerCase();
+
+        // Check for dog indicators in description
+        if (
+            descLower.includes('dog') ||
+            descLower.includes('puppy') ||
+            descLower.includes('bark') ||
+            descLower.includes('fetch') ||
+            descLower.includes('leash') ||
+            descLower.includes('walk')
+        ) {
+            return 'dog';
+        }
+
+        // Check for cat indicators in description
+        if (
+            descLower.includes('cat') ||
+            descLower.includes('kitten') ||
+            descLower.includes('meow') ||
+            descLower.includes('purr') ||
+            descLower.includes('litter box') ||
+            descLower.includes('scratch')
+        ) {
+            return 'cat';
+        }
+
+        // Check for bird indicators in description
+        if (
+            descLower.includes('bird') ||
+            descLower.includes('parrot') ||
+            descLower.includes('feather') ||
+            descLower.includes('fly') ||
+            descLower.includes('beak') ||
+            descLower.includes('wings')
+        ) {
+            return 'bird';
+        }
+    }
+
+    // If we still can't determine, default to the original petType or 'unknown'
+    return pet.petType ? pet.petType.toLowerCase() : 'unknown';
+};
 
 // Custom PetCard wrapper with image hover effect
 const PetCardWithHoverImage: React.FC<{
@@ -88,6 +240,15 @@ const PetList: React.FC<PetListProps> = ({
         return `${API_BASE_URL}${imageUrl}`;
     };
 
+    // Helper function to get appropriate placeholder image based on pet type
+    const getPlaceholderImage = (petType: string): string => {
+        const normalizedType = petType.toLowerCase();
+        if (normalizedType === 'dog') return '/images/dog-placeholder.png';
+        if (normalizedType === 'cat') return '/images/cat-placeholder.png';
+        if (normalizedType === 'bird') return '/images/bird-placeholder.png';
+        return '/images/pet-placeholder.png'; // Generic fallback
+    };
+
     useEffect(() => {
         setLoading(true);
         console.log("Fetching pets with filters:", { petType, birthYear, searchQuery });
@@ -100,9 +261,11 @@ const PetList: React.FC<PetListProps> = ({
 
                 // Apply pet type filter if not 'all'
                 if (petType !== 'all') {
-                    filteredPets = filteredPets.filter(pet =>
-                        pet.petType.toLowerCase() === petType.toLowerCase()
-                    );
+                    filteredPets = filteredPets.filter(pet => {
+                        // Use our determinePetType function to check if it's the right type
+                        const detectedPetType = determinePetType(pet);
+                        return detectedPetType === petType.toLowerCase();
+                    });
                     console.log(`Filtered to ${filteredPets.length} ${petType} pets`);
                 }
 
@@ -138,22 +301,59 @@ const PetList: React.FC<PetListProps> = ({
         if (!normalizedQuery) return pets;
 
         return pets.filter(pet => {
+            // Determine the pet type for consistent searching
+            const detectedPetType = determinePetType(pet);
+
             // Check if any of the pet's properties match the search query
             return (
                 pet.name.toLowerCase().includes(normalizedQuery) ||
                 pet.breed.toLowerCase().includes(normalizedQuery) ||
                 pet.petType.toLowerCase().includes(normalizedQuery) ||
-                (pet.gender && pet.gender.toLowerCase().includes(normalizedQuery)) || // Keep gender in search
-                // Check for common terms
-                (pet.petType.toLowerCase() === 'dog' &&
-                    (normalizedQuery === 'dog' || normalizedQuery === 'dogs' || normalizedQuery.includes('dog'))) ||
-                (pet.petType.toLowerCase() === 'cat' &&
-                    (normalizedQuery === 'cat' || normalizedQuery === 'cats' || normalizedQuery.includes('cat'))) ||
+                (pet.gender && pet.gender.toLowerCase().includes(normalizedQuery)) ||
+                (pet.description && pet.description.toLowerCase().includes(normalizedQuery)) ||
+
+                // Check for dog-related terms
+                (detectedPetType === 'dog' && (
+                    normalizedQuery === 'dog' ||
+                    normalizedQuery === 'dogs' ||
+                    normalizedQuery.includes('dog') ||
+                    normalizedQuery.includes('puppy') ||
+                    normalizedQuery.includes('bark') ||
+                    normalizedQuery.includes('fetch')
+                )) ||
+
+                // Check for cat-related terms
+                (detectedPetType === 'cat' && (
+                    normalizedQuery === 'cat' ||
+                    normalizedQuery === 'cats' ||
+                    normalizedQuery.includes('cat') ||
+                    normalizedQuery.includes('kitten') ||
+                    normalizedQuery.includes('meow') ||
+                    normalizedQuery.includes('purr')
+                )) ||
+
+                // Check for bird-related terms
+                (detectedPetType === 'bird' && (
+                    normalizedQuery === 'bird' ||
+                    normalizedQuery === 'birds' ||
+                    normalizedQuery.includes('bird') ||
+                    normalizedQuery.includes('parrot') ||
+                    normalizedQuery.includes('feather') ||
+                    normalizedQuery.includes('tweet') ||
+                    normalizedQuery.includes('wing')
+                )) ||
+
                 // Keep gender-related terms in search
-                (pet.gender && pet.gender.toLowerCase() === 'male' &&
-                    (normalizedQuery === 'male' || normalizedQuery === 'boy' || normalizedQuery.includes('male'))) ||
-                (pet.gender && pet.gender.toLowerCase() === 'female' &&
-                    (normalizedQuery === 'female' || normalizedQuery === 'girl' || normalizedQuery.includes('female')))
+                (pet.gender && pet.gender.toLowerCase() === 'male' && (
+                    normalizedQuery === 'male' ||
+                    normalizedQuery === 'boy' ||
+                    normalizedQuery.includes('male')
+                )) ||
+                (pet.gender && pet.gender.toLowerCase() === 'female' && (
+                    normalizedQuery === 'female' ||
+                    normalizedQuery === 'girl' ||
+                    normalizedQuery.includes('female')
+                ))
             );
         });
     };
@@ -170,9 +370,11 @@ const PetList: React.FC<PetListProps> = ({
 
                     // Re-apply filters
                     if (petType !== 'all') {
-                        updatedPets = updatedPets.filter(pet =>
-                            pet.petType.toLowerCase() === petType.toLowerCase()
-                        );
+                        updatedPets = updatedPets.filter(pet => {
+                            // Use our determinePetType function for filtering
+                            const detectedPetType = determinePetType(pet);
+                            return detectedPetType === petType.toLowerCase();
+                        });
                     }
 
                     if (birthYear !== 'all') {
@@ -236,10 +438,13 @@ const PetList: React.FC<PetListProps> = ({
     return (
         <Grid container spacing={3} sx={{ p: 3 }}>
             {petsData.map((petDTO) => {
-                // Get proper image URL or use placeholder
+                // Determine the pet type using our helper function
+                const detectedPetType = determinePetType(petDTO);
+
+                // Get proper image URL or use placeholder based on detected type
                 const imageUrl = petDTO.imageUrl
                     ? getFullImageUrl(petDTO.imageUrl)
-                    : `/images/${petDTO.petType.toLowerCase()}-placeholder.png`;
+                    : getPlaceholderImage(detectedPetType);
 
                 // Map the API data to what PetCard expects
                 const petCardProps: Pet = {
@@ -251,7 +456,7 @@ const PetList: React.FC<PetListProps> = ({
                     gender: petDTO.gender,
                     image: imageUrl,
                     imageUrl: imageUrl,
-                    petType: petDTO.petType.toLowerCase(),
+                    petType: detectedPetType,
                 };
 
                 return (
@@ -261,7 +466,7 @@ const PetList: React.FC<PetListProps> = ({
                             // Only pass onAdopt if this is admin view
                             onAdopt={isAdminView ? () => handleAdopt(petDTO) : undefined}
                             CardComponent={CardComponent}
-                            enableContactOwner={enableContactOwner} // Pass the enableContactOwner prop
+                            enableContactOwner={enableContactOwner}
                         />
                     </Grid>
                 );

@@ -134,6 +134,71 @@ const extractGenderFromPet = (pet: Pet): string => {
     return "Unknown";
 };
 
+// Helper function to determine pet type
+const determinePetType = (pet: Pet): string => {
+    // First check if petType is already set
+    if (pet.petType) {
+        return pet.petType;
+    }
+
+    // Check for category property that might be used in API responses
+    if (pet.category) {
+        return pet.category;
+    }
+
+    // Check if there's a "type" field in the pet object
+    if (pet.type) {
+        return pet.type;
+    }
+
+    // Look for bird indicators in the breed or name
+    if (pet.breed) {
+        const breedLower = pet.breed.toLowerCase();
+        if (
+            breedLower.includes('parrot') ||
+            breedLower.includes('amazon') ||
+            breedLower.includes('canary') ||
+            breedLower.includes('finch') ||
+            breedLower.includes('bird') ||
+            breedLower.includes('cockatiel') ||
+            breedLower.includes('cockatoo') ||
+            breedLower.includes('macaw')
+        ) {
+            return 'Bird';
+        }
+    }
+
+    // Check name for bird indicators
+    if (pet.name) {
+        const nameLower = pet.name.toLowerCase();
+        if (
+            nameLower.includes('bird') ||
+            nameLower.includes('parrot') ||
+            nameLower.includes('tweet') ||
+            nameLower.includes('wing')
+        ) {
+            return 'Bird';
+        }
+    }
+
+    // If we have a description field, check that too
+    if (pet.description) {
+        const descLower = pet.description.toLowerCase();
+        if (
+            descLower.includes('bird') ||
+            descLower.includes('parrot') ||
+            descLower.includes('feather') ||
+            descLower.includes('fly') ||
+            descLower.includes('beak')
+        ) {
+            return 'Bird';
+        }
+    }
+
+    // If we can't determine the type, return Unknown
+    return 'Unknown';
+};
+
 const Cart: React.FC<CartProps> = ({ open, onClose }) => {
     const { items, removeFromCart, updateQuantity, clearCart, loading, getCartTotal } = useCart();
     const theme = useTheme();
@@ -149,7 +214,7 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
     // State to track resolved image URLs
     const [resolvedImages, setResolvedImages] = useState<Record<string | number, string>>({});
 
-    // Enhanced image handling function
+    // Enhanced image handling function with pet type normalization
     const getPetImageUrl = (pet: Pet): string => {
         const petId = pet.id.toString();
 
@@ -158,10 +223,14 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
             return imageCache[petId];
         }
 
+        // Normalize pet type if needed (this doesn't modify the original pet object)
+        const petType = determinePetType(pet);
+
         // Debug log to check what image data is available
         console.log("Processing pet image for cart:", {
             id: pet.id,
             name: pet.name,
+            petType: petType,
             imageUrl: pet.imageUrl,
             image: pet.image
         });
@@ -390,7 +459,7 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                     borderBottom: '1px solid #eee'
                 }}>
                     <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: '#003366' }}>
-                        Selected Pets ({items.length} {items.length === 1 ? 'item' : 'pets'})
+                        Selected Pets ({items.length} {items.length === 1 ? 'item' : 'items'})
                     </Typography>
                     <IconButton
                         onClick={onClose}
@@ -469,6 +538,9 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                 // Get the image URL for this pet from resolved images or compute it
                                 const imageUrl = resolvedImages[item.pet.id] || getPetImageUrl(item.pet);
 
+                                // Determine pet type using our helper function
+                                const petType = determinePetType(item.pet);
+
                                 return (
                                     <ListItem
                                         key={item.pet.id}
@@ -515,9 +587,9 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                                 </Typography>
 
                                                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                                                    {/* Pet type and breed */}
+                                                    {/* Pet type and breed - UPDATED to use our determinePetType function */}
                                                     <Typography variant="body2" color="text.secondary" component="div">
-                                                        {item.pet.petType} • {item.pet.breed}
+                                                        {petType} • {item.pet.breed}
                                                     </Typography>
 
                                                     {/* Gender - Using the helper function */}
