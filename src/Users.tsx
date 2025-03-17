@@ -45,6 +45,8 @@ const Users: React.FC = () => {
   const [snackbarMessage, setSnackbarMessage] = useState<string>("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
 
+  const token = localStorage.getItem('token');
+
   const { data: users = [], refetch, isLoading, isError } = useQuery<User[]>({
     queryKey: ["users"],
     queryFn: () => Axios.get("http://localhost:8080/api/v1/getusers").then((res) => res.data),
@@ -60,7 +62,9 @@ const Users: React.FC = () => {
   const addUserMutation = useMutation({
     mutationFn: (data: FormData) =>
       Axios.post("http://localhost:8080/api/v1/adduser", data, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: { "Content-Type": "multipart/form-data",
+          "Authorization": `Bearer ${token}`, // Include the token
+         },
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
@@ -79,7 +83,9 @@ const Users: React.FC = () => {
   const updateUserMutation = useMutation({
     mutationFn: (data: FormData) =>
       Axios.put("http://localhost:8080/api/v1/updateuser", data, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: { "Content-Type": "multipart/form-data", 
+          "Authorization": `Bearer ${token}`, // Include the token
+        },
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
@@ -96,7 +102,12 @@ const Users: React.FC = () => {
   });
 
   const deleteUserMutation = useMutation({
-    mutationFn: (id: number) => Axios.delete(`http://localhost:8080/api/v1/deleteuser/${id}`),
+    mutationFn: (id: number) =>
+      Axios.delete(`http://localhost:8080/api/v1/deleteuser/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Include the token
+        },
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       refetch();

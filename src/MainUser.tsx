@@ -16,6 +16,7 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
+import { Token } from "@mui/icons-material";
 
 interface Pet {
   id: number;
@@ -92,6 +93,8 @@ const MainPage = () => {
     ],
   };
 
+  const token = localStorage.getItem('token');
+
   const fetchPets = async () => {
     setLoading(true);
     setError(null);
@@ -113,6 +116,7 @@ const MainPage = () => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
           },
         }
       );
