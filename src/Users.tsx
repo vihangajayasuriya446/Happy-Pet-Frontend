@@ -169,14 +169,11 @@ const Users: React.FC = () => {
   );
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1, textAlign: "center" }}>
-            Matchmaking Pets Management
-          </Typography>
-        </Toolbar>
-      </AppBar>
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" , p: 3 }}>
+      <Typography variant="h4" component="h1" sx={{ mb: 4, fontWeight: "bold" }}>
+        Matchmaking Pets Management
+      </Typography>
+
 
       <Box sx={{ flex: 1, padding: 2 }}>
         {isLoading && <CircularProgress />}
@@ -186,71 +183,67 @@ const Users: React.FC = () => {
           </Typography>
         )}
         
-        {!isLoading && !isError && (
-          <>
-            {/* Search Bar and Add New Pet Button */}
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: { xs: "column", sm: "row" },
-                justifyContent: "space-between",
-                alignItems: "center",
-                gap: 2,
-                marginBottom: 2,
-              }}
-            >
-              <TextField
-                label="Search Pet Name"
-                variant="outlined"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                sx={{ width: { xs: "100%", sm: "300px" } }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
+        {/* Always render the search bar and add new pet button */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 2,
+            marginBottom: 2,
+          }}
+        >
+          <TextField
+            label="Search Pet Name"
+            variant="outlined"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            sx={{ width: { xs: "100%", sm: "300px" } }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={toggleDrawer(true)}
+            sx={{ width: { xs: "100%", sm: "auto" },textTransform: "none", borderRadius: "8px" }}
+          >
+            Add New Pet
+          </Button>
+        </Box>
+
+        {/* Drawer for User Form */}
+        <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer(false)}>
+          <Box sx={{ width: 400, padding: 2 }}>
+            <IconButton onClick={toggleDrawer(false)} sx={{ position: "absolute", right: 8, top: 8 }}>
+              <CloseIcon />
+            </IconButton>
+            <Suspense fallback={<CircularProgress />}>
+              <UserForm
+                addUser={addUser}
+                updateUser={updateUser}
+                submitted={submitted}
+                data={selectedUser || undefined}
+                isEdit={isEdit}
+                resetForm={resetForm}
+                users={users}
               />
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={toggleDrawer(true)}
-                sx={{ width: { xs: "100%", sm: "auto" } }}
-              >
-                Add New Pet
-              </Button>
-            </Box>
+            </Suspense>
+          </Box>
+        </Drawer>
 
-            {/* Drawer for User Form */}
-            <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer(false)}>
-              <Box sx={{ width: 400, padding: 2 }}>
-                <IconButton onClick={toggleDrawer(false)} sx={{ position: "absolute", right: 8, top: 8 }}>
-                  <CloseIcon />
-                </IconButton>
-                <Suspense fallback={<CircularProgress />}>
-                  <UserForm
-                    addUser={addUser}
-                    updateUser={updateUser}
-                    submitted={submitted}
-                    data={selectedUser || undefined}
-                    isEdit={isEdit}
-                    resetForm={resetForm}
-                    users={users}
-                  />
-                </Suspense>
-              </Box>
-            </Drawer>
-
-            {/* User Table */}
-            <Paper elevation={3} sx={{ marginTop: "40px", width: "100%", overflowX: "auto" }}>
-              <Suspense fallback={<CircularProgress />}>
-                <UserTable rows={filteredUsers} selectedUser={handleSelectUser} deleteUser={deleteUser} />
-              </Suspense>
-            </Paper>
-          </>
-        )}
+        {/* User Table */}
+        <Paper elevation={3} sx={{ marginTop: "40px", width: "100%", overflowX: "auto" }}>
+          <Suspense fallback={<CircularProgress />}>
+            <UserTable rows={filteredUsers} selectedUser={handleSelectUser} deleteUser={deleteUser} />
+          </Suspense>
+        </Paper>
       </Box>
 
       {/* Snackbar for notifications */}
