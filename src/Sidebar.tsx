@@ -51,7 +51,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
                     backdropFilter: 'blur(10px)', // Blur effect for glass-like appearance
                     borderRight: '1px solid rgba(0, 0, 0, 0.12)', // Subtle border
                     boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)', // Soft shadow
-                    background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.8) 30%, rgba(255, 255, 255, 0.5) 70%, rgba(255, 255, 255, 0) 100%)', // Seamless bottom-fading effect
+                    background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0) 100%)', // Bottom-faded effect
                 },
             }}
         >
