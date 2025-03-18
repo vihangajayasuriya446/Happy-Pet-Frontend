@@ -531,7 +531,12 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                             disabled={quantity === 0 || isAdding || loading}
                             sx={{
                                 color: quantity === 0 ? alpha(themeColor, 0.3) : themeColor,
-                                padding: '6px'
+                                padding: '6px',
+                                width: '22px',
+                                height: '22px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
                             }}
                         >
                             <RemoveIcon fontSize="small" />
@@ -554,7 +559,12 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                             disabled={isAdding || loading}
                             sx={{
                                 padding: '6px',
-                                color: themeColor
+                                color: themeColor,
+                                width: '32px',
+                                height: '32px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
                             }}
                         >
                             <AddIcon fontSize="small" />
@@ -583,7 +593,9 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                             borderRadius: '12px',
                             textTransform: 'none',
                             boxShadow: `0 4px 8px ${alpha(themeColor, 0.25)}`,
-                            transition: 'all 0.3s ease'
+                            transition: 'all 0.3s ease',
+                            whiteSpace: 'nowrap',
+                            minWidth: 'fit-content'
                         }}
                     >
                         {isAdding ? (
