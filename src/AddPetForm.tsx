@@ -23,15 +23,20 @@ import {
   CircularProgress,
   Chip,
   Tooltip,
+  Alert,
   Grid,
   IconButton,
+  Drawer,
+  Fab,
 } from "@mui/material";
 import ImageIcon from "@mui/icons-material/Image";
 import PetsIcon from "@mui/icons-material/Pets";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import MessageIcon from "@mui/icons-material/Message";
-import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import CloseIcon from "@mui/icons-material/Close";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import AddIcon from "@mui/icons-material/Add";
 import React from "react";
 
 // First, let's create the InquiryService interfaces and class
@@ -162,6 +167,7 @@ const AddPetForm: React.FC<AddPetFormProps> = ({ onSnackbarMessage }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Fetch pets and users on component mount
   useEffect(() => {
@@ -327,8 +333,9 @@ const AddPetForm: React.FC<AddPetFormProps> = ({ onSnackbarMessage }) => {
       // Refresh pets list
       fetchPets();
 
-      // Reset form
+      // Reset form and close drawer
       resetForm();
+      setDrawerOpen(false);
     } catch (err) {
       console.error("Error saving pet:", err);
       showSnackbar("Error saving pet", "error");
@@ -344,6 +351,7 @@ const AddPetForm: React.FC<AddPetFormProps> = ({ onSnackbarMessage }) => {
     setPreviewUrl(petToEdit.imageUrl || "");
     setEditMode(true);
     setEditIndex(index);
+    setDrawerOpen(true);
   };
 
   const handleDelete = async (id: string | number) => {
@@ -355,15 +363,6 @@ const AddPetForm: React.FC<AddPetFormProps> = ({ onSnackbarMessage }) => {
       console.error("Error deleting pet:", err);
       showSnackbar("Error deleting pet", "error");
     }
-  };
-
-  const handleUserEdit = (user: UserWithInquiries) => {
-    // This would typically open a modal or navigate to edit user page
-    console.log("Edit user:", user);
-    showSnackbar(
-        "User edit functionality not implemented in this view",
-        "info"
-    );
   };
 
   const handleUserDelete = async (user: UserWithInquiries) => {
@@ -441,6 +440,18 @@ const AddPetForm: React.FC<AddPetFormProps> = ({ onSnackbarMessage }) => {
     setEditIndex(null);
   };
 
+  const handleAddNewClick = () => {
+    resetForm();
+    setDrawerOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setDrawerOpen(false);
+    if (editMode) {
+      resetForm();
+    }
+  };
+
   const formatPrice = (price: string | number) => {
     if (!price) return "LKR 0/=";
     return `LKR ${price}/=`;
@@ -462,24 +473,14 @@ const AddPetForm: React.FC<AddPetFormProps> = ({ onSnackbarMessage }) => {
     }
   };
 
-  // Updated input style with fixes for label overlap
   const inputStyle = {
     "& .MuiOutlinedInput-root": {
-      height: "56px",
       "&:hover fieldset": {
         borderColor: "#003366",
       },
       "&.Mui-focused fieldset": {
         borderColor: "#003366",
         borderWidth: "2px",
-      },
-    },
-    "& .MuiInputLabel-root": {
-      transform: "translate(14px, 16px) scale(1)",
-      backgroundColor: "#ffffff",
-      padding: "0 5px",
-      "&.MuiInputLabel-shrink": {
-        transform: "translate(14px, -6px) scale(0.75)",
       },
     },
     "& .MuiInputLabel-root.Mui-focused": {
@@ -495,15 +496,6 @@ const AddPetForm: React.FC<AddPetFormProps> = ({ onSnackbarMessage }) => {
 
   // Theme color for user table
   const themeColor = "#002855";
-
-  // New gradient for header and button - changed to dark blue
-  const darkBlueGradient = "linear-gradient(90deg, #001a33 0%, #003366 100%)";
-
-  // Get pet name by ID (for displaying in inquiry details)
-  const getPetNameById = (petId: string | number): string => {
-    const pet = pets.find((p) => p.id.toString() === petId.toString());
-    return pet ? pet.name : `Pet #${petId}`;
-  };
 
   // Get status color based on status string
   const getStatusColor = (status: string = ""): string => {
@@ -552,428 +544,65 @@ const AddPetForm: React.FC<AddPetFormProps> = ({ onSnackbarMessage }) => {
             borderRadius: "8px",
             boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
             margin: "-30px auto 20px",
+            position: "relative",
           }}
       >
-        {/* Main Dashboard Heading */}
-        <Typography
-            variant="h4"
-            component="h1"
+        {/* Floating Add Button */}
+        <Fab
+            color="primary"
+            aria-label="add"
             sx={{
-              width: "100%",
-              fontWeight: "bold",
-              textAlign: "center",
-              background: darkBlueGradient,
-              color: "white",
-              padding: "16px 24px",
-              borderRadius: "8px",
-              boxShadow: "0 4px 8px rgba(0,0,0,0.15)",
-              mb: 3,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 2
+              position: "fixed",
+              bottom: 30,
+              right: 30,
+              backgroundColor: "#003366",
+              "&:hover": {
+                backgroundColor: "#002244",
+              },
             }}
+            onClick={handleAddNewClick}
         >
-          <PetsIcon fontSize="large" />
-          Pet Buy Management Dashboard
-        </Typography>
+          <AddIcon />
+        </Fab>
 
-        {/* Modern Add Pet Form Card - Now Full Width */}
-        <Card
-            elevation={4}
+        <Box
             sx={{
               width: "100%",
-              maxWidth: "1200px",
-              borderRadius: "16px",
-              overflow: "hidden",
-              background: "linear-gradient(145deg, #ffffff 0%, #f5f7fa 100%)",
-              position: "relative",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 2,
             }}
         >
-          {/* Header with dark blue gradient */}
-          <Box
+          <Typography
+              variant="h5"
+              component="h1"
               sx={{
-                background: darkBlueGradient,
-                padding: "20px",
-                color: "white",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
+                fontWeight: "bold",
+                color: "#003366",
               }}
           >
-            <Typography
-                variant="h5"
-                component="h2"
-                sx={{
-                  fontWeight: "bold",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                }}
-            >
-              <PetsIcon />
-              {editMode ? "Update Pet" : "Add A New Pet"}
-            </Typography>
-            {editMode && (
-                <Chip
-                    label="Edit Mode"
-                    size="small"
-                    sx={{
-                      bgcolor: "rgba(255, 255, 255, 0.2)",
-                      color: "white",
-                      fontWeight: "bold",
-                    }}
-                />
-            )}
-          </Box>
-
-          <CardContent sx={{ p: 4 }}>
-            <Grid container spacing={4} component="form" onSubmit={handleSubmit}>
-              {/* Left column - Image upload */}
-              <Grid item xs={12} md={4}>
-                <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      height: "100%",
-                    }}
-                >
-                  {/* Image Preview Area */}
-                  <Box
-                      sx={{
-                        width: "100%",
-                        height: 280,
-                        borderRadius: "12px",
-                        border: "2px dashed #ccd7e0",
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        backgroundColor: "#f7f9fc",
-                        position: "relative",
-                        overflow: "hidden",
-                        mb: 2,
-                      }}
-                  >
-                    {previewUrl ? (
-                        <>
-                          <img
-                              src={previewUrl}
-                              alt="Preview"
-                              style={{
-                                width: "100%",
-                                height: "100%",
-                                objectFit: "cover",
-                              }}
-                          />
-                          <IconButton
-                              size="small"
-                              sx={{
-                                position: "absolute",
-                                top: 8,
-                                right: 8,
-                                bgcolor: "rgba(255,255,255,0.8)",
-                                "&:hover": {
-                                  bgcolor: "rgba(255,255,255,0.95)",
-                                },
-                              }}
-                              onClick={removeImage}
-                          >
-                            <CloseIcon fontSize="small" />
-                          </IconButton>
-                        </>
-                    ) : (
-                        <>
-                          <AddPhotoAlternateIcon
-                              sx={{ fontSize: 60, color: "#90a4ae", mb: 2 }}
-                          />
-                          <Typography
-                              variant="h6"
-                              color="textSecondary"
-                              align="center"
-                              gutterBottom
-                          >
-                            Upload Pet Image
-                          </Typography>
-                          <Typography
-                              variant="body2"
-                              color="textSecondary"
-                              align="center"
-                              sx={{ px: 2 }}
-                          >
-                            Drag & drop an image here, or click to select a file
-                          </Typography>
-                        </>
-                    )}
-                  </Box>
-
-                  {/* Upload Button */}
-                  <input
-                      accept="image/*"
-                      style={{ display: "none" }}
-                      id="image-upload"
-                      type="file"
-                      onChange={handleImageChange}
-                  />
-                  <label htmlFor="image-upload" style={{ width: "100%" }}>
-                    <Button
-                        variant="outlined"
-                        component="span"
-                        fullWidth
-                        startIcon={<ImageIcon />}
-                        sx={{
-                          borderColor: "#003366",
-                          color: "#003366",
-                          borderRadius: "8px",
-                          padding: "12px 0",
-                          "&:hover": {
-                            borderColor: "#002244",
-                            backgroundColor: "rgba(0, 51, 102, 0.04)",
-                          },
-                        }}
-                    >
-                      {previewUrl ? "Change Image" : "Select Image"}
-                    </Button>
-                  </label>
-
-                  {/* Image requirements */}
-                  <Typography
-                      variant="caption"
-                      color="textSecondary"
-                      sx={{ mt: 2, textAlign: "center" }}
-                  >
-                    Recommended: JPG or PNG format, minimum 500x500px
-                  </Typography>
-                </Box>
-              </Grid>
-
-              {/* Right column - Form fields */}
-              <Grid item xs={12} md={8}>
-                <Box sx={{ height: "100%", display: "flex", flexDirection: "column", gap: 3 }}>
-                  {/* Pet Name Field */}
-                  <Box>
-                    <TextField
-                        fullWidth
-                        label="Pet Name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                        variant="outlined"
-                        sx={inputStyle}
-                        InputProps={{
-                          sx: { borderRadius: "8px" },
-                        }}
-                        placeholder="Enter pet name"
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                    />
-                  </Box>
-
-                  {/* Pet Type and Price in one row */}
-                  <Box sx={{ display: "flex", gap: 2 }}>
-                    {/* Pet Type Select */}
-                    <FormControl
-                        required
-                        sx={{
-                          ...inputStyle,
-                          width: "50%",
-                        }}
-                    >
-                      <InputLabel shrink>Pet Type</InputLabel>
-                      <Select
-                          value={formData.petType}
-                          label="Pet Type"
-                          name="petType"
-                          onChange={handleSelectChange}
-                          sx={{ borderRadius: "8px", height: "56px" }}
-                          displayEmpty
-                      >
-                        <MenuItem value="">Select type</MenuItem>
-                        <MenuItem value="Dog">Dog</MenuItem>
-                        <MenuItem value="Cat">Cat</MenuItem>
-                        <MenuItem value="Bird">Bird</MenuItem>
-                      </Select>
-                    </FormControl>
-
-                    {/* Price Field*/}
-                    <TextField
-                        fullWidth
-                        label="Price (LKR)"
-                        name="price"
-                        type="number"
-                        value={formData.price}
-                        onChange={handleChange}
-                        required
-                        variant="outlined"
-                        sx={{
-                          ...inputStyle,
-                          width: "50%",
-                        }}
-                        InputProps={{
-                          sx: { borderRadius: "8px" },
-                        }}
-                        placeholder="0"
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                    />
-                  </Box>
-
-                  {/* Breed Field */}
-                  <Box>
-                    <TextField
-                        fullWidth
-                        label="Breed"
-                        name="breed"
-                        value={formData.breed}
-                        onChange={handleChange}
-                        required
-                        variant="outlined"
-                        sx={inputStyle}
-                        InputProps={{
-                          sx: { borderRadius: "8px" },
-                        }}
-                        placeholder="Enter breed"
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                    />
-                  </Box>
-
-                  {/* Birth Year and Gender in one row */}
-                  <Box sx={{ display: "flex", gap: 2 }}>
-                    {/* Birth Year Field */}
-                    <TextField
-                        fullWidth
-                        label="Birth Year"
-                        name="birthYear"
-                        type="number"
-                        value={formData.birthYear}
-                        onChange={handleChange}
-                        required
-                        variant="outlined"
-                        sx={{
-                          ...inputStyle,
-                          width: "50%",
-                        }}
-                        InputProps={{
-                          sx: { borderRadius: "8px" },
-                        }}
-                        placeholder="YYYY"
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                    />
-
-                    {/* Gender Select */}
-                    <FormControl
-                        required
-                        sx={{
-                          ...inputStyle,
-                          width: "50%",
-                        }}
-                    >
-                      <InputLabel shrink>Gender</InputLabel>
-                      <Select
-                          value={formData.gender}
-                          label="Gender"
-                          name="gender"
-                          onChange={handleSelectChange}
-                          sx={{ borderRadius: "8px", height: "56px" }}
-                          displayEmpty
-                      >
-                        <MenuItem value="">Select gender</MenuItem>
-                        <MenuItem value="Male">Male</MenuItem>
-                        <MenuItem value="Female">Female</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Box>
-                </Box>
-              </Grid>
-
-              {/* Form Buttons - Full width at the bottom */}
-              <Grid item xs={12}>
-                <Divider sx={{ my: 2 }} />
-                <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      gap: 3,
-                      mt: 2,
-                    }}
-                >
-                  <Button
-                      type="submit"
-                      variant="contained"
-                      size="large"
-                      sx={{
-                        background: darkBlueGradient,
-                        "&:hover": {
-                          background: "linear-gradient(90deg, #00142b 0%, #002244 100%)",
-                        },
-                        minWidth: "180px",
-                        padding: "12px 24px",
-                        fontWeight: "bold",
-                        borderRadius: "8px",
-                        boxShadow: "0 4px 10px rgba(0, 51, 102, 0.2)",
-                        textTransform: "none",
-                        fontSize: "16px",
-                      }}
-                  >
-                    {editMode ? "Update Pet" : "Add Pet"}
-                  </Button>
-                  {editMode && (
-                      <Button
-                          variant="outlined"
-                          size="large"
-                          onClick={resetForm}
-                          sx={{
-                            borderColor: "#003366",
-                            color: "#003366",
-                            "&:hover": {
-                              borderColor: "#002244",
-                              backgroundColor: "rgba(0, 51, 102, 0.04)",
-                            },
-                            minWidth: "120px",
-                            padding: "12px 24px",
-                            borderRadius: "8px",
-                            textTransform: "none",
-                            fontSize: "16px",
-                          }}
-                      >
-                        Cancel
-                      </Button>
-                  )}
-                  {!editMode && (
-                      <Button
-                          variant="outlined"
-                          size="large"
-                          onClick={resetForm}
-                          sx={{
-                            borderColor: "#003366",
-                            color: "#003366",
-                            "&:hover": {
-                              borderColor: "#002244",
-                              backgroundColor: "rgba(0, 51, 102, 0.04)",
-                            },
-                            minWidth: "120px",
-                            padding: "12px 24px",
-                            borderRadius: "8px",
-                            textTransform: "none",
-                            fontSize: "16px",
-                          }}
-                      >
-                        Clear Form
-                      </Button>
-                  )}
-                </Box>
-              </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
+            Pet Management Dashboard
+          </Typography>
+          <Button
+              variant="outlined"
+              startIcon={
+                refreshing ? <CircularProgress size={20} /> : <RefreshIcon />
+              }
+              onClick={handleRefreshAll}
+              disabled={refreshing}
+              sx={{
+                borderColor: themeColor,
+                color: themeColor,
+                "&:hover": {
+                  borderColor: "#001c3d",
+                  backgroundColor: "rgba(0, 40, 85, 0.04)",
+                },
+              }}
+          >
+            {refreshing ? "Refreshing..." : "Refresh All Data"}
+          </Button>
+        </Box>
 
         {/* Section Title for Pets Table */}
         <Typography
@@ -981,7 +610,7 @@ const AddPetForm: React.FC<AddPetFormProps> = ({ onSnackbarMessage }) => {
             component="h3"
             sx={{
               width: "100%",
-              mt: 4,
+              mt: 2,
               mb: 2,
               color: "#003366",
               fontWeight: "bold",
@@ -1003,33 +632,33 @@ const AddPetForm: React.FC<AddPetFormProps> = ({ onSnackbarMessage }) => {
             }}
         >
           <Table size="medium">
-            <TableHead sx={{ backgroundColor: "white" }}>
-              <TableRow>
-                <TableCell sx={{ color: "#003366", fontWeight: "bold" }}>
+            <TableHead>
+              <TableRow sx={{ backgroundColor: "#003366" }}>
+                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
                   ID
                 </TableCell>
-                <TableCell sx={{ color: "#003366", fontWeight: "bold" }}>
-                  Name
+                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                  Pet Name
                 </TableCell>
-                <TableCell sx={{ color: "#003366", fontWeight: "bold" }}>
-                  Type
+                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                  Pet Type
                 </TableCell>
-                <TableCell sx={{ color: "#003366", fontWeight: "bold" }}>
+                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
                   Price
                 </TableCell>
-                <TableCell sx={{ color: "#003366", fontWeight: "bold" }}>
+                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
                   Breed
                 </TableCell>
-                <TableCell sx={{ color: "#003366", fontWeight: "bold" }}>
+                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
                   Birth Year
                 </TableCell>
-                <TableCell sx={{ color: "#003366", fontWeight: "bold" }}>
+                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
                   Gender
                 </TableCell>
-                <TableCell sx={{ color: "#003366", fontWeight: "bold" }}>
+                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
                   Image
                 </TableCell>
-                <TableCell sx={{ color: "#003366", fontWeight: "bold" }}>
+                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
                   Actions
                 </TableCell>
               </TableRow>
@@ -1114,6 +743,19 @@ const AddPetForm: React.FC<AddPetFormProps> = ({ onSnackbarMessage }) => {
                       <Typography variant="body1" color="textSecondary">
                         No pets found.
                       </Typography>
+                      <Button
+                          variant="contained"
+                          sx={{
+                            mt: 2,
+                            backgroundColor: "#003366",
+                            "&:hover": {
+                              backgroundColor: "#002244",
+                            },
+                          }}
+                          onClick={handleAddNewClick}
+                      >
+                        Add Your First Pet
+                      </Button>
                     </TableCell>
                   </TableRow>
               )}
@@ -1129,24 +771,20 @@ const AddPetForm: React.FC<AddPetFormProps> = ({ onSnackbarMessage }) => {
               width: "100%",
               mt: 4,
               mb: 2,
+              color: themeColor,
               fontWeight: "bold",
               textAlign: "left",
               display: "flex",
               alignItems: "center",
               gap: 1,
-              background: darkBlueGradient,
-              color: "white",
-              padding: "12px 16px",
-              borderRadius: "8px",
-              boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
             }}
         >
-          Pet Inquiries Table
+          Registered Users & Pet Inquiries
           <Chip
               label={`${users.length} users`}
               size="small"
               sx={{
-                bgcolor: "rgba(255, 255, 255, 0.2)",
+                bgcolor: themeColor,
                 color: "white",
                 fontWeight: "medium",
               }}
@@ -1436,6 +1074,141 @@ const AddPetForm: React.FC<AddPetFormProps> = ({ onSnackbarMessage }) => {
           )}
         </TableContainer>
 
+        {/* Additional information section */}
+        {users.length > 0 && (
+            <Box sx={{ width: "100%", mt: 3 }}>
+              <Alert severity="info" sx={{ mb: 2 }}>
+                <Typography variant="body2">
+                  <strong>Tip:</strong> Hover over pet chips to see inquiry details.
+                  Click on status chips to change inquiry status.
+                </Typography>
+              </Alert>
+
+              <Paper sx={{ p: 2, borderRadius: "8px" }}>
+                <Typography
+                    variant="subtitle2"
+                    sx={{
+                      mb: 1,
+                      color: themeColor,
+                      fontWeight: "bold",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                >
+                  <CalendarTodayIcon fontSize="small" sx={{ mr: 1 }} />
+                  Summary of Inquiries
+                </Typography>
+                <Divider sx={{ mb: 2 }} />
+
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={4}>
+                    <Box
+                        sx={{
+                          p: 2,
+                          bgcolor: "#f9f9f9",
+                          borderRadius: "8px",
+                          height: "100%",
+                        }}
+                    >
+                      <Typography variant="body2" color="text.secondary">
+                        Total Users
+                      </Typography>
+                      <Typography
+                          variant="h4"
+                          sx={{ color: themeColor, fontWeight: "bold" }}
+                      >
+                        {users.length}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12} sm={4}>
+                    <Box
+                        sx={{
+                          p: 2,
+                          bgcolor: "#f9f9f9",
+                          borderRadius: "8px",
+                          height: "100%",
+                        }}
+                    >
+                      <Typography variant="body2" color="text.secondary">
+                        Total Pet Inquiries
+                      </Typography>
+                      <Typography
+                          variant="h4"
+                          sx={{ color: themeColor, fontWeight: "bold" }}
+                      >
+                        {users.reduce((total, user) => {
+                          const interestedCount = user.interestedPets?.length || 0;
+                          const inquiredCount = user.inquiredPets?.length || 0;
+                          return total + interestedCount + inquiredCount;
+                        }, 0)}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12} sm={4}>
+                    <Box
+                        sx={{
+                          p: 2,
+                          bgcolor: "#f9f9f9",
+                          borderRadius: "8px",
+                          height: "100%",
+                        }}
+                    >
+                      <Typography variant="body2" color="text.secondary">
+                        Most Popular Pet Type
+                      </Typography>
+                      <Typography
+                          variant="h6"
+                          sx={{ color: themeColor, fontWeight: "bold" }}
+                      >
+                        {(() => {
+                          const petTypes: Record<string, number> = {};
+
+                          // Count from interestedPets
+                          users.forEach((user) => {
+                            user.interestedPets?.forEach((pet: PetInquiryDTO) => {
+                              const type = pet.category || "Unknown";
+                              petTypes[type] = (petTypes[type] || 0) + 1;
+                            });
+                          });
+
+                          // Count from inquiredPets
+                          users.forEach((user) => {
+                            user.inquiredPets?.forEach(
+                                (pet: {
+                                  pet_id?: string | number;
+                                  petId?: number;
+                                  category?: string;
+                                  name?: string;
+                                  pet_name?: string;
+                                }) => {
+                                  const type = pet.category || "Unknown";
+                                  petTypes[type] = (petTypes[type] || 0) + 1;
+                                }
+                            );
+                          });
+
+                          // Find the most popular type
+                          let mostPopular = "None";
+                          let highestCount = 0;
+
+                          Object.entries(petTypes).forEach(([type, count]) => {
+                            if (count > highestCount) {
+                              mostPopular = type;
+                              highestCount = count;
+                            }
+                          });
+
+                          return mostPopular !== "None" ? mostPopular : "No data";
+                        })()}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                </Grid>
+              </Paper>
+            </Box>
+        )}
+
         {/* Message for when no users are found */}
         {!isLoading && !error && users.length === 0 && (
             <Paper
@@ -1465,10 +1238,250 @@ const AddPetForm: React.FC<AddPetFormProps> = ({ onSnackbarMessage }) => {
               </Button>
             </Paper>
         )}
+
+        {/* Drawer for Add/Edit Pet Form */}
+        <Drawer
+            anchor="right"
+            open={drawerOpen}
+            onClose={handleDrawerClose}
+            sx={{
+              '& .MuiDrawer-paper': {
+                width: { xs: '100%', sm: 450 },
+                boxSizing: 'border-box',
+                padding: 3,
+                boxShadow: '-4px 0 10px rgba(0,0,0,0.1)'
+              },
+            }}
+        >
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Typography
+                variant="h5"
+                component="h2"
+                sx={{
+                  fontWeight: "bold",
+                  color: "#003366",
+                }}
+            >
+              {editMode ? "Update Pet" : "Add A New Pet"}
+            </Typography>
+            <IconButton onClick={handleDrawerClose}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+
+          <Divider sx={{ mb: 3 }} />
+
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+            {/* Pet Name Field */}
+            <TextField
+                fullWidth
+                margin="normal"
+                label="Pet Name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                sx={inputStyle}
+            />
+
+            {/* Pet Type Select */}
+            <FormControl fullWidth margin="normal" required sx={inputStyle}>
+              <InputLabel>Pet Type</InputLabel>
+              <Select
+                  value={formData.petType}
+                  label="Pet Type"
+                  name="petType"
+                  onChange={handleSelectChange}
+              >
+                <MenuItem value="Dog">Dog</MenuItem>
+                <MenuItem value="Cat">Cat</MenuItem>
+                <MenuItem value="Bird">Bird</MenuItem>
+              </Select>
+            </FormControl>
+
+            {/* Price Field*/}
+            <TextField
+                fullWidth
+                margin="normal"
+                label="Price"
+                name="price"
+                type="number"
+                value={formData.price}
+                onChange={handleChange}
+                required
+                helperText="Will be displayed as LKR [amount]/="
+                sx={inputStyle}
+            />
+
+            {/* Breed Field */}
+            <TextField
+                fullWidth
+                margin="normal"
+                label="Breed"
+                name="breed"
+                value={formData.breed}
+                onChange={handleChange}
+                required
+                sx={inputStyle}
+            />
+
+            {/* Birth Year Field */}
+            <TextField
+                fullWidth
+                margin="normal"
+                label="Birth Year"
+                name="birthYear"
+                type="number"
+                value={formData.birthYear}
+                onChange={handleChange}
+                required
+                sx={inputStyle}
+            />
+
+            {/* Gender Select */}
+            <FormControl fullWidth margin="normal" required sx={inputStyle}>
+              <InputLabel>Gender</InputLabel>
+              <Select
+                  value={formData.gender}
+                  label="Gender"
+                  name="gender"
+                  onChange={handleSelectChange}
+              >
+                <MenuItem value="Male">Male</MenuItem>
+                <MenuItem value="Female">Female</MenuItem>
+              </Select>
+            </FormControl>
+
+            {/* Image Upload with Preview */}
+            <Box sx={{ mt: 3, mb: 2 }}>
+              <input
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  id="image-upload"
+                  type="file"
+                  onChange={handleImageChange}
+              />
+              <label htmlFor="image-upload">
+                <Button
+                    variant="outlined"
+                    component="span"
+                    fullWidth
+                    startIcon={<ImageIcon />}
+                    sx={{
+                      borderColor: "#003366",
+                      color: "#003366",
+                      padding: "10px 0",
+                      "&:hover": {
+                        borderColor: "#002244",
+                        backgroundColor: "rgba(0, 51, 102, 0.04)",
+                      },
+                      "&:focus": {
+                        borderColor: "#003366",
+                        boxShadow: "0 0 0 3px rgba(0, 51, 102, 0.2)",
+                      },
+                    }}
+                >
+                  {previewUrl ? "Change Pet Image" : "Upload Pet Image"}
+                </Button>
+              </label>
+              {previewUrl && (
+                  <Box
+                      sx={{
+                        mt: 2,
+                        textAlign: "center",
+                        border: "1px solid #e0e0e0",
+                        borderRadius: "8px",
+                        padding: "10px",
+                        backgroundColor: "#f9f9f9",
+                        position: "relative",
+                      }}
+                  >
+                    <img
+                        src={previewUrl}
+                        alt="Preview"
+                        style={{
+                          maxWidth: "100%",
+                          maxHeight: "200px",
+                          objectFit: "contain",
+                          borderRadius: "4px",
+                        }}
+                    />
+                    <IconButton
+                        size="small"
+                        sx={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          bgcolor: "rgba(255,255,255,0.8)",
+                          "&:hover": {
+                            bgcolor: "rgba(255,255,255,0.95)",
+                          },
+                        }}
+                        onClick={removeImage}
+                    >
+                      <CloseIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
+              )}
+            </Box>
+
+            <Divider sx={{ my: 3 }} />
+
+            {/* Form Buttons */}
+            <Box
+                sx={{
+                  mt: 2,
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: 2,
+                }}
+            >
+              <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{
+                    backgroundColor: "#003366",
+                    "&:hover": {
+                      backgroundColor: "#002244",
+                    },
+                    "&:focus": {
+                      boxShadow: "0 0 0 3px rgba(0, 51, 102, 0.3)",
+                    },
+                    minWidth: "120px",
+                    padding: "10px 20px",
+                    fontWeight: "bold",
+                    borderRadius: "8px",
+                  }}
+              >
+                {editMode ? "Update Pet" : "Add Pet"}
+              </Button>
+              <Button
+                  variant="outlined"
+                  onClick={handleDrawerClose}
+                  sx={{
+                    borderColor: "#003366",
+                    color: "#003366",
+                    "&:hover": {
+                      borderColor: "#002244",
+                      backgroundColor: "rgba(0, 51, 102, 0.04)",
+                    },
+                    "&:focus": {
+                      borderColor: "#003366",
+                      boxShadow: "0 0 0 3px rgba(0, 51, 102, 0.2)",
+                    },
+                    minWidth: "120px",
+                    padding: "10px 20px",
+                    borderRadius: "8px",
+                  }}
+              >
+                Cancel
+              </Button>
+            </Box>
+          </Box>
+        </Drawer>
       </Box>
   );
 };
 
 export default AddPetForm;
-
 
