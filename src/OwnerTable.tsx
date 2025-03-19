@@ -22,7 +22,8 @@ import {
   Modal,
 } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import Sidebar from './Sidebar';
+import CloseIcon from '@mui/icons-material/Close'; // Import the close icon
+import Sidebar from './Sidebar'; 
 import { User } from './types';
 
 interface Owner {
@@ -41,10 +42,7 @@ const OwnerTable: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [sortBy, setSortBy] = useState<string>('none');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
-  // State for controlling the modal visibility
   const [openPetModal, setOpenPetModal] = useState(false);
-  // State to store the selected pet details for the modal
   const [selectedPet, setSelectedPet] = useState<User | null>(null);
 
   useEffect(() => {
@@ -120,7 +118,6 @@ const OwnerTable: React.FC = () => {
     }
   };
 
-  // Sorting Functions
   const handleSort = (sortType: string) => {
     setSortBy(sortType);
     setAnchorEl(null);
@@ -139,7 +136,6 @@ const OwnerTable: React.FC = () => {
     }
   });
 
-  // Calculate request summary
   const totalRequests = sortedOwners.length;
   const confirmedRequests = sortedOwners.filter(owner => owner.confirmation === 'Yes').length;
   const unconfirmedRequests = totalRequests - confirmedRequests;
@@ -152,43 +148,41 @@ const OwnerTable: React.FC = () => {
     setAnchorEl(null);
   };
 
-  // Function to handle opening the pet details modal
   const handleOpenPetModal = (pet: User) => {
     setSelectedPet(pet);
     setOpenPetModal(true);
   };
 
-  // Function to handle closing the pet details modal
   const handleClosePetModal = () => {
     setOpenPetModal(false);
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <Sidebar open={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Container maxWidth="lg" sx={{ mt: 12, mb: 12 }}>
-          <Typography variant="h4" gutterBottom fontWeight="bold" textAlign="left" sx={{ color: "#fafafa", mb: 4 }}>
+          <Typography variant="h4" gutterBottom fontWeight="bold" textAlign="left" sx={{ color: '#fafafa', mb: 4 }}>
             Matchmaking Requests
           </Typography>
 
           <Grid container spacing={3} mb={4}>
             <Grid item xs={12} sm={4}>
-              <Box sx={{ bgcolor: '#fff', p: 3, borderRadius: 2, opacity: 0.6, textAlign: 'center' }}>
-                <Typography variant="h6">Total Requests</Typography>
-                <Typography variant="h5" fontWeight="bold">{totalRequests}</Typography>
+              <Box sx={{ bgcolor: '#fff', p: 3, borderRadius: 2, boxShadow: 3, textAlign: 'center' }}>
+                <Typography variant="h6" sx={{ color: '#002855' }}>Total Requests</Typography>
+                <Typography variant="h5" fontWeight="bold" sx={{ color: '#002855' }}>{totalRequests}</Typography>
               </Box>
             </Grid>
             <Grid item xs={12} sm={4}>
-              <Box sx={{ bgcolor: '#a0bce8', p: 3, borderRadius: 2, opacity: 0.6, textAlign: 'center' }}>
-                <Typography variant="h6">Confirmed</Typography>
-                <Typography variant="h5" fontWeight="bold">{confirmedRequests}</Typography>
+              <Box sx={{ bgcolor: '#a0bce8', p: 3, borderRadius: 2, boxShadow: 3, textAlign: 'center' }}>
+                <Typography variant="h6" sx={{ color: '#002855' }}>Confirmed</Typography>
+                <Typography variant="h5" fontWeight="bold" sx={{ color: '#002855' }}>{confirmedRequests}</Typography>
               </Box>
             </Grid>
             <Grid item xs={12} sm={4}>
-              <Box sx={{ bgcolor: '#eff283', p: 3, borderRadius: 2, opacity: 0.6, textAlign: 'center' }}>
-                <Typography variant="h6">Unconfirmed</Typography>
-                <Typography variant="h5" fontWeight="bold">{unconfirmedRequests}</Typography>
+              <Box sx={{ bgcolor: '#eff283', p: 3, borderRadius: 2, boxShadow: 3, textAlign: 'center' }}>
+                <Typography variant="h6" sx={{ color: '#002855' }}>Unconfirmed</Typography>
+                <Typography variant="h5" fontWeight="bold" sx={{ color: '#002855' }}>{unconfirmedRequests}</Typography>
               </Box>
             </Grid>
           </Grid>
@@ -197,7 +191,7 @@ const OwnerTable: React.FC = () => {
           <Modal open={openPetModal} onClose={handleClosePetModal}>
             <Box
               sx={{
-                position: 'absolute' as 'absolute',
+                position: 'absolute',
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
@@ -206,24 +200,44 @@ const OwnerTable: React.FC = () => {
                 boxShadow: 24,
                 p: 4,
                 borderRadius: 2,
+                outline: 'none',
               }}
             >
+              {/* Close Icon */}
+              <IconButton
+                aria-label="close"
+                onClick={handleClosePetModal}
+                sx={{
+                  position: 'absolute',
+                  right: 8,
+                  top: 8,
+                  color: '#002855',
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+
               {selectedPet && (
                 <>
-                  <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
+                  {/* Bold Pet Name */}
+                  <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 'bold', color: '#002855' }}>
                     {selectedPet.name}
                   </Typography>
+
+                  {/* Pet Photo */}
                   {selectedPet.photo && (
                     <img
                       src={`data:image/jpeg;base64,${selectedPet.photo}`}
                       alt={selectedPet.name}
-                      style={{ width: '100%', height: 'auto', marginBottom: 2 }}
+                      style={{ width: '100%', height: 'auto', marginBottom: 16, borderRadius: 8 }}
                     />
                   )}
-                  <Typography variant="body2" sx={{ mb: 1 }}>
+
+                  {/* Pet Details */}
+                  <Typography variant="body2" sx={{ mb: 1, color: '#002855' }}>
                     <strong>Type:</strong> {selectedPet.type}
                   </Typography>
-                  <Typography variant="body2" sx={{ mb: 1 }}>
+                  <Typography variant="body2" sx={{ mb: 1, color: '#002855' }}>
                     <strong>Age:</strong> {selectedPet.age}
                   </Typography>
                 </>
@@ -231,35 +245,49 @@ const OwnerTable: React.FC = () => {
             </Box>
           </Modal>
 
-          <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: '8px', overflow: 'hidden' }}>
-            <Box display="flex" justifyContent="flex-end" p={1}>
-              <IconButton onClick={handleClick}>
+          {/* Filter Icon positioned above the table */}
+          <Box display="flex" justifyContent="flex-end" mb={2}>
+            <Tooltip title="Sort by">
+              <IconButton
+                onClick={handleClick}
+                sx={{
+                  bgcolor: '#002855',
+                  color: 'white',
+                  '&:hover': {
+                    bgcolor: '#001a33',
+                  },
+                  borderRadius: '8px',
+                  boxShadow: 2,
+                }}
+              >
                 <FilterListIcon />
               </IconButton>
-              <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-              >
-                <MenuItem onClick={() => handleSort('none')}>None</MenuItem>
-                <MenuItem onClick={() => handleSort('id')}>Sort by Time Added</MenuItem>
-                <MenuItem onClick={() => handleSort('confirmed')}>Confirmed Requests First</MenuItem>
-                <MenuItem onClick={() => handleSort('unconfirmed')}>Unconfirmed Requests First</MenuItem>
-              </Menu>
-            </Box>
+            </Tooltip>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+            >
+              <MenuItem onClick={() => handleSort('none')}>None</MenuItem>
+              <MenuItem onClick={() => handleSort('id')}>Sort by Time Added</MenuItem>
+              <MenuItem onClick={() => handleSort('confirmed')}>Confirmed Requests First</MenuItem>
+              <MenuItem onClick={() => handleSort('unconfirmed')}>Unconfirmed Requests First</MenuItem>
+            </Menu>
+          </Box>
 
-            <Table>
-              <TableHead sx={{ backgroundColor: '#f0f0f0' }}>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center' }}>ID</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center' }}>Name</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center' }}>Address</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center' }}>Contact Number</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center' }}>Pet ID</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center' }}>Confirmation</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center' }}>Actions</TableCell>
-                </TableRow>
-              </TableHead>
+          <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: '8px', overflow: 'hidden' }}>
+            <Table sx={{ minWidth: 650 }}>
+            <TableHead>
+  <TableRow sx={{ backgroundColor: '#679df5' }}> {/* Light blue background */}
+    <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center', color: '#002855' }}>ID</TableCell>
+    <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center', color: '#002855' }}>Name</TableCell>
+    <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center', color: '#002855' }}>Address</TableCell>
+    <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center', color: '#002855' }}>Contact Number</TableCell>
+    <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center', color: '#002855' }}>Pet ID</TableCell>
+    <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center', color: '#002855' }}>Confirmation</TableCell>
+    <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center', color: '#002855' }}>Actions</TableCell>
+  </TableRow>
+</TableHead>
               <TableBody>
                 {isLoading ? (
                   <TableRow>
@@ -271,17 +299,15 @@ const OwnerTable: React.FC = () => {
                   sortedOwners.map((owner) => {
                     const pet = users.find(user => user.id === owner.petId);
                     return (
-                      <TableRow key={owner.id}
-                        sx={{ '&:nth-of-type(odd)': { backgroundColor: '#f9f9f9' }, '&:last-child td, &:last-child th': { border: 0 } }}
-                      >
-                        <TableCell component="th" scope="row" sx={{ padding: '16px', textAlign: 'center' }}>{owner.id}</TableCell>
-                        <TableCell component="th" scope="row" sx={{ padding: '16px', textAlign: 'center' }}>{owner.ownerName}</TableCell>
-                        <TableCell component="th" scope="row" sx={{ padding: '16px', textAlign: 'center' }}>{owner.address}</TableCell>
-                        <TableCell component="th" scope="row" sx={{ padding: '16px', textAlign: 'center' }}>{owner.contactNumber}</TableCell>
-                        <TableCell sx={{ padding: '16px', textAlign: 'center' }}>
+                      <TableRow key={owner.id} sx={{ '&:nth-of-type(odd)': { backgroundColor: '#f9f9f9' } }}>
+                        <TableCell sx={{ padding: '16px', textAlign: 'center', color: '#002855' }}>{owner.id}</TableCell>
+                        <TableCell sx={{ padding: '16px', textAlign: 'center', color: '#002855' }}>{owner.ownerName}</TableCell>
+                        <TableCell sx={{ padding: '16px', textAlign: 'center', color: '#002855' }}>{owner.address}</TableCell>
+                        <TableCell sx={{ padding: '16px', textAlign: 'center', color: '#002855' }}>{owner.contactNumber}</TableCell>
+                        <TableCell sx={{ padding: '16px', textAlign: 'center', color: '#002855' }}>
                           {pet ? (
                             <Tooltip title={pet.name}>
-                              <Button onClick={() => handleOpenPetModal(pet)}>
+                              <Button onClick={() => handleOpenPetModal(pet)} sx={{ color: '#002855' }}>
                                 {owner.petId}
                               </Button>
                             </Tooltip>
@@ -289,7 +315,7 @@ const OwnerTable: React.FC = () => {
                             'Pet not found'
                           )}
                         </TableCell>
-                        <TableCell sx={{ padding: '16px', textAlign: 'center' }}>
+                        <TableCell sx={{ padding: '16px', textAlign: 'center', color: '#002855' }}>
                           <FormControlLabel
                             control={
                               <Switch
@@ -310,8 +336,8 @@ const OwnerTable: React.FC = () => {
                     );
                   })
                 ) : (
-                  <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                    <TableCell component="th" scope="row" colSpan={7} align="center" sx={{ padding: '20px', fontWeight: 'bold', color: 'grey' }}>
+                  <TableRow>
+                    <TableCell colSpan={7} align="center" sx={{ padding: '20px', fontWeight: 'bold', color: '#002855' }}>
                       No Requests Found
                     </TableCell>
                   </TableRow>
