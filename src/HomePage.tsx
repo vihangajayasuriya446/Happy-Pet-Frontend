@@ -384,7 +384,15 @@ const HomePage: React.FC = () => {
       )}
 
       <Box sx={{ mt: 8, px: { xs: 2, md: 4 }, textAlign: "center" }}>
-        <Typography variant="h3" fontWeight="bold" mb={4} sx={{ color: "text.primary" }}>
+        <Typography variant="h3"
+        fontWeight="bold"
+        mb={4}
+        sx={{
+          color: "#FFFFFF", // Light text for contrast
+          position: "relative",
+          zIndex: 2,
+          textShadow: "0 0 10px rgba(0, 0, 0, 0.5)", // Subtle glow effect
+        }}>
           Planning to Adopt a Pet?
         </Typography>
 
@@ -584,7 +592,15 @@ const HomePage: React.FC = () => {
       </Box>
 
       <Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2 }}>
-        <Typography variant="h4" fontWeight="bold" mt={4} mb={4}>
+        <Typography variant="h4"
+        fontWeight="bold"
+        mb={4}
+        sx={{
+          color: "#FFFFFF", // Light text for contrast
+          position: "relative",
+          zIndex: 2,
+          textShadow: "0 0 10px rgba(0, 0, 0, 0.5)", // Subtle glow effect
+        }}>
           Available Pets for Matchmaking
         </Typography>
 
@@ -711,7 +727,15 @@ const HomePage: React.FC = () => {
 
       {/* Additional Content Section */}
       <Box sx={{ mt: 8, px: { xs: 2, md: 4 }, textAlign: "center" }}>
-        <Typography variant="h3" fontWeight="bold" mb={4} sx={{ color: "text.primary" }}>
+        <Typography variant="h3"
+        fontWeight="bold"
+        mb={4}
+        sx={{
+          color: "#FFFFFF", // Light text for contrast
+          position: "relative",
+          zIndex: 2,
+          textShadow: "0 0 10px rgba(0, 0, 0, 0.5)", // Subtle glow effect
+        }}>
           Explore More About Pets
         </Typography>
         <Box
