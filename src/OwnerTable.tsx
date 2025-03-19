@@ -23,6 +23,8 @@ import {
 } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import CloseIcon from '@mui/icons-material/Close'; // Import the close icon
+
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import Sidebar from './Sidebar'; 
 import { User } from './types';
 
@@ -41,7 +43,7 @@ const OwnerTable: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [sortBy, setSortBy] = useState<string>('none');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); 
   const [openPetModal, setOpenPetModal] = useState(false);
   const [selectedPet, setSelectedPet] = useState<User | null>(null);
 
@@ -159,12 +161,28 @@ const OwnerTable: React.FC = () => {
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-      <Sidebar open={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+       <Sidebar open={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+       <Tooltip title="Admin Dashboard"> 
+            <IconButton
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              sx={{
+                mb: 2,
+                '& svg': { // Target the SVG icon inside the button
+                  fontSize: '1.8rem', // Increase icon size 
+                },
+              }}
+            >
+              <KeyboardArrowRightIcon />
+            </IconButton>
+          </Tooltip> 
+
+        
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Container maxWidth="lg" sx={{ mt: 12, mb: 12 }}>
           <Typography variant="h4" gutterBottom fontWeight="bold" textAlign="left" sx={{ color: '#fafafa', mb: 4 }}>
             Matchmaking Requests
           </Typography>
+          
 
           <Grid container spacing={3} mb={4}>
             <Grid item xs={12} sm={4}>
