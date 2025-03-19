@@ -16,7 +16,6 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-import { Token } from "@mui/icons-material";
 
 interface Pet {
   id: number;
@@ -153,7 +152,7 @@ const MainPage = () => {
           {/* Search Filters Section */}
           <Grid item xs={12} md={4}>
             <Box
-              bgcolor="rgba(255, 255, 255, 0.8)"
+              bgcolor="rgba(255, 255, 255, 0.9)"
               p={4}
               borderRadius={4}
               boxShadow="0 8px 32px rgba(0, 0, 0, 0.1)"
@@ -172,11 +171,13 @@ const MainPage = () => {
               </Typography>
 
               {/* Pet Type Dropdown */}
-              <FormControl fullWidth sx={{ mb: 3 }}>
-                <InputLabel>Pet Type</InputLabel>
+              <FormControl fullWidth sx={{ mb: 3 }} variant="outlined">
+                <InputLabel id="pet-type-label">Pet Type</InputLabel>
                 <Select
+                  labelId="pet-type-label"
                   value={petType}
                   onChange={(e) => setPetType(e.target.value)}
+                  label="Pet Type"
                   sx={{ borderRadius: "8px" }}
                 >
                   <MenuItem value="">Select</MenuItem>
@@ -187,11 +188,13 @@ const MainPage = () => {
               </FormControl>
 
               {/* Age Dropdown */}
-              <FormControl fullWidth sx={{ mb: 3 }}>
-                <InputLabel>Age</InputLabel>
+              <FormControl fullWidth sx={{ mb: 3 }} variant="outlined">
+                <InputLabel id="age-label">Age</InputLabel>
                 <Select
+                  labelId="age-label"
                   value={age}
                   onChange={(e) => setAge(e.target.value)}
+                  label="Age"
                   sx={{ borderRadius: "8px" }}
                 >
                   <MenuItem value="">Select</MenuItem>
@@ -203,11 +206,13 @@ const MainPage = () => {
               </FormControl>
 
               {/* Gender Dropdown */}
-              <FormControl fullWidth sx={{ mb: 3 }}>
-                <InputLabel>Gender</InputLabel>
+              <FormControl fullWidth sx={{ mb: 3 }} variant="outlined">
+                <InputLabel id="gender-label">Gender</InputLabel>
                 <Select
+                  labelId="gender-label"
                   value={gender}
                   onChange={(e) => setGender(e.target.value)}
+                  label="Gender"
                   sx={{ borderRadius: "8px" }}
                 >
                   <MenuItem value="">Select</MenuItem>
@@ -217,11 +222,13 @@ const MainPage = () => {
               </FormControl>
 
               {/* Breed Dropdown */}
-              <FormControl fullWidth sx={{ mb: 3 }}>
-                <InputLabel shrink>Breed</InputLabel>
+              <FormControl fullWidth sx={{ mb: 3 }} variant="outlined">
+                <InputLabel id="breed-label">Breed</InputLabel>
                 <Select
+                  labelId="breed-label"
                   value={breed}
                   onChange={(e) => setBreed(e.target.value)}
+                  label="Breed"
                   disabled={!petType}
                   sx={{ borderRadius: "8px" }}
                 >
@@ -236,11 +243,13 @@ const MainPage = () => {
               </FormControl>
 
               {/* Location Dropdown */}
-              <FormControl fullWidth sx={{ mb: 3 }}>
-                <InputLabel>Your Location</InputLabel>
+              <FormControl fullWidth sx={{ mb: 3 }} variant="outlined">
+                <InputLabel id="location-label">Your Location</InputLabel>
                 <Select
+                  labelId="location-label"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
+                  label="Your Location"
                   sx={{ borderRadius: "8px" }}
                 >
                   <MenuItem value="">Select</MenuItem>
@@ -295,7 +304,7 @@ const MainPage = () => {
           {/* Results Section */}
           <Grid item xs={12} md={8}>
             <Box
-              bgcolor="rgba(255, 255, 255, 0.8)"
+              bgcolor="rgba(255, 255, 255, 0.9)"
               p={4}
               borderRadius={4}
               boxShadow="0 8px 32px rgba(0, 0, 0, 0.1)"
