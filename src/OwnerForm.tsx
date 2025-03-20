@@ -24,6 +24,7 @@ const OwnerForm: React.FC = () => {
   const [success, setSuccess] = useState<boolean>(false);
   const [open, setOpen] = useState(true); // Modal starts open
   const navigate = useNavigate();
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -44,6 +45,7 @@ const OwnerForm: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify(owner),
       });

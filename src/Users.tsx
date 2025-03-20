@@ -1,4 +1,6 @@
 import React, { useState, Suspense } from "react";
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import Sidebar from './Sidebar'; 
 import {
   Box,
   Button,
@@ -13,6 +15,7 @@ import {
   Toolbar,
   Snackbar,
   Alert,
+  Tooltip,
 } from "@mui/material";
 import Axios from "axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -42,6 +45,7 @@ const Users: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); 
   const [snackbarMessage, setSnackbarMessage] = useState<string>("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
 
@@ -169,7 +173,22 @@ const Users: React.FC = () => {
   );
 
   return (
+    
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" , p: 3 }}>
+      <Sidebar open={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+       <Tooltip title="Admin Dashboard"> 
+            <IconButton
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              sx={{
+                mb: 2,
+                '& svg': { // Target the SVG icon inside the button
+                  fontSize: '1.8rem', // Increase icon size 
+                },
+              }}
+            >
+              <KeyboardArrowRightIcon />
+            </IconButton>
+          </Tooltip> 
       <Typography variant="h4" component="h1" sx={{ mb: 4, fontWeight: "bold" }}>
         Matchmaking Pets Management
       </Typography>
