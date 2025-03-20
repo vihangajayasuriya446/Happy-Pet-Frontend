@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Typography, Container, IconButton, Badge, FormControl, Select, MenuItem, SelectChangeEvent, Button } from "@mui/material";
+import { Box, Typography, Container, IconButton, Badge, FormControl, Select, MenuItem, SelectChangeEvent, Button, Snackbar, Alert } from "@mui/material";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import { CartProvider, useCart } from "./contexts/CartContext";
 import PetList from "./components/PetList";
@@ -9,8 +9,9 @@ import DrawerMenu from "./components/DrawerMenu";
 import Cart from "./components/Cart";
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import UserDetailsDashboard from "./components/UserDetailsDashboard";
-import PetManagementDashboard from "./AddPetForm";
-import AddIcon from "@mui/icons-material/Add"; // Import Add icon
+import PetManagementDashboard from "./PetManagementDashboard";
+import AddIcon from "@mui/icons-material/Add";
+import HomePage from "./HomePage"; // Import HomePage component
 
 // Types definitions with gender field added
 export interface Pet {
@@ -45,15 +46,20 @@ export interface ContactRequest {
     petType: string;
 }
 
-// AppContent component that uses the cart context
-const AppContent: React.FC = () => {
+// BuyPetContent component that uses the cart context
+const BuyPetContent: React.FC = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [cartOpen, setCartOpen] = useState(false);
     const [searchQuery] = useState('');
     const [petType, setPetType] = useState<string>('all');
     const { getItemCount } = useCart();
     const itemCount = getItemCount();
-    const navigate = useNavigate(); // Add useNavigate hook
+    const navigate = useNavigate();
+
+    // Handle snackbar messages
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error" | "info" | "warning">("success");
 
     const toggleDrawer = () => {
         setDrawerOpen(!drawerOpen);
@@ -68,9 +74,18 @@ const AppContent: React.FC = () => {
         console.log(`Pet type changed to: ${event.target.value}`);
     };
 
-    // Add navigation function to go to pet management dashboard
+    // Navigate to pet management dashboard
     const goToPetManagement = () => {
         navigate('/admin/pets');
+    };
+
+    // Navigate to home page
+    const goToHomePage = () => {
+        navigate('/home');
+    };
+
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
     };
 
     return (
@@ -100,7 +115,7 @@ const AppContent: React.FC = () => {
                         display: 'flex',
                         flexDirection: { xs: 'column', sm: 'row' },
                         alignItems: 'center',
-                        justifyContent: 'space-between', // Changed to space-between for better layout
+                        justifyContent: 'space-between',
                         mb: { xs: 3, sm: 4 },
                         position: 'relative'
                     }}>
@@ -176,7 +191,7 @@ const AppContent: React.FC = () => {
                             Buy a Pet
                         </Typography>
 
-                        {/* Add Pet Button on the right */}
+                        {/* Buttons on the right */}
                         <Box
                             sx={{
                                 display: 'flex',
@@ -184,8 +199,26 @@ const AppContent: React.FC = () => {
                                 justifyContent: 'flex-end',
                                 order: { xs: 3, sm: 3 },
                                 mt: { xs: 2, sm: 0 },
+                                gap: 2
                             }}
                         >
+                            <Button
+                                variant="outlined"
+                                onClick={goToHomePage}
+                                sx={{
+                                    bgcolor: 'transparent',
+                                    color: '#ffffff',
+                                    fontWeight: 'bold',
+                                    borderColor: '#ffffff',
+                                    '&:hover': {
+                                        bgcolor: 'rgba(255, 255, 255, 0.1)',
+                                        borderColor: '#ffffff',
+                                    }
+                                }}
+                            >
+                                Home
+                            </Button>
+
                             <Button
                                 variant="contained"
                                 startIcon={<AddIcon />}
@@ -199,7 +232,7 @@ const AppContent: React.FC = () => {
                                     }
                                 }}
                             >
-                                Add A Pet
+                                Add Pet
                             </Button>
                         </Box>
                     </Box>
@@ -256,6 +289,22 @@ const AppContent: React.FC = () => {
                 </Container>
             </Box>
 
+            {/* Snackbar for notifications */}
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={6000}
+                onClose={handleSnackbarClose}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            >
+                <Alert
+                    onClose={handleSnackbarClose}
+                    severity={snackbarSeverity}
+                    sx={{ width: '100%' }}
+                >
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
+
             <Footer />
         </Box>
     );
@@ -285,9 +334,9 @@ export const ContactProvider: React.FC<{ children: React.ReactNode }> = ({ child
     );
 };
 
-// We need to wrap AppContent with a NavigationWrapper to use useNavigate
-const NavigationWrapper: React.FC = () => {
-    return <AppContent />;
+// We need to wrap components with a NavigationWrapper to use useNavigate
+const BuyPetWrapper: React.FC = () => {
+    return <BuyPetContent />;
 };
 
 // Main App component with routing
@@ -297,12 +346,14 @@ const App: React.FC = () => {
             <CartProvider>
                 <ContactProvider>
                     <Routes>
-                        <Route path="/" element={<NavigationWrapper />} />
+                        <Route path="/" element={<Navigate to="/home" replace />} />
+                        <Route path="/home" element={<HomePage />} />
+                        <Route path="/buy" element={<BuyPetWrapper />} />
                         <Route path="/contact-owner/:petId" element={<UserDetailsDashboard />} />
                         <Route path="/contact" element={<UserDetailsDashboard />} />
-                        {/* Renamed component for clarity */}
                         <Route path="/admin/pets" element={<PetManagementDashboard />} />
-                        <Route path="*" element={<Navigate to="/" replace />} />
+                        <Route path="/admindb" element={<Navigate to="/admin/pets" replace />} />
+                        <Route path="*" element={<Navigate to="/home" replace />} />
                     </Routes>
                 </ContactProvider>
             </CartProvider>

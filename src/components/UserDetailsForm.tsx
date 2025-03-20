@@ -12,7 +12,8 @@ import {
     useTheme,
     useMediaQuery,
     alpha,
-    Container
+    Container,
+    Chip
 } from '@mui/material';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import EmailOutlineIcon from '@mui/icons-material/EmailOutlined';
@@ -359,15 +360,6 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
         return `LKR ${numericPrice.toFixed(0)}/=`;
     };
 
-    // Helper function to get pet emoji
-    const getPetEmoji = (petType: string | undefined): string => {
-        const type = petType?.toLowerCase() || '';
-        if (type.includes('dog')) return '🐕';
-        if (type.includes('cat')) return '🐈';
-        if (type.includes('bird')) return '🦜';
-        return '🐾';
-    };
-
     return (
         <Box sx={{ bgcolor: '#003366', minHeight: '100vh', padding: 2 }}>
             <Container maxWidth="lg">
@@ -410,7 +402,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
                                 petId ? `Contact About Pet #${petId}` : 'Contact Us'}
                     </Typography>
 
-                    {/* Display pet information if available */}
+                    {/* Display pet information if available - UPDATED STYLING */}
                     {selectedPet && (
                         <Box sx={{ mb: 4 }}>
                             <Card sx={{
@@ -425,40 +417,44 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
                                 border: '1px solid',
                                 borderColor: alpha(theme.palette.primary.main, 0.2)
                             }}>
+                                {/* UPDATED IMAGE CONTAINER */}
                                 <Box sx={{
                                     width: { xs: '100%', sm: '40%' },
-                                    height: { xs: 200, sm: 180 },
+                                    height: { xs: 220, sm: 200 },
                                     position: 'relative',
-                                    overflow: 'hidden'
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    overflow: 'hidden',
+                                    backgroundColor: alpha(theme.palette.primary.light, 0.05)
                                 }}>
                                     <CardMedia
                                         component="img"
                                         sx={{
                                             width: '100%',
                                             height: '100%',
-                                            objectFit: 'cover',
+                                            objectFit: 'contain',
+                                            padding: 1
                                         }}
                                         image={selectedPet.imageUrl || '/default-pet-image.jpg'}
                                         alt={selectedPet.name}
                                     />
-                                    <Box sx={{
-                                        position: 'absolute',
-                                        top: 10,
-                                        left: 10,
-                                        bgcolor: alpha('#000', 0.6),
-                                        color: 'white',
-                                        px: 1.5,
-                                        py: 0.5,
-                                        borderRadius: '12px',
-                                        fontSize: '0.875rem',
-                                        fontWeight: 600,
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: 0.5
-                                    }}>
-                                        <span>{getPetEmoji(selectedPet.petType || derivePetTypeFromBreed(selectedPet.breed))}</span>
-                                        {selectedPet.petType || derivePetTypeFromBreed(selectedPet.breed)}
-                                    </Box>
+                                    {/* UPDATED CHIP WITHOUT EMOJI */}
+                                    <Chip
+                                        label={selectedPet.petType || derivePetTypeFromBreed(selectedPet.breed)}
+                                        size="small"
+                                        sx={{
+                                            position: 'absolute',
+                                            top: 10,
+                                            left: 10,
+                                            bgcolor: alpha('#000', 0.6),
+                                            color: 'white',
+                                            fontWeight: 600,
+                                            '& .MuiChip-label': {
+                                                px: 1
+                                            }
+                                        }}
+                                    />
                                 </Box>
                                 <Box sx={{
                                     display: 'flex',

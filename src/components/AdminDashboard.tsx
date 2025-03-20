@@ -18,13 +18,8 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    IconButton,
     Tooltip,
     Avatar,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
     MenuItem,
     Select,
     FormControl,
@@ -40,14 +35,20 @@ import PersonIcon from '@mui/icons-material/Person';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import MessageIcon from '@mui/icons-material/Message';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PendingIcon from '@mui/icons-material/Pending';
 import NewReleasesIcon from '@mui/icons-material/NewReleases';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import IconButton from '@mui/material/IconButton';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 import { InquiryService, ContactInquiry, UserWithInquiriesDTO } from '../services/InquiryService';
 
 interface AdminDashboardProps {
@@ -404,22 +405,26 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onSnackbarMessage }) =>
                         </Typography>
                     )}
                 </Typography>
-                <Button
-                    variant="outlined"
-                    startIcon={refreshing ? <CircularProgress size={20} /> : <RefreshIcon />}
-                    onClick={handleRefresh}
-                    disabled={refreshing}
-                    sx={{
-                        borderColor: '#003366',
-                        color: '#003366',
-                        '&:hover': {
-                            borderColor: '#002244',
-                            backgroundColor: 'rgba(0, 51, 102, 0.04)'
-                        }
-                    }}
-                >
-                    {refreshing ? 'Refreshing...' : 'Refresh Data'}
-                </Button>
+                <Tooltip title="Refresh data">
+                    <span>
+                        <Button
+                            variant="outlined"
+                            startIcon={refreshing ? <CircularProgress size={20} /> : <RefreshIcon />}
+                            onClick={handleRefresh}
+                            disabled={refreshing}
+                            sx={{
+                                borderColor: '#003366',
+                                color: '#003366',
+                                '&:hover': {
+                                    borderColor: '#002244',
+                                    backgroundColor: 'rgba(0, 51, 102, 0.04)'
+                                }
+                            }}
+                        >
+                            {refreshing ? 'Refreshing...' : 'Refresh Data'}
+                        </Button>
+                    </span>
+                </Tooltip>
             </Box>
 
             {/* Summary Cards */}
@@ -827,31 +832,37 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onSnackbarMessage }) =>
                                                 <TableCell>
                                                     <Box sx={{ display: 'flex', gap: 1 }}>
                                                         <Tooltip title="View Details">
-                                                            <IconButton
-                                                                size="small"
-                                                                color="primary"
-                                                                onClick={() => handleOpenViewDialog(inquiry)}
-                                                            >
-                                                                <VisibilityIcon fontSize="small" />
-                                                            </IconButton>
+                                                            <span>
+                                                                <IconButton
+                                                                    size="small"
+                                                                    color="primary"
+                                                                    onClick={() => handleOpenViewDialog(inquiry)}
+                                                                >
+                                                                    <VisibilityIcon fontSize="small" />
+                                                                </IconButton>
+                                                            </span>
                                                         </Tooltip>
                                                         <Tooltip title="Change Status">
-                                                            <IconButton
-                                                                size="small"
-                                                                color="warning"
-                                                                onClick={() => handleOpenStatusDialog(inquiry)}
-                                                            >
-                                                                <EditIcon fontSize="small" />
-                                                            </IconButton>
+                                                            <span>
+                                                                <IconButton
+                                                                    size="small"
+                                                                    color="warning"
+                                                                    onClick={() => handleOpenStatusDialog(inquiry)}
+                                                                >
+                                                                    <EditIcon fontSize="small" />
+                                                                </IconButton>
+                                                            </span>
                                                         </Tooltip>
                                                         <Tooltip title="Delete">
-                                                            <IconButton
-                                                                size="small"
-                                                                color="error"
-                                                                onClick={() => handleOpenDeleteDialog(inquiry)}
-                                                            >
-                                                                <DeleteIcon fontSize="small" />
-                                                            </IconButton>
+                                                            <span>
+                                                                <IconButton
+                                                                    size="small"
+                                                                    color="error"
+                                                                    onClick={() => handleOpenDeleteDialog(inquiry)}
+                                                                >
+                                                                    <DeleteIcon fontSize="small" />
+                                                                </IconButton>
+                                                            </span>
                                                         </Tooltip>
                                                     </Box>
                                                 </TableCell>

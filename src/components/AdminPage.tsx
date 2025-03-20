@@ -23,7 +23,8 @@ import {
     Menu,
     MenuItem,
     Avatar,
-    Tooltip
+    Tooltip,
+    Button
 } from '@mui/material';
 import PetsIcon from '@mui/icons-material/Pets';
 import PeopleIcon from '@mui/icons-material/People';
@@ -34,6 +35,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import AddIcon from '@mui/icons-material/Add';
 import AddPetForm from '../AddPetForm';
 import RegisteredUsersTable from '../components/RegisteredUsersTable';
 import AdminDashboard from '../components/AdminDashboard';
@@ -93,6 +95,7 @@ const AdminPage: React.FC = () => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [notificationAnchorEl, setNotificationAnchorEl] = useState<null | HTMLElement>(null);
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+    const [petFormOpen, setPetFormOpen] = useState(false);
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -169,6 +172,19 @@ const AdminPage: React.FC = () => {
         if (isMobile) {
             setDrawerOpen(false);
         }
+    };
+
+    const handlePetFormOpen = () => {
+        setPetFormOpen(true);
+    };
+
+    const handlePetFormClose = () => {
+        setPetFormOpen(false);
+    };
+
+    const handlePetAdded = () => {
+        // Refresh pet data or perform any necessary updates
+        handleSnackbar("Pet added successfully", "success");
     };
 
     // Drawer content
@@ -311,30 +327,34 @@ const AdminPage: React.FC = () => {
 
                     {/* Notification Icon */}
                     <Tooltip title="Notifications">
-                        <IconButton
-                            color="inherit"
-                            onClick={handleNotificationMenuOpen}
-                        >
-                            <Badge badgeContent={notifications} color="error">
-                                <NotificationsIcon />
-                            </Badge>
-                        </IconButton>
+                        <span>
+                            <IconButton
+                                color="inherit"
+                                onClick={handleNotificationMenuOpen}
+                            >
+                                <Badge badgeContent={notifications} color="error">
+                                    <NotificationsIcon />
+                                </Badge>
+                            </IconButton>
+                        </span>
                     </Tooltip>
 
                     {/* User Menu */}
                     <Tooltip title="Account settings">
-                        <IconButton
-                            onClick={handleMenuOpen}
-                            size="small"
-                            sx={{ ml: 2 }}
-                            aria-controls={anchorEl ? 'account-menu' : undefined}
-                            aria-haspopup="true"
-                            aria-expanded={anchorEl ? 'true' : undefined}
-                        >
-                            <Avatar sx={{ width: 32, height: 32, bgcolor: '#001a33' }}>
-                                <AccountCircleIcon />
-                            </Avatar>
-                        </IconButton>
+                        <span>
+                            <IconButton
+                                onClick={handleMenuOpen}
+                                size="small"
+                                sx={{ ml: 2 }}
+                                aria-controls={anchorEl ? 'account-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={anchorEl ? 'true' : undefined}
+                            >
+                                <Avatar sx={{ width: 32, height: 32, bgcolor: '#001a33' }}>
+                                    <AccountCircleIcon />
+                                </Avatar>
+                            </IconButton>
+                        </span>
                     </Tooltip>
                 </Toolbar>
             </AppBar>
@@ -469,11 +489,37 @@ const AdminPage: React.FC = () => {
                     <AdminDashboard onSnackbarMessage={handleSnackbar} />
                 </TabPanel>
                 <TabPanel value={tabValue} index={1}>
-                    <AddPetForm onSnackbarMessage={handleSnackbar} />
+                    <Box sx={{ mb: 3, display: 'flex', justifyContent: 'flex-end' }}>
+                        <Button
+                            variant="contained"
+                            startIcon={<AddIcon />}
+                            onClick={handlePetFormOpen}
+                            sx={{
+                                backgroundColor: '#003366',
+                                '&:hover': {
+                                    backgroundColor: '#002244',
+                                },
+                            }}
+                        >
+                            Add New Pet
+                        </Button>
+                    </Box>
+                    <Typography variant="h6" component="h2" sx={{ mb: 3 }}>
+                        Pet Management
+                    </Typography>
+                    {/* Here you would typically have a table or list of pets */}
                 </TabPanel>
                 <TabPanel value={tabValue} index={2}>
                     <RegisteredUsersTable onSnackbarMessage={handleSnackbar} />
                 </TabPanel>
+
+                {/* Pet Form as a Drawer */}
+                <AddPetForm
+                    onSnackbarMessage={handleSnackbar}
+                    onPetAdded={handlePetAdded}
+                    isOpen={petFormOpen}
+                    onClose={handlePetFormClose}
+                />
 
                 <Snackbar
                     open={snackbar.open}

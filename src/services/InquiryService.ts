@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { INQUIRY_API_URL } from '../constants';
 
 // Updated UserInquiry interface to match the UserDetailsForm component
@@ -138,6 +138,11 @@ function derivePetTypeFromBreed(breed: string): string {
     return firstWord || 'PET';
 }
 
+// Type guard to check if an error is an AxiosError
+function isAxiosError(error: unknown): error is AxiosError {
+    return (error as AxiosError).isAxiosError !== undefined;
+}
+
 export class InquiryService {
     // Get all inquiries
     static async getAllInquiries(): Promise<UserInquiry[]> {
@@ -190,7 +195,7 @@ export class InquiryService {
             console.error('Error fetching dashboard data:', error);
 
             // More detailed error logging
-            if (axios.isAxiosError(error)) {
+            if (isAxiosError(error)) {
                 if (error.response) {
                     // The request was made and the server responded with a status code
                     // that falls out of the range of 2xx
@@ -294,7 +299,7 @@ export class InquiryService {
             return response.data;
         } catch (error) {
             console.error('Error creating inquiry:', error);
-            if (axios.isAxiosError(error) && error.response) {
+            if (isAxiosError(error) && error.response) {
                 console.error('Server response:', error.response.data);
                 throw new Error(`Server error: ${JSON.stringify(error.response.data)}`);
             }
@@ -328,7 +333,7 @@ export class InquiryService {
             return response.data;
         } catch (error) {
             console.error('Error creating contact inquiry:', error);
-            if (axios.isAxiosError(error) && error.response) {
+            if (isAxiosError(error) && error.response) {
                 console.error('Server response:', error.response.data);
                 throw new Error(`Server error: ${JSON.stringify(error.response.data)}`);
             }
@@ -399,7 +404,7 @@ export class InquiryService {
             return response.data;
         } catch (error) {
             console.error(`Error updating inquiry ${inquiry.id}:`, error);
-            if (axios.isAxiosError(error) && error.response) {
+            if (isAxiosError(error) && error.response) {
                 console.error('Server response:', error.response.data);
                 throw new Error(`Server error: ${JSON.stringify(error.response.data)}`);
             }
@@ -445,7 +450,7 @@ export class InquiryService {
         } catch (error) {
             console.error(`Error updating inquiry status for ${id}:`, error);
 
-            if (axios.isAxiosError(error)) {
+            if (isAxiosError(error)) {
                 if (error.response) {
                     console.error(`Server response: ${error.response.status}`);
                     console.error('Response data:', error.response.data);
@@ -627,7 +632,7 @@ export class InquiryService {
             console.error(`Error updating pet inquiry status:`, error);
 
             // Additional error details for debugging
-            if (axios.isAxiosError(error) && error.response) {
+            if (isAxiosError(error) && error.response) {
                 console.error(`Server response: ${error.response.status} - ${JSON.stringify(error.response.data)}`);
             }
 
@@ -654,52 +659,56 @@ export class InquiryService {
     }
 
     // Submit a pet inquiry form - specifically for the contact-form endpoint
-    // static async submitPetInquiryForm(formData: {
-    //     name: string;
-    //     email: string;
-    //     contactNo: string;
-    //     address: string;
-    //     message: string;
-    //     petId: number;
-    // }): Promise<PetInquiryResponseDTO> {
-    //     try {
-    //         console.log('Submitting pet inquiry form to contact-form endpoint:', formData);
+    /* Keeping commented out to avoid unused interface warnings
+    static async submitPetInquiryForm(formData: {
+        name: string;
+        email: string;
+        contactNo: string;
+        address: string;
+        message: string;
+        petId: number;
+    }): Promise<any> {
+        try {
+            console.log('Submitting pet inquiry form to contact-form endpoint:', formData);
 
-    //         // Make sure petId is correctly formatted as a number
-    //         const petId = typeof formData.petId === 'string'
-    //             ? parseInt(formData.petId, 10)
-    //             : formData.petId;
+            // Make sure petId is correctly formatted as a number
+            const petId = typeof formData.petId === 'string'
+                ? parseInt(formData.petId, 10)
+                : formData.petId;
 
-    //         // Format data for the contact-form endpoint
-    //         const requestData: PetInquiryFormDTO = {
-    //             name: formData.name,
-    //             email: formData.email,
-    //             contactNo: formData.contactNo,
-    //             address: formData.address || '',
-    //             message: formData.message,
-    //             petId: petId
-    //         };
+            // Format data for the contact-form endpoint
+            const requestData = {
+                name: formData.name,
+                email: formData.email,
+                contactNo: formData.contactNo,
+                address: formData.address || '',
+                message: formData.message,
+                petId: petId
+            };
 
-    //         // Call the specific contact-form endpoint
-    //         const response = await axios.post<PetInquiryResponseDTO>(`${API_BASE_URL}/contact-form`, requestData);
-    //         console.log('Pet inquiry form submission response:', response.data);
+            // Call the specific contact-form endpoint
+            const response = await axios.post(`${API_BASE_URL}/contact-form`, requestData);
+            console.log('Pet inquiry form submission response:', response.data);
 
-    //         // After successful submission, refresh the dashboard data cache
-    //         setTimeout(() => this.refreshDashboardData().catch(e => console.warn('Background refresh failed:', e)), 1000);
+            // After successful submission, refresh the dashboard data cache
+            setTimeout(() => this.refreshDashboardData().catch(e => console.warn('Background refresh failed:', e)), 1000);
 
-    //         return response.data;
-    //     } catch (error) {
-    //         console.error('Error submitting pet inquiry form:', error);
-    //         if (axios.isAxiosError(error) && error.response) {
-    //             console.error('Server response:', error.response.data);
-    //             throw new Error(`Server error: ${JSON.stringify(error.response.data)}`);
-    //         }
-    //         throw error;
-    //     }
-    // }
+            return response.data;
+        } catch (error) {
+            console.error('Error submitting pet inquiry form:', error);
+            if (isAxiosError(error) && error.response) {
+                console.error('Server response:', error.response.data);
+                throw new Error(`Server error: ${JSON.stringify(error.response.data)}`);
+            }
+            throw error;
+        }
+    }
+    */
 }
 
-// Add this interface to match your backend DTO
+// These interfaces are used in the commented-out code, so they're not needed
+// but I'm keeping them commented out for future reference
+/*
 interface PetInquiryFormDTO {
     name: string;
     email: string;
@@ -709,7 +718,6 @@ interface PetInquiryFormDTO {
     petId: number;
 }
 
-// Add this interface for the response from the contact-form endpoint
 interface PetInquiryResponseDTO {
     id: number;
     name: string;
@@ -722,4 +730,4 @@ interface PetInquiryResponseDTO {
     createdAt: string;
     updatedAt: string;
 }
-
+*/

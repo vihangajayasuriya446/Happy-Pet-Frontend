@@ -283,12 +283,11 @@ const PetList: React.FC<PetListProps> = ({
 
                 setPetsData(filteredPets);
                 setError(null);
+                setLoading(false);
             })
             .catch(err => {
                 console.error("Error fetching pets:", err);
                 setError("Failed to load pets. Please try again later.");
-            })
-            .finally(() => {
                 setLoading(false);
             });
     }, [searchQuery, petType, birthYear]);
