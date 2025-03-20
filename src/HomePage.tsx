@@ -156,7 +156,7 @@ const HomePage: React.FC = () => {
           >
             <Box sx={{ width: 80, height: 80, mb: 2 }}>
               <img
-                src="/src/assets/buy_pet_icon.png"
+                src="/src/assets/buy-pet.png"
                 alt="Buy Pet Icon"
                 style={{ width: "100%", height: "100%", objectFit: "contain" }}
               />

@@ -7,30 +7,51 @@ import {
     Button,
     Typography,
     Box,
-    CircularProgress,
     Modal,
-    useTheme
+    useTheme,
+    Skeleton,
+    Collapse,
 } from '@mui/material';
 import AdoptionForm from './AdoptionForm';
 import { fetchAvailablePets } from './petService';
 import { Pet } from './types';
-import { styled } from '@mui/system';
+import { styled, alpha } from '@mui/system';
+import PetsIcon from '@mui/icons-material/Pets';
+import CakeIcon from '@mui/icons-material/Cake';
+import FemaleIcon from '@mui/icons-material/Female';
+import MaleIcon from '@mui/icons-material/Male';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
-// Styled Card for Hover Effect
+// Styled Card with enhanced hover effects
 const StyledCard = styled(Card)(({ theme }) => ({
+    borderRadius: '16px',
+    overflow: 'hidden',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+    transition: 'all 0.3s ease-in-out',
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'space-between',
+    position: 'relative',
     backgroundColor: '#ffffff',
-    borderRadius: '16px',
-    boxShadow: Array.isArray(theme.shadows) && theme.shadows.length > 3 ? theme.shadows[3] : 'none',
-    overflow: 'hidden',
-    transition: 'transform 0.2s ease-in-out',
     '&:hover': {
-        transform: 'scale(1.05)',
-        boxShadow: Array.isArray(theme.shadows) && theme.shadows.length > 5 ? theme.shadows[5] : 'none',
+        transform: 'translateY(-8px)',
+        boxShadow: `0 12px 24px ${alpha(theme.palette.primary.main, 0.2)}`,
     },
+}));
+
+// Gradient overlay for the pet image
+const GradientOverlay = styled(Box)(({ theme }) => ({
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: `linear-gradient(to bottom, ${alpha(theme.palette.common.black, 0)} 0%, ${alpha(
+        theme.palette.common.black,
+        0.7
+    )} 100%)`,
 }));
 
 const PetGrid = () => {
@@ -39,12 +60,13 @@ const PetGrid = () => {
     const [error, setError] = useState<string | null>(null);
     const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
     const [open, setOpen] = React.useState(false); // Modal open state
+    const [expandedPetId, setExpandedPetId] = useState<string | null>(null); // Track expanded pet description
+
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
     // Access the theme
     const theme = useTheme();
-
 
     useEffect(() => {
         const loadPets = async () => {
@@ -92,10 +114,42 @@ const PetGrid = () => {
         handleClose(); // Close the modal
     };
 
+    // Toggle pet description visibility
+    const toggleDescription = (petId: string) => {
+        setExpandedPetId((prevId) => (prevId === petId ? null : petId));
+    };
+
     if (loading) {
         return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
-                <CircularProgress />
+            <Box sx={{ padding: '2rem', maxWidth: '1500px', margin: '0 auto', paddingTop: '80px' }}>
+                <Typography
+                    variant="h3"
+                    sx={{
+                        textAlign: 'center',
+                        fontWeight: 'bold',
+                        color: 'white',
+                        mb: 4,
+                        fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' }
+                    }}
+                >
+                    Adopt a Pet
+                </Typography>
+                <Grid container spacing={4}>
+                    {[...Array(8)].map((_, index) => (
+                        <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                            <StyledCard>
+                                <Skeleton variant="rectangular" height={300} />
+                                <CardContent>
+                                    <Skeleton variant="text" width="60%" height={40} />
+                                    <Skeleton variant="text" width="80%" height={20} />
+                                    <Skeleton variant="text" width="80%" height={20} />
+                                    <Skeleton variant="text" width="80%" height={20} />
+                                    <Skeleton variant="rectangular" width="100%" height={40} sx={{ mt: 2 }} />
+                                </CardContent>
+                            </StyledCard>
+                        </Grid>
+                    ))}
+                </Grid>
             </Box>
         );
     }
@@ -128,7 +182,7 @@ const PetGrid = () => {
                     textAlign: 'center',
                     fontWeight: 'bold',
                     color: 'white',
-                    mb: 4,
+                    mb: 2,
                     fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' }
                 }}
             >
@@ -140,91 +194,112 @@ const PetGrid = () => {
                     pets.filter(pet => pet.status !== 'Adopted').map((pet) => (
                         <Grid item xs={12} sm={6} md={4} lg={3} key={pet.pet_id}>
                             <StyledCard>
-                                <CardMedia
-                                    component="img"
-                                    sx={{
-                                        height: '400px',
-                                        objectFit: 'cover',
-                                        width: '100%'
-                                    }}
-                                    image={`http://localhost:8080${pet.image_url}`}
-                                    alt={pet.pet_name}
-                                />
-                                <CardContent>
-                                    <Typography
-                                        gutterBottom
-                                        variant="h5"
-                                        component="div"
+                                {/* Pet Image with Gradient Overlay */}
+                                <Box sx={{ position: 'relative', height: '300px', overflow: 'hidden' }}>
+                                    <CardMedia
+                                        component="img"
                                         sx={{
-                                            color: theme.palette.primary.main, // Use primary color
+                                            height: '100%',
+                                            width: '100%',
+                                            objectFit: 'cover',
+                                            transition: 'transform 0.3s ease-in-out',
+                                            '&:hover': {
+                                                transform: 'scale(1.1)',
+                                            },
+                                        }}
+                                        image={`http://localhost:8080${pet.image_url}`}
+                                        alt={pet.pet_name}
+                                    />
+                                    <GradientOverlay />
+                                    {/* Pet Name Overlay */}
+                                    <Typography
+                                        variant="h5"
+                                        sx={{
+                                            position: 'absolute',
+                                            bottom: 16,
+                                            left: 16,
+                                            color: 'white',
                                             fontWeight: 'bold',
-                                            textAlign: 'center',
-                                            fontSize: { xs: '1.2rem', sm: '1.3rem', md: '1.5rem' } // Responsive font size
+                                            fontSize: '1.5rem',
+                                            textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
                                         }}
                                     >
                                         {pet.pet_name}
                                     </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        color="text.secondary"
-                                        sx={{
-                                            mb: 2,
-                                            textAlign: 'justify',
-                                            hyphens: 'auto',
-                                            fontSize: { xs: '0.8rem', sm: '0.9rem', md: '1rem' }, // Responsive font size
-                                            color: theme.palette.text.secondary // Use theme's secondary text color
-                                        }}
-                                    >
-                                        {pet.pet_description || `Hi I am ${pet.pet_name}. I'm a ${pet.pet_age} year old ${pet.pet_breed} ${pet.pet_species.toLowerCase()}. If you'd like to adopt me, click the button below.`}
-                                    </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        sx={{
-                                            mb: 1,
-                                            color: theme.palette.text.secondary, // Use theme's secondary text color
-                                            fontSize: { xs: '0.7rem', sm: '0.8rem', md: '0.9rem' } // Responsive font size
-                                        }}
-                                    >
-                                        <strong>Age:</strong> {pet.pet_age} years
-                                    </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        sx={{
-                                            mb: 1,
-                                            color: theme.palette.text.secondary, // Use theme's secondary text color
-                                            fontSize: { xs: '0.7rem', sm: '0.8rem', md: '0.9rem' } // Responsive font size
-                                        }}
-                                    >
-                                        <strong>Species:</strong> {pet.pet_species}
-                                    </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        sx={{
-                                            mb: 1,
-                                            color: theme.palette.text.secondary, // Use theme's secondary text color
-                                            fontSize: { xs: '0.7rem', sm: '0.8rem', md: '0.9rem' } // Responsive font size
-                                        }}
-                                    >
-                                        <strong>Breed:</strong> {pet.pet_breed}
-                                    </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        sx={{
-                                            mb: 2,
-                                            color: theme.palette.text.secondary, // Use theme's secondary text color
-                                            fontSize: { xs: '0.7rem', sm: '0.8rem', md: '0.9rem' } // Responsive font size
-                                        }}
-                                    >
-                                        <strong>Gender:</strong> {pet.pet_gender}
-                                    </Typography>
+                                </Box>
+
+                                <CardContent>
+                                    {/* Pet Details with Icons */}
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                        <CakeIcon fontSize="small" sx={{ color: theme.palette.text.secondary }} />
+                                        <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                                            {pet.pet_age} years
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                        <PetsIcon fontSize="small" sx={{ color: theme.palette.text.secondary }} />
+                                        <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                                            {pet.pet_breed}
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                                        {pet.pet_gender.toLowerCase() === 'male' ? (
+                                            <MaleIcon fontSize="small" sx={{ color: theme.palette.text.secondary }} />
+                                        ) : (
+                                            <FemaleIcon fontSize="small" sx={{ color: theme.palette.text.secondary }} />
+                                        )}
+                                        <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                                            {pet.pet_gender}
+                                        </Typography>
+                                    </Box>
+
+                                    {/* Pet Description */}
+                                    <Box sx={{ mb: 2 }}>
+                                        <Button
+                                            fullWidth
+                                            variant="text"
+                                            endIcon={
+                                                expandedPetId === pet.pet_id.toString() ? <ExpandLessIcon /> : <ExpandMoreIcon />
+                                            }
+                                            onClick={() => toggleDescription(pet.pet_id.toString())}
+                                            sx={{
+                                                color: theme.palette.primary.main,
+                                                textTransform: 'none',
+                                                fontWeight: 'bold',
+                                            }}
+                                        >
+                                            {expandedPetId === pet.pet_id.toString() ? 'Hide Description' : 'Read Description'}
+                                        </Button>
+                                        <Collapse in={expandedPetId === pet.pet_id.toString()}>
+                                            <Typography
+                                                variant="body2"
+                                                sx={{
+                                                    color: theme.palette.text.secondary,
+                                                    fontStyle: 'italic',
+                                                    mt: 1,
+                                                }}
+                                            >
+                                                {pet.pet_description ||
+                                                    `Hi, I am ${pet.pet_name}. I'm a ${pet.pet_age} year old ${pet.pet_breed} ${pet.pet_species.toLowerCase()}. If you'd like to adopt me, click the button below.`}
+                                            </Typography>
+                                        </Collapse>
+                                    </Box>
+
+                                    {/* Adopt Button */}
                                     <Button
                                         fullWidth
                                         variant="contained"
+                                        startIcon={<FavoriteBorderIcon />}
                                         sx={{
                                             mt: 2,
-                                            backgroundColor: theme.palette.primary.main, // Use primary color
+                                            backgroundColor: theme.palette.primary.main,
                                             color: '#ffffff',
-                                            '&:hover': { backgroundColor: theme.palette.primary.dark } // Use darker shade on hover
+                                            borderRadius: '12px',
+                                            '&:hover': {
+                                                backgroundColor: theme.palette.primary.dark,
+                                                transform: 'translateY(-2px)',
+                                            },
+                                            transition: 'all 0.3s ease',
                                         }}
                                         onClick={() => handleAdoptClick(pet)}
                                     >
@@ -236,12 +311,19 @@ const PetGrid = () => {
                     ))
                 ) : (
                     <Grid item xs={12}>
-                        <Typography
-                            variant="h6"
-                            sx={{ textAlign: 'center', color: 'white', mt: 4 }}
-                        >
-                            No pets available for adoption at the moment.
-                        </Typography>
+                        <Box sx={{ textAlign: 'center', mt: 4 }}>
+                            <img
+                                src="/no-pets-illustration.svg" // Add a placeholder illustration
+                                alt="No pets available"
+                                style={{ width: '200px', height: '200px' }}
+                            />
+                            <Typography
+                                variant="h6"
+                                sx={{ textAlign: 'center', color: 'white', mt: 2 }}
+                            >
+                                No pets available for adoption at the moment.
+                            </Typography>
+                        </Box>
                     </Grid>
                 )}
             </Grid>
@@ -258,9 +340,9 @@ const PetGrid = () => {
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
-                    width: 400,
+                    width: { xs: '90%', sm: '400px' },
                     bgcolor: 'background.paper',
-                    border: '2px solid #000',
+                    borderRadius: '16px',
                     boxShadow: 24,
                     p: 4,
                 }}>

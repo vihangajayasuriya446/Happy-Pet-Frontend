@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Button,
   Paper,
   Table,
   TableBody,
@@ -13,6 +12,7 @@ import {
   Box,
   CircularProgress,
   Stack,
+  Button,
 } from '@mui/material';
 import { Adoption } from './types';
 
@@ -93,11 +93,7 @@ const UserDetailsTable: React.FC<UserDetailsTableProps> = ({
                 <TableCell sx={{ textAlign: 'center' }}>{row.email}</TableCell>
                 <TableCell sx={{ textAlign: 'center' }}>{row.address}</TableCell>
                 <TableCell sx={{ textAlign: 'center' }}>
-                  <Chip
-                    label={row.status}
-                    color={getStatusColor(row.status)}
-                    size="small"
-                  />
+                  <Chip label={row.status} color={getStatusColor(row.status)} size="small" />
                 </TableCell>
                 <TableCell sx={{ textAlign: 'center' }}>
                   {new Date(row.applied_at).toLocaleDateString()}

@@ -11,6 +11,7 @@ export interface Pet {
   image_url?: string;  //This is what we want to load
   created_at?: string;
   status: 'Pending' | 'Approved' | 'Rejected' | 'Available' | 'Adopted';
+  isNew?: boolean;
 }
 
 export enum PetGender {
