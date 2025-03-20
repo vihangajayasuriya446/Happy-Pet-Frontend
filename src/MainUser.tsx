@@ -1,4 +1,6 @@
 import { useState } from "react";
+
+import { useNavigate } from 'react-router-dom';
 import {
   Typography,
   Container,
@@ -37,6 +39,10 @@ const MainPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+
+  const handleOwnerForm = (petId: number) => {
+    navigate(`/OwnerForm/${petId}`);
+  };
 
   const breeds: { [key: string]: string[] } = {
     Dog: [
@@ -355,18 +361,13 @@ const MainPage = () => {
                               Location: {pet.location}
                             </Typography>
                             <Button
-                              variant="contained"
-                              fullWidth
-                              sx={{
-                                mt: 2,
-                                bgcolor: "#002855",
-                                color: "white",
-                                borderRadius: "8px",
-                                "&:hover": { bgcolor: "#001f4d" },
-                              }}
-                            >
-                              Contact Owner
-                            </Button>
+                variant="contained"
+                fullWidth
+                sx={{ mt: 2, bgcolor: "#002855", color: "white" }}
+                onClick={() => handleOwnerForm(pet.id)} 
+              >
+                Contact Owner
+              </Button>
                           </CardContent>
                         </Card>
                       </Grid>
