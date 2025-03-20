@@ -39,6 +39,8 @@ const MainPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+  const navigate = useNavigate();
+
 
   const handleOwnerForm = (petId: number) => {
     navigate(`/OwnerForm/${petId}`);
