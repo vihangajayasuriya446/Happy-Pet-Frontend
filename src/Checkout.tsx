@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../styles/HomePage.module.css";
 
-const HomePage: React.FC = () => {
+const Checkout: React.FC = () => {
   const navigate = useNavigate();
 
   return (
@@ -22,4 +22,4 @@ const HomePage: React.FC = () => {
   );
 };
 
-export default HomePage;
+export default Checkout;

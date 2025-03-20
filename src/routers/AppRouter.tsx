@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import HomePage from "../components/HomePage";
-import PaymentPage from "../components/PaymentPage";
-import DialogPayment from "../components/DialogPayment";
+import HomePage from "../Checkout";
+import PaymentPage from "../PaymentPage";
+import DialogPayment from "../DialogPayment";
 import { useState } from "react";
 
 const AppRouter = () => {
