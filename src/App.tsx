@@ -44,19 +44,8 @@ const App: React.FC = () => {
           <Route path="/owners" element={<OwnerTable />} />
         </Routes>
 
-        <CartProvider>
-                <ContactProvider>
-                    <Routes>
-                        
-                        <Route path="/buy" element={<BuyPetPage />} />
-                        <Route path="/contact-owner/:petId" element={<UserDetailsDashboard />} />
-                        <Route path="/contact" element={<UserDetailsDashboard />} />
-                        <Route path="/admin/pets" element={<PetManagementDashboard />} />
-                        <Route path="/admindb" element={<Navigate to="/admin/pets" replace />} />
-                       
-                    </Routes>
-                </ContactProvider>
-            </CartProvider>
+        
+            
         
         <Footer />
       </Box>
