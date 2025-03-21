@@ -52,7 +52,12 @@ const OwnerTable: React.FC = () => {
     const fetchOwners = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('http://localhost:8080/api/v1/getowner');
+        const response = await fetch('http://localhost:8080/api/v1/getowners', {
+          headers: {
+            'Authorization': `Bearer ${token}` // Include the token in the authorization header
+          }
+        });
+
         if (!response.ok) {
           throw new Error('Failed to fetch owners');
         }
