@@ -17,6 +17,9 @@ import PrivacyPolicy from './PrivacyPolicy';
 import OwnerForm from './OwnerForm';
 import OwnerTable from './OwnerTable';
 
+import User from './Pets';
+import AdoptionPage from './AdoptionPage';
+import UserDetailsDashboard from './UserDetailsDashboard';
 
 const App: React.FC = () => {
   return (
@@ -37,6 +40,8 @@ const App: React.FC = () => {
           <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="/OwnerForm/:petId" element={<OwnerForm />} /> 
           <Route path="/owners" element={<OwnerTable />} />
+          <Route path="/adopt" element={<AdoptionPage />} />
+          <Route path="/user-dashboard" element={<UserDetailsDashboard />} />
         </Routes>
         <Footer />
       </Box>
