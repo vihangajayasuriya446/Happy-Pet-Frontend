@@ -377,7 +377,7 @@ const HomePage: React.FC = () => {
           variant="contained"
           color="secondary"
           sx={{ mt: 2, px: 4, py: 1, borderRadius: "20px" }}
-          onClick={() => handleNavigation("/admindb")}
+          onClick={() => handleNavigation("/admin")}
         >
           Admin Dashboard
         </Button>
