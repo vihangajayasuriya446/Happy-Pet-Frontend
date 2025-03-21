@@ -51,7 +51,15 @@ const PetTable: React.FC<PetTableProps> = ({ rows, deletePet, onOpenForm, onEdit
   };
 
   return (
-    <Container maxWidth="xl" sx={{ px: { xs: 1, sm: 2, md: 3 }, py: 2 }}>
+    <Container
+      maxWidth="xl"
+      sx={{
+        px: { xs: 1, sm: 2, md: 3 },
+        py: 2,
+        width: "100%",
+        overflow: "hidden", // Prevent horizontal overflow
+      }}
+    >
       {/* Header with Title */}
       <Box
         sx={{
@@ -82,7 +90,7 @@ const PetTable: React.FC<PetTableProps> = ({ rows, deletePet, onOpenForm, onEdit
           width: "100%",
         }}
       >
-        {/* Search Bar (Left Side) - Matched with UserDetailsDashboard */}
+        {/* Search Bar (Left Side) */}
         <TextField
           placeholder="Search Pet"
           variant="outlined"
@@ -124,18 +132,23 @@ const PetTable: React.FC<PetTableProps> = ({ rows, deletePet, onOpenForm, onEdit
         </Button>
       </Box>
 
-      {/* Pet Table - Fixed width and stability issues */}
-      <Box sx={{ width: '100%', overflow: 'hidden' }}>
+      {/* Pet Table - Scrollable and Stable */}
+      <Box
+        sx={{
+          width: "100%",
+          overflowX: "auto", // Allow horizontal scrolling for the table
+          borderRadius: "8px",
+          boxShadow: 3,
+        }}
+      >
         <TableContainer
           component={Paper}
           sx={{
-            borderRadius: "8px",
-            boxShadow: 3,
             width: "100%",
-            tableLayout: "fixed",
+            tableLayout: "fixed", // Ensure consistent column widths
           }}
         >
-          <Table stickyHeader sx={{ minWidth: 650 }}>
+          <Table stickyHeader>
             <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
               <TableRow>
                 <TableCell width="5%" sx={{ fontWeight: "bold", color: "#002855", textAlign: "center" }}>ID</TableCell>

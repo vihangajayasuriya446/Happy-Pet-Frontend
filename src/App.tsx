@@ -3,11 +3,13 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import { Box } from '@mui/material';
-import Users from './Pets';
+import Pets from './Pets';
 import HomePage from './HomePage';
 import ContactUsPage from './ContactUsPage';
 import AdoptionPage from './AdoptionPage';
 import UserDetailsDashboard from './UserDetailsDashboard';
+
+import { Navigate } from 'react-router-dom';
 
 const App: React.FC = () => {
   return (
@@ -16,10 +18,12 @@ const App: React.FC = () => {
         <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/dashboard" element={<Users />} />
+          <Route path="/petdashboard" element={<Pets />} />
           <Route path="/adopt" element={<AdoptionPage />} />
           <Route path="/contactus" element={<ContactUsPage />} />
           <Route path="/user-dashboard" element={<UserDetailsDashboard />} />
+          {/* Redirect from /dashboard to /petdashboard */}
+          <Route path="/dashboard" element={<Navigate to="/petdashboard" replace />} />
         </Routes>
         <Footer />
       </Box>
