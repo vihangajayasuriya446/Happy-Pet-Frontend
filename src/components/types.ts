@@ -14,12 +14,15 @@ export interface Pet {
     id: number;
     name: string;
     petType: string;
-    price: number;
+    price: string | number;
     breed: string;
     birthYear: string;
     gender: string;
+    age?: string;
     imageUrl: string | null;
+    image?: string | null;
     purchased: boolean;
+
 }
 
 export interface PetFormData {

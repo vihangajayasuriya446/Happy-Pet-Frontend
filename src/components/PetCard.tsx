@@ -20,7 +20,7 @@ import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import { useCart } from "../contexts/CartContext";
-import { Pet } from "../App";
+import { Pet } from "./types";
 import { useNavigate } from "react-router-dom";
 import { alpha } from "@mui/material/styles";
 
@@ -523,8 +523,8 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                                 color: quantity === 0 ? alpha(themeColor, 0.3) : themeColor,
                                 padding: '6px',
                                 ml: 0.5,
-                                width: '20px',  // Match the width of the increment button
-                                height: '32px', // Match the height of the increment button
+                                width: '20px',
+                                height: '32px',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center'

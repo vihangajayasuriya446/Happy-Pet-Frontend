@@ -258,11 +258,6 @@ const UserDetailsDashboard: React.FC = () => {
         navigate('/');
     };
 
-    // Navigation function to the pet management dashboard
-    const goToPetManagementDashboard = () => {
-        navigate('/admin/pets');
-    };
-
     const resetForm = () => {
         setSelectedInquiry(null);
         setSubmitted(false);
@@ -287,54 +282,6 @@ const UserDetailsDashboard: React.FC = () => {
 
     const handleCloseSnackbar = () => {
         setSnackbar(prev => ({ ...prev, open: false }));
-    };
-
-    // Determine page title based on context
-    const getPageTitle = () => {
-        if (selectedInquiry) {
-            return 'Edit Inquiry';
-        } else if (petId) {
-            return 'Contact About Pet';
-        } else {
-            // Check if there's a selected pet in localStorage
-            const petDataString = localStorage.getItem('selectedPet');
-            if (petDataString) {
-                try {
-                    const petData = JSON.parse(petDataString);
-                    return `Contact About ${petData.name}`;
-                } catch (error) {
-                    console.error('Error parsing pet data from localStorage:', error);
-                }
-            }
-            return 'Contact Us';
-        }
-    };
-
-    // Try to submit using the contact-form endpoint if applicable
-    const tryContactFormEndpoint = async (formData: Omit<UserInquiry, 'id'>) => {
-        // Only use this for pet inquiries
-        if (!formData.petId) return false;
-
-        try {
-            // Format data for the contact-form endpoint
-            const contactFormData = {
-                name: formData.userName,
-                email: formData.userEmail,
-                contactNo: formData.userPhone,
-                address: formData.address || '',
-                message: formData.userMessage,
-                petId: formData.petId
-            };
-
-            console.log("Trying contact-form endpoint with data:", contactFormData);
-
-            const response = await InquiryService.submitPetInquiryForm(contactFormData);
-            console.log("Contact form API response:", response);
-            return true;
-        } catch (error) {
-            console.warn("Contact-form endpoint failed, will try standard endpoint:", error);
-            return false;
-        }
     };
 
     const handleFormSubmit = async (formData: Omit<UserInquiry, 'id'>) => {

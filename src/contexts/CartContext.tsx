@@ -1,6 +1,20 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
-import { Pet } from '../App';
 import cartService, { CartItemResponse } from '../services/CartService';
+
+// Import Pet interface directly instead of from App
+export interface Pet {
+    id: number;
+    name: string;
+    petType: string;
+    price: string | number;
+    breed: string;
+    birthYear: string;
+    gender?: string;
+    age?: string;
+    imageUrl: string | null;
+    image?: string | null;
+    purchased: boolean;
+}
 
 // Define the structure for a cart item
 export interface CartItem {
@@ -47,7 +61,7 @@ const DEFAULT_IMAGE = '/default-pet-image.png';
 const globalImageCache: Record<string, string> = {};
 
 // Helper function to determine pet type
-const determinePetType = (pet: any): string => {
+const determinePetType = (pet: Pet): string => {
     // First check if petType is already set
     if (pet.petType) {
         // Convert to lowercase for case-insensitive comparison
@@ -63,7 +77,7 @@ const determinePetType = (pet: any): string => {
     }
 
     // Check for category property that might be used in API responses
-    if (pet.category) {
+    if ('category' in pet && typeof pet.category === 'string') {
         const categoryLower = pet.category.toLowerCase();
         if (categoryLower === 'dog') return 'Dog';
         if (categoryLower === 'cat') return 'Cat';
@@ -72,7 +86,7 @@ const determinePetType = (pet: any): string => {
     }
 
     // Check if there's a "type" field in the pet object
-    if (pet.type) {
+    if ('type' in pet && typeof pet.type === 'string') {
         const typeLower = pet.type.toLowerCase();
         if (typeLower === 'dog') return 'Dog';
         if (typeLower === 'cat') return 'Cat';
@@ -111,7 +125,7 @@ const determinePetType = (pet: any): string => {
     }
 
     // If we have a description field, check that too
-    if (pet.description) {
+    if ('description' in pet && typeof pet.description === 'string') {
         const descLower = pet.description.toLowerCase();
         if (
             descLower.includes('bird') ||
@@ -200,7 +214,8 @@ const mapCartItemResponseToCartItem = (item: CartItemResponse): CartItem => {
         petType: petType, // Use our determined pet type
         imageUrl: imageUrl,
         image: imageUrl, // Set both imageUrl and image for compatibility
-        gender: item.pet.gender // Include gender from the API response
+        gender: item.pet.gender, // Include gender from the API response
+        purchased: item.pet.purchased
     };
 
     // Log the processed pet data with image URL

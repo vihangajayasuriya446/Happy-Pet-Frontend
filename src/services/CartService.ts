@@ -1,5 +1,20 @@
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { CART_API_URL } from '../constants';
+
+// Define AxiosError interface directly
+interface AxiosError {
+    isAxiosError: boolean;
+    config: Record<string, unknown>;
+    code?: string;
+    request?: unknown;
+    response?: {
+        data: unknown;
+        status: number;
+        headers: Record<string, unknown>;
+        config: Record<string, unknown>;
+    };
+    message?: string;
+}
 
 const CART_STORAGE_KEY = 'pet_shop_cart';
 
@@ -69,6 +84,14 @@ const processCartItems = (items: CartItemResponse[]): CartItemResponse[] => {
         pet: handleMissingGender(item.pet)
     }));
 };
+
+// Type guard to check if an error is an AxiosError
+function isAxiosError(error: unknown): error is AxiosError {
+    return error !== null &&
+        typeof error === 'object' &&
+        'isAxiosError' in error &&
+        (error as {isAxiosError?: boolean}).isAxiosError === true;
+}
 
 const cartService = {
     // Get all items in cart
@@ -213,8 +236,7 @@ const cartService = {
             } catch {
                 console.error('Local fallback failed');
 
-                const axiosError = error as AxiosError;
-                if (axiosError.response?.status === 204) {
+                if (isAxiosError(error) && error.response?.status === 204) {
                     // Item was removed (quantity was 0)
                     return null;
                 }

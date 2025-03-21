@@ -18,11 +18,14 @@ import {
     Chip,
     Tooltip,
     SelectChangeEvent,
+    TextField,
+    InputAdornment,
 } from "@mui/material";
 import PetsIcon from "@mui/icons-material/Pets";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import MessageIcon from "@mui/icons-material/Message";
 import AddIcon from "@mui/icons-material/Add";
+import SearchIcon from "@mui/icons-material/Search";
 import React from "react";
 import AddPetForm, { PetData } from "./AddPetForm";
 
@@ -127,14 +130,15 @@ interface PetManagementDashboardProps {
 
 const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnackbarMessage }) => {
     const [pets, setPets] = useState<PetData[]>([]);
+    const [filteredPets, setFilteredPets] = useState<PetData[]>([]);
     const [users, setUsers] = useState<UserWithInquiries[]>([]);
+    const [filteredUsers, setFilteredUsers] = useState<UserWithInquiries[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-
-    // Using these variables in the component to avoid unused variable warnings
-    const [refreshing, setRefreshing] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [editPet, setEditPet] = useState<PetData | null>(null);
+    const [searchTerm, setSearchTerm] = useState<string>("");
 
     // Fetch pets and users on component mount
     useEffect(() => {
@@ -143,10 +147,44 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    // Filter pets and users based on search term
+    useEffect(() => {
+        if (searchTerm.trim() === "") {
+            setFilteredPets(pets);
+            setFilteredUsers(users);
+        } else {
+            const lowerSearchTerm = searchTerm.toLowerCase();
+
+            // Filter pets by name
+            const filteredPetsData = pets.filter(pet =>
+                pet.name.toLowerCase().includes(lowerSearchTerm)
+            );
+            setFilteredPets(filteredPetsData);
+
+            // Filter users who have inquired about the filtered pets
+            const filteredPetIds = filteredPetsData.map(pet => pet.id.toString());
+
+            const filteredUsersData = users.filter(user => {
+                // Check if user has inquired about any of the filtered pets
+                const hasInquiredFilteredPet = user.inquiredPets?.some(pet =>
+                    filteredPetIds.includes((pet.petId || pet.pet_id || "").toString())
+                ) || user.interestedPets?.some(pet =>
+                    filteredPetIds.includes(pet.petId.toString())
+                );
+
+                return hasInquiredFilteredPet;
+            });
+
+            setFilteredUsers(filteredUsersData);
+        }
+    }, [searchTerm, pets, users]);
+
     const fetchPets = async () => {
         try {
             const response = await axios.get(API_BASE_URL);
-            setPets(response.data as PetData[]);
+            const petsData = response.data as PetData[];
+            setPets(petsData);
+            setFilteredPets(petsData); // Initialize filtered pets with all pets
         } catch (err) {
             console.error("Error fetching pets:", err);
             showSnackbar("Error fetching pets", "error");
@@ -163,8 +201,8 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
                 if (dashboardData && Array.isArray(dashboardData)) {
                     console.log("Dashboard data received:", dashboardData);
                     // Transform the dashboard data to match our component's expected format
-                    const transformedData = dashboardData.map(
-                        (user: UserWithInquiriesDTO) => ({
+                    const transformedData: UserWithInquiries[] = dashboardData.map(
+                        (user: UserWithInquiriesDTO): UserWithInquiries => ({
                             user_id: user.userId,
                             userId: user.userId,
                             name: user.name || "N/A",
@@ -175,7 +213,7 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
                             registrationDate: user.registrationDate,
                             status: user.status,
                             interestedPets: user.interestedPets,
-                            inquiredPets: user.interestedPets?.map((pet) => ({
+                            inquiredPets: user.interestedPets?.map((pet): PetInquiry => ({
                                 pet_id: pet.petId,
                                 petId: pet.petId,
                                 name: pet.name,
@@ -191,6 +229,7 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
                         })
                     );
                     setUsers(transformedData);
+                    setFilteredUsers(transformedData);
                     setIsLoading(false);
                     return;
                 }
@@ -203,7 +242,9 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
 
             // Fallback to regular users endpoint
             const response = await axios.get(USER_API_URL);
-            setUsers(response.data as UserWithInquiries[]);
+            const userData = response.data as UserWithInquiries[];
+            setUsers(userData);
+            setFilteredUsers(userData);
             setIsLoading(false);
         } catch (err) {
             console.error("Error fetching users:", err);
@@ -212,8 +253,12 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
         }
     };
 
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(event.target.value);
+    };
+
     const handleRefreshAll = () => {
-        setRefreshing(true); // Now using this state
+        setIsRefreshing(true);
         Promise.all([fetchPets(), fetchUsers()])
             .then(() => {
                 showSnackbar("Data refreshed successfully", "success");
@@ -223,7 +268,7 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
                 showSnackbar("Error refreshing data", "error");
             })
             .finally(() => {
-                setRefreshing(false);
+                setIsRefreshing(false);
             });
     };
 
@@ -237,7 +282,6 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
     };
 
     const handleUpdate = (index: number) => {
-        // Now using editPet and drawerOpen states
         const petToEdit = pets[index];
         setEditPet({
             ...petToEdit,
@@ -282,17 +326,25 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
             );
 
             if (success) {
-                const updatedUsers = users.map((user) => {
+                // Create a new array with updated users to avoid type issues
+                const updatedUsers: UserWithInquiries[] = users.map((user) => {
                     if (
                         user.user_id?.toString() === userId.toString() ||
                         user.userId?.toString() === userId.toString()
                     ) {
-                        // Helper function to update pet status
-                        const updatePetStatus = (pet: PetInquiryDTO | PetInquiry) => {
+                        // Helper function to update pet status for both pet types
+                        const updatePetStatusInquiry = (pet: PetInquiry): PetInquiry => {
                             if (
                                 pet.petId?.toString() === petId.toString() ||
-                                (pet as PetInquiry).pet_id?.toString() === petId.toString()
+                                pet.pet_id?.toString() === petId.toString()
                             ) {
+                                return { ...pet, status: newStatus };
+                            }
+                            return pet;
+                        };
+
+                        const updatePetStatusDTO = (pet: PetInquiryDTO): PetInquiryDTO => {
+                            if (pet.petId.toString() === petId.toString()) {
                                 return { ...pet, status: newStatus };
                             }
                             return pet;
@@ -300,14 +352,38 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
 
                         return {
                             ...user,
-                            interestedPets: user.interestedPets?.map(updatePetStatus),
-                            inquiredPets: user.inquiredPets?.map(updatePetStatus),
+                            interestedPets: user.interestedPets?.map(updatePetStatusDTO),
+                            inquiredPets: user.inquiredPets?.map(updatePetStatusInquiry),
                         };
                     }
                     return user;
                 });
 
                 setUsers(updatedUsers);
+                // Update filtered users as well
+                if (searchTerm.trim() === "") {
+                    setFilteredUsers(updatedUsers);
+                } else {
+                    // Re-apply the filter
+                    const lowerSearchTerm = searchTerm.toLowerCase();
+                    const filteredPetsData = pets.filter(pet =>
+                        pet.name.toLowerCase().includes(lowerSearchTerm)
+                    );
+                    const filteredPetIds = filteredPetsData.map(pet => pet.id.toString());
+
+                    const filteredUsersData = updatedUsers.filter(user => {
+                        const hasInquiredFilteredPet = user.inquiredPets?.some(pet =>
+                            filteredPetIds.includes((pet.petId || pet.pet_id || "").toString())
+                        ) || user.interestedPets?.some(pet =>
+                            filteredPetIds.includes(pet.petId.toString())
+                        );
+
+                        return hasInquiredFilteredPet;
+                    });
+
+                    setFilteredUsers(filteredUsersData);
+                }
+
                 showSnackbar(`Status updated to ${newStatus}`, "success");
             }
         } catch (error) {
@@ -317,12 +393,10 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
     };
 
     const handleAddNewClick = () => {
-        // Now using editPet and drawerOpen states
         setEditPet(null);
         setDrawerOpen(true);
     };
 
-    // Now using this function
     const handleDrawerClose = () => {
         setDrawerOpen(false);
         setEditPet(null);
@@ -441,15 +515,43 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
                 Pet Buy Management Dashboard
             </Typography>
 
-            {/* Add Pet Button - UPDATED TO MATCH CUSTOMER-FACING STYLE */}
+            {/* Search Bar and Add Pet Button */}
             <Box
                 sx={{
                     width: "100%",
                     display: "flex",
-                    justifyContent: "flex-end",
+                    justifyContent: "space-between",
+                    alignItems: "center",
                     mb: 2,
                 }}
             >
+                <TextField
+                    placeholder="Search for pet's name"
+                    variant="outlined"
+                    size="small"
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    sx={{
+                        width: "300px",
+                        "& .MuiOutlinedInput-root": {
+                            borderRadius: "8px",
+                            "&:hover fieldset": {
+                                borderColor: "#003366",
+                            },
+                            "&.Mui-focused fieldset": {
+                                borderColor: "#003366",
+                            },
+                        }
+                    }}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <SearchIcon sx={{ color: "#003366" }} />
+                            </InputAdornment>
+                        ),
+                    }}
+                />
+
                 <Button
                     variant="contained"
                     startIcon={<AddIcon />}
@@ -495,7 +597,7 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
             >
                 Pet Inventory
                 <Chip
-                    label={`${pets.length} pets`}
+                    label={`${filteredPets.length} pets`}
                     size="small"
                     sx={{
                         bgcolor: "white",
@@ -549,98 +651,110 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {pets.length > 0 ? (
-                            pets.map((pet, index) => (
-                                <TableRow
-                                    key={pet.id}
-                                    sx={{
-                                        "&:nth-of-type(odd)": { backgroundColor: "#f9f9f9" },
-                                        "&:hover": { backgroundColor: "#f0f7ff" },
-                                    }}
-                                >
-                                    <TableCell>{pet.id}</TableCell>
-                                    <TableCell>{pet.name}</TableCell>
-                                    <TableCell>{pet.petType}</TableCell>
-                                    <TableCell sx={{ fontWeight: "medium" }}>
-                                        {formatPrice(pet.price)}
-                                    </TableCell>
-                                    <TableCell>{pet.breed}</TableCell>
-                                    <TableCell>{pet.birthYear}</TableCell>
-                                    <TableCell>{pet.gender}</TableCell>
-                                    <TableCell>
-                                        {pet.imageUrl && (
-                                            <img
-                                                src={pet.imageUrl}
-                                                alt={pet.name}
-                                                style={{
-                                                    width: "60px",
-                                                    height: "60px",
-                                                    objectFit: "cover",
-                                                    borderRadius: "8px",
-                                                    border: "1px solid #e0e0e0",
-                                                }}
-                                            />
-                                        )}
-                                    </TableCell>
-                                    <TableCell>
-                                        <Box sx={{ display: "flex", gap: 1 }}>
+                        {filteredPets.length > 0 ? (
+                            filteredPets.map((pet) => {
+                                // Find the original index in the full pets array
+                                const originalIndex = pets.findIndex(p => p.id === pet.id);
+                                return (
+                                    <TableRow
+                                        key={pet.id}
+                                        sx={{
+                                            "&:nth-of-type(odd)": { backgroundColor: "#f9f9f9" },
+                                            "&:hover": { backgroundColor: "#f0f7ff" },
+                                        }}
+                                    >
+                                        <TableCell>{pet.id}</TableCell>
+                                        <TableCell>{pet.name}</TableCell>
+                                        <TableCell>{pet.petType}</TableCell>
+                                        <TableCell sx={{ fontWeight: "medium" }}>
+                                            {formatPrice(pet.price)}
+                                        </TableCell>
+                                        <TableCell>{pet.breed}</TableCell>
+                                        <TableCell>{pet.birthYear}</TableCell>
+                                        <TableCell>{pet.gender}</TableCell>
+                                        <TableCell>
+                                            {pet.imageUrl && (
+                                                <img
+                                                    src={pet.imageUrl}
+                                                    alt={pet.name}
+                                                    style={{
+                                                        width: "60px",
+                                                        height: "60px",
+                                                        objectFit: "cover",
+                                                        borderRadius: "8px",
+                                                        border: "1px solid #e0e0e0",
+                                                    }}
+                                                />
+                                            )}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Box sx={{ display: "flex", gap: 1 }}>
+                                                <Button
+                                                    variant="contained"
+                                                    size="small"
+                                                    sx={{
+                                                        backgroundColor: "#003366",
+                                                        "&:hover": {
+                                                            backgroundColor: "#002244",
+                                                        },
+                                                        "&:focus": {
+                                                            boxShadow: "0 0 0 3px rgba(0, 51, 102, 0.3)",
+                                                        },
+                                                        borderRadius: "6px",
+                                                    }}
+                                                    onClick={() => handleUpdate(originalIndex)}
+                                                >
+                                                    Update
+                                                </Button>
+                                                <Button
+                                                    variant="contained"
+                                                    size="small"
+                                                    sx={{
+                                                        backgroundColor: "#DC3545",
+                                                        "&:hover": {
+                                                            backgroundColor: "#BB2D3B",
+                                                        },
+                                                        "&:focus": {
+                                                            boxShadow: "0 0 0 3px rgba(220, 53, 69, 0.3)",
+                                                        },
+                                                        borderRadius: "6px",
+                                                    }}
+                                                    onClick={() => handleDelete(pet.id)}
+                                                >
+                                                    Delete
+                                                </Button>
+                                            </Box>
+                                        </TableCell>
+                                    </TableRow>
+                                );
+                            })
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={9} align="center" sx={{ py: 4 }}>
+                                    {searchTerm ? (
+                                        <Typography variant="body1" color="textSecondary">
+                                            No pets found matching "{searchTerm}".
+                                        </Typography>
+                                    ) : (
+                                        <>
+                                            <Typography variant="body1" color="textSecondary">
+                                                No pets found.
+                                            </Typography>
                                             <Button
                                                 variant="contained"
-                                                size="small"
                                                 sx={{
+                                                    mt: 2,
                                                     backgroundColor: "#003366",
                                                     "&:hover": {
                                                         backgroundColor: "#002244",
                                                     },
-                                                    "&:focus": {
-                                                        boxShadow: "0 0 0 3px rgba(0, 51, 102, 0.3)",
-                                                    },
-                                                    borderRadius: "6px",
                                                 }}
-                                                onClick={() => handleUpdate(index)}
+                                                onClick={handleAddNewClick}
                                             >
-                                                Update
+                                                Add Your First Pet
                                             </Button>
-                                            <Button
-                                                variant="contained"
-                                                size="small"
-                                                sx={{
-                                                    backgroundColor: "#DC3545",
-                                                    "&:hover": {
-                                                        backgroundColor: "#BB2D3B",
-                                                    },
-                                                    "&:focus": {
-                                                        boxShadow: "0 0 0 3px rgba(220, 53, 69, 0.3)",
-                                                    },
-                                                    borderRadius: "6px",
-                                                }}
-                                                onClick={() => handleDelete(pet.id)}
-                                            >
-                                                Delete
-                                            </Button>
-                                        </Box>
-                                    </TableCell>
-                                </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell colSpan={9} align="center" sx={{ py: 4 }}>
-                                    <Typography variant="body1" color="textSecondary">
-                                        No pets found.
-                                    </Typography>
-                                    <Button
-                                        variant="contained"
-                                        sx={{
-                                            mt: 2,
-                                            backgroundColor: "#003366",
-                                            "&:hover": {
-                                                backgroundColor: "#002244",
-                                            },
-                                        }}
-                                        onClick={handleAddNewClick}
-                                    >
-                                        Add Your First Pet
-                                    </Button>
+                                        </>
+                                    )}
                                 </TableCell>
                             </TableRow>
                         )}
@@ -669,7 +783,7 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
             >
                 Pet Inquiries
                 <Chip
-                    label={`${users.length} users`}
+                    label={`${filteredUsers.length} users`}
                     size="small"
                     sx={{
                         bgcolor: "white",
@@ -750,8 +864,8 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {users.length > 0 ? (
-                                users.map((user) => (
+                            {filteredUsers.length > 0 ? (
+                                filteredUsers.map((user) => (
                                     <TableRow
                                         key={user.user_id || user.userId}
                                         sx={{
@@ -951,9 +1065,15 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
                             ) : (
                                 <TableRow>
                                     <TableCell colSpan={9} align="center" sx={{ py: 4 }}>
-                                        <Typography variant="body1" color="textSecondary">
-                                            No users found.
-                                        </Typography>
+                                        {searchTerm ? (
+                                            <Typography variant="body1" color="textSecondary">
+                                                No users found with inquiries matching "{searchTerm}".
+                                            </Typography>
+                                        ) : (
+                                            <Typography variant="body1" color="textSecondary">
+                                                No users found.
+                                            </Typography>
+                                        )}
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -963,7 +1083,7 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
             </TableContainer>
 
             {/* Message for when no users are found */}
-            {!isLoading && !error && users.length === 0 && (
+            {!isLoading && !error && filteredUsers.length === 0 && !searchTerm && (
                 <Paper
                     sx={{ p: 3, width: "100%", textAlign: "center", borderRadius: "8px" }}
                 >
@@ -988,23 +1108,26 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
                         }}
                     >
                         Refresh Data
+                        {isRefreshing && (
+                            <CircularProgress size={16} sx={{ ml: 1, color: themeColor }} />
+                        )}
                     </Button>
                 </Paper>
             )}
 
-            {/* Add Pet Form in Drawer */}
-            <AddPetForm
-                onSnackbarMessage={onSnackbarMessage}
-                onPetAdded={fetchPets}
-                onPetUpdated={fetchPets}
-                // Use the state variables to maintain functionality
-                isOpen={drawerOpen}
-                onClose={handleDrawerClose}
-                petToEdit={editPet}
-            />
+            {/* Add Pet Form */}
+            {drawerOpen && (
+                <AddPetForm
+                    onSnackbarMessage={onSnackbarMessage}
+                    onPetAdded={fetchPets}
+                    onPetUpdated={fetchPets}
+                    isOpen={drawerOpen}
+                    onClose={handleDrawerClose}
+                    petToEdit={editPet}
+                />
+            )}
         </Box>
     );
 };
 
 export default PetManagementDashboard;
-

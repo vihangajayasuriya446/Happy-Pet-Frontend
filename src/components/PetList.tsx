@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Grid, CircularProgress, Box, Typography } from "@mui/material";
 import DefaultPetCard from "./PetCard";
 import axios from "axios";
-import { Pet } from "../App";
+import { Pet } from "./types";
+
 
 //Interface for the API data only
 interface PetDTO {
@@ -186,7 +187,7 @@ const PetCardWithHoverImage: React.FC<{
     pet: Pet;
     onAdopt?: () => void;
     CardComponent: React.FC<{ pet: Pet; onAdopt?: () => void }>;
-    enableContactOwner?: boolean; // Add this prop
+    enableContactOwner?: boolean;
 }> = ({ pet, onAdopt, CardComponent, enableContactOwner }) => {
     // Create a new pet object with the enableContactOwner flag
     const petWithContactFlag = {
@@ -202,6 +203,8 @@ const PetCardWithHoverImage: React.FC<{
                 borderRadius: '8px',
                 height: '100%',
                 width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
                 '& img': {
                     transition: 'transform 0.3s ease',
                 },
@@ -445,21 +448,39 @@ const PetList: React.FC<PetListProps> = ({
                     ? getFullImageUrl(petDTO.imageUrl)
                     : getPlaceholderImage(detectedPetType);
 
+                // Calculate age and format it to display "years" instead of just "y"
+                const currentYear = new Date().getFullYear();
+                const birthYear = parseInt(petDTO.birthYear);
+                const age = currentYear - birthYear;
+                const ageDisplay = `${age} ${age === 1 ? 'year' : 'years'}`;
+
                 // Map the API data to what PetCard expects
                 const petCardProps: Pet = {
                     id: parseInt(petDTO.id),
                     name: petDTO.name,
                     breed: petDTO.breed,
                     price: parseFloat(petDTO.price),
-                    birthYear: parseInt(petDTO.birthYear),
+                    birthYear: petDTO.birthYear, // Keep as string
                     gender: petDTO.gender,
                     image: imageUrl,
                     imageUrl: imageUrl,
                     petType: detectedPetType,
+                    age: ageDisplay, // Add the formatted age string
+                    purchased: petDTO.purchased || false, // Add the missing purchased property
                 };
 
                 return (
-                    <Grid item xs={12} sm={6} md={4} lg={3} key={petDTO.id} sx={{ display: 'flex' }}>
+                    <Grid
+                        item
+                        xs={12}
+                        sm={6}
+                        md={4}
+                        lg={3}
+                        key={petDTO.id}
+                        sx={{
+                            display: 'flex',
+                        }}
+                    >
                         <PetCardWithHoverImage
                             pet={petCardProps}
                             // Only pass onAdopt if this is admin view

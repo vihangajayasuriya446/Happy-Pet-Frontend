@@ -1,5 +1,20 @@
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { INQUIRY_API_URL } from '../constants';
+
+// Define AxiosError interface without any
+interface AxiosError<T = unknown> {
+    isAxiosError: boolean;
+    config: Record<string, unknown>;
+    code?: string;
+    request?: unknown;
+    response?: {
+        data: T;
+        status: number;
+        headers: Record<string, unknown>;
+        config: Record<string, unknown>;
+    };
+    message?: string;
+}
 
 // Updated UserInquiry interface to match the UserDetailsForm component
 export interface UserInquiry {
@@ -140,7 +155,10 @@ function derivePetTypeFromBreed(breed: string): string {
 
 // Type guard to check if an error is an AxiosError
 function isAxiosError(error: unknown): error is AxiosError {
-    return (error as AxiosError).isAxiosError !== undefined;
+    return error !== null &&
+        typeof error === 'object' &&
+        'isAxiosError' in error &&
+        (error as {isAxiosError?: boolean}).isAxiosError === true;
 }
 
 export class InquiryService {
@@ -659,15 +677,14 @@ export class InquiryService {
     }
 
     // Submit a pet inquiry form - specifically for the contact-form endpoint
-    /* Keeping commented out to avoid unused interface warnings
     static async submitPetInquiryForm(formData: {
         name: string;
         email: string;
         contactNo: string;
         address: string;
         message: string;
-        petId: number;
-    }): Promise<any> {
+        petId: number | string;
+    }): Promise<unknown> {
         try {
             console.log('Submitting pet inquiry form to contact-form endpoint:', formData);
 
@@ -703,31 +720,4 @@ export class InquiryService {
             throw error;
         }
     }
-    */
 }
-
-// These interfaces are used in the commented-out code, so they're not needed
-// but I'm keeping them commented out for future reference
-/*
-interface PetInquiryFormDTO {
-    name: string;
-    email: string;
-    contactNo: string;
-    address: string;
-    message: string;
-    petId: number;
-}
-
-interface PetInquiryResponseDTO {
-    id: number;
-    name: string;
-    email: string;
-    contactNo: string;
-    address: string;
-    message: string;
-    petId: number;
-    status: string;
-    createdAt: string;
-    updatedAt: string;
-}
-*/

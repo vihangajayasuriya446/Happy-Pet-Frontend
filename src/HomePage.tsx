@@ -4,11 +4,24 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
+// Define interface for pet data
+interface Pet {
+    id: string | number;
+    name: string;
+    petType: string;
+    price: number;
+    breed: string;
+    birthYear: string;
+    gender: string;
+    imageUrl?: string;
+    purchased: boolean;
+}
+
 const HomePage: React.FC = () => {
     const navigate = useNavigate();
     const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
     const role = localStorage.getItem('role');
-    const [pets, setPets] = useState<any[]>([]);
+    const [pets, setPets] = useState<Pet[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
     const [snackbarMessage, setSnackbarMessage] = useState<string>('');
@@ -28,10 +41,10 @@ const HomePage: React.FC = () => {
     useEffect(() => {
         // Fetch pets from your backend API
         axios
-            .get("http://localhost:8080/api/v1/pets")
+            .get<Pet[]>("http://localhost:8080/api/v1/pets")
             .then((response) => {
                 // Filter out purchased pets if needed
-                const availablePets = response.data.filter((pet: any) => !pet.purchased);
+                const availablePets = response.data.filter((pet) => !pet.purchased);
                 setPets(availablePets);
             })
             .catch((error) => {

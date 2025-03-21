@@ -41,6 +41,7 @@ interface AddPetFormProps {
     onPetAdded?: () => void;
     onPetUpdated?: () => void;
     editPet?: PetData | null;
+    petToEdit?: PetData | null; // Added this line to support the prop name used in PetManagementDashboard
     isOpen: boolean;
     onClose: () => void;
 }
@@ -50,6 +51,7 @@ const AddPetForm: React.FC<AddPetFormProps> = ({
                                                    onPetAdded,
                                                    onPetUpdated,
                                                    editPet,
+                                                   petToEdit,
                                                    isOpen,
                                                    onClose
                                                }) => {
@@ -67,19 +69,22 @@ const AddPetForm: React.FC<AddPetFormProps> = ({
     const [previewUrl, setPreviewUrl] = useState<string>("");
     const [editMode, setEditMode] = useState(false);
 
-    // Set form data when editPet changes
+    // Use either editPet or petToEdit, whichever is provided
+    const petData = editPet || petToEdit;
+
+    // Set form data when petData changes
     useEffect(() => {
-        if (editPet) {
+        if (petData) {
             setFormData({
-                ...editPet,
+                ...petData,
                 image: null,
             });
-            setPreviewUrl(editPet.imageUrl || "");
+            setPreviewUrl(petData.imageUrl || "");
             setEditMode(true);
         } else {
             resetForm();
         }
-    }, [editPet]);
+    }, [petData]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({

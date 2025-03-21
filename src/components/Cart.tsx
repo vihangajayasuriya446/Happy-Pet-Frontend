@@ -10,14 +10,28 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import { useCart } from "../contexts/CartContext";
-import { Pet } from "../App";
 import Toast from "../components/Toast";
-
 
 // Define a type for the response from cart operations
 interface CartOperationResponse {
     success: boolean;
     message: string;
+}
+
+// Define a CartPet type that can represent both versions of Pet
+interface CartPet {
+    id: string | number;
+    name: string;
+    breed: string;
+    birthYear?: number | string;
+    petType?: string;
+    price: number | string;
+    imageUrl?: string;
+    gender?: string;
+    image?: string;
+    category?: string;
+    type?: string;
+    description?: string;
 }
 
 // CartButton component
@@ -124,7 +138,7 @@ const getImageWithFallbacks = (
 };
 
 // Helper function to extract gender from pet object
-const extractGenderFromPet = (pet: Pet): string => {
+const extractGenderFromPet = (pet: CartPet): string => {
     // Check if gender property exists directly
     if (pet.gender) {
         return pet.gender;
@@ -135,7 +149,7 @@ const extractGenderFromPet = (pet: Pet): string => {
 };
 
 // Helper function to determine pet type
-const determinePetType = (pet: Pet): string => {
+const determinePetType = (pet: CartPet): string => {
     // First check if petType is already set
     if (pet.petType) {
         return pet.petType;
@@ -214,8 +228,8 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
     // State to track resolved image URLs
     const [resolvedImages, setResolvedImages] = useState<Record<string | number, string>>({});
 
-    // Enhanced image handling function with pet type normalization
-    const getPetImageUrl = (pet: Pet): string => {
+    // Enhanced image handling function with pet type normalization - MODIFIED to use CartPet type
+    const getPetImageUrl = (pet: CartPet): string => {
         const petId = pet.id.toString();
 
         // Return from cache if available
@@ -323,7 +337,9 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
             const newResolvedImages: Record<string | number, string> = {};
 
             items.forEach(item => {
-                const imageUrl = getPetImageUrl(item.pet);
+                // Use the item.pet as CartPet type
+                const cartPet = item.pet as unknown as CartPet;
+                const imageUrl = getPetImageUrl(cartPet);
                 newResolvedImages[item.pet.id] = imageUrl;
 
                 // Preload the image
@@ -535,11 +551,14 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                     : item.pet.price;
                                 const itemTotal = (itemPrice * item.quantity).toFixed(2);
 
+                                // Cast to CartPet to avoid type errors
+                                const cartPet = item.pet as unknown as CartPet;
+
                                 // Get the image URL for this pet from resolved images or compute it
-                                const imageUrl = resolvedImages[item.pet.id] || getPetImageUrl(item.pet);
+                                const imageUrl = resolvedImages[item.pet.id] || getPetImageUrl(cartPet);
 
                                 // Determine pet type using our helper function
-                                const petType = determinePetType(item.pet);
+                                const petType = determinePetType(cartPet);
 
                                 return (
                                     <ListItem
@@ -594,7 +613,7 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
 
                                                     {/* Gender - Using the helper function */}
                                                     <Typography variant="body2" color="text.secondary" component="div">
-                                                        Gender: {extractGenderFromPet(item.pet)}
+                                                        Gender: {extractGenderFromPet(cartPet)}
                                                     </Typography>
 
                                                     {/* Birth Year */}
