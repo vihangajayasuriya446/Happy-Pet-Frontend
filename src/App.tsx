@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import { Box } from '@mui/material';
@@ -17,6 +17,11 @@ import PrivacyPolicy from './PrivacyPolicy';
 import OwnerForm from './OwnerForm';
 import OwnerTable from './OwnerTable';
 
+import BuyPetPage from "./BuyPetPage";
+import UserDetailsDashboard from "./components/UserDetailsDashboard";
+import PetManagementDashboard from "./PetManagementDashboard";
+import { CartProvider } from "./contexts/CartContext";
+import { ContactProvider } from "./contexts/ContactContext";
 
 const App: React.FC = () => {
   return (
@@ -38,6 +43,21 @@ const App: React.FC = () => {
           <Route path="/OwnerForm/:petId" element={<OwnerForm />} /> 
           <Route path="/owners" element={<OwnerTable />} />
         </Routes>
+
+        <CartProvider>
+                <ContactProvider>
+                    <Routes>
+                        
+                        <Route path="/buy" element={<BuyPetPage />} />
+                        <Route path="/contact-owner/:petId" element={<UserDetailsDashboard />} />
+                        <Route path="/contact" element={<UserDetailsDashboard />} />
+                        <Route path="/admin/pets" element={<PetManagementDashboard />} />
+                        <Route path="/admindb" element={<Navigate to="/admin/pets" replace />} />
+                       
+                    </Routes>
+                </ContactProvider>
+            </CartProvider>
+        
         <Footer />
       </Box>
     </Router>
