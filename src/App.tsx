@@ -20,6 +20,7 @@ import OwnerTable from './OwnerTable';
 import User from './Pets';
 import AdoptionPage from './AdoptionPage';
 import UserDetailsDashboard from './UserDetailsDashboard';
+import Pets from './Pets';
 
 const App: React.FC = () => {
   return (
@@ -41,6 +42,7 @@ const App: React.FC = () => {
           <Route path="/OwnerForm/:petId" element={<OwnerForm />} /> 
           <Route path="/owners" element={<OwnerTable />} />
           <Route path="/adopt" element={<AdoptionPage />} />
+          <Route path="/dashboard1" element={<Pets/>} />
           <Route path="/user-dashboard" element={<UserDetailsDashboard />} />
         </Routes>
         <Footer />

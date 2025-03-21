@@ -112,7 +112,7 @@ const UserDetailsDashboard: React.FC = () => {
   };
 
   const goToPetManagementDashboard = () => {
-    navigate('/dashboard');
+    navigate('/dashboard1');
   };
 
   const showNotification = (message: string, severity: 'success' | 'error' | 'info' | 'warning') => {
