@@ -73,22 +73,6 @@ const derivePetTypeFromBreed = (breed: string): string => {
         return 'Bird';
     }
 
-    if (breedLower.includes('fish') || breedLower.includes('goldfish')) {
-        return 'Fish';
-    }
-
-    if (breedLower.includes('rabbit') || breedLower.includes('bunny')) {
-        return 'Rabbit';
-    }
-
-    if (breedLower.includes('hamster') || breedLower.includes('guinea pig') || breedLower.includes('gerbil')) {
-        return 'Small Pet';
-    }
-
-    if (breedLower.includes('reptile') || breedLower.includes('snake') || breedLower.includes('lizard') || breedLower.includes('turtle')) {
-        return 'Reptile';
-    }
-
     // Default to the first word of the breed as a fallback
     const firstWord = breed.split(' ')[0];
     return firstWord || 'Pet';
@@ -424,7 +408,8 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                     <Divider sx={{ mb: 1.25, opacity: 0.6 }} />
 
                     {/* Age information */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',pl: 1,
+                        width: '80%'  }}>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <Typography
                                 component="span"
@@ -489,6 +474,8 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                             textTransform: 'none',
                             transition: 'all 0.3s ease',
                             mb: 1,
+                            mr: 'auto',
+                            width: '80%',
                             '&:hover': {
                                 borderColor: themeColor,
                                 backgroundColor: alpha(themeColor, 0.05),
@@ -510,6 +497,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                     justifyContent: 'space-between',
                     width: '100%',
                     mt: 1
+
                 }}>
                     {/* Quantity control */}
                     <Box sx={{
@@ -518,7 +506,9 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                         bgcolor: alpha(themeColor, 0.05),
                         borderRadius: '12px',
                         overflow: 'hidden',
-                        height: 42,
+                        width: '40%',
+                        mr: 2,
+                        height: 36,
                         border: `1px solid ${alpha(themeColor, 0.2)}`,
                         transition: 'all 0.2s ease',
                         '&:hover': {
@@ -532,8 +522,9 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                             sx={{
                                 color: quantity === 0 ? alpha(themeColor, 0.3) : themeColor,
                                 padding: '6px',
-                                width: '22px',
-                                height: '22px',
+                                ml: 0.5,
+                                width: '20px',  // Match the width of the increment button
+                                height: '32px', // Match the height of the increment button
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center'
@@ -560,6 +551,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                             sx={{
                                 padding: '6px',
                                 color: themeColor,
+                                ml: -1.5,
                                 width: '32px',
                                 height: '32px',
                                 display: 'flex',
@@ -585,17 +577,20 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                             '&.Mui-disabled': {
                                 background: alpha(themeColor, 0.3),
                             },
-                            height: 42,
-                            ml: 1.5,
-                            px: 3,
-                            fontSize: '0.95rem',
+                            height: 36,
+                            ml: 0,
+                            mr: 'auto',
+                            width: 'auto',
+                            px: 2,
+                            fontSize: '0.85rem',
                             fontWeight: 600,
-                            borderRadius: '12px',
+                            borderRadius: '10px',
                             textTransform: 'none',
                             boxShadow: `0 4px 8px ${alpha(themeColor, 0.25)}`,
                             transition: 'all 0.3s ease',
                             whiteSpace: 'nowrap',
-                            minWidth: 'fit-content'
+                            minWidth: 'max-content',
+
                         }}
                     >
                         {isAdding ? (
