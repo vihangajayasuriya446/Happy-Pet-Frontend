@@ -15,10 +15,17 @@ import PreparingHomeForCatArticle from './PreparingHomeForCatArticle';
 import ChoosingRightCatBreedArticle from './ChoosingRightCatBreedArticle';
 import UnderstandingCatBodyLanguageArticle from './UnderstandingCatBodyLanguageArticle';
 import EssentialCatHealthCareArticle from './EssentialCatHealthCareArticle';
-import theme from './theme';
 import CreatingEnrichingCatEnvironmentArticle from "./CreatingEnrichingCatEnvironmentArticle";
 
+// Bird articles
+import BirdAdoptionArticles from './BirdAdoptionArticles';
+import PreparingHomeForBirdArticle from './PreparingHomeForBirdArticle';
+import ChoosingRightBirdSpeciesArticle from './ChoosingRightBirdSpeciesArticle';
+import UnderstandingBirdBodyLanguageArticle from './UnderstandingBirdBodyLanguageArticle';
+import CreatingBirdEnrichingEnvironmentArticle from './CreatingBirdEnrichingEnvironmentArticle';
+import EssentialHealthCareForBirdArticle from './EssentialHealthCareForBirdArticle';
 
+import theme from './theme';
 
 const App: React.FC = () => {
     return (
@@ -26,10 +33,9 @@ const App: React.FC = () => {
             <CssBaseline />
             <Router>
                 <Routes>
-                    {/* Home route - you may want to create a combined home page */}
-                    <Route path="/" element={<DogAdoptionArticles />} />
 
                     {/* Dog adoption routes */}
+                    <Route path="/" element={<DogAdoptionArticles />} />
                     <Route path="/dog-adoption-articles" element={<DogAdoptionArticles />} />
                     <Route path="/dog-adoption-articles/preparing-your-home-for-a-new-dog" element={<DogHomePreparationArticle />} />
                     <Route path="/dog-adoption-articles/choosing-the-right-dog-breed" element={<ChoosingRightDogBreedArticle />} />
@@ -44,6 +50,14 @@ const App: React.FC = () => {
                     <Route path="/cat-adoption-articles/understanding-cat-body-language" element={<UnderstandingCatBodyLanguageArticle />} />
                     <Route path="/cat-adoption-articles/creating-an-enriching-environment" element={<CreatingEnrichingCatEnvironmentArticle />} />
                     <Route path="/cat-adoption-articles/essential-health-care-for-your-new-cat" element={<EssentialCatHealthCareArticle />} />
+
+                    {/* Bird adoption routes */}
+                    <Route path="/bird-adoption-articles" element={<BirdAdoptionArticles />} />
+                    <Route path="/bird-adoption-articles/preparing-your-home-for-a-new-bird" element={<PreparingHomeForBirdArticle />} />
+                    <Route path="/bird-adoption-articles/choosing-the-right-bird-species" element={<ChoosingRightBirdSpeciesArticle />} />
+                    <Route path="/bird-adoption-articles/understanding-bird-body-language" element={<UnderstandingBirdBodyLanguageArticle />} />
+                    <Route path="/bird-adoption-articles/creating-an-enriching-environment" element={<CreatingBirdEnrichingEnvironmentArticle />} />
+                    <Route path="/bird-adoption-articles/essential-health-care-for-your-new-bird" element={<EssentialHealthCareForBirdArticle />} />
                 </Routes>
             </Router>
         </ThemeProvider>
