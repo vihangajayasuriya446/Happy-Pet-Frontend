@@ -3,7 +3,7 @@ import { Box, Typography, Container, Button, Divider } from '@mui/material';
 import { Link } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-const EssentialHealthCareArticle: FC = () => {
+const EssentialDogHealthCareArticle: FC = () => {
     return (
         <Container maxWidth="lg" sx={{ py: 5 }}>
             {/* Back button */}
@@ -1526,6 +1526,6 @@ const EssentialHealthCareArticle: FC = () => {
 );
 };
 
-export default EssentialHealthCareArticle;
+export default EssentialDogHealthCareArticle;
 
 
