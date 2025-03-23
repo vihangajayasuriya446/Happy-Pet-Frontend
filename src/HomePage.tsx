@@ -17,6 +17,19 @@ type Pet = {
   purchased: boolean;
 };
 
+interface Pets {
+  pet_id: number;
+  pet_name: string;
+  pet_species: string;
+  pet_age: number;
+  pet_gender: string;
+  pet_breed: string;
+  pet_adoptionStatus: string;
+  pet_photo: string;
+  image_url: string;
+  status: string;
+}
+
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
@@ -26,6 +39,39 @@ const HomePage: React.FC = () => {
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
   const [buyPets, setBuyPets] = useState<Pet[]>([]);
+  const [adoptPets, setAdoptPets] = useState<Pets[]>([]);
+
+  useEffect(() => {
+    const fetchAdoptPets = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/api/pets/available");
+        if (!response.ok) {
+          throw new Error("Failed to fetch adoptable pets");
+        }
+        const data = await response.json();
+  
+        // Transform data to match the Pets interface
+        const transformedAdoptPets: Pets[] = data.map((pet: any) => ({
+          pet_id: pet.pet_id, // Use snake_case
+          pet_name: pet.pet_name,
+          pet_species: pet.pet_species,
+          pet_age: pet.pet_age,
+          pet_gender: pet.pet_gender,
+          pet_breed: pet.pet_breed,
+          pet_adoptionStatus: pet.pet_adoptionStatus,
+          pet_photo: pet.pet_photo,
+          image_url: pet.image_url ? `http://localhost:8080${pet.image_url}` : "/images/default-pet-image.png", // Fallback for missing image_url
+          status: pet.status,
+        }));
+  
+        setAdoptPets(transformedAdoptPets.slice(0, 3)); // Only take the first 3 pets
+      } catch (error) {
+        console.error("Error fetching adoptable pets:", error);
+      }
+    };
+  
+    fetchAdoptPets();
+  }, []);
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -721,10 +767,10 @@ const HomePage: React.FC = () => {
           }}
         />
         <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ color: "#333", mb: 2 }}>
-          {pets.length - 3} more pets
+          See more pets
         </Typography>
         <Typography variant="body1" sx={{ color: "#666", mb: 3 }}>
-          on HappyPet
+          for Match
         </Typography>
         <Button
           variant="outlined"
@@ -745,6 +791,128 @@ const HomePage: React.FC = () => {
       </Box>
     </Card>
   </Box>
+ {/* Adopt a Pet Section */}
+<Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2 }}>
+  <Typography variant="h4" fontWeight="bold" mb={4} sx={{ color: "#FFFFFF", textShadow: "0 0 10px rgba(0, 0, 0, 0.5)" }}>
+    Available Pets for Adoption
+  </Typography>
+  <Box
+    display="grid"
+    gridTemplateColumns="repeat(auto-fit, minmax(250px, 1fr))"
+    gap={4}
+    justifyContent="center"
+    width="100%"
+    maxWidth="1200px"
+  >
+    {/* Display only 3 adoptable pets */}
+    {adoptPets.map((pet) => (
+  <Card
+    key={pet.pet_id} // Use snake_case
+    sx={{
+      borderRadius: "24px",
+      transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+      "&:hover": {
+        transform: "translateY(-10px)",
+        boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
+      },
+      display: "flex",
+      flexDirection: "column",
+      height: "100%",
+      backgroundColor: "rgba(255, 255, 255, 0.6)",
+      border: "1px solid rgba(255, 255, 255, 0.1)",
+      backdropFilter: "blur(10px)",
+    }}
+  >
+    <CardMedia
+      component="img"
+      sx={{ height: 200, width: "100%", objectFit: "cover", borderRadius: "24px 24px 0 0" }}
+      image={pet.image_url || "/images/default-pet-image.png"} // Use snake_case
+      alt={pet.pet_name} // Use snake_case
+    />
+    <CardContent sx={{ flexGrow: 1, textAlign: "center", p: 3 }}>
+      <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ color: "text.primary" }}>
+        {pet.pet_name} {/* Use snake_case */}
+      </Typography>
+      {pet.pet_breed && ( // Use snake_case
+        <Typography variant="body2" color="text.secondary">
+          <strong>Breed:</strong> {pet.pet_breed} {/* Use snake_case */}
+        </Typography>
+      )}
+      {pet.pet_age && ( // Use snake_case
+        <Typography variant="body2" color="text.secondary">
+          <strong>Age:</strong> {pet.pet_age} {/* Use snake_case */}
+        </Typography>
+      )}
+      {pet.pet_species && ( // Use snake_case
+        <Typography variant="body2" color="text.secondary">
+          <strong>Species:</strong> {pet.pet_species} {/* Use snake_case */}
+        </Typography>
+      )}
+      {pet.status && (
+        <Typography variant="body2" color="text.secondary">
+          <strong>Status:</strong> {pet.status}
+        </Typography>
+      )}
+    </CardContent>
+  </Card>
+))}
+
+    {/* "More Pets" Card for Adoption */}
+    <Card
+      sx={{
+        borderRadius: "16px",
+        backdropFilter: "blur(10px)",
+        backgroundColor: "rgba(255, 255, 255, 0.6)",
+        border: "1px solid rgba(0, 0, 0, 0.1)",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+        "&:hover": {
+          transform: "translateY(-8px)",
+          boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
+        },
+        cursor: "pointer",
+        p: 4,
+        textAlign: "center",
+        maxWidth: "400px",
+        margin: "auto",
+      }}
+      onClick={() => handleCardClick("/adopt")}
+    >
+      <Box sx={{ p: 3 }}>
+        <FavoriteBorderIcon
+          sx={{
+            fontSize: 80,
+            mb: 3,
+            color: "primary.main",
+            filter: "drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1))",
+          }}
+        />
+        <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ color: "#333", mb: 2 }}>
+          See more pets
+        </Typography>
+        <Typography variant="body1" sx={{ color: "#666", mb: 3 }}>
+          for Adoption
+        </Typography>
+        <Button
+          variant="outlined"
+          sx={{
+            borderRadius: "20px",
+            textTransform: "none",
+            fontWeight: "bold",
+            color: "primary.main",
+            borderColor: "primary.main",
+            "&:hover": {
+              backgroundColor: "primary.main",
+              color: "white",
+            },
+          }}
+        >
+          See More
+        </Button>
+      </Box>
+    </Card>
+  </Box>
+</Box>
 
 {/* Buy Section */}
 <Typography
@@ -849,10 +1017,10 @@ const HomePage: React.FC = () => {
           }}
         />
         <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ color: "#333", mb: 2 }}>
-          Buy more
+          See more pets
         </Typography>
         <Typography variant="body1" sx={{ color: "#666", mb: 3 }}>
-          on HappyPet
+          for Buy
         </Typography>
         <Button
           variant="outlined"
