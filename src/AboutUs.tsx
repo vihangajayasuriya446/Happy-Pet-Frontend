@@ -24,7 +24,7 @@ const AboutUs: React.FC = () => {
     <Box
       sx={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #f0f0f0, #e0e0e0)',
+        
         paddingTop: theme.spacing(8),
         paddingBottom: theme.spacing(8),
       }}
