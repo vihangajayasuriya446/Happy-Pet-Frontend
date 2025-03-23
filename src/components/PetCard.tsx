@@ -106,7 +106,6 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
         setResolvedImageUrl(imageSource);
 
         // Determine pet type from pet object or derive from breed
-        // Use only petType property or derive from breed (removed the 'type' property reference)
         const type = pet.petType || derivePetTypeFromBreed(pet.breed);
         console.log(`Determined pet type for ${pet.name}: ${type}`);
         setPetType(type);
@@ -408,8 +407,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                     <Divider sx={{ mb: 1.25, opacity: 0.6 }} />
 
                     {/* Age information */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',pl: 1,
-                        width: '80%'  }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pl: 1, width: '80%' }}>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <Typography
                                 component="span"
@@ -497,7 +495,6 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                     justifyContent: 'space-between',
                     width: '100%',
                     mt: 1
-
                 }}>
                     {/* Quantity control */}
                     <Box sx={{
@@ -590,7 +587,6 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                             transition: 'all 0.3s ease',
                             whiteSpace: 'nowrap',
                             minWidth: 'max-content',
-
                         }}
                     >
                         {isAdding ? (

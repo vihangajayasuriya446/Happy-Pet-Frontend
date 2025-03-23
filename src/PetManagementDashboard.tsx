@@ -182,6 +182,7 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
     const fetchPets = async () => {
         try {
             const response = await axios.get(API_BASE_URL);
+            console.log("Fetched pets data:", response.data); // Log the response data
             const petsData = response.data as PetData[];
             setPets(petsData);
             setFilteredPets(petsData); // Initialize filtered pets with all pets
@@ -190,6 +191,7 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
             showSnackbar("Error fetching pets", "error");
         }
     };
+    
 
     const fetchUsers = async () => {
         setIsLoading(true);
@@ -474,6 +476,8 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
     const getPetId = (pet: PetInquiry | PetInquiryDTO): string | number => {
         return (pet as PetInquiry).petId || (pet as PetInquiry).pet_id || 0;
     };
+
+    
 
     return (
         <Box
