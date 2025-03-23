@@ -9,7 +9,6 @@ import {
   List,
   ListItem,
   ListItemText,
-  InputBase,
   Popover,
   Button,
   Avatar,
@@ -18,7 +17,6 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close"; // Import CloseIcon
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
@@ -133,63 +131,141 @@ const Navbar = () => {
           >
             HappyPet
           </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              mx: 2,
-              cursor: "pointer",
-              "&:hover": { color: "#007BFF", transition: "color 0.3s ease" },
-            }}
-            onClick={() => handleNavigation("/")}
-          >
-            Home
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              mx: 2,
-              cursor: "pointer",
-              "&:hover": { color: "#007BFF", transition: "color 0.3s ease" },
-            }}
-            onClick={() => handleNavigation("/services")}
-          >
-            Services
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              mx: 2,
-              cursor: "pointer",
-              "&:hover": { color: "#007BFF", transition: "color 0.3s ease" },
-            }}
-            onClick={() => handleNavigation("/about")}
-          >
-            About Us
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              mx: 2,
-              cursor: "pointer",
-              "&:hover": { color: "#007BFF", transition: "color 0.3s ease" },
-            }}
-            onClick={() => handleNavigation("/contactus")}
-          >
-            Contact Us
-          </Typography>
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
-              bgcolor: "rgba(241, 241, 241, 0.8)", // Semi-transparent background
-              p: "5px 10px",
-              borderRadius: "20px",
-              mx: 2,
-              "&:hover": { boxShadow: "0 0 8px rgba(0, 0, 0, 0.1)" },
+              gap: 4, // Standardized gap between navigation links
+              mr: 4, // Margin to separate from account icon
             }}
           >
-            <SearchIcon sx={{ color: "gray" }} />
-            <InputBase placeholder="Search" sx={{ ml: 1 }} />
+            {/* Home */}
+            <Typography
+              variant="body1"
+              sx={{
+                cursor: "pointer",
+                fontWeight: "500",
+                color: "#333333",
+                position: "relative",
+                "&:hover": {
+                  color: "#007BFF",
+                  transition: "color 0.3s ease",
+                },
+                "&::after": {
+                  content: '""',
+                  position: "absolute",
+                  bottom: "-4px",
+                  left: 0,
+                  width: "100%",
+                  height: "2px",
+                  backgroundColor: "#007BFF",
+                  transform: "scaleX(0)",
+                  transition: "transform 0.3s ease",
+                },
+                "&:hover::after": {
+                  transform: "scaleX(1)",
+                },
+              }}
+              onClick={() => handleNavigation("/")} // Hardcoded path for Home
+            >
+              Home
+            </Typography>
+
+            {/* Services */}
+            <Typography
+              variant="body1"
+              sx={{
+                cursor: "pointer",
+                fontWeight: "500",
+                color: "#333333",
+                position: "relative",
+                "&:hover": {
+                  color: "#007BFF",
+                  transition: "color 0.3s ease",
+                },
+                "&::after": {
+                  content: '""',
+                  position: "absolute",
+                  bottom: "-4px",
+                  left: 0,
+                  width: "100%",
+                  height: "2px",
+                  backgroundColor: "#007BFF",
+                  transform: "scaleX(0)",
+                  transition: "transform 0.3s ease",
+                },
+                "&:hover::after": {
+                  transform: "scaleX(1)",
+                },
+              }}
+              onClick={() => handleNavigation("/aboutus")} // Hardcoded path for Services
+            >
+              About Us
+            </Typography>
+
+            {/* About Us */}
+            <Typography
+              variant="body1"
+              sx={{
+                cursor: "pointer",
+                fontWeight: "500",
+                color: "#333333",
+                position: "relative",
+                "&:hover": {
+                  color: "#007BFF",
+                  transition: "color 0.3s ease",
+                },
+                "&::after": {
+                  content: '""',
+                  position: "absolute",
+                  bottom: "-4px",
+                  left: 0,
+                  width: "100%",
+                  height: "2px",
+                  backgroundColor: "#007BFF",
+                  transform: "scaleX(0)",
+                  transition: "transform 0.3s ease",
+                },
+                "&:hover::after": {
+                  transform: "scaleX(1)",
+                },
+              }}
+              onClick={() => handleNavigation("/terms")} // Hardcoded path for About Us
+            >
+              Terms
+            </Typography>
+
+            {/* Contact Us */}
+            <Typography
+              variant="body1"
+              sx={{
+                cursor: "pointer",
+                fontWeight: "500",
+                color: "#333333",
+                position: "relative",
+                "&:hover": {
+                  color: "#007BFF",
+                  transition: "color 0.3s ease",
+                },
+                "&::after": {
+                  content: '""',
+                  position: "absolute",
+                  bottom: "-4px",
+                  left: 0,
+                  width: "100%",
+                  height: "2px",
+                  backgroundColor: "#007BFF",
+                  transform: "scaleX(0)",
+                  transition: "transform 0.3s ease",
+                },
+                "&:hover::after": {
+                  transform: "scaleX(1)",
+                },
+              }}
+              onClick={() => handleNavigation("/contact-us")} // Hardcoded path for Contact Us
+            >
+              Contact Us
+            </Typography>
           </Box>
           <IconButton sx={{ ml: 2 }} onClick={handleAccountClick}>
             {userDetails ? (

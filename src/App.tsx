@@ -22,6 +22,7 @@ import AdoptionPage from './AdoptionPage';
 import UserDetailsDashboard from './UserDetailsDashboard';
 import UserDetailsDashboard1 from "./components/UserDetailsDashboard";
 import Pets from './Pets';
+import AboutUs from './AboutUs';
 
 const App: React.FC = () => {
   return (
@@ -45,6 +46,7 @@ const App: React.FC = () => {
           <Route path="/adopt" element={<AdoptionPage />} />
           <Route path="/dashboard1" element={<Pets/>} />
           <Route path="/user-dashboard" element={<UserDetailsDashboard />} />
+          <Route path="/aboutus" element={<AboutUs />} />
         
                        
                         <Route path="/buy" element={<BuyPetPage />} />
