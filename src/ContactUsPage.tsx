@@ -190,10 +190,13 @@ const ContactUsPage: React.FC = () => {
         maxWidth="md"
         sx={{
           py: 8,
-          backgroundColor: "#ffffff",
+          px: 4,
+          backgroundColor: "rgba(255, 255, 255, 0.8)", // Semi-transparent background
+          backdropFilter: "blur(10px)", // Glassmorphism effect
           borderRadius: 4,
           boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
           mt: { xs: "64px", sm: "72px", md: "80px" },
+          border: "1px solid rgba(255, 255, 255, 0.3)", // Subtle border
         }}
       >
         {/* Page Title */}
@@ -213,10 +216,10 @@ const ContactUsPage: React.FC = () => {
         <Typography
           variant="body2"
           paragraph
-          sx={{ mb: 4, textAlign: "center", color: "text.secondary" }}
+          sx={{ mb: 4, textAlign: "center", color: "black" }}
         >
-          <strong>Note:</strong>Have questions, need assistance, or want to know more about adopting a pet?
-           The Happy Pet team is here to help! Reach out to us, and let's make a difference—one paw at a time!
+          <strong>Note:</strong> Have questions, need assistance, or want to know more about adopting a pet?
+          The Happy Pet team is here to help! Reach out to us, and let's make a difference—one paw at a time!
         </Typography>
 
         {/* Contact Form Section */}
@@ -225,10 +228,12 @@ const ContactUsPage: React.FC = () => {
           sx={{
             p: 4,
             mb: 4,
-            backgroundColor: "background.paper",
+            backgroundColor: "rgba(255, 255, 255, 0.9)", // Semi-transparent background
+            backdropFilter: "blur(10px)", // Glassmorphism effect
             borderTop: "3px solid",
             borderColor: "primary.main",
             borderRadius: 2,
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
           }}
         >
           <Typography
@@ -317,127 +322,127 @@ const ContactUsPage: React.FC = () => {
         </Paper>
 
         {/* Frequently Asked Questions Section */}
-<Box sx={{ mb: 4 }}>
-  <Typography
-    variant="h6"
-    component="h2"
-    gutterBottom
-    fontWeight="600"
-    align="center"
-    color="primary"
-    sx={{ mb: 3 }}
-  >
-    Frequently Asked Questions
-  </Typography>
+        <Box sx={{ mb: 4 }}>
+          <Typography
+            variant="h6"
+            component="h2"
+            gutterBottom
+            fontWeight="600"
+            align="center"
+            color="primary"
+            sx={{ mb: 3 }}
+          >
+            Frequently Asked Questions
+          </Typography>
 
-  {/* FAQ 1: How do I adopt a pet on HappyPet? */}
-  <Accordion sx={styles.accordion}>
-    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-      <Typography fontWeight="500">How do I adopt a pet on HappyPet?</Typography>
-    </AccordionSummary>
-    <AccordionDetails>
-      <Typography variant="body2">
-        To adopt a pet, visit the Adopt page on HappyPet, browse the available pets, and follow the adoption process.
-      </Typography>
-    </AccordionDetails>
-  </Accordion>
+          {/* FAQ 1: How do I adopt a pet on HappyPet? */}
+          <Accordion sx={styles.accordion}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography fontWeight="500">How do I adopt a pet on HappyPet?</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2">
+                To adopt a pet, visit the Adopt page on HappyPet, browse the available pets, and follow the adoption process.
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
 
-  {/* FAQ 2: Can I purchase a pet on HappyPet? */}
-  <Accordion sx={styles.accordion}>
-    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-      <Typography fontWeight="500">Can I purchase a pet on HappyPet?</Typography>
-    </AccordionSummary>
-    <AccordionDetails>
-      <Typography variant="body2">
-        Yes, HappyPet allows you to purchase pets from verified pet owners and organizations. You can filter pets by various preferences.
-      </Typography>
-    </AccordionDetails>
-  </Accordion>
+          {/* FAQ 2: Can I purchase a pet on HappyPet? */}
+          <Accordion sx={styles.accordion}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography fontWeight="500">Can I purchase a pet on HappyPet?</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2">
+                Yes, HappyPet allows you to purchase pets from verified pet owners and organizations. You can filter pets by various preferences.
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
 
-  {/* FAQ 3: What is the Smart Pet Matchmaking System? */}
-  <Accordion sx={styles.accordion}>
-    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-      <Typography fontWeight="500">What is the Pet Matchmaking System?</Typography>
-    </AccordionSummary>
-    <AccordionDetails>
-      <Typography variant="body2">
-        The Pet Matchmaking System helps you find the perfect pet breed on your preferences, You can filter pets by breed, age, size, and other preferences.
-      </Typography>
-    </AccordionDetails>
-  </Accordion>
+          {/* FAQ 3: What is the Smart Pet Matchmaking System? */}
+          <Accordion sx={styles.accordion}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography fontWeight="500">What is the Pet Matchmaking System?</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2">
+                The Pet Matchmaking System helps you find the perfect pet breed on your preferences, You can filter pets by breed, age, size, and other preferences.
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
 
-  {/* FAQ 4: How do I update my account information? */}
-  <Accordion sx={styles.accordion}>
-    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-      <Typography fontWeight="500">How do I update my account information?</Typography>
-    </AccordionSummary>
-    <AccordionDetails>
-      <Typography variant="body2">
-        You can update your account information by logging into your HappyPet account.
-      </Typography>
-    </AccordionDetails>
-  </Accordion>
+          {/* FAQ 4: How do I update my account information? */}
+          <Accordion sx={styles.accordion}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography fontWeight="500">How do I update my account information?</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2">
+                You can update your account information by logging into your HappyPet account.
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
 
-  {/* FAQ 5: Can I return a pet after adoption? */}
-  <Accordion sx={styles.accordion}>
-    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-      <Typography fontWeight="500">Can I return a pet after adoption?</Typography>
-    </AccordionSummary>
-    <AccordionDetails>
-      <Typography variant="body2">
-        Each shelter has its own return policy. Please contact the shelter directly for more information.
-      </Typography>
-    </AccordionDetails>
-  </Accordion>
+          {/* FAQ 5: Can I return a pet after adoption? */}
+          <Accordion sx={styles.accordion}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography fontWeight="500">Can I return a pet after adoption?</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2">
+                Each shelter has its own return policy. Please contact the shelter directly for more information.
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
 
-  {/* FAQ 6: How does HappyPet support stray animal welfare? */}
-  <Accordion sx={styles.accordion}>
-    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-      <Typography fontWeight="500">How does HappyPet support stray animal welfare?</Typography>
-    </AccordionSummary>
-    <AccordionDetails>
-      <Typography variant="body2">
-        HappyPet collaborates with animal welfare organizations to ensure stray animals receive proper care. You can also contribute to these initiatives through the platform.
-      </Typography>
-    </AccordionDetails>
-  </Accordion>
+          {/* FAQ 6: How does HappyPet support stray animal welfare? */}
+          <Accordion sx={styles.accordion}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography fontWeight="500">How does HappyPet support stray animal welfare?</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2">
+                HappyPet collaborates with animal welfare organizations to ensure stray animals receive proper care. You can also contribute to these initiatives through the platform.
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
 
-  {/* FAQ 7: Is HappyPet available on mobile devices? */}
-  <Accordion sx={styles.accordion}>
-    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-      <Typography fontWeight="500">Is HappyPet available on mobile devices?</Typography>
-    </AccordionSummary>
-    <AccordionDetails>
-      <Typography variant="body2">
-        Yes, HappyPet is optimized for both mobile and desktop users, providing a seamless experience across devices.
-      </Typography>
-    </AccordionDetails>
-  </Accordion>
+          {/* FAQ 7: Is HappyPet available on mobile devices? */}
+          <Accordion sx={styles.accordion}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography fontWeight="500">Is HappyPet available on mobile devices?</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2">
+                Yes, HappyPet is optimized for both mobile and desktop users, providing a seamless experience across devices.
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
 
-  {/* FAQ 8: How do I contact a shelter or breeder? */}
-  <Accordion sx={styles.accordion}>
-    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-      <Typography fontWeight="500">How do I contact a shelter or breeder?</Typography>
-    </AccordionSummary>
-    <AccordionDetails>
-      <Typography variant="body2">
-        Each pet listing includes contact information for the shelter or breeder. You can reach out to them directly through the platform.
-      </Typography>
-    </AccordionDetails>
-  </Accordion>
+          {/* FAQ 8: How do I contact a shelter or breeder? */}
+          <Accordion sx={styles.accordion}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography fontWeight="500">How do I contact a shelter or breeder?</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2">
+                Each pet listing includes contact information for the shelter or breeder. You can reach out to them directly through the platform.
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
 
-  {/* FAQ 9: What should I do if I encounter an issue with the platform? */}
-  <Accordion sx={styles.accordion}>
-    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-      <Typography fontWeight="500">What should I do if I encounter an issue with the platform?</Typography>
-    </AccordionSummary>
-    <AccordionDetails>
-      <Typography variant="body2">
-        If you encounter any issues, please visit our support page or contact our customer service team for assistance.
-      </Typography>
-    </AccordionDetails>
-  </Accordion>
-</Box>
+          {/* FAQ 9: What should I do if I encounter an issue with the platform? */}
+          <Accordion sx={styles.accordion}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography fontWeight="500">What should I do if I encounter an issue with the platform?</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2">
+                If you encounter any issues, please visit our support page or contact our customer service team for assistance.
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+        </Box>
 
         {/* Additional Contact Information */}
         <Box sx={{ mb: 4 }}>
