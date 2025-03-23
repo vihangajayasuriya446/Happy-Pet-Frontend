@@ -142,7 +142,7 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [editPet, setEditPet] = useState<PetData | null>(null);
     const [searchTerm, setSearchTerm] = useState<string>("");
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true); 
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false); 
 
     // Fetch pets and users on component mount
     useEffect(() => {

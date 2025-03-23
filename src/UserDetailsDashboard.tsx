@@ -28,7 +28,7 @@ const UserDetailsDashboard: React.FC = () => {
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true); 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); 
 
   // Add state for notifications
   const [notification, setNotification] = useState<{

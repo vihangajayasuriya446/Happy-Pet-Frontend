@@ -19,7 +19,7 @@ const Pets: React.FC = () => {
  const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
  const [submitted, setSubmitted] = useState<boolean>(false);
  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
- const [isSidebarOpen, setIsSidebarOpen] = useState(true); 
+ const [isSidebarOpen, setIsSidebarOpen] = useState(false); 
 
  // Fetch all pets
  const { data: pets = [] as Pet[] } = useQuery<Pet[], Error>({
