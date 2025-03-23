@@ -24,7 +24,6 @@ const OwnerForm: React.FC = () => {
   const [success, setSuccess] = useState<boolean>(false);
   const [open, setOpen] = useState(true); // Modal starts open
   const navigate = useNavigate();
-  const token = localStorage.getItem('token');
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -45,7 +44,6 @@ const OwnerForm: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify(owner),
       });
@@ -74,7 +72,7 @@ const OwnerForm: React.FC = () => {
   return (
     <Container maxWidth="sm" sx={{ mt: 10 }}>
       <Box>
-        {/* Policy Modal (Unchanged) */}
+        {/* Policy Modal */}
         <Modal open={open} onClose={handleAgree}>
           <Box
             sx={{
@@ -88,37 +86,60 @@ const OwnerForm: React.FC = () => {
               borderRadius: 3,
               textAlign: 'center',
               outline: 'none',
-              maxWidth: '500px',
-              width: '90%',
+              width: '520px', // Match the form box width
+              maxWidth: '90%', // Ensure responsiveness
             }}
           >
             <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ color: '#002855' }}>
               Pet Matchmaking Policy & Terms
             </Typography>
-            <Typography variant="body1" paragraph sx={{ color: '#555' }}>
+            <Typography variant="body1" paragraph sx={{ color: '#000000' }}>
               Happypet’s Pet Matchmaking feature connects pet owners seeking
               breeding partners. We solely facilitate contact and do not
               participate in the breeding process. Users are responsible for
               verifying pet health, compatibility, and compliance with legal and
               ethical standards.
             </Typography>
-            <Typography variant="body1" paragraph sx={{ color: '#555' }}>
+            <Typography variant="body1" paragraph sx={{ color: '#000000' }}>
               Happypet is not liable for any disputes, health issues, or outcomes
               arising from these arrangements. Use of this feature is at the
               user’s own discretion and risk.
             </Typography>
             <Box mt={3} display="flex" justifyContent="center" gap={2}>
-              <Button variant="outlined" color="primary" onClick={handleBack} sx={{ px: 4 }}>
+              <Button 
+                variant="outlined" 
+                onClick={handleBack} 
+                sx={{ 
+                  px: 4, 
+                  color: '#0000ff', 
+                  borderColor: '#0000ff',
+                  '&:hover': {
+                    borderColor: '#0000ff',
+                    backgroundColor: 'rgba(0, 0, 255, 0.04)',
+                  },
+                }}
+              >
                 Back
               </Button>
-              <Button variant="contained" color="primary" onClick={handleAgree} sx={{ px: 4 }}>
+              <Button 
+                variant="contained" 
+                onClick={handleAgree} 
+                sx={{ 
+                  px: 4, 
+                  backgroundColor: '#0000ff', 
+                  color: '#fff',
+                  '&:hover': {
+                    backgroundColor: '#0000cc',
+                  },
+                }}
+              >
                 Agree
               </Button>
             </Box>
           </Box>
         </Modal>
 
-        {/* Form Container (Updated) */}
+        {/* Form Container */}
         <Box
           sx={{
             backgroundColor: 'rgba(255, 255, 255, 0.95)',
@@ -128,6 +149,9 @@ const OwnerForm: React.FC = () => {
             border: '1px solid rgba(0, 0, 0, 0.1)',
             mt: 15,
             mb: 8,
+            width: '500px', // Match the modal width
+            maxWidth: '90%', // Ensure responsiveness
+            mx: 'auto', // Center the form
           }}
         >
           <Typography
@@ -139,7 +163,7 @@ const OwnerForm: React.FC = () => {
           >
             Matchmaking Request Form
           </Typography>
-          <Typography variant="body1" textAlign="center" sx={{ color: '#555', mb: 4 }}>
+          <Typography variant="body1" textAlign="center" sx={{ color: '#000000', mb: 4 }}>
             Fill required details to send a matchmaking request.
           </Typography>
 
@@ -189,21 +213,22 @@ const OwnerForm: React.FC = () => {
               <Button 
                 type="submit" 
                 variant="contained" 
-                color="primary" 
                 sx={{ 
                   px: 5, 
                   py: 1.5, 
                   borderRadius: 2, 
                   textTransform: 'none', 
-                  fontSize: '1rem', 
+                  
                   fontWeight: 'bold',
-                  boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
+                  backgroundColor: '#0000ff',
+                   fontSize: '1.05rem',
+                  color: '#fff',
                   '&:hover': {
-                    boxShadow: '0px 6px 8px rgba(0, 0, 0, 0.2)',
+                    backgroundColor: '#0000cc',
                   },
                 }}
               >
-                Submit
+                Send
               </Button>
             </Box>
           </form>

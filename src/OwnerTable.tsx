@@ -11,8 +11,7 @@ import {
   CircularProgress,
   Container,
   Typography,
-  Switch,
-  FormControlLabel,
+  Checkbox,
   Grid,
   Box,
   Menu,
@@ -23,7 +22,6 @@ import {
 } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import CloseIcon from '@mui/icons-material/Close'; // Import the close icon
-
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import Sidebar from './Sidebar'; 
 import { User } from './types';
@@ -46,18 +44,12 @@ const OwnerTable: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); 
   const [openPetModal, setOpenPetModal] = useState(false);
   const [selectedPet, setSelectedPet] = useState<User | null>(null);
-  const token = localStorage.getItem('token');
 
   useEffect(() => {
     const fetchOwners = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('http://localhost:8080/api/v1/getowners', {
-          headers: {
-            'Authorization': `Bearer ${token}` // Include the token in the authorization header
-          }
-        });
-
+        const response = await fetch('http://localhost:8080/api/v1/getowners');
         if (!response.ok) {
           throw new Error('Failed to fetch owners');
         }
@@ -91,10 +83,6 @@ const OwnerTable: React.FC = () => {
     try {
       const response = await fetch(`http://localhost:8080/api/v1/deleteowner/${id}`, {
         method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          "Authorization": `Bearer ${token}`,
-        },
       });
 
       if (response.ok) {
@@ -114,7 +102,6 @@ const OwnerTable: React.FC = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({ confirmation: newConfirmation }),
       });
@@ -172,46 +159,89 @@ const OwnerTable: React.FC = () => {
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-       <Sidebar open={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
-       <Tooltip title="Admin Dashboard"> 
-            <IconButton
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              sx={{
-                mb: 2,
-                '& svg': { // Target the SVG icon inside the button
-                  fontSize: '1.8rem', // Increase icon size 
-                },
-              }}
-            >
-              <KeyboardArrowRightIcon />
-            </IconButton>
-          </Tooltip> 
+      <Sidebar open={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+      
 
-        
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <Tooltip title="Admin Dashboard">
+                  <IconButton
+                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                    sx={{
+                      position: "fixed",
+                      left: isSidebarOpen ? 240 : 16, // Adjust position based on sidebar state
+                      top: 60, // Increased top value to move the icon further down
+                      zIndex: 1300, // High zIndex to ensure it's above other content
+                      '& svg': {
+                        fontSize: '2rem',
+                        color:"black"
+                      },
+                      backgroundColor: 'transparent',
+                      '&:hover': {
+                        backgroundColor: 'rgba(28, 34, 225, 0.61)',
+                        backdropFilter: 'blur(10px)',
+                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                      },
+                    }}
+                  >
+                    <KeyboardArrowRightIcon />
+                  </IconButton>
+                </Tooltip>
+      
         <Container maxWidth="lg" sx={{ mt: 12, mb: 12 }}>
-          <Typography variant="h4" gutterBottom fontWeight="bold" textAlign="left" sx={{ color: '#fafafa', mb: 4 }}>
+          
+          <Typography variant="h3" gutterBottom fontWeight="bold" textAlign="left" sx={{ color: '#fafafa', mb: 4 }}>
             Matchmaking Requests
           </Typography>
-          
 
           <Grid container spacing={3} mb={4}>
+            {/* Total Requests Box */}
             <Grid item xs={12} sm={4}>
-              <Box sx={{ bgcolor: '#fff', p: 3, borderRadius: 2, boxShadow: 3, textAlign: 'center' }}>
-                <Typography variant="h6" sx={{ color: '#002855' }}>Total Requests</Typography>
-                <Typography variant="h5" fontWeight="bold" sx={{ color: '#002855' }}>{totalRequests}</Typography>
+              <Box
+                sx={{
+                  bgcolor: '#fff',
+                  p: 3,
+                  borderRadius: 2,
+                  boxShadow: 3,
+                  textAlign: 'center',
+                  border: '2px solid #1a1aff', // Blue outline
+                }}
+              >
+                <Typography variant="h6" sx={{ color: '#000' }}>Total Requests</Typography>
+                <Typography variant="h5" fontWeight="bold" sx={{ color: '#000' }}>{totalRequests}</Typography>
               </Box>
             </Grid>
+
+            {/* Confirmed Requests Box */}
             <Grid item xs={12} sm={4}>
-              <Box sx={{ bgcolor: '#a0bce8', p: 3, borderRadius: 2, boxShadow: 3, textAlign: 'center' }}>
-                <Typography variant="h6" sx={{ color: '#002855' }}>Confirmed</Typography>
-                <Typography variant="h5" fontWeight="bold" sx={{ color: '#002855' }}>{confirmedRequests}</Typography>
+              <Box
+                sx={{
+                  bgcolor: '#a0bce8',
+                  p: 3,
+                  borderRadius: 2,
+                  boxShadow: 3,
+                  textAlign: 'center',
+                  border: '2px solid #1a1aff', // Blue outline
+                }}
+              >
+                <Typography variant="h6" sx={{ color: '#000' }}>Confirmed</Typography>
+                <Typography variant="h5" fontWeight="bold" sx={{ color: '#000' }}>{confirmedRequests}</Typography>
               </Box>
             </Grid>
+
+            {/* Unconfirmed Requests Box */}
             <Grid item xs={12} sm={4}>
-              <Box sx={{ bgcolor: '#eff283', p: 3, borderRadius: 2, boxShadow: 3, textAlign: 'center' }}>
-                <Typography variant="h6" sx={{ color: '#002855' }}>Unconfirmed</Typography>
-                <Typography variant="h5" fontWeight="bold" sx={{ color: '#002855' }}>{unconfirmedRequests}</Typography>
+              <Box
+                sx={{
+                  bgcolor: '#ffff99', // Yellow background
+                  p: 3,
+                  borderRadius: 2,
+                  boxShadow: 3,
+                  textAlign: 'center',
+                  border: '2px solid #ffcc00', // Yellow outline
+                }}
+              >
+                <Typography variant="h6" sx={{ color: '#000' }}>Unconfirmed</Typography>
+                <Typography variant="h5" fontWeight="bold" sx={{ color: '#000' }}>{unconfirmedRequests}</Typography>
               </Box>
             </Grid>
           </Grid>
@@ -306,17 +336,17 @@ const OwnerTable: React.FC = () => {
 
           <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: '8px', overflow: 'hidden' }}>
             <Table sx={{ minWidth: 650 }}>
-            <TableHead>
-  <TableRow sx={{ backgroundColor: '#679df5' }}> {/* Light blue background */}
-    <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center', color: '#002855' }}>ID</TableCell>
-    <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center', color: '#002855' }}>Name</TableCell>
-    <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center', color: '#002855' }}>Address</TableCell>
-    <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center', color: '#002855' }}>Contact Number</TableCell>
-    <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center', color: '#002855' }}>Pet ID</TableCell>
-    <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center', color: '#002855' }}>Confirmation</TableCell>
-    <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center', color: '#002855' }}>Actions</TableCell>
-  </TableRow>
-</TableHead>
+              <TableHead>
+                <TableRow sx={{ backgroundColor: '#000099' }}> {/* Updated background color */}
+                  <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center', color: '#fff' }}>ID</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center', color: '#fff' }}>Name</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center', color: '#fff' }}>Address</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center', color: '#fff' }}>Contact Number</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center', color: '#fff' }}>Pet ID</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center', color: '#fff' }}>Confirmation</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center', color: '#fff' }}>Actions</TableCell>
+                </TableRow>
+              </TableHead>
               <TableBody>
                 {isLoading ? (
                   <TableRow>
@@ -329,14 +359,14 @@ const OwnerTable: React.FC = () => {
                     const pet = users.find(user => user.id === owner.petId);
                     return (
                       <TableRow key={owner.id} sx={{ '&:nth-of-type(odd)': { backgroundColor: '#f9f9f9' } }}>
-                        <TableCell sx={{ padding: '16px', textAlign: 'center', color: '#002855' }}>{owner.id}</TableCell>
-                        <TableCell sx={{ padding: '16px', textAlign: 'center', color: '#002855' }}>{owner.ownerName}</TableCell>
-                        <TableCell sx={{ padding: '16px', textAlign: 'center', color: '#002855' }}>{owner.address}</TableCell>
-                        <TableCell sx={{ padding: '16px', textAlign: 'center', color: '#002855' }}>{owner.contactNumber}</TableCell>
-                        <TableCell sx={{ padding: '16px', textAlign: 'center', color: '#002855' }}>
+                        <TableCell sx={{ padding: '16px', textAlign: 'center', color: '#000' }}>{owner.id}</TableCell>
+                        <TableCell sx={{ padding: '16px', textAlign: 'center', color: '#000' }}>{owner.ownerName}</TableCell>
+                        <TableCell sx={{ padding: '16px', textAlign: 'center', color: '#000' }}>{owner.address}</TableCell>
+                        <TableCell sx={{ padding: '16px', textAlign: 'center', color: '#000' }}>{owner.contactNumber}</TableCell>
+                        <TableCell sx={{ padding: '16px', textAlign: 'center', color: '#000' }}>
                           {pet ? (
                             <Tooltip title={pet.name}>
-                              <Button onClick={() => handleOpenPetModal(pet)} sx={{ color: '#002855' }}>
+                              <Button onClick={() => handleOpenPetModal(pet)} sx={{ color: '#000' }}>
                                 {owner.petId}
                               </Button>
                             </Tooltip>
@@ -344,16 +374,11 @@ const OwnerTable: React.FC = () => {
                             'Pet not found'
                           )}
                         </TableCell>
-                        <TableCell sx={{ padding: '16px', textAlign: 'center', color: '#002855' }}>
-                          <FormControlLabel
-                            control={
-                              <Switch
-                                checked={owner.confirmation === 'Yes'}
-                                onChange={() => handleToggle(owner.id, owner.confirmation)}
-                                color="primary"
-                              />
-                            }
-                            label={owner.confirmation}
+                        <TableCell sx={{ padding: '16px', textAlign: 'center', color: '#000' }}>
+                          <Checkbox
+                            checked={owner.confirmation === 'Yes'}
+                            onChange={() => handleToggle(owner.id, owner.confirmation)}
+                            color="primary"
                           />
                         </TableCell>
                         <TableCell sx={{ padding: '16px', textAlign: 'center' }}>
@@ -366,7 +391,7 @@ const OwnerTable: React.FC = () => {
                   })
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={7} align="center" sx={{ padding: '20px', fontWeight: 'bold', color: '#002855' }}>
+                    <TableCell colSpan={7} align="center" sx={{ padding: '20px', fontWeight: 'bold', color: '#000' }}>
                       No Requests Found
                     </TableCell>
                   </TableRow>
