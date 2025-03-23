@@ -429,6 +429,9 @@ const HomePage: React.FC = () => {
                                 backgroundColor: "rgba(255, 255, 255, 0.6)",
                                 border: "1px solid rgba(255, 255, 255, 0.1)",
                                 backdropFilter: "blur(10px)",
+                                maxWidth: "400px",
+                                maxHeight: "350px"
+
                             }}
                         >
                             <CardMedia
@@ -457,8 +460,8 @@ const HomePage: React.FC = () => {
                                     </Typography>
                                 )}
                                 {pet.price && (
-                                    <Typography variant="body2" sx={{ fontWeight: "bold", color: "primary.main", mt: 1 }}>
-                                        ${pet.price.toFixed(2)}
+                                    <Typography variant="body2" sx={{ fontWeight: "bold", color: "primary.main", mt: 0 }}>
+                                        LKR {pet.price.toFixed(2)}
                                     </Typography>
                                 )}
                             </CardContent>
