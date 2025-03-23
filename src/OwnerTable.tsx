@@ -44,12 +44,18 @@ const OwnerTable: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); 
   const [openPetModal, setOpenPetModal] = useState(false);
   const [selectedPet, setSelectedPet] = useState<User | null>(null);
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     const fetchOwners = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('http://localhost:8080/api/v1/getowners');
+        const response = await fetch('http://localhost:8080/api/v1/getowners', {
+          headers: {
+            'Authorization': `Bearer ${token}` // Include the token in the authorization header
+          }
+        });
+
         if (!response.ok) {
           throw new Error('Failed to fetch owners');
         }
@@ -83,6 +89,10 @@ const OwnerTable: React.FC = () => {
     try {
       const response = await fetch(`http://localhost:8080/api/v1/deleteowner/${id}`, {
         method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          "Authorization": `Bearer ${token}`,
+        },
       });
 
       if (response.ok) {
@@ -102,6 +112,7 @@ const OwnerTable: React.FC = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({ confirmation: newConfirmation }),
       });
@@ -117,7 +128,6 @@ const OwnerTable: React.FC = () => {
       console.error('Error updating owner:', error);
     }
   };
-
   const handleSort = (sortType: string) => {
     setSortBy(sortType);
     setAnchorEl(null);
