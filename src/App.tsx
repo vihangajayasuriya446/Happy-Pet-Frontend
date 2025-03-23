@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate  } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import { Box } from '@mui/material';
@@ -16,6 +16,8 @@ import TermsAndConditions from './TermsAndConditions';
 import PrivacyPolicy from './PrivacyPolicy';
 import OwnerForm from './OwnerForm';
 import OwnerTable from './OwnerTable';
+import BuyPetPage from "./BuyPetPage";
+import PetManagementDashboard from "./PetManagementDashboard";
 
 import User from './Pets';
 import AdoptionPage from './AdoptionPage';
@@ -44,6 +46,14 @@ const App: React.FC = () => {
           <Route path="/adopt" element={<AdoptionPage />} />
           <Route path="/dashboard1" element={<Pets/>} />
           <Route path="/user-dashboard" element={<UserDetailsDashboard />} />
+          <Route path="/" element={<Navigate to="/home" replace />} />
+                        <Route path="/home" element={<HomePage />} />
+                        <Route path="/buy" element={<BuyPetPage />} />
+                        <Route path="/contact-owner/:petId" element={<UserDetailsDashboard />} />
+                        <Route path="/contact" element={<UserDetailsDashboard />} />
+                        <Route path="/admin/pets" element={<PetManagementDashboard />} />
+                        <Route path="/admindb" element={<Navigate to="/admin/pets" replace />} />
+                        <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
         <Footer />
       </Box>
