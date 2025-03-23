@@ -41,7 +41,7 @@ const OwnerTable: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [sortBy, setSortBy] = useState<string>('none');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true); 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); 
   const [openPetModal, setOpenPetModal] = useState(false);
   const [selectedPet, setSelectedPet] = useState<User | null>(null);
   const token = localStorage.getItem('token');
