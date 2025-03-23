@@ -74,7 +74,7 @@ const AdminDashboardNav: React.FC = () => {
             To open the admin dashboard, click the{' '}
             <KeyboardArrowRightIcon
               fontSize="small"
-              sx={{ verticalAlign: 'middle', color: theme.palette.primary.main }}
+              sx={{ verticalAlign: 'middle', color: "black" }}
             />{' '}
             icon located on the left side of the screen.
           </Typography>

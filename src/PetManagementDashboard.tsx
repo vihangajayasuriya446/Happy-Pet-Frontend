@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Sidebar from './Sidebar';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import {
     Button,
     Typography,
@@ -20,6 +22,7 @@ import {
     SelectChangeEvent,
     TextField,
     InputAdornment,
+    IconButton
 } from "@mui/material";
 import PetsIcon from "@mui/icons-material/Pets";
 import RefreshIcon from "@mui/icons-material/Refresh";
@@ -139,6 +142,7 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [editPet, setEditPet] = useState<PetData | null>(null);
     const [searchTerm, setSearchTerm] = useState<string>("");
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true); 
 
     // Fetch pets and users on component mount
     useEffect(() => {
@@ -514,6 +518,30 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
                 <PetsIcon sx={{ fontSize: 32 }} />
                 Pet Buy Management Dashboard
             </Typography>
+            <Sidebar open={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+            <Tooltip title="Admin Dashboard">
+                      <IconButton
+                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                        sx={{
+                          position: "fixed",
+                          left: isSidebarOpen ? 240 : 16, // Adjust position based on sidebar state
+                          top: 60, // Increased top value to move the icon further down
+                          zIndex: 1300, // High zIndex to ensure it's above other content
+                          '& svg': {
+                            fontSize: '2rem',
+                            color:"black"
+                          },
+                          backgroundColor: 'transparent',
+                          '&:hover': {
+                            backgroundColor: 'rgba(28, 34, 225, 0.61)',
+                            backdropFilter: 'blur(10px)',
+                            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                          },
+                        }}
+                      >
+                        <KeyboardArrowRightIcon />
+                      </IconButton>
+                    </Tooltip>
 
             {/* Search Bar and Add Pet Button */}
             <Box

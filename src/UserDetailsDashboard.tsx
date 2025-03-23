@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import Sidebar from './Sidebar';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import {
   Box,
   Typography,
@@ -7,7 +9,7 @@ import {
   Alert,
   TextField,
   Drawer,
-  InputAdornment,
+  InputAdornment,Tooltip,IconButton
 } from '@mui/material';
 import UserDetailsTable from './UserDetailsTable';
 import UserDetailsForm from './UserDetailsForm';
@@ -26,6 +28,7 @@ const UserDetailsDashboard: React.FC = () => {
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); 
 
   // Add state for notifications
   const [notification, setNotification] = useState<{
@@ -147,7 +150,30 @@ const UserDetailsDashboard: React.FC = () => {
           flexWrap: 'wrap',
           gap: 2,
         }}
-      >
+      ><Sidebar open={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+      <Tooltip title="Admin Dashboard">
+                <IconButton
+                  onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                  sx={{
+                    position: "fixed",
+                    left: isSidebarOpen ? 240 : 16, // Adjust position based on sidebar state
+                    top: 60, // Increased top value to move the icon further down
+                    zIndex: 1300, // High zIndex to ensure it's above other content
+                    '& svg': {
+                      fontSize: '2rem',
+                      color:"black"
+                    },
+                    backgroundColor: 'transparent',
+                    '&:hover': {
+                      backgroundColor: 'rgba(28, 34, 225, 0.61)',
+                      backdropFilter: 'blur(10px)',
+                      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                    },
+                  }}
+                >
+                  <KeyboardArrowRightIcon />
+                </IconButton>
+              </Tooltip>
         {/* Search Bar with transparency */}
         <TextField
           placeholder="Search Applicant"
