@@ -21,9 +21,13 @@ import {
   DialogActions,
   useMediaQuery,
   useTheme,
+  IconButton,
+  Tooltip
 } from "@mui/material";
 import axios from "axios";
 import { Delete, Search } from "@mui/icons-material";
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import Sidebar from './Sidebar'; 
 
 interface ContactFormResponse {
   id: number;
@@ -53,6 +57,8 @@ const ResponsesPage: React.FC = () => {
 
   // State for search
   const [searchQuery, setSearchQuery] = useState("");
+
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); 
 
   // Fetch all responses from the backend
   useEffect(() => {
@@ -129,6 +135,33 @@ const ResponsesPage: React.FC = () => {
     <Box>
       <Container maxWidth="lg" sx={{ py: 4 }}>
         {/* Page Title */}
+        <Sidebar open={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+      
+
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <Tooltip title="Admin Dashboard">
+                  <IconButton
+                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                    sx={{
+                      position: "fixed",
+                      left: isSidebarOpen ? 240 : 16, // Adjust position based on sidebar state
+                      top: 60, // Increased top value to move the icon further down
+                      zIndex: 1300, // High zIndex to ensure it's above other content
+                      '& svg': {
+                        fontSize: '2rem',
+                        color:"black"
+                      },
+                      backgroundColor: 'transparent',
+                      '&:hover': {
+                        backgroundColor: 'rgba(28, 34, 225, 0.61)',
+                        backdropFilter: 'blur(10px)',
+                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                      },
+                    }}
+                  >
+                    <KeyboardArrowRightIcon />
+                  </IconButton>
+                </Tooltip>
         <Typography variant="h4" component="h1" gutterBottom fontWeight="600" align="center">
           Contact Us Responses
         </Typography>
