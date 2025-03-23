@@ -16,6 +16,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import PetsIcon from '@mui/icons-material/Pets';
 import StorefrontIcon from '@mui/icons-material/Storefront'; 
 import CloseIcon from '@mui/icons-material/Close'; 
+import ContactMailIcon from '@mui/icons-material/ContactMail'; // New icon for Contact Us Inquiries
 
 import { useNavigate } from 'react-router-dom';
 
@@ -35,6 +36,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleSidebar }) => {
     const [openPetStore, setOpenPetStore] = useState(false);
     const [openAdoptPets, setOpenAdoptPets] = useState(false);
     const [openMatchmaking, setOpenMatchmaking] = useState(false);
+    const [openContactUs, setOpenContactUs] = useState(false); // State for Contact Us Inquiries
 
     return (
         <>
@@ -195,6 +197,42 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleSidebar }) => {
                                     onClick={() => handleNavigation('/owners')}
                                 > 
                                     <ListItemText primary="View Matchmaking Requests" primaryTypographyProps={{ color: '#333' }} /> 
+                                </ListItemButton>
+                            </List>
+                        </Collapse> 
+
+                        {/* Contact Us Inquiries */}
+                        <ListItemButton 
+                            onClick={() => setOpenContactUs(!openContactUs)}
+                            sx={{ 
+                                borderRadius: '8px', 
+                                mb: 1,
+                                backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                                '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.05)' }
+                            }}
+                        > 
+                            <ListItemIcon>
+                                <ContactMailIcon sx={{ color: '#333' }}/> 
+                            </ListItemIcon>
+                            <ListItemText 
+                                primary="Contact Us Inquiries" 
+                                primaryTypographyProps={{ fontWeight: 'bold', color: '#333' }} 
+                            />
+                            {openContactUs ? <ExpandLess sx={{ color: '#333' }} /> : <ExpandMore sx={{ color: '#333' }} />}
+                        </ListItemButton>
+                        <Collapse in={openContactUs} timeout="auto" unmountOnExit> 
+                            <List component="div" disablePadding>
+                                <ListItemButton 
+                                    sx={{ 
+                                        pl: 4, 
+                                        borderRadius: '8px', 
+                                        mb: 1,
+                                        backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                                        '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.05)' } 
+                                    }}
+                                    onClick={() => handleNavigation('/contactusresponses')}
+                                > 
+                                    <ListItemText primary="Inquiries" primaryTypographyProps={{ color: '#333' }} /> 
                                 </ListItemButton>
                             </List>
                         </Collapse> 

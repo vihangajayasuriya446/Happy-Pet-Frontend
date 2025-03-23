@@ -19,6 +19,7 @@ import CloseIcon from "@mui/icons-material/Close"; // Import CloseIcon
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import logoImg from './assets/logo512.png';
 
 interface UserDetails {
   email: string;
@@ -116,7 +117,7 @@ const Navbar = () => {
         <Toolbar>
           <Box
             component="img"
-            src="./src/assets/logo512.png"
+            src={logoImg}
             alt="HappyPet Logo"
             sx={{ height: 70, width: 70, mr: 2 }}
           />
@@ -262,7 +263,7 @@ const Navbar = () => {
                   transform: "scaleX(1)",
                 },
               }}
-              onClick={() => handleNavigation("/contact-us")} // Hardcoded path for Contact Us
+              onClick={() => handleNavigation("/contactus")} // Hardcoded path for Contact Us
             >
               Contact Us
             </Typography>
