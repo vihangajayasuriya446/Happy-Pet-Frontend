@@ -16,6 +16,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import CloseIcon from "@mui/icons-material/Close"; // Import CloseIcon
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
@@ -107,6 +108,7 @@ const Navbar = () => {
         sx={{
           bgcolor: "rgba(248, 249, 250, 0.9)", // Soft gray background
           backdropFilter: "blur(10px)", // Glass morphism effect
+          WebkitBackdropFilter: "blur(10px)", // Safari support
           color: "#333333",
           boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
           px: 2,
@@ -234,6 +236,7 @@ const Navbar = () => {
             border: "1px solid rgba(255, 255, 255, 0.2)", // Subtle border for glass effect
             backgroundColor: "rgba(255, 255, 255, 0.85)", // Semi-transparent white
             backdropFilter: "blur(20px)", // Enhanced glass morphism
+            WebkitBackdropFilter: "blur(20px)", // Safari support
             backgroundImage: "linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.6))", // Gradient overlay
             overflow: "hidden",
           },
@@ -416,48 +419,85 @@ const DrawerMenu = ({ open, toggleDrawer }: DrawerMenuProps) => {
       open={open}
       onClose={toggleDrawer}
       sx={{
-        width: 250,
+        width: 300,
         flexShrink: 0,
         "& .MuiDrawer-paper": {
-          width: 250,
+          width: 300,
           boxSizing: "border-box",
-          bgcolor: "rgba(248, 249, 250, 0.95)", // Soft gray background
-          backdropFilter: "blur(10px)", // Glass morphism effect
-          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+          bgcolor: "rgba(248, 249, 250, 0.1)", // Soft gray background
+          backdropFilter: "blur(10px)", // Enhanced glass morphism effect
+          WebkitBackdropFilter: "blur(20px)", // Safari support
+          boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
           borderRight: "1px solid rgba(0, 0, 0, 0.1)", // Subtle border
+          backgroundImage: "linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.6))", // Gradient overlay
         },
       }}
     >
-      <List>
-        <ListItem
-          key={"Home"}
-          onClick={() => handleNavigation("/")}
-          sx={{ cursor: "pointer", "&:hover": { bgcolor: "#f1f1f1" } }}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          p: 3,
+          gap: 2,
+        }}
+      >
+        {/* Close Button */}
+        <IconButton
+          onClick={toggleDrawer}
+          sx={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            color: "#333333",
+            "&:hover": { color: "#007BFF" },
+          }}
         >
-          <ListItemText primary={"Home"} />
-        </ListItem>
-        <ListItem
-          key={"Services"}
-          onClick={() => handleNavigation("/services")}
-          sx={{ cursor: "pointer", "&:hover": { bgcolor: "#f1f1f1" } }}
+          <CloseIcon />
+        </IconButton>
+
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: "bold",
+            color: "#002855",
+            fontSize: "1.5rem",
+            mb: 2,
+          }}
         >
-          <ListItemText primary={"Services"} />
-        </ListItem>
-        <ListItem
-          key={"About Us"}
-          onClick={() => handleNavigation("/aboutus")}
-          sx={{ cursor: "pointer", "&:hover": { bgcolor: "#f1f1f1" } }}
-        >
-          <ListItemText primary={"About Us"} />
-        </ListItem>
-        <ListItem
-          key={"Contact Us"}
-          onClick={() => handleNavigation("/contactus")}
-          sx={{ cursor: "pointer", "&:hover": { bgcolor: "#f1f1f1" } }}
-        >
-          <ListItemText primary={"Contact Us"} />
-        </ListItem>
-      </List>
+          Menu
+        </Typography>
+        <List sx={{ width: "100%" }}>
+          {[
+            { name: "Pet Buy", path: "/buy" },
+            { name: "Pet Adopt", path: "/adopt" },
+            { name: "Matchmaking", path: "/matchmaking" },
+          ].map((item) => (
+            <ListItem
+              key={item.name}
+              onClick={() => handleNavigation(item.path)}
+              sx={{
+                cursor: "pointer",
+                borderRadius: "12px",
+                "&:hover": {
+                  bgcolor: "rgba(0, 123, 255, 0.1)",
+                  transform: "translateX(5px)",
+                  transition: "all 0.3s ease",
+                },
+              }}
+            >
+              <ListItemText
+                primary={item.name}
+                sx={{
+                  color: "#333333",
+                  fontWeight: "500",
+                  "&:hover": { color: "#007BFF" },
+                }}
+              />
+            </ListItem>
+          ))}
+        </List>
+      </Box>
     </Drawer>
   );
 };

@@ -361,7 +361,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
     };
 
     return (
-        <Box sx={{ bgcolor: '#003366', minHeight: '100vh', padding: 2 }}>
+        <Box sx={{ minHeight: '100vh', padding: 2 }}>
             <Container maxWidth="lg">
                 <Paper
                     elevation={3}

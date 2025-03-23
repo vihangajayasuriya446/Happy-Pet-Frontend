@@ -31,6 +31,11 @@ const UserDetailsDashboard1: React.FC = () => {
         severity: 'success'
     });
 
+    // Scroll to the top of the page when the component mounts or updates
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [location]);
+
     // Extract petId from URL query parameters if present
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
@@ -308,21 +313,7 @@ const UserDetailsDashboard1: React.FC = () => {
         <Box sx={{ width: '100%', margin: 'auto', p: 2 }}>
             {/* Back button to return to the pet list - now with white styling */}
             <Box sx={{ mb: 3 }}>
-                <Button
-                    variant="contained"
-                    startIcon={<ArrowBackIcon />}
-                    onClick={goBackToPetList}
-                    sx={{
-                        backgroundColor: 'white',
-                        color: '#003366',
-                        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-                        '&:hover': {
-                            backgroundColor: '#f5f5f5',
-                        }
-                    }}
-                >
-                    Back
-                </Button>
+                
             </Box>
 
             {isLoading ? (
