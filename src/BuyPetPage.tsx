@@ -3,8 +3,8 @@ import { Box, Typography, Container, IconButton, Badge, FormControl, Select, Men
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import { useCart } from "./contexts/CartContext";
 import PetList from "./components/PetList";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+
+
 import DrawerMenu from "./components/DrawerMenu";
 import Cart from "./components/Cart";
 
@@ -39,21 +39,21 @@ const BuyPetPage: React.FC = () => {
     return (
         <Box sx={{
             minHeight: '100vh',
-            bgcolor: '#003366',
+            
             display: 'flex',
             flexDirection: 'column',
             fontFamily: '"Nunito Sans", sans-serif',
         }}>
             {/* Fix the Navbar component by checking its props requirements */}
             {/* If toggleDrawer is not a valid prop, remove it */}
-            <Navbar />
+            
             <DrawerMenu open={drawerOpen} toggleDrawer={toggleDrawer} />
             <Cart open={cartOpen} onClose={toggleCart} />
 
             {/* Title Section with Shopping Bag Icon and Filters */}
             <Box
                 sx={{
-                    bgcolor: '#003366',
+                    
                     pt: { xs: 12, md: 16 },
                     pb: 3,
                     position: 'relative',
@@ -187,7 +187,7 @@ const BuyPetPage: React.FC = () => {
             {/* Main content */}
             <Box
                 sx={{
-                    bgcolor: '#003366',
+                    
                     flex: 1,
                     width: '100%'
                 }}
@@ -219,7 +219,7 @@ const BuyPetPage: React.FC = () => {
                 </Alert>
             </Snackbar>
 
-            <Footer />
+           
         </Box>
     );
 };

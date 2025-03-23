@@ -18,7 +18,7 @@ interface SnackbarState {
     severity: 'success' | 'error' | 'info' | 'warning';
 }
 
-const UserDetailsDashboard: React.FC = () => {
+const UserDetailsDashboard1: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [selectedInquiry, setSelectedInquiry] = useState<UserInquiry | null>(null);
@@ -360,4 +360,4 @@ const UserDetailsDashboard: React.FC = () => {
     );
 };
 
-export default UserDetailsDashboard;
+export default UserDetailsDashboard1;
