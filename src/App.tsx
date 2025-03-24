@@ -23,9 +23,12 @@ import UserDetailsDashboard from './UserDetailsDashboard';
 import UserDetailsDashboard1 from "./components/UserDetailsDashboard";
 import Pets from './Pets';
 import AboutUs from './AboutUs';
+import { CartProvider } from './contexts/CartContext'; // Adjust the path as needed
+import ResponsesPage from './ResponsesPage';
 
 const App: React.FC = () => {
   return (
+    <CartProvider>
     <Router>
       <Box sx={{ minHeight: '100vh' }}>
         <Navbar />
@@ -45,6 +48,7 @@ const App: React.FC = () => {
           <Route path="/owners" element={<OwnerTable />} />
           <Route path="/adopt" element={<AdoptionPage />} />
           <Route path="/dashboard1" element={<Pets/>} />
+          <Route path="/contactusresponses" element={<ResponsesPage/>} />
           <Route path="/user-dashboard" element={<UserDetailsDashboard />} />
           <Route path="/aboutus" element={<AboutUs />} />
         
@@ -59,6 +63,7 @@ const App: React.FC = () => {
         <Footer />
       </Box>
     </Router>
+    </CartProvider>
   );
 };
 
