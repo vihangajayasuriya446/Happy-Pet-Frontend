@@ -96,7 +96,7 @@ const PrivacyPolicy: React.FC = () => {
           If you have any questions about this Privacy Policy, You can contact us:
         </p>
         <ul style={{ margin: '10px 0', paddingLeft: '20px' }}>
-          <li style={{ margin: '5px 0' }}>By email: happypet@gmail.com</li>
+          <li style={{ margin: '5px 0' }}>By email: happypetlk.com@gmail.com</li>
           <li style={{ margin: '5px 0' }}>
             By visiting this page on our website:{' '}
             <a

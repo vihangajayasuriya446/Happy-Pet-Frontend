@@ -146,49 +146,67 @@ const Footer = () => {
           </Link>
         </Grid>
 
-        {/* Social Media Icons Section */}
-        <Grid item xs={12} sm={3} textAlign={{ xs: "center", sm: "left" }}>
-          <Typography
-            variant="h6"
-            fontWeight="bold"
-            sx={{ mb: 2, color: "text.primary" }}
-          >
-            Follow Us
-          </Typography>
-          <Box
-            display="flex"
-            justifyContent={{ xs: "center", sm: "left" }}
-            gap={2}
-          >
-            <Facebook
-              sx={{
-                fontSize: 30,
-                cursor: "pointer",
-                color: "text.primary",
-                transition: "color 0.3s ease",
-                "&:hover": { color: "primary.main" },
-              }}
-            />
-            <Instagram
-              sx={{
-                fontSize: 30,
-                cursor: "pointer",
-                color: "text.primary",
-                transition: "color 0.3s ease",
-                "&:hover": { color: "primary.main" },
-              }}
-            />
-            <Twitter
-              sx={{
-                fontSize: 30,
-                cursor: "pointer",
-                color: "text.primary",
-                transition: "color 0.3s ease",
-                "&:hover": { color: "primary.main" },
-              }}
-            />
-          </Box>
-        </Grid>
+              {/* Social Media Icons Section */}
+<Grid item xs={12} sm={3} textAlign={{ xs: "center", sm: "left" }}>
+  <Typography
+    variant="h6"
+    fontWeight="bold"
+    sx={{ mb: 2, color: "text.primary" }}
+  >
+    Follow Us
+  </Typography>
+  <Box
+    display="flex"
+    justifyContent={{ xs: "center", sm: "left" }}
+    gap={2}
+  >
+    <Link
+      href="https://www.facebook.com/yourpage" // Replace with your Facebook page URL
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <Facebook
+        sx={{
+          fontSize: 30,
+          cursor: "pointer",
+          color: "text.primary",
+          transition: "color 0.3s ease",
+          "&:hover": { color: "primary.main" },
+        }}
+      />
+    </Link>
+    <Link
+      href="https://www.instagram.com/happypetlk?igsh=MW51MmI2OWJ3OHR5OA==" // Replace with your Instagram page URL
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <Instagram
+        sx={{
+          fontSize: 30,
+          cursor: "pointer",
+          color: "text.primary",
+          transition: "color 0.3s ease",
+          "&:hover": { color: "primary.main" },
+        }}
+      />
+    </Link>
+    <Link
+      href="https://www.twitter.com/yourpage" // Replace with your Twitter page URL
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <Twitter
+        sx={{
+          fontSize: 30,
+          cursor: "pointer",
+          color: "text.primary",
+          transition: "color 0.3s ease",
+          "&:hover": { color: "primary.main" },
+        }}
+      />
+    </Link>
+  </Box>
+</Grid>
       </Grid>
 
       {/* Copyright Section */}

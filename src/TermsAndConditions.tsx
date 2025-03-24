@@ -248,11 +248,11 @@ const TermsAndConditions: React.FC = () => {
           <br />
           <strong>Happy Pet</strong>
           <br />
-          <strong>Bambalapitiya, Colombo, Western Province, Sri Lanka</strong>
+          <strong>Colombo 04, Western Province, Sri Lanka</strong>
           <br />
           <strong>Phone: 0770092167</strong>
           <br />
-          <strong>Email: happypet@gmail.com</strong>
+          <strong>Email: happypetlk.com@gmail.com</strong>
         </p>
       </div>
     </div>
