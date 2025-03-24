@@ -1,5 +1,5 @@
 import { Box, Typography, Link, Grid } from "@mui/material";
-import { Facebook, Instagram, Twitter } from "@mui/icons-material";
+import { Facebook, Instagram, Twitter, LinkedIn } from "@mui/icons-material";
 
 const Footer = () => {
   return (
@@ -191,11 +191,11 @@ const Footer = () => {
       />
     </Link>
     <Link
-      href="https://www.twitter.com/yourpage" // Replace with your Twitter page URL
+      href="https://www.linkedin.com/in/happy-pet-664b40352/" // Replace with your Twitter page URL
       target="_blank"
       rel="noopener noreferrer"
     >
-      <Twitter
+      <LinkedIn
         sx={{
           fontSize: 30,
           cursor: "pointer",
