@@ -42,7 +42,7 @@ const Footer = () => {
               sx={{ mb: 1, color: "text.primary", transition: "color 0.3s ease" }}
             >
               <Link
-                href="#"
+                href="/aboutus"
                 underline="hover"
                 color="inherit"
                 sx={{
@@ -57,7 +57,7 @@ const Footer = () => {
               sx={{ mb: 1, color: "text.primary", transition: "color 0.3s ease" }}
             >
               <Link
-                href="#"
+                href="/contactus"
                 underline="hover"
                 color="inherit"
                 sx={{
@@ -80,16 +80,7 @@ const Footer = () => {
             Information
           </Typography>
           <Link
-            href="#"
-            underline="hover"
-            color="inherit"
-            display="block"
-            sx={{ mb: 1, color: "text.primary", transition: "color 0.3s ease" }}
-          >
-            More Search
-          </Link>
-          <Link
-            href="#"
+            href="/matchmaking"
             underline="hover"
             color="inherit"
             display="block"
@@ -98,7 +89,7 @@ const Footer = () => {
             Pet Matchmaking
           </Link>
           <Link
-            href="#"
+            href="/buy"
             underline="hover"
             color="inherit"
             display="block"
@@ -107,7 +98,7 @@ const Footer = () => {
             Buy Pets
           </Link>
           <Link
-            href="#"
+            href="/adopt"
             underline="hover"
             color="inherit"
             display="block"
@@ -127,16 +118,7 @@ const Footer = () => {
             Helpful Links
           </Typography>
           <Link
-            href="#"
-            underline="hover"
-            color="inherit"
-            display="block"
-            sx={{ mb: 1, color: "text.primary", transition: "color 0.3s ease" }}
-          >
-            Services
-          </Link>
-          <Link
-            href="#"
+            href="/supports"
             underline="hover"
             color="inherit"
             display="block"

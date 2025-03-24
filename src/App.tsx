@@ -25,6 +25,7 @@ import Pets from './Pets';
 import AboutUs from './AboutUs';
 import { CartProvider } from './contexts/CartContext'; // Adjust the path as needed
 import ResponsesPage from './ResponsesPage';
+import SupportPage from './SupportPage';
 
 const App: React.FC = () => {
   return (
@@ -45,6 +46,7 @@ const App: React.FC = () => {
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="/OwnerForm/:petId" element={<OwnerForm />} /> 
+          <Route path="/supports" element={<SupportPage />} />
           <Route path="/owners" element={<OwnerTable />} />
           <Route path="/adopt" element={<AdoptionPage />} />
           <Route path="/dashboard1" element={<Pets/>} />
