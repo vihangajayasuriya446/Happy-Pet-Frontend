@@ -26,6 +26,8 @@ import AboutUs from './AboutUs';
 import { CartProvider } from './contexts/CartContext'; // Adjust the path as needed
 import ResponsesPage from './ResponsesPage';
 import SupportPage from './SupportPage';
+import PaymentPage from './components/PaymentPage';
+import DialogPayment from './components/DialogPayment';
 
 const App: React.FC = () => {
   return (
@@ -53,6 +55,9 @@ const App: React.FC = () => {
           <Route path="/contactusresponses" element={<ResponsesPage/>} />
           <Route path="/user-dashboard" element={<UserDetailsDashboard />} />
           <Route path="/aboutus" element={<AboutUs />} />
+          <Route path="/" element={<HomePage />} />
+        <Route path="/payment" element={<PaymentPage />} />
+        <Route path="/dialog-payment" element={<DialogPayment isOpen={true} onClose={() => {}} amountToPay={50} />} />
         
                        
                         <Route path="/buy" element={<BuyPetPage />} />
