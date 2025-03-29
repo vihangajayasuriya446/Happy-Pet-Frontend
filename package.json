@@ -1,5 +1,10 @@
 {
+<<<<<<< HEAD
   "name": "matchmaking",
+=======
+  "name": "payment-page",
+  "version": "0.1.0",
+>>>>>>> origin/HappyPet-Payment
   "private": true,
   "version": "0.0.0",
   "type": "module",
