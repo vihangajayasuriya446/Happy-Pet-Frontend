@@ -1,10 +1,39 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* Reset global styles to prevent unwanted scrolling */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  /* Prevent automatic scrolling on navigation */
+  scroll-padding-top: 0;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+}
+
+/* Ensure the container fills the viewport */
+#root {
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  /* Remove fixed max-width to allow full viewport usage */
+  max-width: none;
+  /* This ensures content can't cause horizontal scrolling */
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Keep your existing logo styles */
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -39,4 +68,10 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* Add this to explicitly set top position for page content */
+.page-container {
+  position: relative;
+  top: 0;
 }

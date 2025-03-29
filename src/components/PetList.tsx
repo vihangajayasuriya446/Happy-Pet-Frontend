@@ -259,7 +259,7 @@ const PetList: React.FC<PetListProps> = ({
         // Fetch all pets first
         axios.get<PetDTO[]>(PETS_API_URL)
             .then(response => {
-                let filteredPets = response.data;
+                let filteredPets = response.data.filter(pet => !pet.purchased);
                 console.log(`Fetched ${filteredPets.length} total pets`);
 
                 // Apply pet type filter if not 'all'

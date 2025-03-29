@@ -1,4 +1,4 @@
-import { Box, Typography, Link, TextField, Button, Grid } from "@mui/material";
+import { Box, Typography, Link, Grid } from "@mui/material";
 import { Facebook, Instagram, Twitter } from "@mui/icons-material";
 
 const Footer = () => {
@@ -8,9 +8,13 @@ const Footer = () => {
         bgcolor: "rgba(255, 255, 255, 0.8)", // Semi-transparent background
         py: 6,
         px: { xs: 2, sm: 4 },
-        mt: 8,
+        mt: 4,
         borderTop: "1px solid rgba(0, 0, 0, 0.1)",
         backdropFilter: "blur(10px)", // Glass morphism effect
+        minHeight: "300px", // Standard height for footer
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
       }}
     >
       <Grid
@@ -26,7 +30,7 @@ const Footer = () => {
             src="/src/assets/logo512.png"
             alt="Happy Pet"
             style={{
-              height: 180,
+              height: 120,
               marginBottom: 20,
               objectFit: "contain",
               filter: "drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1))",
@@ -160,95 +164,49 @@ const Footer = () => {
           </Link>
         </Grid>
 
-        {/* Subscription Section */}
-        {/* Subscription Section */}
-<Grid item xs={12} sm={3} textAlign={{ xs: "center", sm: "left" }}>
-  <Typography
-    variant="h6"
-    fontWeight="bold"
-    sx={{ mb: 2, color: "text.primary" }}
-  >
-    Subscribe for More
-  </Typography>
-  <Box
-    display="flex"
-    flexDirection={{ xs: "column", sm: "row" }}
-    mt={1}
-    gap={1}
-    alignItems="center" // Align items vertically
-  >
-    <TextField
-      variant="outlined"
-      size="small"
-      placeholder="Enter your email"
-      sx={{
-        bgcolor: "rgba(255, 255, 255, 0.8)",
-        borderRadius: "8px",
-        flexGrow: 1, // Allow the text field to grow and take available space
-        mb: { xs: 1, sm: 0 },
-        "& .MuiOutlinedInput-root": {
-          "& fieldset": {
-            borderColor: "rgba(0, 0, 0, 0.1)",
-          },
-          "&:hover fieldset": {
-            borderColor: "primary.main",
-          },
-        },
-      }}
-    />
-    <Button
-      variant="contained"
-      sx={{
-        bgcolor: "primary.main",
-        color: "white",
-        borderRadius: "8px",
-        padding: "8px 20px", // Adjust padding to fit the text
-        whiteSpace: "nowrap", // Prevent text from wrapping
-        "&:hover": {
-          bgcolor: "primary.dark",
-        },
-      }}
-    >
-      Subscribe
-    </Button>
-  </Box>
-
-  {/* Social Icons */}
-  <Box
-    display="flex"
-    justifyContent={{ xs: "center", sm: "left" }}
-    mt={2}
-    gap={2}
-  >
-    <Facebook
-      sx={{
-        fontSize: 30,
-        cursor: "pointer",
-        color: "text.primary",
-        transition: "color 0.3s ease",
-        "&:hover": { color: "primary.main" },
-      }}
-    />
-    <Instagram
-      sx={{
-        fontSize: 30,
-        cursor: "pointer",
-        color: "text.primary",
-        transition: "color 0.3s ease",
-        "&:hover": { color: "primary.main" },
-      }}
-    />
-    <Twitter
-      sx={{
-        fontSize: 30,
-        cursor: "pointer",
-        color: "text.primary",
-        transition: "color 0.3s ease",
-        "&:hover": { color: "primary.main" },
-      }}
-    />
-  </Box>
-</Grid>
+        {/* Social Media Icons Section */}
+        <Grid item xs={12} sm={3} textAlign={{ xs: "center", sm: "left" }}>
+          <Typography
+            variant="h6"
+            fontWeight="bold"
+            sx={{ mb: 2, color: "text.primary" }}
+          >
+            Follow Us
+          </Typography>
+          <Box
+            display="flex"
+            justifyContent={{ xs: "center", sm: "left" }}
+            gap={2}
+          >
+            <Facebook
+              sx={{
+                fontSize: 30,
+                cursor: "pointer",
+                color: "text.primary",
+                transition: "color 0.3s ease",
+                "&:hover": { color: "primary.main" },
+              }}
+            />
+            <Instagram
+              sx={{
+                fontSize: 30,
+                cursor: "pointer",
+                color: "text.primary",
+                transition: "color 0.3s ease",
+                "&:hover": { color: "primary.main" },
+              }}
+            />
+            <Twitter
+              sx={{
+                fontSize: 30,
+                cursor: "pointer",
+                color: "text.primary",
+                transition: "color 0.3s ease",
+                "&:hover": { color: "primary.main" },
+              }}
+            />
+          </Box>
+        </Grid>
       </Grid>
 
       {/* Copyright Section */}

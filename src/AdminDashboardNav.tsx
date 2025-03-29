@@ -1,100 +1,101 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  Box,
-  Typography,
-  Button,
-  Container,
-  useTheme,
-  useMediaQuery,
-} from "@mui/material";
+import React, { useState } from 'react';
+import { Box, Typography, IconButton, useTheme } from '@mui/material';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import Sidebar from './Sidebar'; // Adjust the import path as necessary
 
 const AdminDashboardNav: React.FC = () => {
-  const navigate = useNavigate();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const handleNavigation = (path: string) => {
-    navigate(path);
-    window.scrollTo(0, 0);
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen); // Toggle the sidebar state
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        p: 3,
-      }}
-    >
-      <Container
-        maxWidth="sm"
-        sx={{
-          textAlign: "center",
-          bgcolor: "rgba(255, 255, 255, 0.8)", // Semi-transparent background
-          backdropFilter: "blur(10px)", // Glass morphism effect
-          borderRadius: "16px",
-          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)", // Soft shadow
-          p: 4,
-          transition: "transform 0.3s ease, box-shadow 0.1s ease",
-          "&:hover": {
-            transform: "scale(1.02)", // Slight scale on hover
-            boxShadow: "0 12px 40px rgba(0, 0, 0, 0.1)",
-          },
-        }}
+    <>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+        padding={4}
       >
-        <Typography
-          variant="h4"
-          sx={{
-            fontWeight: "bold",
-            color: "#002855",
-            mb: 4,
-            fontSize: isMobile ? "1.75rem" : "2rem",
-            fontFamily: "'Poppins', sans-serif", // Modern font
-          }}
-        >
-          Admin Dashboard
-        </Typography>
         <Box
+          border={1}
+          borderColor="divider"
+          borderRadius={4}
+          padding={6}
+          maxWidth={600}
+          textAlign="center"
+          boxShadow={6}
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 2,
+            backgroundColor: 'rgba(255, 255, 255, 0.59)',
+            backdropFilter: 'blur(10px)',
+            transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+            '&:hover': {
+              transform: 'translateY(-5px)',
+              boxShadow: 12,
+            },
           }}
         >
-          {[
-            { label: "Pet Adopt Admin Dashboard", path: "/pet-adopt" },
-            { label: "Pet Buy Admin Dashboard", path: "/pet-buy" },
-            { label: "Matchmaking Admin Dashboard", path: "/dashboard" },
-          ].map((item, index) => (
-            <Button
-              key={index}
-              variant="contained"
-              fullWidth
-              sx={{
-                bgcolor: "#002855",
-                color: "white",
-                fontWeight: "bold",
-                borderRadius: "12px",
-                py: 1.5,
-                fontSize: isMobile ? "0.875rem" : "1rem",
-                transition: "all 0.3s ease",
-                "&:hover": {
-                  bgcolor: "#001f4d",
-                  transform: "translateY(-4px)",
-                  boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)",
-                },
-              }}
-              onClick={() => handleNavigation(item.path)}
-            >
-              {item.label}
-            </Button>
-          ))}
+          <Typography
+            variant="h3"
+            component="h1"
+            gutterBottom
+            sx={{
+              fontWeight: 700,
+              color: "#0000b3",
+              marginBottom: 4,
+            }}
+          >
+            Welcome to Admin Panel
+          </Typography>
+          <Typography
+            variant="body1"
+            paragraph
+            sx={{
+              color: "black",
+              fontSize: '1.1rem',
+              lineHeight: 1.6,
+            }}
+          >
+            This admin dashboard allows you to manage various operations, including adding pets, featuring them, and viewing user activities.
+          </Typography>
+          <Typography
+            variant="body1"
+            paragraph
+            sx={{
+              color: "black",
+              fontSize: '1.1rem',
+              lineHeight: 1.6,
+              marginBottom: 4,
+            }}
+          >
+            To open the admin dashboard, click the{' '}
+            <KeyboardArrowRightIcon
+              fontSize="small"
+              sx={{ verticalAlign: 'middle', color: "black" }}
+            />{' '}
+            icon located on the left side of the screen.
+          </Typography>
+          <IconButton
+            aria-label="open admin dashboard"
+            color="primary"
+            onClick={toggleSidebar} // Use toggleSidebar here
+            sx={{
+              backgroundColor: "#0000b3",
+              color: "white",
+              '&:hover': {
+                backgroundColor: "#000066",
+              },
+            }}
+          >
+            <KeyboardArrowRightIcon fontSize="large" />
+          </IconButton>
         </Box>
-      </Container>
-    </Box>
+      </Box>
+      <Sidebar open={sidebarOpen} toggleSidebar={toggleSidebar} /> {/* Pass toggleSidebar here */}
+    </>
   );
 };
 

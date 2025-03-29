@@ -19,6 +19,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Pet } from "./types";
 import SearchIcon from '@mui/icons-material/Search';
+import PetsIcon from "@mui/icons-material/Pets";
+
 
 interface PetTableProps {
   rows: Pet[];
@@ -51,15 +53,7 @@ const PetTable: React.FC<PetTableProps> = ({ rows, deletePet, onOpenForm, onEdit
   };
 
   return (
-    <Container
-      maxWidth="xl"
-      sx={{
-        px: { xs: 1, sm: 2, md: 3 },
-        py: 2,
-        width: "100%",
-        overflow: "hidden", // Prevent horizontal overflow
-      }}
-    >
+    <Container maxWidth="xl" sx={{ px: { xs: 1, sm: 2, md: 3 }, py: 2 }}>
       {/* Header with Title */}
       <Box
         sx={{
@@ -69,14 +63,37 @@ const PetTable: React.FC<PetTableProps> = ({ rows, deletePet, onOpenForm, onEdit
           mb: 2,
         }}
       >
-        <Typography
+        {/* <Typography
           variant="h5"
           sx={{
             color: "#002855",
             fontWeight: "bold",
           }}
         >
-          Pet Management Dashboard
+          Pet Adoptions User Details
+        </Typography> */}
+
+        <Typography
+          variant="h4"
+          component="h1"
+          sx={{
+            fontWeight: "bold",
+            color: "white",
+            backgroundColor: "#003366",
+            p: 2,
+            borderRadius: "8px",
+            mb: 3,
+            textAlign: "center",
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 1,
+            fontFamily: "'Nunito', sans-serif",
+          }}
+        >
+          <PetsIcon sx={{ fontSize: 32 }} />
+          Pet Adoptions User Details
         </Typography>
       </Box>
 
@@ -90,14 +107,14 @@ const PetTable: React.FC<PetTableProps> = ({ rows, deletePet, onOpenForm, onEdit
           width: "100%",
         }}
       >
-        {/* Search Bar (Left Side) */}
+        {/* Search Bar (Left Side) - Matched with UserDetailsDashboard */}
         <TextField
           placeholder="Search Pet"
           variant="outlined"
           size="small"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          sx={{ 
+          sx={{
             width: '300px',
             '& .MuiOutlinedInput-root': {
               backgroundColor: 'rgba(255, 255, 255, 0.7)',
@@ -132,23 +149,18 @@ const PetTable: React.FC<PetTableProps> = ({ rows, deletePet, onOpenForm, onEdit
         </Button>
       </Box>
 
-      {/* Pet Table - Scrollable and Stable */}
-      <Box
-        sx={{
-          width: "100%",
-          overflowX: "auto", // Allow horizontal scrolling for the table
-          borderRadius: "8px",
-          boxShadow: 3,
-        }}
-      >
+      {/* Pet Table - Fixed width and stability issues */}
+      <Box sx={{ width: '100%', overflow: 'hidden' }}>
         <TableContainer
           component={Paper}
           sx={{
+            borderRadius: "8px",
+            boxShadow: 3,
             width: "100%",
-            tableLayout: "fixed", // Ensure consistent column widths
+            tableLayout: "fixed",
           }}
         >
-          <Table stickyHeader>
+          <Table stickyHeader sx={{ minWidth: 650 }}>
             <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
               <TableRow>
                 <TableCell width="5%" sx={{ fontWeight: "bold", color: "#002855", textAlign: "center" }}>ID</TableCell>
@@ -237,7 +249,7 @@ const PetTable: React.FC<PetTableProps> = ({ rows, deletePet, onOpenForm, onEdit
             borderRadius: "4px",
           }}
         >
-          User Details Dashboard
+          Pet Adoption User Details
         </Button>
       </Box>
     </Container>

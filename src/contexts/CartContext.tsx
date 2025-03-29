@@ -37,6 +37,8 @@ interface CartContextType {
     checkout: () => Promise<{ message: string; total: number }>;
     refreshCart: () => Promise<void>;
     refreshImageUrl: (petId: number | string) => Promise<string>;
+    isPetInCart: (petId: number | string) => boolean; 
+    getCartPetIds: () => number[]; 
 }
 
 // Create the context with default values
@@ -52,6 +54,9 @@ const CartContext = createContext<CartContextType>({
     checkout: async () => ({ message: '', total: 0 }),
     refreshCart: async () => {},
     refreshImageUrl: async () => '',
+    isPetInCart: () => false, 
+    getCartPetIds: () => [], 
+
 });
 
 // Default fallback image path
@@ -387,6 +392,17 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         });
     }, []);
 
+    // Function to check if a pet is already in cart
+    const isPetInCart = useCallback((petId: number | string): boolean => {
+        const idAsNumber = ensureNumber(petId);
+        return items.some(item => ensureNumber(item.pet.id) === idAsNumber);
+    }, [items]);
+
+    const getCartPetIds = useCallback((): number[] => {
+        return items.map(item => ensureNumber(item.pet.id));
+    }, [items]);
+    
+
     // Define refreshCart first since other functions will use it
     const refreshCart = useCallback(async () => {
         try {
@@ -649,7 +665,9 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         getCartTotal,
         checkout,
         refreshCart,
-        refreshImageUrl
+        refreshImageUrl,
+        isPetInCart,
+        getCartPetIds
     };
 
     return (

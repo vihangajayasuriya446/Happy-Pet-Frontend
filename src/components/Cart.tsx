@@ -11,6 +11,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import { useCart } from "../contexts/CartContext";
 import Toast from "../components/Toast";
+import { useNavigate } from "react-router-dom";
 
 // Define a type for the response from cart operations
 interface CartOperationResponse {
@@ -214,6 +215,7 @@ const determinePetType = (pet: CartPet): string => {
 };
 
 const Cart: React.FC<CartProps> = ({ open, onClose }) => {
+    const navigate = useNavigate();
     const { items, removeFromCart, updateQuantity, clearCart, loading, getCartTotal } = useCart();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -641,7 +643,7 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                         </Box>
 
                                         {/* Quantity Controls */}
-                                        <Box sx={{
+                                        {/* <Box sx={{
                                             display: 'flex',
                                             alignItems: 'center',
                                             position: 'absolute',
@@ -680,7 +682,7 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                             >
                                                 <AddIcon fontSize="small" />
                                             </IconButton>
-                                        </Box>
+                                        </Box> */}
 
                                         {/* Delete Button */}
                                         <Box sx={{
@@ -760,7 +762,7 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                                 <Button
                                     variant="contained"
                                     fullWidth
-                                    onClick={handleCheckout}
+                                    onClick={() => navigate("/payment-home")}
                                     disabled={loading}
                                     sx={{
                                         bgcolor: '#003366',

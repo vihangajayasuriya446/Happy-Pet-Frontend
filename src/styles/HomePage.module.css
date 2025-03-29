@@ -1,3 +1,4 @@
+/* CHANGES - This is a file of payment component intergration */
 .container {
     display: flex;
     flex-direction: column;
@@ -5,7 +6,7 @@
     justify-content: center;
     height: 100vh;
     text-align: center;
-    background-color: #2f6bee;
+    /* background-color: #2f6bee; */
   }
   
   .content {

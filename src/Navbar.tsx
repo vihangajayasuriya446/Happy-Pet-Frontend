@@ -1,3 +1,4 @@
+// CHANGES - Imported cart icon and drawer to navbar . now cart can be obened through navbar
 import { useState, MouseEvent } from "react";
 import {
   AppBar,
@@ -9,17 +10,22 @@ import {
   List,
   ListItem,
   ListItemText,
-  InputBase,
   Popover,
   Button,
   Avatar,
   CircularProgress,
+  Badge
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import CloseIcon from "@mui/icons-material/Close"; // Import CloseIcon
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import logoImg from './assets/logo512.png'; // CHANGES - Import logo image
+import { useCart } from "./contexts/CartContext"; // CHANGES - Import cart context
+import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
+import Cart from "./components/Cart"; 
+
 
 interface UserDetails {
   email: string;
@@ -35,6 +41,10 @@ const Navbar = () => {
   const [loginLoading, setLoginLoading] = useState(false); // Separate loading state for Login
   const [navigationLoading, setNavigationLoading] = useState(false); // Loading state for navigation
   const navigate = useNavigate();
+  const [cartOpen, setCartOpen] = useState(false);
+  const { getItemCount } = useCart();
+  const itemCount = getItemCount();
+  
 
   const toggleDrawer = () => setDrawerOpen(!drawerOpen);
 
@@ -45,6 +55,10 @@ const Navbar = () => {
       setNavigationLoading(false);
     }, 500);
   };
+
+  const toggleCart = () => {
+    setCartOpen(!cartOpen);
+};
 
   const handleAccountClick = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -102,11 +116,13 @@ const Navbar = () => {
 
   return (
     <>
+    <Cart open={cartOpen} onClose={toggleCart} />
       <AppBar
         position="fixed"
         sx={{
           bgcolor: "rgba(248, 249, 250, 0.9)", // Soft gray background
           backdropFilter: "blur(10px)", // Glass morphism effect
+          WebkitBackdropFilter: "blur(10px)", // Safari support
           color: "#333333",
           boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
           px: 2,
@@ -116,9 +132,9 @@ const Navbar = () => {
         <Toolbar>
           <Box
             component="img"
-            src="./src/assets/logo512.png"
+            src={logoImg} // CHANGES - Use imported logo image instead of using path
             alt="HappyPet Logo"
-            sx={{ height: 70, width: 70, mr: 2 }}
+            sx={{ height: 100, width: 100, mr: 2 }}
           />
           <Typography
             variant="h6"
@@ -129,66 +145,173 @@ const Navbar = () => {
               fontSize: "1.5rem",
             }}
           >
-            HappyPet
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              mx: 2,
-              cursor: "pointer",
-              "&:hover": { color: "#007BFF", transition: "color 0.3s ease" },
-            }}
-            onClick={() => handleNavigation("/")}
-          >
-            Home
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              mx: 2,
-              cursor: "pointer",
-              "&:hover": { color: "#007BFF", transition: "color 0.3s ease" },
-            }}
-            onClick={() => handleNavigation("/services")}
-          >
-            Services
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              mx: 2,
-              cursor: "pointer",
-              "&:hover": { color: "#007BFF", transition: "color 0.3s ease" },
-            }}
-            onClick={() => handleNavigation("/about")}
-          >
-            About Us
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              mx: 2,
-              cursor: "pointer",
-              "&:hover": { color: "#007BFF", transition: "color 0.3s ease" },
-            }}
-            onClick={() => handleNavigation("/contactus")}
-          >
-            Contact Us
+            &nbsp;
           </Typography>
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
-              bgcolor: "rgba(241, 241, 241, 0.8)", // Semi-transparent background
-              p: "5px 10px",
-              borderRadius: "20px",
-              mx: 2,
-              "&:hover": { boxShadow: "0 0 8px rgba(0, 0, 0, 0.1)" },
+              gap: 4, // Standardized gap between navigation links
+              mr: 4, // Margin to separate from account icon
             }}
           >
-            <SearchIcon sx={{ color: "gray" }} />
-            <InputBase placeholder="Search" sx={{ ml: 1 }} />
+            {/* Home */}
+            <Typography
+              variant="body1"
+              sx={{
+                cursor: "pointer",
+                fontWeight: "500",
+                color: "#333333",
+                position: "relative",
+                "&:hover": {
+                  color: "#007BFF",
+                  transition: "color 0.3s ease",
+                },
+                "&::after": {
+                  content: '""',
+                  position: "absolute",
+                  bottom: "-4px",
+                  left: 0,
+                  width: "100%",
+                  height: "2px",
+                  backgroundColor: "#007BFF",
+                  transform: "scaleX(0)",
+                  transition: "transform 0.3s ease",
+                },
+                "&:hover::after": {
+                  transform: "scaleX(1)",
+                },
+              }}
+              onClick={() => handleNavigation("/")} // Hardcoded path for Home
+            >
+              Home
+            </Typography>
+
+            {/* Services */}
+            <Typography
+              variant="body1"
+              sx={{
+                cursor: "pointer",
+                fontWeight: "500",
+                color: "#333333",
+                position: "relative",
+                "&:hover": {
+                  color: "#007BFF",
+                  transition: "color 0.3s ease",
+                },
+                "&::after": {
+                  content: '""',
+                  position: "absolute",
+                  bottom: "-4px",
+                  left: 0,
+                  width: "100%",
+                  height: "2px",
+                  backgroundColor: "#007BFF",
+                  transform: "scaleX(0)",
+                  transition: "transform 0.3s ease",
+                },
+                "&:hover::after": {
+                  transform: "scaleX(1)",
+                },
+              }}
+              onClick={() => handleNavigation("/aboutus")} // Hardcoded path for Services
+            >
+              About Us
+            </Typography>
+
+            {/* About Us */}
+            <Typography
+              variant="body1"
+              sx={{
+                cursor: "pointer",
+                fontWeight: "500",
+                color: "#333333",
+                position: "relative",
+                "&:hover": {
+                  color: "#007BFF",
+                  transition: "color 0.3s ease",
+                },
+                "&::after": {
+                  content: '""',
+                  position: "absolute",
+                  bottom: "-4px",
+                  left: 0,
+                  width: "100%",
+                  height: "2px",
+                  backgroundColor: "#007BFF",
+                  transform: "scaleX(0)",
+                  transition: "transform 0.3s ease",
+                },
+                "&:hover::after": {
+                  transform: "scaleX(1)",
+                },
+              }}
+              onClick={() => handleNavigation("/terms")} // Hardcoded path for About Us
+            >
+              Terms
+            </Typography>
+
+            {/* Contact Us */}
+            <Typography
+              variant="body1"
+              sx={{
+                cursor: "pointer",
+                fontWeight: "500",
+                color: "#333333",
+                position: "relative",
+                "&:hover": {
+                  color: "#007BFF",
+                  transition: "color 0.3s ease",
+                },
+                "&::after": {
+                  content: '""',
+                  position: "absolute",
+                  bottom: "-4px",
+                  left: 0,
+                  width: "100%",
+                  height: "2px",
+                  backgroundColor: "#007BFF",
+                  transform: "scaleX(0)",
+                  transition: "transform 0.3s ease",
+                },
+                "&:hover::after": {
+                  transform: "scaleX(1)",
+                },
+              }}
+              onClick={() => handleNavigation("/contact-us")} // Hardcoded path for Contact Us
+            >
+              Contact Us
+            </Typography>
           </Box>
+          <IconButton
+              onClick={toggleCart}
+              // sx={{
+              //     position: 'absolute',
+              //     right: { xs: -70, sm: -70, md: -70 },
+              //     top: { xs: 20, md: 15 },
+              //     transform: 'translateY(-50%)',
+              //     bgcolor: 'white',
+              //     boxShadow: 3,
+              //     '&:hover': {
+              //         bgcolor: '#f5f5f5',
+              //     },
+              // }}
+            >
+              <Badge
+                  badgeContent={itemCount}
+                  color="error"
+                  sx={{
+                      '& .MuiBadge-badge': {
+                          fontSize: '0.7rem',
+                          height: '20px',
+                          minWidth: '20px',
+                          padding: '0 4px',
+                      }
+                  }}
+              >
+              <ShoppingBagIcon sx={{ color: '#003366' }} />
+            </Badge>
+          </IconButton>
           <IconButton sx={{ ml: 2 }} onClick={handleAccountClick}>
             {userDetails ? (
               <Avatar
@@ -234,6 +357,7 @@ const Navbar = () => {
             border: "1px solid rgba(255, 255, 255, 0.2)", // Subtle border for glass effect
             backgroundColor: "rgba(255, 255, 255, 0.85)", // Semi-transparent white
             backdropFilter: "blur(20px)", // Enhanced glass morphism
+            WebkitBackdropFilter: "blur(20px)", // Safari support
             backgroundImage: "linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.6))", // Gradient overlay
             overflow: "hidden",
           },
@@ -416,48 +540,85 @@ const DrawerMenu = ({ open, toggleDrawer }: DrawerMenuProps) => {
       open={open}
       onClose={toggleDrawer}
       sx={{
-        width: 250,
+        width: 300,
         flexShrink: 0,
         "& .MuiDrawer-paper": {
-          width: 250,
+          width: 300,
           boxSizing: "border-box",
-          bgcolor: "rgba(248, 249, 250, 0.95)", // Soft gray background
-          backdropFilter: "blur(10px)", // Glass morphism effect
-          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+          bgcolor: "rgba(248, 249, 250, 0.1)", // Soft gray background
+          backdropFilter: "blur(10px)", // Enhanced glass morphism effect
+          WebkitBackdropFilter: "blur(20px)", // Safari support
+          boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
           borderRight: "1px solid rgba(0, 0, 0, 0.1)", // Subtle border
+          backgroundImage: "linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.6))", // Gradient overlay
         },
       }}
     >
-      <List>
-        <ListItem
-          key={"Home"}
-          onClick={() => handleNavigation("/")}
-          sx={{ cursor: "pointer", "&:hover": { bgcolor: "#f1f1f1" } }}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          p: 3,
+          gap: 2,
+        }}
+      >
+        {/* Close Button */}
+        <IconButton
+          onClick={toggleDrawer}
+          sx={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            color: "#333333",
+            "&:hover": { color: "#007BFF" },
+          }}
         >
-          <ListItemText primary={"Home"} />
-        </ListItem>
-        <ListItem
-          key={"Services"}
-          onClick={() => handleNavigation("/services")}
-          sx={{ cursor: "pointer", "&:hover": { bgcolor: "#f1f1f1" } }}
+          <CloseIcon />
+        </IconButton>
+
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: "bold",
+            color: "#002855",
+            fontSize: "1.5rem",
+            mb: 2,
+          }}
         >
-          <ListItemText primary={"Services"} />
-        </ListItem>
-        <ListItem
-          key={"About Us"}
-          onClick={() => handleNavigation("/aboutus")}
-          sx={{ cursor: "pointer", "&:hover": { bgcolor: "#f1f1f1" } }}
-        >
-          <ListItemText primary={"About Us"} />
-        </ListItem>
-        <ListItem
-          key={"Contact Us"}
-          onClick={() => handleNavigation("/contactus")}
-          sx={{ cursor: "pointer", "&:hover": { bgcolor: "#f1f1f1" } }}
-        >
-          <ListItemText primary={"Contact Us"} />
-        </ListItem>
-      </List>
+          Menu
+        </Typography>
+        <List sx={{ width: "100%" }}>
+          {[
+            { name: "Pet Buy", path: "/buy" },
+            { name: "Pet Adopt", path: "/adopt" },
+            { name: "Matchmaking", path: "/matchmaking" },
+          ].map((item) => (
+            <ListItem
+              key={item.name}
+              onClick={() => handleNavigation(item.path)}
+              sx={{
+                cursor: "pointer",
+                borderRadius: "12px",
+                "&:hover": {
+                  bgcolor: "rgba(0, 123, 255, 0.1)",
+                  transform: "translateX(5px)",
+                  transition: "all 0.3s ease",
+                },
+              }}
+            >
+              <ListItemText
+                primary={item.name}
+                sx={{
+                  color: "#333333",
+                  fontWeight: "500",
+                  "&:hover": { color: "#007BFF" },
+                }}
+              />
+            </ListItem>
+          ))}
+        </List>
+      </Box>
     </Drawer>
   );
 };

@@ -83,7 +83,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
     const [quantity, setQuantity] = useState(0);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [isAdding, setIsAdding] = useState(false);
-    const { addToCart, loading } = useCart();
+    const { addToCart, loading , isPetInCart } = useCart();
     const [resolvedImageUrl, setResolvedImageUrl] = useState<string>('');
     const [petType, setPetType] = useState<string>('');
     const [isHovered, setIsHovered] = useState(false);
@@ -176,16 +176,20 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
     const handleQuickAdd = async () => {
         setIsAdding(true);
         try {
-            console.log("Quick adding pet to bag with image:", {
-                petId: pet.id,
-                petName: pet.name,
-                imageUrl: resolvedImageUrl,
-                petType: petType
-            });
-
-            // Pass the entire pet object with type information
-            await addToCart({...pet, petType}, 1);
-            setSnackbarOpen(true);
+            if(!isPetInCart(pet.id)){
+                console.log("Quick adding pet to bag with image:", {
+                    petId: pet.id,
+                    petName: pet.name,
+                    imageUrl: resolvedImageUrl,
+                    petType: petType
+                });
+    
+                // Pass the entire pet object with type information
+                await addToCart({...pet, petType}, 1);
+                setSnackbarOpen(true);
+            }else{
+                console.log("Pet already in cart");
+            }
         } catch (error) {
             console.error("Error adding to pet bag:", error);
         } finally {
@@ -266,7 +270,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
             />
 
             {/* Quick add button */}
-            <Tooltip title="Add to bag" arrow placement="left">
+            {/* <Tooltip title="Add to bag" arrow placement="left">
                 <IconButton
                     onClick={handleQuickAdd}
                     disabled={isAdding || loading}
@@ -295,7 +299,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                         <ShoppingBagOutlinedIcon sx={{ color: themeColor }} />
                     }
                 </IconButton>
-            </Tooltip>
+            </Tooltip> */}
 
             {/* Image section */}
             <Box sx={{
@@ -305,21 +309,31 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                 position: 'relative'
             }}>
                 <CardMedia
-                    component="img"
-                    height={220}
-                    image={resolvedImageUrl}
-                    alt={pet.name}
-                    sx={{
-                        objectFit: "cover",
-                        transition: 'transform 0.7s ease',
-                        width: '100%',
-                        transform: isHovered ? 'scale(1.12)' : 'scale(1.05)',
-                    }}
-                    onError={(e) => {
-                        console.error(`Image failed to load for pet ${pet.name}:`, resolvedImageUrl);
-                        (e.target as HTMLImageElement).src = '/default-pet-image.jpg';
-                        setResolvedImageUrl('/default-pet-image.jpg');
-                    }}
+                        component="img"
+                        height={220}
+                        image={resolvedImageUrl}
+                        alt={pet.name}
+                        sx={{
+                            objectFit: "cover",
+                            transition: 'transform 0.7s ease',
+                            width: '100%',
+                            transform: isHovered ? 'scale(1.12)' : 'scale(1.05)',
+                        }}
+                        onError={(e) => {
+                            const defaultImage = '/default-pet-image.jpg';
+                            
+                            // Only update if not already using the default image to prevent loops
+                            if (resolvedImageUrl !== defaultImage) {
+                                console.error(`Image failed to load for pet ${pet.name}:`, resolvedImageUrl);
+                                (e.target as HTMLImageElement).src = defaultImage;
+                                setResolvedImageUrl(defaultImage);
+                            } else {
+                                // If even the default image fails, use an inline SVG as ultimate fallback
+                                console.error(`Default image also failed to load for pet ${pet.name}`);
+                                (e.target as HTMLImageElement).src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22288%22%20height%3D%22225%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20288%20225%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_18323ddf613%20text%20%7B%20fill%3A%23999%3Bfont-weight%3Anormal%3Bfont-family%3AArial%2C%20Helvetica%2C%20Open%20Sans%2C%20sans-serif%2C%20monospace%3Bfont-size%3A14pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_18323ddf613%22%3E%3Crect%20width%3D%22288%22%20height%3D%22225%22%20fill%3D%22%23f3f3f3%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22107.19374847412109%22%20y%3D%22119.025%22%3EPet%20Image%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E';
+                                // Don't update state again to prevent further re-renders
+                            }
+                        }}
                 />
                 {/* Gradient overlay */}
                 <Box sx={{
@@ -500,7 +514,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
 
                 }}>
                     {/* Quantity control */}
-                    <Box sx={{
+                    {/* <Box sx={{
                         display: 'flex',
                         alignItems: 'center',
                         bgcolor: alpha(themeColor, 0.05),
@@ -561,12 +575,15 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                         >
                             <AddIcon fontSize="small" />
                         </IconButton>
-                    </Box>
+                    </Box> */}
 
                     <Button
                         variant="contained"
-                        onClick={onAdopt || handleAddToCart}
-                        disabled={(!onAdopt && quantity === 0) || isAdding || loading}
+                        onClick={onAdopt || handleQuickAdd}
+                        disabled={
+                            // !onAdopt ||
+                             isAdding ||
+                              loading}
                         sx={{
                             background: themeColor,
                             '&:hover': {
@@ -578,9 +595,9 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
                                 background: alpha(themeColor, 0.3),
                             },
                             height: 36,
-                            ml: 0,
-                            mr: 'auto',
-                            width: 'auto',
+                            ml: 'auto',
+                            mr: 5,
+                            width: '100%', // Changed to 100%
                             px: 2,
                             fontSize: '0.85rem',
                             fontWeight: 600,

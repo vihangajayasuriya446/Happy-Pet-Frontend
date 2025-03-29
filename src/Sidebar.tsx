@@ -8,13 +8,14 @@ import {
     Typography, 
     Collapse,
     Box,
-   
+    IconButton, 
 } from '@mui/material';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import HomeIcon from '@mui/icons-material/Home';
 import PetsIcon from '@mui/icons-material/Pets';
 import StorefrontIcon from '@mui/icons-material/Storefront'; 
+import CloseIcon from '@mui/icons-material/Close'; 
 
 import { useNavigate } from 'react-router-dom';
 
@@ -37,7 +38,6 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleSidebar }) => {
 
     return (
         <>
-            
             <Drawer 
                 anchor="left"
                 open={open}
@@ -57,10 +57,13 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleSidebar }) => {
                 }}
             >
                 <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}> 
-                    <Box sx={{ p: 3, fontWeight: 'bold', backgroundColor: 'rgba(255, 255, 255, 0.6)', borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}> 
+                    <Box sx={{ p: 3, fontWeight: 'bold', backgroundColor: 'rgba(255, 255, 255, 0.6)', borderBottom: '1px solid rgba(0, 0, 0, 0.12)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}> 
                         <Typography variant="h5" component="div" sx={{ color: '#333', fontWeight: 'bold' }}>
                             Admin Dashboard
                         </Typography>
+                        <IconButton onClick={toggleSidebar} sx={{ color: '#333' }}>
+                            <CloseIcon />
+                        </IconButton>
                     </Box>
                     <List sx={{ flexGrow: 1, overflowY: 'auto', p: 2 }}>
                         {/* Pet Store */}
@@ -92,22 +95,24 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleSidebar }) => {
                                         backgroundColor: 'rgba(255, 255, 255, 0.6)',
                                         '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.05)' } 
                                     }}
-                                    onClick={() => handleNavigation('/add-new-pets')}
+                                    onClick={() => handleNavigation('/admin/pets')} // Updated path
                                 > 
-                                    <ListItemText primary="Add New Pets" primaryTypographyProps={{ color: '#555' }} />
+                                    <ListItemText primary="Pet Buy Management" primaryTypographyProps={{ color: '#333' }} />
                                 </ListItemButton>
+                                {/* CHANGES - Added item to navigate to Payments */}
                                 <ListItemButton 
                                     sx={{ 
                                         pl: 4, 
                                         borderRadius: '8px', 
                                         mb: 1,
-                                        backgroundColor: 'rgba(255, 255, 255, 0.6)', 
-                                        '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.05)' }
+                                        backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                                        '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.05)' } 
                                     }}
-                                    onClick={() => handleNavigation('/view-pets-for-sale')}
+                                    onClick={() => handleNavigation('/admin/payments')} // Updated path
                                 > 
-                                    <ListItemText primary="View Current Pets for Sale" primaryTypographyProps={{ color: '#555' }} /> 
+                                    <ListItemText primary="Payments Management" primaryTypographyProps={{ color: '#333' }} />
                                 </ListItemButton>
+                                
                             </List>
                         </Collapse>
 
@@ -140,9 +145,9 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleSidebar }) => {
                                         backgroundColor: 'rgba(255, 255, 255, 0.6)',
                                         '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.05)' }
                                     }}
-                                    onClick={() => handleNavigation('/dashboard')}
+                                    onClick={() => handleNavigation('/dashboard1')} // Updated path
                                 > 
-                                    <ListItemText primary="Add New Pets" primaryTypographyProps={{ color: '#555' }} /> 
+                                    <ListItemText primary="Adopt Pet Table" primaryTypographyProps={{ color: '#333' }} /> 
                                 </ListItemButton>
                                 <ListItemButton 
                                     sx={{ 
@@ -152,9 +157,9 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleSidebar }) => {
                                         backgroundColor: 'rgba(255, 255, 255, 0.6)', 
                                         '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.05)' } 
                                     }}
-                                    onClick={() => handleNavigation('/owners')}
+                                    onClick={() => handleNavigation('/user-dashboard')}
                                 > 
-                                    <ListItemText primary="View Pets for Adoption" primaryTypographyProps={{ color: '#555' }} /> 
+                                    <ListItemText primary="Adopt Requests" primaryTypographyProps={{ color: '#333' }} /> 
                                 </ListItemButton>
                             </List>
                         </Collapse>
@@ -190,7 +195,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleSidebar }) => {
                                     }}
                                     onClick={() => handleNavigation('/dashboard')}
                                 >
-                                    <ListItemText primary="Add New Pets" primaryTypographyProps={{ color: '#555' }} />
+                                    <ListItemText primary="Add New Pets" primaryTypographyProps={{ color: '#333' }} />
                                 </ListItemButton>
                                 <ListItemButton 
                                     sx={{ 
@@ -202,7 +207,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleSidebar }) => {
                                     }}
                                     onClick={() => handleNavigation('/owners')}
                                 > 
-                                    <ListItemText primary="View Matchmaking Requests" primaryTypographyProps={{ color: '#555' }} /> 
+                                    <ListItemText primary="View Matchmaking Requests" primaryTypographyProps={{ color: '#333' }} /> 
                                 </ListItemButton>
                             </List>
                         </Collapse> 

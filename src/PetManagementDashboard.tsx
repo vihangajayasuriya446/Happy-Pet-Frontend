@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Sidebar from './Sidebar';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import {
     Button,
     Typography,
@@ -20,6 +22,8 @@ import {
     SelectChangeEvent,
     TextField,
     InputAdornment,
+    IconButton,
+    Avatar,
 } from "@mui/material";
 import PetsIcon from "@mui/icons-material/Pets";
 import RefreshIcon from "@mui/icons-material/Refresh";
@@ -28,6 +32,7 @@ import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import React from "react";
 import AddPetForm, { PetData } from "./AddPetForm";
+import { InquiryService as InquiryService1 } from "./services/InquiryService";
 
 // First, let's create the InquiryService interfaces and class
 export interface PetInquiryDTO {
@@ -139,6 +144,7 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [editPet, setEditPet] = useState<PetData | null>(null);
     const [searchTerm, setSearchTerm] = useState<string>("");
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     // Fetch pets and users on component mount
     useEffect(() => {
@@ -199,7 +205,6 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
             try {
                 const dashboardData = await InquiryService.getDashboardData();
                 if (dashboardData && Array.isArray(dashboardData)) {
-                    console.log("Dashboard data received:", dashboardData);
                     // Transform the dashboard data to match our component's expected format
                     const transformedData: UserWithInquiries[] = dashboardData.map(
                         (user: UserWithInquiriesDTO): UserWithInquiries => ({
@@ -319,13 +324,14 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
         newStatus: "NEW" | "IN_PROGRESS" | "RESOLVED"
     ) => {
         try {
-            const success = await InquiryService.updatePetInquiryStatus(
+            const success = await InquiryService1.updatePetInquiryStatus(
                 Number(userId),
                 Number(petId),
                 newStatus
             );
 
             if (success) {
+                fetchUsers();
                 // Create a new array with updated users to avoid type issues
                 const updatedUsers: UserWithInquiries[] = users.map((user) => {
                     if (
@@ -478,654 +484,701 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
     return (
         <Box
             sx={{
-                width: "100%",
-                maxWidth: "1200px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: "20px",
-                padding: "30px",
-                borderRadius: "8px",
-                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                margin: "-30px auto 20px",
-                position: "relative",
+                py: 1,
+                paddingTop: "5px",
             }}
         >
-            {/* Main Dashboard Title with Paw Icon */}
-            <Typography
-                variant="h4"
-                component="h1"
-                sx={{
-                    fontWeight: "bold",
-                    color: "white",
-                    backgroundColor: "#003366",
-                    p: 2,
-                    borderRadius: "8px",
-                    mb: 3,
-                    textAlign: "center",
-                    width: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 1,
-                    fontFamily: "'Nunito', sans-serif",
-                }}
-            >
-                <PetsIcon sx={{ fontSize: 32 }} />
-                Pet Buy Management Dashboard
-            </Typography>
-
-            {/* Search Bar and Add Pet Button */}
             <Box
-                sx={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    mb: 2,
-                }}
-            >
-                <TextField
-                    placeholder="Search for pet's name"
-                    variant="outlined"
-                    size="small"
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    sx={{
-                        width: "300px",
-                        "& .MuiOutlinedInput-root": {
-                            borderRadius: "8px",
-                            "&:hover fieldset": {
-                                borderColor: "#003366",
-                            },
-                            "&.Mui-focused fieldset": {
-                                borderColor: "#003366",
-                            },
-                        }
-                    }}
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <SearchIcon sx={{ color: "#003366" }} />
-                            </InputAdornment>
-                        ),
-                    }}
-                />
-
-                <Button
-                    variant="contained"
-                    startIcon={<AddIcon />}
-                    onClick={handleAddNewClick}
-                    sx={{
-                        backgroundColor: "white",
-                        color: "#003366",
-                        borderRadius: "8px",
-                        boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
-                        padding: "8px 16px",
-                        textTransform: "none",
-                        fontWeight: "500",
-                        "&:hover": {
-                            backgroundColor: "#f5f5f5",
-                        },
-                        "& .MuiButton-startIcon": {
-                            marginRight: "4px",
-                        },
-                    }}
-                >
-                    Add A Pet
-                </Button>
-            </Box>
-
-            {/* Section Title for Pets Table - Styled like Pet Inquiries */}
-            <Typography
-                variant="h6"
-                component="h3"
-                sx={{
-                    width: "100%",
-                    mt: 1,
-                    mb: 0,
-                    color: "white",
-                    fontWeight: "bold",
-                    textAlign: "left",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                    backgroundColor: themeColor,
-                    padding: "10px 15px",
-                    borderRadius: "4px 4px 0 0",
-                }}
-            >
-                Pet Inventory
-                <Chip
-                    label={`${filteredPets.length} pets`}
-                    size="small"
-                    sx={{
-                        bgcolor: "white",
-                        color: themeColor,
-                        fontWeight: "medium",
-                    }}
-                />
-            </Typography>
-
-            {/* Enhanced Pets Table */}
-            <TableContainer
-                component={Paper}
+                bgcolor="rgba(255, 255, 255, 0.7)"
                 sx={{
                     width: "100%",
                     maxWidth: "1200px",
-                    borderRadius: "0 0 12px 12px",
-                    overflow: "hidden",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                }}
-            >
-                <Table size="medium">
-                    <TableHead>
-                        <TableRow sx={{ backgroundColor: "#003366" }}>
-                            <TableCell sx={{ color: "white", fontWeight: "bold" }}>
-                                ID
-                            </TableCell>
-                            <TableCell sx={{ color: "white", fontWeight: "bold" }}>
-                                Pet Name
-                            </TableCell>
-                            <TableCell sx={{ color: "white", fontWeight: "bold" }}>
-                                Pet Type
-                            </TableCell>
-                            <TableCell sx={{ color: "white", fontWeight: "bold" }}>
-                                Price
-                            </TableCell>
-                            <TableCell sx={{ color: "white", fontWeight: "bold" }}>
-                                Breed
-                            </TableCell>
-                            <TableCell sx={{ color: "white", fontWeight: "bold" }}>
-                                Birth Year
-                            </TableCell>
-                            <TableCell sx={{ color: "white", fontWeight: "bold" }}>
-                                Gender
-                            </TableCell>
-                            <TableCell sx={{ color: "white", fontWeight: "bold" }}>
-                                Image
-                            </TableCell>
-                            <TableCell sx={{ color: "white", fontWeight: "bold" }}>
-                                Actions
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {filteredPets.length > 0 ? (
-                            filteredPets.map((pet) => {
-                                // Find the original index in the full pets array
-                                const originalIndex = pets.findIndex(p => p.id === pet.id);
-                                return (
-                                    <TableRow
-                                        key={pet.id}
-                                        sx={{
-                                            "&:nth-of-type(odd)": { backgroundColor: "#f9f9f9" },
-                                            "&:hover": { backgroundColor: "#f0f7ff" },
-                                        }}
-                                    >
-                                        <TableCell>{pet.id}</TableCell>
-                                        <TableCell>{pet.name}</TableCell>
-                                        <TableCell>{pet.petType}</TableCell>
-                                        <TableCell sx={{ fontWeight: "medium" }}>
-                                            {formatPrice(pet.price)}
-                                        </TableCell>
-                                        <TableCell>{pet.breed}</TableCell>
-                                        <TableCell>{pet.birthYear}</TableCell>
-                                        <TableCell>{pet.gender}</TableCell>
-                                        <TableCell>
-                                            {pet.imageUrl && (
-                                                <img
-                                                    src={pet.imageUrl}
-                                                    alt={pet.name}
-                                                    style={{
-                                                        width: "60px",
-                                                        height: "60px",
-                                                        objectFit: "cover",
-                                                        borderRadius: "8px",
-                                                        border: "1px solid #e0e0e0",
-                                                    }}
-                                                />
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Box sx={{ display: "flex", gap: 1 }}>
-                                                <Button
-                                                    variant="contained"
-                                                    size="small"
-                                                    sx={{
-                                                        backgroundColor: "#003366",
-                                                        "&:hover": {
-                                                            backgroundColor: "#002244",
-                                                        },
-                                                        "&:focus": {
-                                                            boxShadow: "0 0 0 3px rgba(0, 51, 102, 0.3)",
-                                                        },
-                                                        borderRadius: "6px",
-                                                    }}
-                                                    onClick={() => handleUpdate(originalIndex)}
-                                                >
-                                                    Update
-                                                </Button>
-                                                <Button
-                                                    variant="contained"
-                                                    size="small"
-                                                    sx={{
-                                                        backgroundColor: "#DC3545",
-                                                        "&:hover": {
-                                                            backgroundColor: "#BB2D3B",
-                                                        },
-                                                        "&:focus": {
-                                                            boxShadow: "0 0 0 3px rgba(220, 53, 69, 0.3)",
-                                                        },
-                                                        borderRadius: "6px",
-                                                    }}
-                                                    onClick={() => handleDelete(pet.id)}
-                                                >
-                                                    Delete
-                                                </Button>
-                                            </Box>
-                                        </TableCell>
-                                    </TableRow>
-                                );
-                            })
-                        ) : (
-                            <TableRow>
-                                <TableCell colSpan={9} align="center" sx={{ py: 4 }}>
-                                    {searchTerm ? (
-                                        <Typography variant="body1" color="textSecondary">
-                                            No pets found matching "{searchTerm}".
-                                        </Typography>
-                                    ) : (
-                                        <>
-                                            <Typography variant="body1" color="textSecondary">
-                                                No pets found.
-                                            </Typography>
-                                            <Button
-                                                variant="contained"
-                                                sx={{
-                                                    mt: 2,
-                                                    backgroundColor: "#003366",
-                                                    "&:hover": {
-                                                        backgroundColor: "#002244",
-                                                    },
-                                                }}
-                                                onClick={handleAddNewClick}
-                                            >
-                                                Add Your First Pet
-                                            </Button>
-                                        </>
-                                    )}
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-
-            {/* Section Title for Users Table - Now white */}
-            <Typography
-                variant="h6"
-                component="h3"
-                sx={{
-                    width: "100%",
-                    mt: 4,
-                    mb: 0,
-                    color: "white",
-                    fontWeight: "bold",
-                    textAlign: "left",
                     display: "flex",
+                    flexDirection: "column",
                     alignItems: "center",
-                    gap: 1,
-                    backgroundColor: themeColor,
-                    padding: "10px 15px",
-                    borderRadius: "4px 4px 0 0",
+                    gap: "20px",
+                    pt: 1.2,
+                    px: 3,
+                    pb: 2,
+                    borderRadius: "8px",
+                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                    margin: "80px auto 20px",
+                    position: "relative",
                 }}
             >
-                Pet Inquiries
-                <Chip
-                    label={`${filteredUsers.length} users`}
-                    size="small"
+                {/* Main Dashboard Title with Paw Icon */}
+                <Typography
+                    variant="h4"
+                    component="h1"
                     sx={{
-                        bgcolor: "white",
-                        color: themeColor,
-                        fontWeight: "medium",
+                        fontWeight: "bold",
+                        color: "white",
+                        backgroundColor: "#003366",
+                        p: 2,
+                        borderRadius: "8px",
+                        mb: 3,
+                        textAlign: "center",
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 1,
+                        fontFamily: "'Nunito', sans-serif",
                     }}
-                />
-            </Typography>
-
-            {/* Users Table with Pet Inquiry Information */}
-            <TableContainer
-                component={Paper}
-                sx={{
-                    borderRadius: "0 0 8px 8px",
-                    boxShadow: 3,
-                    width: "100%"
-                }}
-            >
-                {isLoading ? (
-                    <Box
+                >
+                    <PetsIcon sx={{ fontSize: 32 }} />
+                    Pet details and Inquiries 
+                </Typography>
+                <Sidebar open={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+                <Tooltip title="Admin Dashboard">
+                    <IconButton
+                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                         sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            height: "400px",
+                            position: "fixed",
+                            left: isSidebarOpen ? 240 : 16, // Adjust position based on sidebar state
+                            top: 60, // Increased top value to move the icon further down
+                            zIndex: 1300, // High zIndex to ensure it's above other content
+                            '& svg': {
+                                fontSize: '2rem',
+                                color: "black"
+                            },
+                            backgroundColor: 'transparent',
+                            '&:hover': {
+                                backgroundColor: 'rgba(28, 34, 225, 0.61)',
+                                backdropFilter: 'blur(10px)',
+                                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                            },
                         }}
                     >
-                        <CircularProgress />
-                    </Box>
-                ) : error ? (
-                    <Box sx={{ padding: "2rem", textAlign: "center" }}>
-                        <Typography color="error">{error}</Typography>
-                        <Button
-                            variant="contained"
-                            sx={{
-                                mt: 2,
-                                bgcolor: themeColor,
-                                "&:hover": {
-                                    bgcolor: "#001c3d",
+                        <KeyboardArrowRightIcon />
+                    </IconButton>
+                </Tooltip>
+
+                {/* Search Bar and Add Pet Button */}
+                <Box
+                    sx={{
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        mb: 2,
+                    }}
+                >
+                    <TextField
+                        placeholder="Search for pet's name"
+                        variant="outlined"
+                        size="small"
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        sx={{
+                            width: "300px",
+                            "& .MuiOutlinedInput-root": {
+                                borderRadius: "8px",
+                                "&:hover fieldset": {
+                                    borderColor: "#003366",
                                 },
-                            }}
-                            onClick={() => fetchUsers()}
-                        >
-                            Try Again
-                        </Button>
-                    </Box>
-                ) : (
-                    <Table>
-                        <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
-                            <TableRow>
-                                <TableCell sx={{ fontWeight: "bold", color: themeColor }}>
+                                "&.Mui-focused fieldset": {
+                                    borderColor: "#003366",
+                                },
+                            }
+                        }}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon sx={{ color: "#003366" }} />
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+
+                    <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        onClick={handleAddNewClick}
+                        sx={{
+                            backgroundColor: "white",
+                            color: "#003366",
+                            borderRadius: "8px",
+                            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+                            padding: "8px 16px",
+                            textTransform: "none",
+                            fontWeight: "500",
+                            "&:hover": {
+                                backgroundColor: "#f5f5f5",
+                            },
+                            "& .MuiButton-startIcon": {
+                                marginRight: "4px",
+                            },
+                        }}
+                    >
+                        Add A Pet
+                    </Button>
+                </Box>
+
+                {/* Section Title for Pets Table - Styled like Pet Inquiries */}
+                <Typography
+                    variant="h6"
+                    component="h3"
+                    sx={{
+                        width: "100%",
+                        mt: 1,
+                        mb: 0,
+                        color: "white",
+                        fontWeight: "bold",
+                        textAlign: "left",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        backgroundColor: themeColor,
+                        padding: "10px 15px",
+                        borderRadius: "4px 4px 0 0",
+                    }}
+                >
+                    Pet Inventory
+                    <Chip
+                        label={`${filteredPets.length} pets`}
+                        size="small"
+                        sx={{
+                            bgcolor: "white",
+                            color: themeColor,
+                            fontWeight: "medium",
+                        }}
+                    />
+                </Typography>
+
+                {/* Enhanced Pets Table */}
+                <TableContainer
+                    component={Paper}
+                    sx={{
+                        width: "100%",
+                        maxWidth: "1200px",
+                        borderRadius: "0 0 12px 12px",
+                        overflow: "hidden",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                    }}
+                >
+                    <Table size="medium">
+                        <TableHead>
+                            <TableRow sx={{ backgroundColor: "#003366" }}>
+                                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
                                     ID
                                 </TableCell>
-                                <TableCell sx={{ fontWeight: "bold", color: themeColor }}>
-                                    Name
+                                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                                    Pet Name
                                 </TableCell>
-                                <TableCell sx={{ fontWeight: "bold", color: themeColor }}>
-                                    Email
+                                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                                    Pet Type
                                 </TableCell>
-                                <TableCell sx={{ fontWeight: "bold", color: themeColor }}>
-                                    Phone
+                                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                                    Price
                                 </TableCell>
-                                <TableCell sx={{ fontWeight: "bold", color: themeColor }}>
-                                    Address
+                                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                                    Breed
                                 </TableCell>
-                                <TableCell sx={{ fontWeight: "bold", color: themeColor }}>
-                                    Registered Date
+                                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                                    Birth Year
                                 </TableCell>
-                                <TableCell sx={{ fontWeight: "bold", color: themeColor }}>
-                                    Status
+                                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                                    Gender
                                 </TableCell>
-                                <TableCell sx={{ fontWeight: "bold", color: themeColor }}>
-                                    Inquired Pets
+                                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+                                    Image
                                 </TableCell>
-                                <TableCell sx={{ fontWeight: "bold", color: themeColor }}>
+                                <TableCell sx={{ color: "white", fontWeight: "bold" }}>
                                     Actions
                                 </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {filteredUsers.length > 0 ? (
-                                filteredUsers.map((user) => (
-                                    <TableRow
-                                        key={user.user_id || user.userId}
-                                        sx={{
-                                            "&:nth-of-type(odd)": { backgroundColor: "#f9f9f9" },
-                                        }}
-                                    >
-                                        <TableCell>{user.user_id || user.userId}</TableCell>
-                                        <TableCell>{user.name}</TableCell>
-                                        <TableCell>{user.email}</TableCell>
-                                        <TableCell>
-                                            {user.phone || user.contactNo || "N/A"}
-                                        </TableCell>
+                            {filteredPets.length > 0 ? (
+                                filteredPets.map((pet) => {
+                                    // Find the original index in the full pets array
+                                    const originalIndex = pets.findIndex(p => p.id === pet.id);
+                                    return (
+                                        <TableRow
+                                            key={pet.id}
+                                            sx={{
+                                                "&:nth-of-type(odd)": { backgroundColor: "#f9f9f9" },
+                                                "&:hover": { backgroundColor: "#f0f7ff" },
+                                            }}
+                                        >
+                                            <TableCell>{pet.id}</TableCell>
+                                            <TableCell>{pet.name}</TableCell>
+                                            <TableCell>{pet.petType}</TableCell>
+                                            <TableCell sx={{ fontWeight: "medium" }}>
+                                                {formatPrice(pet.price)}
+                                            </TableCell>
+                                            <TableCell>{pet.breed}</TableCell>
+                                            <TableCell>{pet.birthYear}</TableCell>
+                                            <TableCell>{pet.gender}</TableCell>
+                                            <TableCell>
+                                                {pet.imageUrl && (
+                                                    <Avatar
+                                                        alt={pet.imageUrl}
+                                                        src={`${import.meta.env.VITE_API_BASE_URL}${pet.imageUrl}`}
+                                                        sx={{
+                                                            width: 50,
+                                                            height: 50,
+                                                            margin: "0 auto",
+                                                            borderRadius: 2,
+                                                        }}
+                                                    />
 
-                                        <TableCell>
-                                            <Tooltip title={user.address || "N/A"}>
-                                                <Typography
-                                                    sx={{
-                                                        maxWidth: 150,
-                                                        overflow: "hidden",
-                                                        textOverflow: "ellipsis",
-                                                        whiteSpace: "nowrap",
-                                                    }}
-                                                >
-                                                    {user.address || "N/A"}
-                                                </Typography>
-                                            </Tooltip>
-                                        </TableCell>
-                                        <TableCell>
-                                            {formatDate(
-                                                user.registered_date ||
-                                                user.registrationDate ||
-                                                user.registeredDate
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            {user.status ? (
-                                                <Chip
-                                                    label={formatStatusText(user.status)}
-                                                    size="small"
-                                                    sx={{
-                                                        bgcolor: getStatusColor(user.status),
-                                                        color: "white",
-                                                        fontWeight: "medium",
-                                                    }}
-                                                />
-                                            ) : (
-                                                <Typography variant="body2" color="text.secondary">
-                                                    N/A
-                                                </Typography>
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            {(user.interestedPets || user.inquiredPets) && (
-                                                <Box
-                                                    sx={{
-                                                        display: "flex",
-                                                        flexDirection: "column",
-                                                        gap: 1,
-                                                    }}
-                                                >
-                                                    {Array.from(
-                                                        new Map(
-                                                            [
-                                                                ...(user.interestedPets || []).map((pet) => ({
-                                                                    key: pet.petId,
-                                                                    pet: { ...pet, source: "interested" },
-                                                                })),
-                                                                ...(user.inquiredPets || []).map((pet) => ({
-                                                                    key: getPetId(pet),
-                                                                    pet: { ...pet, source: "inquired" },
-                                                                })),
-                                                            ].map((item) => [item.key, item.pet])
-                                                        ).values()
-                                                    ).map((pet, idx) => (
-                                                        <Box
-                                                            key={`pet-${idx}`}
-                                                            sx={{
-                                                                display: "flex",
-                                                                alignItems: "center",
-                                                                gap: 1,
-                                                            }}
-                                                        >
-                                                            <Tooltip
-                                                                title={
-                                                                    <React.Fragment>
-                                                                        <Typography variant="body2">
-                                                                            <strong>Inquiry Date:</strong>{" "}
-                                                                            {formatDate(getInquiryDate(pet))}
-                                                                        </Typography>
-                                                                        {pet.message && (
-                                                                            <Typography variant="body2">
-                                                                                <strong>Message:</strong> {pet.message}
-                                                                            </Typography>
-                                                                        )}
-                                                                        {pet.breed && (
-                                                                            <Typography variant="body2">
-                                                                                <strong>Breed:</strong> {pet.breed}
-                                                                            </Typography>
-                                                                        )}
-                                                                    </React.Fragment>
-                                                                }
-                                                                arrow
-                                                            >
-                                                                <Chip
-                                                                    icon={<PetsIcon fontSize="small" />}
-                                                                    label={`${getPetName(pet)} (ID: ${getPetId(pet)})`}
-                                                                    size="small"
-                                                                    sx={{
-                                                                        bgcolor: "#e3f2fd",
-                                                                        border: "1px solid #90caf9",
-                                                                        "& .MuiChip-label": {
-                                                                            px: 1,
-                                                                            fontSize: "0.75rem",
-                                                                        },
-                                                                    }}
-                                                                />
-                                                            </Tooltip>
-
-                                                            {/* Status dropdown */}
-                                                            <FormControl
-                                                                size="small"
-                                                                variant="outlined"
-                                                                sx={{ minWidth: 120 }}
-                                                            >
-                                                                <Select
-                                                                    value={pet.status || "NEW"}
-                                                                    onChange={(e: SelectChangeEvent) =>
-                                                                        handleStatusChange(
-                                                                            user.user_id || user.userId || 0,
-                                                                            getPetId(pet),
-                                                                            e.target.value as
-                                                                                | "NEW"
-                                                                                | "IN_PROGRESS"
-                                                                                | "RESOLVED"
-                                                                        )
-                                                                    }
-                                                                    sx={{
-                                                                        height: 32,
-                                                                        bgcolor: getStatusColor(
-                                                                            pet.status || "NEW"
-                                                                        ),
-                                                                        color: "white",
-                                                                        "& .MuiSelect-icon": { color: "white" },
-                                                                        "&:hover": {
-                                                                            bgcolor: `${getStatusColor(
-                                                                                pet.status || "NEW"
-                                                                            )}dd`,
-                                                                        },
-                                                                    }}
-                                                                >
-                                                                    <MenuItem
-                                                                        value="NEW"
-                                                                        sx={{ color: getStatusColor("NEW") }}
-                                                                    >
-                                                                        <Typography variant="body2">New</Typography>
-                                                                    </MenuItem>
-                                                                    <MenuItem
-                                                                        value="IN_PROGRESS"
-                                                                        sx={{
-                                                                            color: getStatusColor("IN_PROGRESS"),
-                                                                        }}
-                                                                    >
-                                                                        <Typography variant="body2">
-                                                                            In Progress
-                                                                        </Typography>
-                                                                    </MenuItem>
-                                                                    <MenuItem
-                                                                        value="RESOLVED"
-                                                                        sx={{ color: getStatusColor("RESOLVED") }}
-                                                                    >
-                                                                        <Typography variant="body2">
-                                                                            Resolved
-                                                                        </Typography>
-                                                                    </MenuItem>
-                                                                </Select>
-                                                            </FormControl>
-                                                        </Box>
-                                                    ))}
+                                                    //     <Avatar
+                                                    //         src={
+                                                    //         typeof row.photo === "string"
+                                                    //             ? `data:image/jpeg;base64,${row.photo}` // For existing Base64 strings
+                                                    //             : URL.createObjectURL(row.photo) // For new files
+                                                    //         }
+                                                    //         alt="Pet"
+                                                    //         sx={{
+                                                    //         width: 50,
+                                                    //         height: 50,
+                                                    //         borderRadius: "8px",
+                                                    //     }}
+                                                    // />
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Box sx={{ display: "flex", gap: 1 }}>
+                                                    <Button
+                                                        variant="contained"
+                                                        size="small"
+                                                        sx={{
+                                                            backgroundColor: "#003366",
+                                                            "&:hover": {
+                                                                backgroundColor: "#002244",
+                                                            },
+                                                            "&:focus": {
+                                                                boxShadow: "0 0 0 3px rgba(0, 51, 102, 0.3)",
+                                                            },
+                                                            borderRadius: "6px",
+                                                        }}
+                                                        onClick={() => handleUpdate(originalIndex)}
+                                                    >
+                                                        Update
+                                                    </Button>
+                                                    <Button
+                                                        variant="contained"
+                                                        size="small"
+                                                        sx={{
+                                                            backgroundColor: "#DC3545",
+                                                            "&:hover": {
+                                                                backgroundColor: "#BB2D3B",
+                                                            },
+                                                            "&:focus": {
+                                                                boxShadow: "0 0 0 3px rgba(220, 53, 69, 0.3)",
+                                                            },
+                                                            borderRadius: "6px",
+                                                        }}
+                                                        onClick={() => handleDelete(pet.id)}
+                                                    >
+                                                        Delete
+                                                    </Button>
                                                 </Box>
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-                                                <Button
-                                                    variant="contained"
-                                                    size="small"
-                                                    color="error"
-                                                    sx={{ textTransform: "none", borderRadius: "4px" }}
-                                                    onClick={() => handleUserDelete(user)}
-                                                >
-                                                    Delete
-                                                </Button>
-                                            </Box>
-                                        </TableCell>
-                                    </TableRow>
-                                ))
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })
                             ) : (
                                 <TableRow>
                                     <TableCell colSpan={9} align="center" sx={{ py: 4 }}>
                                         {searchTerm ? (
                                             <Typography variant="body1" color="textSecondary">
-                                                No users found with inquiries matching "{searchTerm}".
+                                                No pets found matching "{searchTerm}".
                                             </Typography>
                                         ) : (
-                                            <Typography variant="body1" color="textSecondary">
-                                                No users found.
-                                            </Typography>
+                                            <>
+                                                <Typography variant="body1" color="textSecondary">
+                                                    No pets found.
+                                                </Typography>
+                                                <Button
+                                                    variant="contained"
+                                                    sx={{
+                                                        mt: 2,
+                                                        backgroundColor: "#003366",
+                                                        "&:hover": {
+                                                            backgroundColor: "#002244",
+                                                        },
+                                                    }}
+                                                    onClick={handleAddNewClick}
+                                                >
+                                                    Add Your First Pet
+                                                </Button>
+                                            </>
                                         )}
                                     </TableCell>
                                 </TableRow>
                             )}
                         </TableBody>
                     </Table>
-                )}
-            </TableContainer>
+                </TableContainer>
 
-            {/* Message for when no users are found */}
-            {!isLoading && !error && filteredUsers.length === 0 && !searchTerm && (
-                <Paper
-                    sx={{ p: 3, width: "100%", textAlign: "center", borderRadius: "8px" }}
+                {/* Section Title for Users Table - Now white */}
+                <Typography
+                    variant="h6"
+                    component="h3"
+                    sx={{
+                        width: "100%",
+                        mt: 4,
+                        mb: 0,
+                        color: "white",
+                        fontWeight: "bold",
+                        textAlign: "left",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        backgroundColor: themeColor,
+                        padding: "10px 15px",
+                        borderRadius: "4px 4px 0 0",
+                    }}
                 >
-                    <MessageIcon sx={{ fontSize: 60, color: "#ccc", mb: 2 }} />
-                    <Typography variant="h6" gutterBottom>
-                        No User Inquiries Yet
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                        When users submit inquiries about pets, they will appear here.
-                    </Typography>
-                    <Button
-                        variant="outlined"
-                        startIcon={<RefreshIcon />}
-                        onClick={handleRefreshAll}
+                    Pet Inquiries
+                    <Chip
+                        label={`${filteredUsers.length} users`}
+                        size="small"
                         sx={{
-                            borderColor: themeColor,
+                            bgcolor: "white",
                             color: themeColor,
-                            "&:hover": {
-                                borderColor: "#001c3d",
-                                backgroundColor: "rgba(0, 40, 85, 0.04)",
-                            },
+                            fontWeight: "medium",
                         }}
-                    >
-                        Refresh Data
-                        {isRefreshing && (
-                            <CircularProgress size={16} sx={{ ml: 1, color: themeColor }} />
-                        )}
-                    </Button>
-                </Paper>
-            )}
+                    />
+                </Typography>
 
-            {/* Add Pet Form */}
-            {drawerOpen && (
-                <AddPetForm
-                    onSnackbarMessage={onSnackbarMessage}
-                    onPetAdded={fetchPets}
-                    onPetUpdated={fetchPets}
-                    isOpen={drawerOpen}
-                    onClose={handleDrawerClose}
-                    petToEdit={editPet}
-                />
-            )}
+                {/* Users Table with Pet Inquiry Information */}
+                <TableContainer
+                    component={Paper}
+                    sx={{
+                        borderRadius: "0 0 8px 8px",
+                        boxShadow: 3,
+                        width: "100%"
+                    }}
+                >
+                    {isLoading ? (
+                        <Box
+                            sx={{
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                height: "400px",
+                            }}
+                        >
+                            <CircularProgress />
+                        </Box>
+                    ) : error ? (
+                        <Box sx={{ padding: "2rem", textAlign: "center" }}>
+                            <Typography color="error">{error}</Typography>
+                            <Button
+                                variant="contained"
+                                sx={{
+                                    mt: 2,
+                                    bgcolor: themeColor,
+                                    "&:hover": {
+                                        bgcolor: "#001c3d",
+                                    },
+                                }}
+                                onClick={() => fetchUsers()}
+                            >
+                                Try Again
+                            </Button>
+                        </Box>
+                    ) : (
+                        <Table>
+                            <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
+                                <TableRow>
+                                    <TableCell sx={{ fontWeight: "bold", color: themeColor }}>
+                                        ID
+                                    </TableCell>
+                                    <TableCell sx={{ fontWeight: "bold", color: themeColor }}>
+                                        Name
+                                    </TableCell>
+                                    <TableCell sx={{ fontWeight: "bold", color: themeColor }}>
+                                        Email
+                                    </TableCell>
+                                    <TableCell sx={{ fontWeight: "bold", color: themeColor }}>
+                                        Phone
+                                    </TableCell>
+                                    <TableCell sx={{ fontWeight: "bold", color: themeColor }}>
+                                        Address
+                                    </TableCell>
+                                    <TableCell sx={{ fontWeight: "bold", color: themeColor }}>
+                                        Registered Date
+                                    </TableCell>
+                                    <TableCell sx={{ fontWeight: "bold", color: themeColor }}>
+                                        Status
+                                    </TableCell>
+                                    <TableCell sx={{ fontWeight: "bold", color: themeColor }}>
+                                        Inquired Pets
+                                    </TableCell>
+                                    <TableCell sx={{ fontWeight: "bold", color: themeColor }}>
+                                        Actions
+                                    </TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {filteredUsers.length > 0 ? (
+                                    filteredUsers.map((user) => (
+                                        <TableRow
+                                            key={user.user_id || user.userId}
+                                            sx={{
+                                                "&:nth-of-type(odd)": { backgroundColor: "#f9f9f9" },
+                                            }}
+                                        >
+                                            <TableCell>{user.user_id || user.userId}</TableCell>
+                                            <TableCell>{user.name}</TableCell>
+                                            <TableCell>{user.email}</TableCell>
+                                            <TableCell>
+                                                {user.phone || user.contactNo || "N/A"}
+                                            </TableCell>
+
+                                            <TableCell>
+                                                <Tooltip title={user.address || "N/A"}>
+                                                    <Typography
+                                                        sx={{
+                                                            maxWidth: 150,
+                                                            overflow: "hidden",
+                                                            textOverflow: "ellipsis",
+                                                            whiteSpace: "nowrap",
+                                                        }}
+                                                    >
+                                                        {user.address || "N/A"}
+                                                    </Typography>
+                                                </Tooltip>
+                                            </TableCell>
+                                            <TableCell>
+                                                {formatDate(
+                                                    user.registered_date ||
+                                                    user.registrationDate ||
+                                                    user.registeredDate
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {user.status ? (
+                                                    <Chip
+                                                        label={formatStatusText(user.status)}
+                                                        size="small"
+                                                        sx={{
+                                                            bgcolor: getStatusColor(user.status),
+                                                            color: "white",
+                                                            fontWeight: "medium",
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    <Typography variant="body2" color="text.secondary">
+                                                        N/A
+                                                    </Typography>
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {(user.interestedPets || user.inquiredPets) && (
+                                                    <Box
+                                                        sx={{
+                                                            display: "flex",
+                                                            flexDirection: "column",
+                                                            gap: 1,
+                                                        }}
+                                                    >
+                                                        {Array.from(
+                                                            new Map(
+                                                                [
+                                                                    ...(user.interestedPets || []).map((pet) => ({
+                                                                        key: pet.petId,
+                                                                        pet: { ...pet, source: "interested" },
+                                                                    })),
+                                                                    ...(user.inquiredPets || []).map((pet) => ({
+                                                                        key: getPetId(pet),
+                                                                        pet: { ...pet, source: "inquired" },
+                                                                    })),
+                                                                ].map((item) => [item.key, item.pet])
+                                                            ).values()
+                                                        ).map((pet, idx) => (
+                                                            <Box
+                                                                key={`pet-${idx}`}
+                                                                sx={{
+                                                                    display: "flex",
+                                                                    alignItems: "center",
+                                                                    gap: 1,
+                                                                }}
+                                                            >
+                                                                <Tooltip
+                                                                    title={
+                                                                        <React.Fragment>
+                                                                            <Typography variant="body2">
+                                                                                <strong>Inquiry Date:</strong>{" "}
+                                                                                {formatDate(getInquiryDate(pet))}
+                                                                            </Typography>
+                                                                            {pet.message && (
+                                                                                <Typography variant="body2">
+                                                                                    <strong>Message:</strong> {pet.message}
+                                                                                </Typography>
+                                                                            )}
+                                                                            {pet.breed && (
+                                                                                <Typography variant="body2">
+                                                                                    <strong>Breed:</strong> {pet.breed}
+                                                                                </Typography>
+                                                                            )}
+                                                                        </React.Fragment>
+                                                                    }
+                                                                    arrow
+                                                                >
+                                                                    <Chip
+                                                                        icon={<PetsIcon fontSize="small" />}
+                                                                        label={`${getPetName(pet)} (ID: ${getPetId(pet)})`}
+                                                                        size="small"
+                                                                        sx={{
+                                                                            bgcolor: "#e3f2fd",
+                                                                            border: "1px solid #90caf9",
+                                                                            "& .MuiChip-label": {
+                                                                                px: 1,
+                                                                                fontSize: "0.75rem",
+                                                                            },
+                                                                        }}
+                                                                    />
+                                                                </Tooltip>
+
+                                                                {/* Status dropdown */}
+                                                                <FormControl
+                                                                    size="small"
+                                                                    variant="outlined"
+                                                                    sx={{ minWidth: 120 }}
+                                                                >
+                                                                    <Select
+                                                                        value={pet.status || "NEW"}
+                                                                        onChange={(e: SelectChangeEvent) =>
+                                                                            handleStatusChange(
+                                                                                user.user_id || user.userId || 0,
+                                                                                getPetId(pet),
+                                                                                e.target.value as
+                                                                                | "NEW"
+                                                                                | "IN_PROGRESS"
+                                                                                | "RESOLVED"
+                                                                            )
+                                                                        }
+                                                                        sx={{
+                                                                            height: 32,
+                                                                            bgcolor: getStatusColor(
+                                                                                pet.status || "NEW"
+                                                                            ),
+                                                                            color: "white",
+                                                                            "& .MuiSelect-icon": { color: "white" },
+                                                                            "&:hover": {
+                                                                                bgcolor: `${getStatusColor(
+                                                                                    pet.status || "NEW"
+                                                                                )}dd`,
+                                                                            },
+                                                                        }}
+                                                                    >
+                                                                        <MenuItem
+                                                                            value="NEW"
+                                                                            sx={{ color: getStatusColor("NEW") }}
+                                                                        >
+                                                                            <Typography variant="body2">New</Typography>
+                                                                        </MenuItem>
+                                                                        <MenuItem
+                                                                            value="IN_PROGRESS"
+                                                                            sx={{
+                                                                                color: getStatusColor("IN_PROGRESS"),
+                                                                            }}
+                                                                        >
+                                                                            <Typography variant="body2">
+                                                                                In Progress
+                                                                            </Typography>
+                                                                        </MenuItem>
+                                                                        <MenuItem
+                                                                            value="RESOLVED"
+                                                                            sx={{ color: getStatusColor("RESOLVED") }}
+                                                                        >
+                                                                            <Typography variant="body2">
+                                                                                Resolved
+                                                                            </Typography>
+                                                                        </MenuItem>
+                                                                    </Select>
+                                                                </FormControl>
+                                                            </Box>
+                                                        ))}
+                                                    </Box>
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                                                    <Button
+                                                        variant="contained"
+                                                        size="small"
+                                                        color="error"
+                                                        sx={{ textTransform: "none", borderRadius: "4px" }}
+                                                        onClick={() => handleUserDelete(user)}
+                                                    >
+                                                        Delete
+                                                    </Button>
+                                                </Box>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                ) : (
+                                    <TableRow>
+                                        <TableCell colSpan={9} align="center" sx={{ py: 4 }}>
+                                            {searchTerm ? (
+                                                <Typography variant="body1" color="textSecondary">
+                                                    No users found with inquiries matching "{searchTerm}".
+                                                </Typography>
+                                            ) : (
+                                                <Typography variant="body1" color="textSecondary">
+                                                    No users found.
+                                                </Typography>
+                                            )}
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    )}
+                </TableContainer>
+
+                {/* Message for when no users are found */}
+                {!isLoading && !error && filteredUsers.length === 0 && !searchTerm && (
+                    <Paper
+                        sx={{ p: 3, width: "100%", textAlign: "center", borderRadius: "8px" }}
+                    >
+                        <MessageIcon sx={{ fontSize: 60, color: "#ccc", mb: 2 }} />
+                        <Typography variant="h6" gutterBottom>
+                            No User Inquiries Yet
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                            When users submit inquiries about pets, they will appear here.
+                        </Typography>
+                        <Button
+                            variant="outlined"
+                            startIcon={<RefreshIcon />}
+                            onClick={handleRefreshAll}
+                            sx={{
+                                borderColor: themeColor,
+                                color: themeColor,
+                                "&:hover": {
+                                    borderColor: "#001c3d",
+                                    backgroundColor: "rgba(0, 40, 85, 0.04)",
+                                },
+                            }}
+                        >
+                            Refresh Data
+                            {isRefreshing && (
+                                <CircularProgress size={16} sx={{ ml: 1, color: themeColor }} />
+                            )}
+                        </Button>
+                    </Paper>
+                )}
+
+                {/* Add Pet Form */}
+                {drawerOpen && (
+                    <AddPetForm
+                        onSnackbarMessage={onSnackbarMessage}
+                        onPetAdded={fetchPets}
+                        onPetUpdated={fetchPets}
+                        isOpen={drawerOpen}
+                        onClose={handleDrawerClose}
+                        petToEdit={editPet}
+                    />
+                )}
+            </Box>
         </Box>
     );
 };
