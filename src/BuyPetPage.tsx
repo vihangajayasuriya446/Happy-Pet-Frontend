@@ -1,13 +1,58 @@
-// CHANGES - Removed cart icon from pet buy as it was moved to navbar
 import React, { useState } from "react";
-import { Box, Typography, Container, IconButton, Badge, FormControl, Select, MenuItem, SelectChangeEvent, Snackbar, Alert } from "@mui/material";
-// import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
+import { 
+  Box, 
+  Typography, 
+  Container, 
+  FormControl, 
+  Select, 
+  MenuItem, 
+  SelectChangeEvent, 
+  Snackbar, 
+  Alert,
+  styled
+} from "@mui/material";
 import { useCart } from "./contexts/CartContext";
 import PetList from "./components/PetList";
-
-
 import DrawerMenu from "./components/DrawerMenu";
 import Cart from "./components/Cart";
+
+const MainContentBox = styled(Box)(({ theme }) => ({
+  background: 'rgba(255, 255, 255, 0.58)',
+  backdropFilter: 'blur(10px)',
+  WebkitBackdropFilter: 'blur(10px)',
+  borderRadius: '24px',
+  border: '1px solid rgba(255, 255, 255, 0.2)',
+  padding: theme.spacing(8),
+  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+  width: '90%',
+  maxWidth: '1200px',
+  margin: '0 auto',
+  [theme.breakpoints.down('md')]: {
+    padding: theme.spacing(6),
+    width: '95%',
+  },
+  [theme.breakpoints.down('sm')]: {
+    padding: theme.spacing(4),
+    borderRadius: '16px',
+  },
+}));
+
+const FilterSelect = styled(Select)(({ theme }) => ({
+  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+  borderRadius: '12px',
+  minWidth: 180,
+  '& .MuiOutlinedInput-notchedOutline': {
+    borderColor: 'transparent',
+  },
+  '&:hover .MuiOutlinedInput-notchedOutline': {
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+    borderColor: 'rgba(0, 0, 0, 0.2)',
+    borderWidth: '1px',
+  },
+  marginLeft: theme.spacing(2),
+}));
 
 const BuyPetPage: React.FC = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -15,22 +60,13 @@ const BuyPetPage: React.FC = () => {
     const [searchQuery] = useState('');
     const [petType, setPetType] = useState<string>('all');
     const { getItemCount } = useCart();
-    const itemCount = getItemCount();
-
-    // Handle snackbar messages
     const [snackbarOpen, setSnackbarOpen] = useState(false);
 
-    const toggleDrawer = () => {
-        setDrawerOpen(!drawerOpen);
-    };
+    const toggleDrawer = () => setDrawerOpen(!drawerOpen);
+    const toggleCart = () => setCartOpen(!cartOpen);
 
-    const toggleCart = () => {
-        setCartOpen(!cartOpen);
-    };
-
-    const handlePetTypeChange = (event: SelectChangeEvent<string>) => {
-        setPetType(event.target.value);
-        console.log(`Pet type changed to: ${event.target.value}`);
+    const handlePetTypeChange = (event: SelectChangeEvent<unknown>) => {
+        setPetType(event.target.value as string);
     };
 
     const handleSnackbarClose = () => {
@@ -43,173 +79,92 @@ const BuyPetPage: React.FC = () => {
             display: 'flex',
             flexDirection: 'column',
             fontFamily: '"Nunito Sans", sans-serif',
-            
+            position: 'relative',
+            padding: { xs: '48px 0', md: '96px 0' },
+           
         }}>
-            {/* Fix the Navbar component by checking its props requirements */}
-            {/* If toggleDrawer is not a valid prop, remove it */}
-
             <DrawerMenu open={drawerOpen} toggleDrawer={toggleDrawer} />
             <Cart open={cartOpen} onClose={toggleCart} />
 
-            {/* Title Section with Shopping Bag Icon and Filters */}
-            <Box 
-                sx={{
-
-                    pt: { xs: 12, md: 16 },
-                    pb: 3,
-                    position: 'relative',
-                }}
-            >
-                <Container maxWidth="lg" sx={{ position: 'relative' }}>
-                    {/* Title and Filter in the same row */}
-                    <Box sx={{
-                        display: 'flex',
-                        flexDirection: { xs: 'column', sm: 'row' },
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        mb: { xs: 3, sm: 4 },
-                        position: 'relative'
-                    }}>
-                        {/* Filters positioned on the left */}
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                order: { xs: 2, sm: 1 },
-                                mt: { xs: 2, sm: 0 },
-                                gap: 2
-                            }}
-                        >
-                            <Typography
-                                variant="body1"
-                                sx={{
-                                    color: 'white',
-                                    fontWeight: 600,
-                                    mr: 2,
-                                    display: { xs: 'none', sm: 'block' }
-                                }}
-                            >
-                                Filter by:
-                            </Typography>
-                            {/* Pet Type Filter */}
-                            <FormControl
-                                size="small"
-                                sx={{
-                                    minWidth: 150,
-                                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                                    borderRadius: 1,
-                                    '& .MuiOutlinedInput-notchedOutline': {
-                                        borderColor: 'transparent'
-                                    },
-                                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                                        borderColor: 'transparent'
-                                    }
-                                }}
-                            >
-                                <Select
-                                    value={petType}
-                                    onChange={handlePetTypeChange}
-                                    displayEmpty
-                                    inputProps={{ 'aria-label': 'Select pet type' }}
-                                    sx={{
-                                        color: '#003366',
-                                        fontWeight: 600,
-                                        '&:focus': {
-                                            backgroundColor: 'white'
-                                        }
-                                    }}
-                                >
-                                    <MenuItem value="all">All Pets</MenuItem>
-                                    <MenuItem value="dog">Dogs</MenuItem>
-                                    <MenuItem value="cat">Cats</MenuItem>
-                                    <MenuItem value="bird">Birds</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Box>
-
-                        {/* Title in the center */}
-                        <Typography
-                            variant="h3"
-                            sx={{
-                                color: 'common.white',
-                                fontWeight: 800,
-                                fontSize: { xs: '2rem', md: '3rem' },
-                                fontFamily: '"Nunito", sans-serif',
-                                textAlign: 'center',
-                                order: { xs: 1, sm: 2 },
-                            }}
-                        >
-                            Buy a Pet
-                        </Typography>
-
-                        {/* Empty Box to maintain layout balance (replacing the button) */}
-                        <Box
-                            sx={{
-                                width: { xs: '100%', sm: '150px' },
-                                order: { xs: 3, sm: 3 },
-                                mt: { xs: 2, sm: 0 }
-                            }}
-                        />
-                    </Box>
-
-                    {/* Shopping Bag Icon positioned at the right edge */}
-                    {/* <IconButton
-                        onClick={toggleCart}
+            <MainContentBox>
+                {/* Header Section with increased padding */}
+                <Box sx={{
+                    mb: { xs: 4, md: 6 },
+                    textAlign: 'center',
+                    paddingTop: { xs: 2, md: 4 },
+                }}>
+                    <Typography
+                        variant="h1"
                         sx={{
-                            position: 'absolute',
-                            right: { xs: -70, sm: -70, md: -70 },
-                            top: { xs: 20, md: 15 },
-                            transform: 'translateY(-50%)',
-                            bgcolor: 'white',
-                            boxShadow: 3,
-                            '&:hover': {
-                                bgcolor: '#f5f5f5',
-                            },
+                            fontWeight: 800,
+                            fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
+                            fontFamily: '"Nunito", sans-serif',
+                            lineHeight: 1.3,
+                            color: '#003366',
+                            mb: { xs: 3, md: 4 },
                         }}
                     >
-                        <Badge
-                            badgeContent={itemCount}
-                            color="error"
+                        Discover Your Perfect Companion
+                    </Typography>
+                    
+                    <Box sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        gap: 2,
+                        paddingBottom: { xs: 2, md: 4 },
+                    }}>
+                        <Typography
+                            variant="h6"
                             sx={{
-                                '& .MuiBadge-badge': {
-                                    fontSize: '0.7rem',
-                                    height: '20px',
-                                    minWidth: '20px',
-                                    padding: '0 4px',
-                                }
+                                fontWeight: 600,
+                                color: '#4a5568'
                             }}
                         >
-                            <ShoppingBagIcon sx={{ color: '#003366' }} />
-                        </Badge>
-                    </IconButton> */}
-                </Container>
-            </Box>
+                            Browse our selection of
+                        </Typography>
+                        <FormControl size="medium">
+                            <FilterSelect
+                                value={petType}
+                                onChange={handlePetTypeChange}
+                                displayEmpty
+                                inputProps={{ 'aria-label': 'Select pet type' }}
+                                sx={{
+                                    color: '#2d3748',
+                                    fontWeight: 600,
+                                }}
+                            >
+                                <MenuItem value="all">All Pets</MenuItem>
+                                <MenuItem value="dog">Dogs</MenuItem>
+                                <MenuItem value="cat">Cats</MenuItem>
+                                <MenuItem value="bird">Birds</MenuItem>
+                                <MenuItem value="other">Other Animals</MenuItem>
+                            </FilterSelect>
+                        </FormControl>
+                    </Box>
+                </Box>
 
-            {/* Main content */}
-            <Box
-                sx={{
-
-                    flex: 1,
-                    width: '100%'
-                }}
-            >
-                <Container
-                    maxWidth="lg"
-                    sx={{
-                        py: { xs: 2, md: 3 }
-                    }}
-                >
-                    {/* Pet List Component without gender filter */}
+                {/* Pet List Section with adjusted padding */}
+                <Box sx={{
+                    borderRadius: '16px',
+                    overflow: 'hidden',
+                    padding: { xs: 1, md: 2 },
+                    marginTop: { xs: 2, md: 4 },
+                }}>
                     <PetList searchQuery={searchQuery} petType={petType} />
-                </Container>
-            </Box>
+                </Box>
+            </MainContentBox>
 
-            {/* Snackbar for notifications */}
+            {/* Snackbar */}
             <Snackbar
                 open={snackbarOpen}
                 autoHideDuration={6000}
                 onClose={handleSnackbarClose}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                sx={{
+                    bottom: { xs: 90, sm: 24 }
+                }}
             >
                 <Alert
                     onClose={handleSnackbarClose}
@@ -219,8 +174,6 @@ const BuyPetPage: React.FC = () => {
                     Operation successful!
                 </Alert>
             </Snackbar>
-
-
         </Box>
     );
 };

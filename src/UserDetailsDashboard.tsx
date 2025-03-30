@@ -245,7 +245,7 @@ const UserDetailsDashboard: React.FC = () => {
               variant="contained"
               color="primary"
               onClick={handleOpenForm}
-              sx={{ textTransform: 'none', borderRadius: '4px' }}
+              sx={{ textTransform: 'none', borderRadius: '4px' ,bgcolor:"#003366"}}
               startIcon={<AddIcon />}
             >
               Add User

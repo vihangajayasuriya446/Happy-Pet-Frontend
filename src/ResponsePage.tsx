@@ -281,25 +281,28 @@ const ResponsesPage: React.FC = () => {
                 }}
               />
               <Button
-                variant="contained"
-                color="primary"
-                onClick={handleRefresh}
-                disabled={isRefreshing}
-                startIcon={isRefreshing ? <CircularProgress size={20} /> : <Refresh />}
-                sx={{
-                  borderRadius: "8px",
-                  minWidth: "40px",
-                  width: "40px",
-                  height: "40px",
-                  padding: 0,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  '& .MuiButton-startIcon': {
-                    margin: 0,
-                  }
-                }}
-              />
+  variant="contained"
+  sx={{
+    backgroundColor: '#003366',
+    '&:hover': {
+      backgroundColor: '#002855', // Slightly darker shade for hover
+    },
+    borderRadius: "8px",
+    minWidth: "40px",
+    width: "40px",
+    height: "40px",
+    padding: 0,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    '& .MuiButton-startIcon': {
+      margin: 0,
+    }
+  }}
+  onClick={handleRefresh}
+  disabled={isRefreshing}
+  startIcon={isRefreshing ? <CircularProgress size={20} /> : <Refresh />}
+/>
             </Box>
 
             {!loading && !error && (

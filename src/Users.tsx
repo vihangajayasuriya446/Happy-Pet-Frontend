@@ -289,9 +289,9 @@ const Users: React.FC = () => {
               />
               <Button
                 variant="contained"
-                color="primary"
+                
                 onClick={toggleDrawer(true)}
-                sx={{ width: { xs: "100%", sm: "auto" }, textTransform: "none", borderRadius: "8px" }}
+                sx={{ width: { xs: "100%", sm: "auto" }, textTransform: "none", borderRadius: "8px",color:"white",bgcolor:"#003366" }}
               >
                 Add New Pet
               </Button>

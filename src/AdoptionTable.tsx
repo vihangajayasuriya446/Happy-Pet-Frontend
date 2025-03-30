@@ -136,11 +136,11 @@ const PetTable: React.FC<PetTableProps> = ({ rows, deletePet, onOpenForm, onEdit
         {/* Add Pet Button (Right Side) */}
         <Button
           variant="contained"
-          color="primary"
+         
           onClick={onOpenForm}
           sx={{
             textTransform: "none",
-            borderRadius: "4px",
+            borderRadius: "4px",bgcolor:" #003366"
           }}
         >
           + Add a Pet

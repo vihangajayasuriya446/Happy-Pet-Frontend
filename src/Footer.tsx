@@ -191,7 +191,7 @@ const Footer = () => {
       />
     </Link>
     <Link
-      href="https://www.linkedin.com/in/happy-pet-664b40352/" // Replace with your Twitter page URL
+      href="https://www.linkedin.com/in/happy-pet-664b40352/" 
       target="_blank"
       rel="noopener noreferrer"
     >
