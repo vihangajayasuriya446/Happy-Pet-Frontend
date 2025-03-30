@@ -1,5 +1,5 @@
 import { Box, Typography, Link, Grid } from "@mui/material";
-import { Facebook, Instagram, Twitter } from "@mui/icons-material";
+import { Facebook, Instagram, Twitter, LinkedIn } from "@mui/icons-material";
 
 const Footer = () => {
   return (
@@ -8,7 +8,7 @@ const Footer = () => {
         bgcolor: "rgba(255, 255, 255, 0.8)", // Semi-transparent background
         py: 6,
         px: { xs: 2, sm: 4 },
-        mt: 4,
+        mt: 8,
         borderTop: "1px solid rgba(0, 0, 0, 0.1)",
         backdropFilter: "blur(10px)", // Glass morphism effect
         minHeight: "300px", // Standard height for footer
@@ -42,7 +42,7 @@ const Footer = () => {
               sx={{ mb: 1, color: "text.primary", transition: "color 0.3s ease" }}
             >
               <Link
-                href="#"
+                href="/aboutus"
                 underline="hover"
                 color="inherit"
                 sx={{
@@ -57,7 +57,7 @@ const Footer = () => {
               sx={{ mb: 1, color: "text.primary", transition: "color 0.3s ease" }}
             >
               <Link
-                href="#"
+                href="/contactus"
                 underline="hover"
                 color="inherit"
                 sx={{
@@ -80,16 +80,7 @@ const Footer = () => {
             Information
           </Typography>
           <Link
-            href="#"
-            underline="hover"
-            color="inherit"
-            display="block"
-            sx={{ mb: 1, color: "text.primary", transition: "color 0.3s ease" }}
-          >
-            More Search
-          </Link>
-          <Link
-            href="#"
+            href="/matchmaking"
             underline="hover"
             color="inherit"
             display="block"
@@ -98,7 +89,7 @@ const Footer = () => {
             Pet Matchmaking
           </Link>
           <Link
-            href="#"
+            href="/buy"
             underline="hover"
             color="inherit"
             display="block"
@@ -107,7 +98,7 @@ const Footer = () => {
             Buy Pets
           </Link>
           <Link
-            href="#"
+            href="/adopt"
             underline="hover"
             color="inherit"
             display="block"
@@ -127,16 +118,7 @@ const Footer = () => {
             Helpful Links
           </Typography>
           <Link
-            href="#"
-            underline="hover"
-            color="inherit"
-            display="block"
-            sx={{ mb: 1, color: "text.primary", transition: "color 0.3s ease" }}
-          >
-            Services
-          </Link>
-          <Link
-            href="#"
+            href="/supports"
             underline="hover"
             color="inherit"
             display="block"
@@ -164,49 +146,67 @@ const Footer = () => {
           </Link>
         </Grid>
 
-        {/* Social Media Icons Section */}
-        <Grid item xs={12} sm={3} textAlign={{ xs: "center", sm: "left" }}>
-          <Typography
-            variant="h6"
-            fontWeight="bold"
-            sx={{ mb: 2, color: "text.primary" }}
-          >
-            Follow Us
-          </Typography>
-          <Box
-            display="flex"
-            justifyContent={{ xs: "center", sm: "left" }}
-            gap={2}
-          >
-            <Facebook
-              sx={{
-                fontSize: 30,
-                cursor: "pointer",
-                color: "text.primary",
-                transition: "color 0.3s ease",
-                "&:hover": { color: "primary.main" },
-              }}
-            />
-            <Instagram
-              sx={{
-                fontSize: 30,
-                cursor: "pointer",
-                color: "text.primary",
-                transition: "color 0.3s ease",
-                "&:hover": { color: "primary.main" },
-              }}
-            />
-            <Twitter
-              sx={{
-                fontSize: 30,
-                cursor: "pointer",
-                color: "text.primary",
-                transition: "color 0.3s ease",
-                "&:hover": { color: "primary.main" },
-              }}
-            />
-          </Box>
-        </Grid>
+              {/* Social Media Icons Section */}
+<Grid item xs={12} sm={3} textAlign={{ xs: "center", sm: "left" }}>
+  <Typography
+    variant="h6"
+    fontWeight="bold"
+    sx={{ mb: 2, color: "text.primary" }}
+  >
+    Follow Us
+  </Typography>
+  <Box
+    display="flex"
+    justifyContent={{ xs: "center", sm: "left" }}
+    gap={2}
+  >
+    <Link
+      href="https://www.facebook.com/yourpage" // Replace with your Facebook page URL
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <Facebook
+        sx={{
+          fontSize: 30,
+          cursor: "pointer",
+          color: "text.primary",
+          transition: "color 0.3s ease",
+          "&:hover": { color: "primary.main" },
+        }}
+      />
+    </Link>
+    <Link
+      href="https://www.instagram.com/happypetlk?igsh=MW51MmI2OWJ3OHR5OA==" // Replace with your Instagram page URL
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <Instagram
+        sx={{
+          fontSize: 30,
+          cursor: "pointer",
+          color: "text.primary",
+          transition: "color 0.3s ease",
+          "&:hover": { color: "primary.main" },
+        }}
+      />
+    </Link>
+    <Link
+      href="https://www.linkedin.com/in/happy-pet-664b40352/" // Replace with your Twitter page URL
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <LinkedIn
+        sx={{
+          fontSize: 30,
+          cursor: "pointer",
+          color: "text.primary",
+          transition: "color 0.3s ease",
+          "&:hover": { color: "primary.main" },
+        }}
+      />
+    </Link>
+  </Box>
+</Grid>
       </Grid>
 
       {/* Copyright Section */}
