@@ -16,7 +16,7 @@ import {
   Container,
   InputAdornment,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+
 import { Pet } from "./types";
 import SearchIcon from '@mui/icons-material/Search';
 import PetsIcon from "@mui/icons-material/Pets";
@@ -30,7 +30,7 @@ interface PetTableProps {
 }
 
 const PetTable: React.FC<PetTableProps> = ({ rows, deletePet, onOpenForm, onEdit }) => {
-  const navigate = useNavigate();
+ 
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   type StatusColor = "success" | "warning" | "default";
@@ -48,9 +48,7 @@ const PetTable: React.FC<PetTableProps> = ({ rows, deletePet, onOpenForm, onEdit
     }
   };
 
-  const goToUserDetailsDashboard = () => {
-    navigate("/user-dashboard");
-  };
+ 
 
   return (
     <Container maxWidth="xl" sx={{ px: { xs: 1, sm: 2, md: 3 }, py: 2 }}>
@@ -231,27 +229,7 @@ const PetTable: React.FC<PetTableProps> = ({ rows, deletePet, onOpenForm, onEdit
       </Box>
 
       {/* User Details Dashboard Button (Below the Table, Right Side) */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "flex-end",
-          mt: 3,
-          mb: 2,
-          width: "100%",
-        }}
-      >
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={goToUserDetailsDashboard}
-          sx={{
-            textTransform: "none",
-            borderRadius: "4px",
-          }}
-        >
-          Pet Adoption User Details
-        </Button>
-      </Box>
+      
     </Container>
   );
 };

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Sidebar from './Sidebar';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+
 import {
     Button,
     Typography,
@@ -33,6 +33,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import React from "react";
 import AddPetForm, { PetData } from "./AddPetForm";
 import { InquiryService as InquiryService1 } from "./services/InquiryService";
+import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 
 // First, let's create the InquiryService interfaces and class
 export interface PetInquiryDTO {
@@ -532,27 +533,23 @@ const PetManagementDashboard: React.FC<PetManagementDashboardProps> = ({ onSnack
                 <Sidebar open={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
                 <Tooltip title="Admin Dashboard">
                     <IconButton
-                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                        sx={{
-                            position: "fixed",
-                            left: isSidebarOpen ? 240 : 16, // Adjust position based on sidebar state
-                            top: 60, // Increased top value to move the icon further down
-                            zIndex: 1300, // High zIndex to ensure it's above other content
-                            '& svg': {
-                                fontSize: '2rem',
-                                color: "black"
-                            },
-                            backgroundColor: 'transparent',
-                            '&:hover': {
-                                backgroundColor: 'rgba(28, 34, 225, 0.61)',
-                                backdropFilter: 'blur(10px)',
-                                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                            },
-                        }}
+                      onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                      sx={{
+                        position: "fixed",
+                        left: isSidebarOpen ? 240 : 16,
+                        top: 90,
+                        zIndex: 1300,
+                        backgroundColor: 'background.paper,0.8',
+                        boxShadow: 2,
+                        '&:hover': {
+                          backgroundColor: 'primary.main',
+                          color: 'primary.contrastText'
+                        },
+                      }}
                     >
-                        <KeyboardArrowRightIcon />
+                      <KeyboardArrowRight sx={{ transform: isSidebarOpen ? 'rotate(180deg)' : 'none',color:"black" }} />
                     </IconButton>
-                </Tooltip>
+                  </Tooltip>
 
                 {/* Search Bar and Add Pet Button */}
                 <Box

@@ -230,7 +230,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleSidebar }) => {
                                 <ContactMailIcon sx={{ color: '#333' }}/> 
                             </ListItemIcon>
                             <ListItemText 
-                                primary="Contact Us Inquiries" 
+                                primary="Contact Us" 
                                 primaryTypographyProps={{ fontWeight: 'bold', color: '#333' }} 
                             />
                             {openContactUs ? <ExpandLess sx={{ color: '#333' }} /> : <ExpandMore sx={{ color: '#333' }} />}
@@ -247,7 +247,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleSidebar }) => {
                                     }}
                                     onClick={() => handleNavigation('/contactusresponses')}
                                 > 
-                                    <ListItemText primary="Inquiries" primaryTypographyProps={{ color: '#333' }} /> 
+                                    <ListItemText primary="Messages" primaryTypographyProps={{ color: '#333' }} /> 
                                 </ListItemButton>
                             </List>
                         </Collapse> 

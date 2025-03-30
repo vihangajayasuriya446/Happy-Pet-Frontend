@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Sidebar from './Sidebar';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+
 import {
   Box,
   Typography,
@@ -16,15 +16,16 @@ import UserDetailsForm from './UserDetailsForm';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchAllAdoptions, updateAdoptionStatus, deleteAdoption } from './UserService';
 import { Adoption } from './types';
-import { useNavigate } from 'react-router-dom';
+
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import PetsIcon from "@mui/icons-material/Pets";
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 
 
 const UserDetailsDashboard: React.FC = () => {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
+
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [selectedAdoption, setSelectedAdoption] = useState<Adoption | null>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
@@ -116,9 +117,7 @@ const UserDetailsDashboard: React.FC = () => {
     setSubmitted(false);
   };
 
-  const goToPetManagementDashboard = () => {
-    navigate('/dashboard1');
-  };
+
 
   const showNotification = (message: string, severity: 'success' | 'error' | 'info' | 'warning') => {
     setNotification({
@@ -194,28 +193,24 @@ const UserDetailsDashboard: React.FC = () => {
           }}
         ><Sidebar open={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
           <Tooltip title="Admin Dashboard">
-            <IconButton
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              sx={{
-                position: "fixed",
-                left: isSidebarOpen ? 240 : 16, // Adjust position based on sidebar state
-                top: 60, // Increased top value to move the icon further down
-                zIndex: 1300, // High zIndex to ensure it's above other content
-                '& svg': {
-                  fontSize: '2rem',
-                  color: "black"
-                },
-                backgroundColor: 'transparent',
-                '&:hover': {
-                  backgroundColor: 'rgba(28, 34, 225, 0.61)',
-                  backdropFilter: 'blur(10px)',
-                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                },
-              }}
-            >
-              <KeyboardArrowRightIcon />
-            </IconButton>
-          </Tooltip>
+                    <IconButton
+                      onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                      sx={{
+                        position: "fixed",
+                        left: isSidebarOpen ? 240 : 16,
+                        top: 90,
+                        zIndex: 1300,
+                        backgroundColor: 'background.paper,0.8',
+                        boxShadow: 2,
+                        '&:hover': {
+                          backgroundColor: 'primary.main',
+                          color: 'primary.contrastText'
+                        },
+                      }}
+                    >
+                      <KeyboardArrowRight sx={{ transform: isSidebarOpen ? 'rotate(180deg)' : 'none',color:"black" }} />
+                    </IconButton>
+                  </Tooltip>
           {/* Search Bar with transparency */}
           <TextField
             placeholder="Search Applicant"
@@ -295,16 +290,7 @@ const UserDetailsDashboard: React.FC = () => {
         </Box>
 
         {/* Pet Management Dashboard button moved to the right side below the table */}
-        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={goToPetManagementDashboard}
-            sx={{ textTransform: 'none', borderRadius: '4px' }}
-          >
-            Pet Adoption Details
-          </Button>
-        </Box>
+        
 
         {/* Notification */}
         <Snackbar

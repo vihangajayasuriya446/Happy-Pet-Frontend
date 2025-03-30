@@ -1,5 +1,4 @@
 import React, { useState, Suspense } from "react";
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import Sidebar from './Sidebar';
 import {
   Box,
@@ -20,6 +19,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
 import PetsIcon from "@mui/icons-material/Pets";
+import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 
 // Lazy load components for better performance
 const UserForm = React.lazy(() => import("./UserForm"));
@@ -202,29 +202,25 @@ const Users: React.FC = () => {
 
         {/* Main Content */}
         <Box sx={{ flex: 1, display: "flex", flexDirection: "column", p: 3, position: "relative", marginLeft: isSidebarOpen ? "240px" : 0 }}>
-          <Tooltip title="Admin Dashboard">
-            <IconButton
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              sx={{
-                position: "fixed",
-                left: isSidebarOpen ? 240 : 16, // Adjust position based on sidebar state
-                top: 60, // Increased top value to move the icon further down
-                zIndex: 1300, // High zIndex to ensure it's above other content
-                '& svg': {
-                  fontSize: '2rem',
-                  color: "black"
-                },
-                backgroundColor: 'transparent',
-                '&:hover': {
-                  backgroundColor: 'rgba(28, 34, 225, 0.61)',
-                  backdropFilter: 'blur(10px)',
-                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                },
-              }}
-            >
-              <KeyboardArrowRightIcon />
-            </IconButton>
-          </Tooltip>
+        <Tooltip title="Admin Dashboard">
+                    <IconButton
+                      onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                      sx={{
+                        position: "fixed",
+                        left: isSidebarOpen ? 240 : 16,
+                        top: 90,
+                        zIndex: 1300,
+                        backgroundColor: 'background.paper,0.8',
+                        boxShadow: 2,
+                        '&:hover': {
+                          backgroundColor: 'primary.main',
+                          color: 'primary.contrastText'
+                        },
+                      }}
+                    >
+                      <KeyboardArrowRight sx={{ transform: isSidebarOpen ? 'rotate(180deg)' : 'none',color:"black" }} />
+                    </IconButton>
+                  </Tooltip>
 
 
 
