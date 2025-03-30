@@ -29,6 +29,7 @@ import PaymentPage from './components/CardPayment';
 import DialogPayment from './components/DialogPayment';
 import { CartProvider } from './contexts/CartContext'; // CHANGES - import the CartProvider
 import ScrollToTop from '../src/components/ScrollTop'; // Add this import
+import ResponsesPage from './ResponsePage';
 
 const App: React.FC = () => {
   return (
@@ -63,6 +64,7 @@ const App: React.FC = () => {
           <Route path="/admindb" element={<Navigate to="/admin/pets" replace />} />
           <Route path="/payment-home" element={<PaymentHomePage />} />
           <Route path="/card-payment" element={<PaymentPage />} />
+          <Route path="/contactusresponses" element={<ResponsesPage/>} />
           <Route path="/dialog-payment" element={<DialogPayment isOpen={true} onClose={() => {}}  />} />
         </Routes>
         <Footer />
