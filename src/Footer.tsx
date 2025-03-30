@@ -118,7 +118,7 @@ const Footer = () => {
             Helpful Links
           </Typography>
           <Link
-            href="/supports"
+            href="/supportus"
             underline="hover"
             color="inherit"
             display="block"

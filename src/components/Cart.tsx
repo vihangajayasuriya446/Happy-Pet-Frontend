@@ -5,6 +5,7 @@ import {
     CircularProgress
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -454,6 +455,11 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
     const closeToast = () => {
         setToast({ ...toast, open: false });
     };
+    
+  const handleClickto = () => {
+    // Navigate to the about page
+    navigate('/buy');
+  };
 
     return (
         <>
@@ -518,7 +524,7 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
                         </Typography>
                         <Button
                             variant="contained"
-                            onClick={onClose}
+                            onClick={handleClickto}
                             sx={{
                                 bgcolor: '#003366',
                                 px: 4,

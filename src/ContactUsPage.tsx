@@ -168,18 +168,18 @@ const ContactUsPage: React.FC = () => {
           borderColor: "#bbb",
         },
         "&.Mui-focused fieldset": {
-          borderColor: "#3f51b5",
+          borderColor: "#003366",
         },
       },
     },
     button: {
-      backgroundColor: "#3f51b5",
+      backgroundColor: "#003366",
       color: "#fff",
       padding: "10px 20px",
       borderRadius: "4px",
       textTransform: "none",
       "&:hover": {
-        backgroundColor: "#303f9f",
+        backgroundColor: "#002244",
       },
     },
     accordion: {
@@ -189,7 +189,7 @@ const ContactUsPage: React.FC = () => {
       marginBottom: "8px",
     },
     link: {
-      color: "#3f51b5",
+      color: "#003366",
       textDecoration: "none",
       "&:hover": {
         textDecoration: "underline",
@@ -214,7 +214,7 @@ const ContactUsPage: React.FC = () => {
           backdropFilter: "blur(10px)",
           borderRadius: 4,
           boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-          mt: { xs: "64px", sm: "72px", md: "80px" },
+          mt: { xs: "80px", sm: "100px", md: "120px" }, // Increased top padding
           border: "1px solid rgba(255, 255, 255, 0.3)",
         }}
       >
@@ -225,15 +225,14 @@ const ContactUsPage: React.FC = () => {
           gutterBottom
           fontWeight="600"
           align="center"
-          color="primary"
-          sx={{ mb: 4 }}
+          sx={{ mb: 4, color: "#003366" }} // Changed to #003366
         >
           Contact Us
         </Typography>
 
         {/* Note Section */}
         <Typography
-          variant="body2"
+          variant="body1"
           paragraph
           sx={{ mb: 4, textAlign: "center", color: "black" }}
         >
@@ -250,7 +249,7 @@ const ContactUsPage: React.FC = () => {
             backgroundColor: "rgba(255, 255, 255, 0.9)",
             backdropFilter: "blur(10px)",
             borderTop: "3px solid",
-            borderColor: "primary.main",
+            borderColor: "#003366", // Changed to #003366
             borderRadius: 2,
             boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
           }}
@@ -261,8 +260,7 @@ const ContactUsPage: React.FC = () => {
             gutterBottom
             fontWeight="600"
             align="center"
-            color="primary"
-            sx={{ mb: 3 }}
+            sx={{ mb: 3, color: "#003366" }} // Changed to #003366
           >
             Contact Form
           </Typography>
@@ -298,6 +296,7 @@ const ContactUsPage: React.FC = () => {
                   sx={styles.formInput}
                   error={!!formErrors.name}
                   helperText={formErrors.name}
+                  
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -360,21 +359,20 @@ const ContactUsPage: React.FC = () => {
         {/* Frequently Asked Questions Section */}
         <Box sx={{ mb: 4 }}>
           <Typography
-            variant="h6"
+            variant="h5"
             component="h2"
             gutterBottom
             fontWeight="600"
             align="center"
-            color="primary"
-            sx={{ mb: 3 }}
+            sx={{ mb: 3, color: "#003366" }} // Changed to #003366
           >
             Frequently Asked Questions
           </Typography>
 
           {/* FAQ 1: How do I adopt a pet on HappyPet? */}
           <Accordion sx={styles.accordion}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography fontWeight="500">How do I adopt a pet on HappyPet?</Typography>
+            <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: "#003366" }} />}>
+              <Typography fontWeight="500" sx={{ color: "#003366" }}>How do I adopt a pet on HappyPet?</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant="body2">
@@ -385,8 +383,8 @@ const ContactUsPage: React.FC = () => {
 
           {/* FAQ 2: Can I purchase a pet on HappyPet? */}
           <Accordion sx={styles.accordion}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography fontWeight="500">Can I purchase a pet on HappyPet?</Typography>
+            <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: "#003366" }} />}>
+              <Typography fontWeight="500" sx={{ color: "#003366" }}>Can I purchase a pet on HappyPet?</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant="body2">
@@ -397,8 +395,8 @@ const ContactUsPage: React.FC = () => {
 
           {/* FAQ 3: What is the Smart Pet Matchmaking System? */}
           <Accordion sx={styles.accordion}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography fontWeight="500">What is the Pet Matchmaking System?</Typography>
+            <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: "#003366" }} />}>
+              <Typography fontWeight="500" sx={{ color: "#003366" }}>What is the Pet Matchmaking System?</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant="body2">
@@ -409,8 +407,8 @@ const ContactUsPage: React.FC = () => {
 
           {/* FAQ 4: How do I update my account information? */}
           <Accordion sx={styles.accordion}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography fontWeight="500">How do I update my account information?</Typography>
+            <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: "#003366" }} />}>
+              <Typography fontWeight="500" sx={{ color: "#003366" }}>How do I update my account information?</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant="body2">
@@ -421,8 +419,8 @@ const ContactUsPage: React.FC = () => {
 
           {/* FAQ 5: Can I return a pet after adoption? */}
           <Accordion sx={styles.accordion}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography fontWeight="500">Can I return a pet after adoption?</Typography>
+            <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: "#003366" }} />}>
+              <Typography fontWeight="500" sx={{ color: "#003366" }}>Can I return a pet after adoption?</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant="body2">
@@ -433,8 +431,8 @@ const ContactUsPage: React.FC = () => {
 
           {/* FAQ 6: How does HappyPet support stray animal welfare? */}
           <Accordion sx={styles.accordion}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography fontWeight="500">How does HappyPet support stray animal welfare?</Typography>
+            <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: "#003366" }} />}>
+              <Typography fontWeight="500" sx={{ color: "#003366" }}>How does HappyPet support stray animal welfare?</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant="body2">
@@ -445,8 +443,8 @@ const ContactUsPage: React.FC = () => {
 
           {/* FAQ 7: Is HappyPet available on mobile devices? */}
           <Accordion sx={styles.accordion}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography fontWeight="500">Is HappyPet available on mobile devices?</Typography>
+            <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: "#003366" }} />}>
+              <Typography fontWeight="500" sx={{ color: "#003366" }}>Is HappyPet available on mobile devices?</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant="body2">
@@ -457,8 +455,8 @@ const ContactUsPage: React.FC = () => {
 
           {/* FAQ 8: How do I contact a shelter or breeder? */}
           <Accordion sx={styles.accordion}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography fontWeight="500">How do I contact a shelter or breeder?</Typography>
+            <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: "#003366" }} />}>
+              <Typography fontWeight="500" sx={{ color: "#003366" }}>How do I contact a shelter or breeder?</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant="body2">
@@ -469,8 +467,8 @@ const ContactUsPage: React.FC = () => {
 
           {/* FAQ 9: What should I do if I encounter an issue with the platform? */}
           <Accordion sx={styles.accordion}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography fontWeight="500">What should I do if I encounter an issue with the platform?</Typography>
+            <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: "#003366" }} />}>
+              <Typography fontWeight="500" sx={{ color: "#003366" }}>What should I do if I encounter an issue with the platform?</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant="body2">
@@ -488,8 +486,7 @@ const ContactUsPage: React.FC = () => {
             gutterBottom
             fontWeight="600"
             align="center"
-            color="primary"
-            sx={{ mb: 3 }}
+            sx={{ mb: 3, color: "#003366" }} // Changed to #003366
           >
             Additional Contact Information
           </Typography>

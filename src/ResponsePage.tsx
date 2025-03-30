@@ -30,7 +30,7 @@ import {
   Delete, 
   Search, 
   KeyboardArrowRight,
-  FiberNew,
+ 
   Refresh
 } from "@mui/icons-material";
 import Sidebar from './Sidebar';
@@ -60,6 +60,7 @@ const ResponsesPage: React.FC = () => {
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [selectedResponse, setSelectedResponse] = useState<ContactFormResponse | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  
 
   const fetchResponses = async () => {
     try {
