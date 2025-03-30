@@ -1,314 +1,706 @@
-import React from "react";
+import React from 'react';
+import {
+  Container,
+  Typography,
+  Link,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+  Paper,
+  Box,
+  useTheme
+} from '@mui/material';
 
 const TermsAndConditions: React.FC = () => {
+  const theme = useTheme();
+  const headingColor = '#003366';
+  const listBackground = 'rgba(0, 51, 102, 0.03)';
+  const sectionBorderColor = '#003366';
+
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <h1 style={styles.title}>TERMS AND CONDITIONS</h1>
-        <p style={styles.subtitle}>Last updated March 09, 2025</p>
-      </div>
+    <Container maxWidth="md" sx={{ py: 8 }}>
+      <Paper elevation={0} sx={{ 
+        p: { xs: 3, md: 5 }, 
+        borderRadius: 2,
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        border: `1px solid ${theme.palette.divider}`,
+      }}>
+        <Box mb={5}>
+          <Typography 
+            variant="h3" 
+            component="h1" 
+            gutterBottom 
+            sx={{ 
+              fontWeight: 700,
+              color: headingColor,
+              fontSize: { xs: '2rem', md: '2.5rem' }
+            }}
+          >
+            TERMS AND CONDITIONS
+          </Typography>
+          <Typography variant="subtitle1" color="text.secondary">
+            Last Updated: March 09, 2025
+          </Typography>
+          <Divider sx={{ 
+            my: 4,
+            borderWidth: 1,
+            borderColor: theme.palette.divider
+          }} />
+        </Box>
 
-      <div style={styles.section}>
-        <h2 style={styles.heading}>1. AGREEMENT TO OUR LEGAL TERMS</h2>
-        <p style={styles.text}>
-          We are <strong>Happy Pet</strong> ("Company," "we," "us," or "our"), a
-          company registered in <strong>Sri Lanka</strong> at{" "}
-          <strong>Colombo 04, Western Province</strong>. We operate
-          the website{" "}
-          <a href="http://www.happypet.com.lk" style={styles.link}>
-            http://www.happypet.com.lk
-          </a>{" "}
-          (the "Site") and related services (collectively, the "Services").
-        </p>
-        <p style={styles.text}>
-          HappyPet is a user-friendly web application designed to simplify pet
-          adoption, purchasing, and care. It provides a centralized platform for
-          users to find pets, access reliable pet supplies, and contribute to
-          animal welfare initiatives.
-        </p>
-        <p style={styles.text}>
-          You can contact us by phone at <strong>0770092167</strong>, email at{" "}
-          <strong>happypet@gmail.com</strong>, or by post to{" "}
-          <strong>IIT, Colombo 04, Western Province, Sri Lanka</strong>.
-        </p>
-        <p style={styles.text}>
-          These Legal Terms constitute a legally binding agreement between you
-          and Happy Pet concerning your access to and use of the Services. By
-          using the Services, you agree to be bound by these Legal Terms. If you
-          do not agree, you must discontinue use immediately.
-        </p>
-      </div>
+        {/* Section 1 */}
+        <Box mb={5} sx={{
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          borderLeft: `4px solid ${sectionBorderColor}`
+        }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ 
+            fontWeight: 600,
+            mb: 3,
+            color: headingColor
+          }}>
+            1. AGREEMENT TO OUR LEGAL TERMS
+          </Typography>
+          <Typography paragraph sx={{ lineHeight: 1.7 }}>
+            Welcome to HappyPet LLC ("Company," "We," "Us," or "Our"). We are a company registered in Sri Lanka, located at Colombo 04, Western Province. Our website, <Link href="http://www.happypet.com.lk" color="primary">happypet.com.lk</Link> (the "Site"), and associated services (collectively, the "Services") are designed to facilitate pet adoption, sales, and welfare contributions.
+          </Typography>
+          <Typography paragraph sx={{ lineHeight: 1.7 }}>
+            By accessing or using the Services, You ("User") agree to comply with and be bound by these Terms and Conditions ("Legal Terms"). If You do not agree, You must discontinue use immediately.
+          </Typography>
+          <Typography paragraph sx={{ lineHeight: 1.7 }}>
+            For inquiries, contact Us:
+          </Typography>
+          <List dense sx={{ 
+            backgroundColor: listBackground,
+            borderRadius: 1,
+            p: 2
+          }}>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Phone:" secondary="+94 77 009 2167" />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText 
+                primary="Email:" 
+                secondary={
+                  <Link href="mailto:happypet@gmail.com" color="primary">
+                    happypet@gmail.com
+                  </Link>
+                } 
+              />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Address:" secondary="Bambalapitiya, Colombo, Western Province, Sri Lanka" />
+            </ListItem>
+          </List>
+        </Box>
 
-      <div style={styles.section}>
-        <h2 style={styles.heading}>2. INTELLECTUAL PROPERTY RIGHTS</h2>
-        <p style={styles.text}>
-          We own or license all intellectual property rights in the Services,
-          including content, trademarks, and logos. You are granted a limited,
-          non-exclusive, non-transferable license to access and use the Services
-          for personal, non-commercial purposes.
-        </p>
-        <p style={styles.text}>
-          You may not copy, reproduce, or exploit any part of the Services
-          without our prior written permission.
-        </p>
-      </div>
+        {/* Section 2 */}
+        <Box mb={5} sx={{
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          borderLeft: `4px solid ${sectionBorderColor}`
+        }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ 
+            fontWeight: 600,
+            mb: 3,
+            color: headingColor
+          }}>
+            2. INTELLECTUAL PROPERTY RIGHTS
+          </Typography>
+          <Typography paragraph sx={{ lineHeight: 1.7 }}>
+            All content within the Services, including text, images, graphics, trademarks, and software, is owned by or licensed to HappyPet LLC. Users are granted a limited, non-exclusive, and non-transferable license to use the Services for personal, non-commercial purposes.
+          </Typography>
+          <Typography paragraph sx={{ lineHeight: 1.7 }}>
+            You may not:
+          </Typography>
+          <List dense sx={{ 
+            backgroundColor: listBackground,
+            borderRadius: 1,
+            p: 2
+          }}>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Copy, modify, distribute, or exploit any part of the Services without prior written permission." />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Use Our trademarks or branding without authorization." />
+            </ListItem>
+          </List>
+        </Box>
 
-      <div style={styles.section}>
-        <h2 style={styles.heading}>3. USER REPRESENTATIONS</h2>
-        <p style={styles.text}>
-          By using the Services, you represent and warrant that:
-        </p>
-        <ul style={styles.list}>
-          <li>You are at least 18 years old.</li>
-          <li>You will not use the Services for illegal or unauthorized purposes.</li>
-          <li>You will not violate any applicable laws or regulations.</li>
-        </ul>
-      </div>
+        {/* Section 3 */}
+        <Box mb={5} sx={{
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          borderLeft: `4px solid ${sectionBorderColor}`
+        }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ 
+            fontWeight: 600,
+            mb: 3,
+            color: headingColor
+          }}>
+            3. USER REPRESENTATIONS
+          </Typography>
+          <Typography paragraph sx={{ lineHeight: 1.7 }}>
+            By using the Services, You confirm that:
+          </Typography>
+          <List dense sx={{ 
+            backgroundColor: listBackground,
+            borderRadius: 1,
+            p: 2
+          }}>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="You are at least 18 years old or have parental/guardian consent." />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="You will not use the Services for fraudulent, illegal, or unauthorized activities." />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="You will comply with all applicable laws and regulations." />
+            </ListItem>
+          </List>
+        </Box>
 
-      <div style={styles.section}>
-        <h2 style={styles.heading}>4. USER REGISTRATION</h2>
-        <p style={styles.text}>
-          You may be required to register to use the Services. You agree to keep
-          your password confidential and are responsible for all activities under
-          your account.
-        </p>
-      </div>
+        {/* Section 4 */}
+        <Box mb={5} sx={{
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          borderLeft: `4px solid ${sectionBorderColor}`
+        }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ 
+            fontWeight: 600,
+            mb: 3,
+            color: headingColor
+          }}>
+            4. USER REGISTRATION
+          </Typography>
+          <Typography paragraph sx={{ lineHeight: 1.7 }}>
+            To access certain features, You may be required to register an account. You are responsible for safeguarding Your login credentials and any activities under Your account. Notify Us immediately of unauthorized account usage.
+          </Typography>
+        </Box>
 
-      <div style={styles.section}>
-        <h2 style={styles.heading}>5. PRODUCTS</h2>
-        <p style={styles.text}>
-          We make every effort to display product details accurately, but we do
-          not guarantee that colors, features, or specifications are error-free.
-          All products are subject to availability, and prices may change.
-        </p>
-      </div>
+        {/* Section 5 */}
+        <Box mb={5} sx={{
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          borderLeft: `4px solid ${sectionBorderColor}`
+        }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ 
+            fontWeight: 600,
+            mb: 3,
+            color: headingColor
+          }}>
+            5. PRODUCTS AND SERVICES
+          </Typography>
+          <Typography paragraph sx={{ lineHeight: 1.7 }}>
+            We make reasonable efforts to ensure the accuracy of product descriptions, images, and availability. However, We do not guarantee that product details are error-free. Prices and availability are subject to change without notice.
+          </Typography>
+        </Box>
 
-      <div style={styles.section}>
-        <h2 style={styles.heading}>6. PURCHASES AND PAYMENT</h2>
-        <p style={styles.text}>
-          We accept the following payment methods: <strong>Visa</strong> and{" "}
-          <strong>Mastercard</strong>. You agree to provide accurate payment
-          information and authorize us to charge your payment method for
-          purchases.
-        </p>
-      </div>
+        {/* Section 6 */}
+        <Box mb={5} sx={{
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          borderLeft: `4px solid ${sectionBorderColor}`
+        }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ 
+            fontWeight: 600,
+            mb: 3,
+            color: headingColor
+          }}>
+            6. PURCHASES AND PAYMENTS
+          </Typography>
+          <List dense sx={{ 
+            backgroundColor: listBackground,
+            borderRadius: 1,
+            p: 2
+          }}>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Accepted payment methods: Visa and Mastercard." />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="You agree to provide accurate payment details and authorize Us to charge Your selected payment method." />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Transactions are processed securely, but We are not liable for third-party payment failures." />
+            </ListItem>
+          </List>
+        </Box>
 
-      <div style={styles.section}>
-        <h2 style={styles.heading}>7. RETURN POLICY</h2>
-        <p style={styles.text}>All sales are final, and no refunds will be issued.</p>
-      </div>
+        {/* Section 7 */}
+        <Box mb={5} sx={{
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          borderLeft: `4px solid ${sectionBorderColor}`
+        }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ 
+            fontWeight: 600,
+            mb: 3,
+            color: headingColor
+          }}>
+            7. RETURN AND REFUND POLICY
+          </Typography>
+          <List dense sx={{ 
+            backgroundColor: listBackground,
+            borderRadius: 1,
+            p: 2
+          }}>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="All sales are final. Refunds will not be issued unless required by law." />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="If You receive a defective or incorrect item, contact Us within 7 days for resolution." />
+            </ListItem>
+          </List>
+        </Box>
 
-      <div style={styles.section}>
-        <h2 style={styles.heading}>8. PROHIBITED ACTIVITIES</h2>
-        <p style={styles.text}>
-          You may not use the Services for any illegal or unauthorized purpose,
-          including but not limited to:
-        </p>
-        <ul style={styles.list}>
-          <li>Harassing, abusing, or harming others.</li>
-          <li>Uploading viruses or malicious code.</li>
-          <li>Violating intellectual property rights.</li>
-        </ul>
-      </div>
+        {/* Section 8 */}
+        <Box mb={5} sx={{
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          borderLeft: `4px solid ${sectionBorderColor}`
+        }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ 
+            fontWeight: 600,
+            mb: 3,
+            color: headingColor
+          }}>
+            8. PROHIBITED ACTIVITIES
+          </Typography>
+          <Typography paragraph sx={{ lineHeight: 1.7 }}>
+            Users must not:
+          </Typography>
+          <List dense sx={{ 
+            backgroundColor: listBackground,
+            borderRadius: 1,
+            p: 2
+          }}>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Harass, abuse, or harm others." />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Upload viruses, malware, or any malicious code." />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Infringe upon intellectual property rights." />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Engage in fraudulent or deceptive conduct." />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Attempt to disrupt, hack, or manipulate the Services." />
+            </ListItem>
+          </List>
+        </Box>
 
-      <div style={styles.section}>
-        <h2 style={styles.heading}>9. USER GENERATED CONTRIBUTIONS</h2>
-        <p style={styles.text}>
-          By posting content on the Services, you grant us a worldwide,
-          royalty-free license to use, reproduce, and distribute your
-          contributions.
-        </p>
-      </div>
+        {/* Continue with remaining sections following the same pattern */}
+        {/* Section 9 */}
+        <Box mb={5} sx={{
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          borderLeft: `4px solid ${sectionBorderColor}`
+        }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ 
+            fontWeight: 600,
+            mb: 3,
+            color: headingColor
+          }}>
+            9. USER-GENERATED CONTENT
+          </Typography>
+          <Typography paragraph sx={{ lineHeight: 1.7 }}>
+            By submitting content (e.g., reviews, images, comments) on Our platform, You grant Us a worldwide, royalty-free license to use, distribute, and display such content.
+          </Typography>
+          <Typography paragraph sx={{ lineHeight: 1.7 }}>
+            You retain ownership but agree that:
+          </Typography>
+          <List dense sx={{ 
+            backgroundColor: listBackground,
+            borderRadius: 1,
+            p: 2
+          }}>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="We may modify or remove inappropriate content." />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Your content must not be illegal, defamatory, or misleading." />
+            </ListItem>
+          </List>
+        </Box>
 
-      <div style={styles.section}>
-        <h2 style={styles.heading}>10. CONTRIBUTION LICENSE</h2>
-        <p style={styles.text}>
-          You retain ownership of your contributions but grant us the right to
-          use them for any purpose.
-        </p>
-      </div>
+        {/* Section 10 */}
+        <Box mb={5} sx={{
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          borderLeft: `4px solid ${sectionBorderColor}`
+        }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ 
+            fontWeight: 600,
+            mb: 3,
+            color: headingColor
+          }}>
+            10. THIRD-PARTY LINKS
+          </Typography>
+          <Typography paragraph sx={{ lineHeight: 1.7 }}>
+            Our Services may contain links to third-party websites. We do not endorse or assume responsibility for their content, policies, or practices. Use third-party services at Your own risk.
+          </Typography>
+        </Box>
 
-      <div style={styles.section}>
-        <h2 style={styles.heading}>11. THIRD-PARTY WEBSITES AND CONTENT</h2>
-        <p style={styles.text}>
-          The Services may contain links to third-party websites. We are not
-          responsible for the content or practices of these websites.
-        </p>
-      </div>
+        {/* Section 11 */}
+        <Box mb={5} sx={{
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          borderLeft: `4px solid ${sectionBorderColor}`
+        }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ 
+            fontWeight: 600,
+            mb: 3,
+            color: headingColor
+          }}>
+            11. SERVICE MANAGEMENT
+          </Typography>
+          <Typography paragraph sx={{ lineHeight: 1.7 }}>
+            We reserve the right to:
+          </Typography>
+          <List dense sx={{ 
+            backgroundColor: listBackground,
+            borderRadius: 1,
+            p: 2
+          }}>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Monitor platform activity." />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Modify, suspend, or terminate Services without prior notice." />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Implement security measures to protect data integrity." />
+            </ListItem>
+          </List>
+        </Box>
 
-      <div style={styles.section}>
-        <h2 style={styles.heading}>12. SERVICES MANAGEMENT</h2>
-        <p style={styles.text}>
-          We reserve the right to monitor, modify, or discontinue the Services at
-          any time without notice.
-        </p>
-      </div>
+        {/* Section 12 */}
+        <Box mb={5} sx={{
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          borderLeft: `4px solid ${sectionBorderColor}`
+        }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ 
+            fontWeight: 600,
+            mb: 3,
+            color: headingColor
+          }}>
+            12. PRIVACY POLICY
+          </Typography>
+          <Typography paragraph sx={{ lineHeight: 1.7 }}>
+            Your use of the Services is also governed by Our <Link href="#" color="primary">Privacy Policy</Link>, which explains how We collect, use, and protect Your personal data.
+          </Typography>
+        </Box>
 
-      <div style={styles.section}>
-        <h2 style={styles.heading}>13. PRIVACY POLICY</h2>
-        <p style={styles.text}>
-          Your use of the Services is subject to our Privacy Policy, which is
-          incorporated into these Legal Terms.
-        </p>
-      </div>
+        {/* Section 13 */}
+        <Box mb={5} sx={{
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          borderLeft: `4px solid ${sectionBorderColor}`
+        }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ 
+            fontWeight: 600,
+            mb: 3,
+            color: headingColor
+          }}>
+            13. COPYRIGHT INFRINGEMENTS
+          </Typography>
+          <Typography paragraph sx={{ lineHeight: 1.7 }}>
+            If You believe that Your copyrighted material has been used without authorization, contact Us at <Link href="mailto:happypet@gmail.com" color="primary">happypet@gmail.com</Link> with supporting evidence.
+          </Typography>
+        </Box>
 
-      <div style={styles.section}>
-        <h2 style={styles.heading}>14. COPYRIGHT INFRINGEMENTS</h2>
-        <p style={styles.text}>
-          If you believe your copyright has been infringed, please contact us at{" "}
-          <strong>happypet@gmail.com</strong>.
-        </p>
-      </div>
+        {/* Section 14 */}
+        <Box mb={5} sx={{
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          borderLeft: `4px solid ${sectionBorderColor}`
+        }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ 
+            fontWeight: 600,
+            mb: 3,
+            color: headingColor
+          }}>
+            14. TERMINATION OF USE
+          </Typography>
+          <Typography paragraph sx={{ lineHeight: 1.7 }}>
+            We reserve the right to terminate or suspend Your access to the Services at Our discretion, without notice, if:
+          </Typography>
+          <List dense sx={{ 
+            backgroundColor: listBackground,
+            borderRadius: 1,
+            p: 2
+          }}>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="You violate these Terms." />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Your activity poses a security risk." />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="We are required to comply with legal obligations." />
+            </ListItem>
+          </List>
+        </Box>
 
-      <div style={styles.section}>
-        <h2 style={styles.heading}>15. TERM AND TERMINATION</h2>
-        <p style={styles.text}>
-          These Legal Terms remain in effect while you use the Services. We may
-          terminate your access at any time for any reason.
-        </p>
-      </div>
+        {/* Section 15 */}
+        <Box mb={5} sx={{
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          borderLeft: `4px solid ${sectionBorderColor}`
+        }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ 
+            fontWeight: 600,
+            mb: 3,
+            color: headingColor
+          }}>
+            15. MODIFICATIONS AND INTERRUPTIONS
+          </Typography>
+          <Typography paragraph sx={{ lineHeight: 1.7 }}>
+            We may modify these Terms or discontinue any part of the Services at any time. It is Your responsibility to review the updated Terms periodically.
+          </Typography>
+        </Box>
 
-      <div style={styles.section}>
-        <h2 style={styles.heading}>16. MODIFICATIONS AND INTERRUPTIONS</h2>
-        <p style={styles.text}>
-          We reserve the right to modify or discontinue the Services at any time
-          without notice.
-        </p>
-      </div>
+        {/* Section 16 */}
+        <Box mb={5} sx={{
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          borderLeft: `4px solid ${sectionBorderColor}`
+        }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ 
+            fontWeight: 600,
+            mb: 3,
+            color: headingColor
+          }}>
+            16. GOVERNING LAW AND DISPUTE RESOLUTION
+          </Typography>
+          <List dense sx={{ 
+            backgroundColor: listBackground,
+            borderRadius: 1,
+            p: 2
+          }}>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="These Terms are governed by the laws of Sri Lanka." />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Disputes will be resolved through binding arbitration in Colombo, Sri Lanka." />
+            </ListItem>
+          </List>
+        </Box>
 
-      <div style={styles.section}>
-        <h2 style={styles.heading}>17. GOVERNING LAW</h2>
-        <p style={styles.text}>
-          These Legal Terms are governed by the laws of <strong>Sri Lanka</strong>.
-        </p>
-      </div>
+        {/* Section 17 */}
+        <Box mb={5} sx={{
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          borderLeft: `4px solid ${sectionBorderColor}`
+        }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ 
+            fontWeight: 600,
+            mb: 3,
+            color: headingColor
+          }}>
+            17. DISCLAIMER OF WARRANTIES
+          </Typography>
+          <Typography paragraph sx={{ lineHeight: 1.7 }}>
+            The Services are provided "as is" and "as available" without warranties of any kind. We do not guarantee uninterrupted, secure, or error-free operation.
+          </Typography>
+        </Box>
 
-      <div style={styles.section}>
-        <h2 style={styles.heading}>18. DISPUTE RESOLUTION</h2>
-        <p style={styles.text}>
-          Any disputes will be resolved through binding arbitration in{" "}
-          <strong>Colombo, Sri Lanka</strong>.
-        </p>
-      </div>
+        {/* Section 18 */}
+        <Box mb={5} sx={{
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          borderLeft: `4px solid ${sectionBorderColor}`
+        }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ 
+            fontWeight: 600,
+            mb: 3,
+            color: headingColor
+          }}>
+            18. LIMITATIONS OF LIABILITY
+          </Typography>
+          <Typography paragraph sx={{ lineHeight: 1.7 }}>
+            To the maximum extent permitted by law, We are not liable for any:
+          </Typography>
+          <List dense sx={{ 
+            backgroundColor: listBackground,
+            borderRadius: 1,
+            p: 2
+          }}>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Indirect, incidental, or consequential damages arising from Your use of the Services." />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Loss of profits, data, or goodwill." />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Unauthorized access to or alterations of Your transmissions or data." />
+            </ListItem>
+          </List>
+        </Box>
 
-      <div style={styles.section}>
-        <h2 style={styles.heading}>19. CORRECTIONS</h2>
-        <p style={styles.text}>
-          We reserve the right to correct any errors or omissions in the Services.
-        </p>
-      </div>
+        {/* Section 19 */}
+        <Box mb={5} sx={{
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          borderLeft: `4px solid ${sectionBorderColor}`
+        }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ 
+            fontWeight: 600,
+            mb: 3,
+            color: headingColor
+          }}>
+            19. INDEMNIFICATION
+          </Typography>
+          <Typography paragraph sx={{ lineHeight: 1.7 }}>
+            You agree to indemnify and hold Us harmless from any claims, damages, or legal actions resulting from:
+          </Typography>
+          <List dense sx={{ 
+            backgroundColor: listBackground,
+            borderRadius: 1,
+            p: 2
+          }}>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Your breach of these Terms." />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Your use or misuse of the Services." />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Your violation of any law or third-party rights." />
+            </ListItem>
+          </List>
+        </Box>
 
-      <div style={styles.section}>
-        <h2 style={styles.heading}>20. DISCLAIMER</h2>
-        <p style={styles.text}>
-          The Services are provided "as is" without warranties of any kind.
-        </p>
-      </div>
+        {/* Section 20 */}
+        <Box mb={5} sx={{
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          borderLeft: `4px solid ${sectionBorderColor}`
+        }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ 
+            fontWeight: 600,
+            mb: 3,
+            color: headingColor
+          }}>
+            20. USER DATA RESPONSIBILITY
+          </Typography>
+          <Typography paragraph sx={{ lineHeight: 1.7 }}>
+            You are responsible for the accuracy, security, and backup of any data You provide through the Services.
+          </Typography>
+        </Box>
 
-      <div style={styles.section}>
-        <h2 style={styles.heading}>21. LIMITATIONS OF LIABILITY</h2>
-        <p style={styles.text}>
-          We are not liable for any damages arising from your use of the Services.
-        </p>
-      </div>
+        {/* Section 21 */}
+        <Box mb={5} sx={{
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          borderLeft: `4px solid ${sectionBorderColor}`
+        }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ 
+            fontWeight: 600,
+            mb: 3,
+            color: headingColor
+          }}>
+            21. ELECTRONIC COMMUNICATIONS
+          </Typography>
+          <Typography paragraph sx={{ lineHeight: 1.7 }}>
+            By using the Services, You consent to receive electronic communications, including emails, notifications, and updates.
+          </Typography>
+        </Box>
 
-      <div style={styles.section}>
-        <h2 style={styles.heading}>22. INDEMNIFICATION</h2>
-        <p style={styles.text}>
-          You agree to indemnify us for any losses caused by your use of the
-          Services.
-        </p>
-      </div>
+        {/* Section 22 */}
+        <Box mb={5} sx={{
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          borderLeft: `4px solid ${sectionBorderColor}`
+        }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ 
+            fontWeight: 600,
+            mb: 3,
+            color: headingColor
+          }}>
+            22. MISCELLANEOUS
+          </Typography>
+          <Typography paragraph sx={{ lineHeight: 1.7 }}>
+            These Terms constitute the entire agreement between You and Us. If any provision is deemed invalid, the remaining provisions shall remain enforceable.
+          </Typography>
+        </Box>
 
-      <div style={styles.section}>
-        <h2 style={styles.heading}>23. USER DATA</h2>
-        <p style={styles.text}>
-          You are responsible for any data you transmit through the Services.
-        </p>
-      </div>
-
-      <div style={styles.section}>
-        <h2 style={styles.heading}>24. ELECTRONIC COMMUNICATIONS</h2>
-        <p style={styles.text}>
-          By using the Services, you consent to receive electronic communications.
-        </p>
-      </div>
-
-      <div style={styles.section}>
-        <h2 style={styles.heading}>25. MISCELLANEOUS</h2>
-        <p style={styles.text}>
-          These Legal Terms constitute the entire agreement between you and us.
-        </p>
-      </div>
-
-      <div style={styles.section}>
-        <h2 style={styles.heading}>26. CONTACT US</h2>
-        <p style={styles.text}>
-          For any questions, contact us at:
-          <br />
-          <strong>Happy Pet</strong>
-          <br />
-          <strong>Bambalapitiya, Colombo, Western Province, Sri Lanka</strong>
-          <br />
-          <strong>Phone: 0770092167</strong>
-          <br />
-          <strong>Email: happypet@gmail.com</strong>
-        </p>
-      </div>
-    </div>
+        {/* Section 23 */}
+        <Box sx={{
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          borderLeft: `4px solid ${sectionBorderColor}`
+        }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ 
+            fontWeight: 600,
+            mb: 3,
+            color: headingColor
+          }}>
+            23. CONTACT INFORMATION
+          </Typography>
+          <Typography paragraph sx={{ mb: 3, lineHeight: 1.7 }}>
+            For further inquiries, please contact Us at:
+          </Typography>
+          <List dense sx={{ 
+            backgroundColor: listBackground,
+            borderRadius: 1,
+            p: 2
+          }}>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Company Name:" secondary="HappyPet LLC" />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Address:" secondary="Bambalapitiya, Colombo, Western Province, Sri Lanka" />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText primary="Phone:" secondary="+94 77 009 2167" />
+            </ListItem>
+            <ListItem sx={{ py: 1 }}>
+              <ListItemText 
+                primary="Email:" 
+                secondary={
+                  <Link href="mailto:happypet@gmail.com" color="primary">
+                    happypet@gmail.com
+                  </Link>
+                } 
+              />
+            </ListItem>
+          </List>
+          <Typography paragraph sx={{ mt: 3, lineHeight: 1.7, fontStyle: 'italic' }}>
+            By using the Services, You acknowledge that You have read, understood, and agree to be bound by these Terms and Conditions.
+          </Typography>
+        </Box>
+      </Paper>
+    </Container>
   );
-};
-
-// Define styles with proper TypeScript types
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    maxWidth: "800px",
-    margin: "0 auto",
-    marginTop: "90px",
-    padding: "30px",
-    paddingTop: "80px",
-    fontFamily: "Arial, sans-serif",
-    color: "#333",
-    lineHeight: 1.6,
-    backgroundColor: "#f8f9fa",
-    borderRadius:'12px',
-    
-  },
-  header: {
-    textAlign: "center" as const, // Use 'as const' to narrow the type
-    marginBottom: "40px",
-  },
-  title: {
-    fontSize: "26px",
-    fontWeight: "bold",
-    color: "#002855",
-  },
-  subtitle: {
-    fontSize: "14px",
-    color: "#595959",
-  },
-  section: {
-    marginBottom: "40px",
-  },
-  heading: {
-    fontSize: "19px",
-    fontWeight: "bold",
-    color: "#000",
-    marginBottom: "10px",
-  },
-  text: {
-    fontSize: "14px",
-    color: "#595959",
-    marginBottom: "10px",
-  },
-  link: {
-    color: "#3030F1",
-    textDecoration: "none",
-  },
-  list: {
-    marginLeft: "20px",
-    listStyleType: "disc",
-  },
 };
 
 export default TermsAndConditions;

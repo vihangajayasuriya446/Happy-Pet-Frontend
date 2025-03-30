@@ -156,18 +156,31 @@ const PetGrid = () => {
         if (loading) {
             return (
                 <Box sx={{ padding: '2rem', maxWidth: '1500px', margin: '0 auto', paddingTop: '80px' }}>
-                    <Typography
-                        variant="h3"
-                        sx={{
-                            textAlign: 'center',
-                            fontWeight: 'bold',
-                            color: 'white',
-                            mb: 4,
-                            fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' }
-                        }}
-                    >
-                        Adopt a Pet
-                    </Typography>
+                    <Box sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        mb: 4
+                    }}>
+                        <Box sx={{
+                            backgroundColor: 'rgba(255, 255, 255, 0.54)',
+                            borderRadius: '16px',
+                            px: 4,
+                            py: 2,
+                            display: 'inline-block'
+                        }}>
+                            <Typography
+                                variant="h3"
+                                sx={{
+                                    textAlign: 'center',
+                                    fontWeight: 'bold',
+                                    color: '#003366',
+                                    fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' }
+                                }}
+                            >
+                                Adopt a Pet
+                            </Typography>
+                        </Box>
+                    </Box>
                     <Grid container spacing={4}>
                         {[...Array(8)].map((_, index) => (
                             <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
@@ -210,18 +223,34 @@ const PetGrid = () => {
                 margin: '0 auto',
                 paddingTop: '80px'
             }}>
-                <Typography
-                    variant="h3"
-                    sx={{
-                        textAlign: 'center',
-                        fontWeight: 'bold',
-                        color: 'white',
-                        mb: 2,
-                        fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' }
-                    }}
-                >
-                    Adopt a Pet
-                </Typography>
+                {/* Centered heading with white transparent background */}
+                <Box sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    mb: 4
+                }}>
+                    <Box sx={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.39)',
+                        borderRadius: '16px',
+                        px: 4,
+                        py: 2,
+                        display: 'inline-block',
+                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)',
+                        backdropFilter: 'blur(5px)',
+                    }}>
+                        <Typography
+                            variant="h3"
+                            sx={{
+                                textAlign: 'center',
+                                fontWeight: 'bold',
+                                color: '#003366',
+                                fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' }
+                            }}
+                        >
+                            Adopt a Pet
+                        </Typography>
+                    </Box>
+                </Box>
 
                 <Grid container spacing={4}>
                     {pets.filter(pet => pet.status !== 'Adopted').length > 0 ? (
