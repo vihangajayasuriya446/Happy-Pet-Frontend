@@ -750,187 +750,199 @@ const HomePage: React.FC = () => {
           }}
         >
           {/* Dog Adoption Card */}
-          <Card
-            sx={{
-              borderRadius: "16px",
-              backdropFilter: "blur(10px)",
-              backgroundColor: "rgba(255, 255, 255, 0.6)",
-              border: "1px solid rgba(0, 0, 0, 0.1)",
-              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
-              transition: "transform 0.3s ease, box-shadow 0.3s ease",
-              "&:hover": {
-                transform: "translateY(-8px)",
-                boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
-              },
-              cursor: "pointer",
-              p: 3,
-              textAlign: "center",
-            }}
-          >
-            <Box
+            <Card
               sx={{
-                width: 80,
-                height: 80,
-                mb: 3,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius: "50%",
-                backgroundColor: "rgba(0, 123, 255, 0.1)",
+                borderRadius: "16px",
                 backdropFilter: "blur(10px)",
-              }}
-            >
-              <img
-                src="/src/assets/dog-icon.png"
-                alt="Dog Icon"
-                style={{ width: "60%", height: "60%", objectFit: "contain" }}
-              />
-            </Box>
-            <Typography variant="h5" fontWeight="bold" sx={{ color: "text.primary", mb: 2 }}>
-              Dog Adoption Articles
-            </Typography>
-            <Typography variant="body1" sx={{ color: "text.secondary", mb: 3 }}>
-              Learn more about caring for your new dog.
-            </Typography>
-            <Button
-              variant="outlined"
-              sx={{
-                borderRadius: "20px",
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "primary.main",
-                borderColor: "primary.main",
+                backgroundColor: "rgba(255, 255, 255, 0.6)",
+                border: "1px solid rgba(0, 0, 0, 0.1)",
+                boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
                 "&:hover": {
-                  backgroundColor: "primary.main",
-                  color: "white",
+                  transform: "translateY(-8px)",
+                  boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
                 },
+                cursor: "pointer",
+                p: 3,
+                textAlign: "center",
               }}
             >
-              READ MORE
-            </Button>
-          </Card>
+              <Box
+                sx={{
+                  width: 80,
+                  height: 80,
+                  mb: 3,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(0, 123, 255, 0.1)",
+                  backdropFilter: "blur(10px)",
+                }}
+              >
+                <img
+                  src="/src/assets/dog-icon.png"
+                  alt="Dog Icon"
+                  style={{ width: "60%", height: "60%", objectFit: "contain" }}
+                />
+              </Box>
+              <Typography variant="h5" fontWeight="bold" sx={{ color: "text.primary", mb: 2 }}>
+                Dog Adoption Articles
+              </Typography>
+              <Typography variant="body1" sx={{ color: "text.secondary", mb: 3 }}>
+                Learn more about caring for your new dog.
+              </Typography>
+              <Button
+                variant="outlined"
+                sx={{
+                  borderRadius: "20px",
+                  textTransform: "none",
+                  fontWeight: "bold",
+                  color: "primary.main",
+                  borderColor: "primary.main",
+                  "&:hover": {
+                    backgroundColor: "primary.main",
+                    color: "white",
+                  },
+                }}
+                component="a"
+                href="https://www.helpguide.org/wellness/pets/adopting-a-dog-for-the-first-time"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                READ MORE
+              </Button>
+            </Card>
 
-          {/* Cat Adoption Card */}
-          <Card
-            sx={{
-              borderRadius: "16px",
-              backdropFilter: "blur(10px)",
-              backgroundColor: "rgba(255, 255, 255, 0.6)",
-              border: "1px solid rgba(0, 0, 0, 0.1)",
-              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
-              transition: "transform 0.3s ease, box-shadow 0.3s ease",
-              "&:hover": {
-                transform: "translateY(-8px)",
-                boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
-              },
-              cursor: "pointer",
-              p: 3,
-              textAlign: "center",
-            }}
-          >
-            <Box
+ {/* Cat Adoption Card */}
+            <Card
               sx={{
-                width: 80,
-                height: 80,
-                mb: 3,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius: "50%",
-                backgroundColor: "rgba(255, 193, 7, 0.1)",
+                borderRadius: "16px",
                 backdropFilter: "blur(10px)",
-              }}
-            >
-              <img
-                src="/src/assets/cat-icon.png"
-                alt="Cat Icon"
-                style={{ width: "60%", height: "60%", objectFit: "contain" }}
-              />
-            </Box>
-            <Typography variant="h5" fontWeight="bold" sx={{ color: "text.primary", mb: 2 }}>
-              Cat Adoption Articles
-            </Typography>
-            <Typography variant="body1" sx={{ color: "text.secondary", mb: 3 }}>
-              Helpful insights on what to expect.
-            </Typography>
-            <Button
-              variant="outlined"
-              sx={{
-                borderRadius: "20px",
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "primary.main",
-                borderColor: "primary.main",
+                backgroundColor: "rgba(255, 255, 255, 0.6)",
+                border: "1px solid rgba(0, 0, 0, 0.1)",
+                boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
                 "&:hover": {
-                  backgroundColor: "primary.main",
-                  color: "white",
+                  transform: "translateY(-8px)",
+                  boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
                 },
+                cursor: "pointer",
+                p: 3,
+                textAlign: "center",
               }}
             >
-              READ MORE
-            </Button>
-          </Card>
+              <Box
+                sx={{
+                  width: 80,
+                  height: 80,
+                  mb: 3,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(255, 193, 7, 0.1)",
+                  backdropFilter: "blur(10px)",
+                }}
+              >
+                <img
+                  src="/src/assets/cat-icon.png"
+                  alt="Cat Icon"
+                  style={{ width: "60%", height: "60%", objectFit: "contain" }}
+                />
+              </Box>
+              <Typography variant="h5" fontWeight="bold" sx={{ color: "text.primary", mb: 2 }}>
+                Cat Adoption Articles
+              </Typography>
+              <Typography variant="body1" sx={{ color: "text.secondary", mb: 3 }}>
+                Helpful insights on what to expect.
+              </Typography>
+              <Button
+                variant="outlined"
+                sx={{
+                  borderRadius: "20px",
+                  textTransform: "none",
+                  fontWeight: "bold",
+                  color: "primary.main",
+                  borderColor: "primary.main",
+                  "&:hover": {
+                    backgroundColor: "primary.main",
+                    color: "white",
+                  },
+                }}
+                component="a"
+                href="https://www.kinship.com/cat-lifestyle/step-by-step-guide-to-adopting-a-cat"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                READ MORE
+              </Button>
+            </Card>
 
           {/* Bird Adoption Card */}
-          <Card
-            sx={{
-              borderRadius: "16px",
-              backdropFilter: "blur(10px)",
-              backgroundColor: "rgba(255, 255, 255, 0.6)",
-              border: "1px solid rgba(0, 0, 0, 0.1)",
-              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
-              transition: "transform 0.3s ease, box-shadow 0.3s ease",
-              "&:hover": {
-                transform: "translateY(-8px)",
-                boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
-              },
-              cursor: "pointer",
-              p: 3,
-              textAlign: "center",
-            }}
-          >
-            <Box
+            <Card
               sx={{
-                width: 80,
-                height: 80,
-                mb: 3,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius: "50%",
-                backgroundColor: "rgba(156, 39, 176, 0.1)",
+                borderRadius: "16px",
                 backdropFilter: "blur(10px)",
-              }}
-            >
-              <img
-                src="/src/assets/bird-icon.png"
-                alt="Bird Icon"
-                style={{ width: "60%", height: "60%", objectFit: "contain" }}
-              />
-            </Box>
-            <Typography variant="h5" fontWeight="bold" sx={{ color: "text.primary", mb: 2 }}>
-              Bird Adoption Articles
-            </Typography>
-            <Typography variant="body1" sx={{ color: "text.secondary", mb: 3 }}>
-              Discover how to care for your new bird.
-            </Typography>
-            <Button
-              variant="outlined"
-              sx={{
-                borderRadius: "20px",
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "primary.main",
-                borderColor: "primary.main",
+                backgroundColor: "rgba(255, 255, 255, 0.6)",
+                border: "1px solid rgba(0, 0, 0, 0.1)",
+                boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
                 "&:hover": {
-                  backgroundColor: "primary.main",
-                  color: "white",
+                  transform: "translateY(-8px)",
+                  boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
                 },
+                cursor: "pointer",
+                p: 3,
+                textAlign: "center",
               }}
             >
-              READ MORE
-            </Button>
-          </Card>
+              <Box
+                sx={{
+                  width: 80,
+                  height: 80,
+                  mb: 3,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(156, 39, 176, 0.1)",
+                  backdropFilter: "blur(10px)",
+                }}
+              >
+                <img
+                  src="/src/assets/bird-icon.png"
+                  alt="Bird Icon"
+                  style={{ width: "60%", height: "60%", objectFit: "contain" }}
+                />
+              </Box>
+              <Typography variant="h5" fontWeight="bold" sx={{ color: "text.primary", mb: 2 }}>
+                Bird Adoption Articles
+              </Typography>
+              <Typography variant="body1" sx={{ color: "text.secondary", mb: 3 }}>
+                Discover how to care for your new bird.
+              </Typography>
+              <Button
+                variant="outlined"
+                sx={{
+                  borderRadius: "20px",
+                  textTransform: "none",
+                  fontWeight: "bold",
+                  color: "primary.main",
+                  borderColor: "primary.main",
+                  "&:hover": {
+                    backgroundColor: "primary.main",
+                    color: "white",
+                  },
+                }}
+                component="a"
+                href="https://nhspca.org/things-to-consider-before-adopting-a-bird/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                READ MORE
+              </Button>
+            </Card>
         </Box>
       </Box>
     </FullHeightBox>

@@ -80,7 +80,7 @@ const OwnerForm: React.FC = () => {
             sx={{
               position: 'absolute' as 'absolute',
               top: '50%',
-              left: '50%',
+              left: '50.5%',
               transform: 'translate(-50%, -50%)',
               bgcolor: '#fff',
               boxShadow: 24,
@@ -113,10 +113,10 @@ const OwnerForm: React.FC = () => {
                 onClick={handleBack} 
                 sx={{ 
                   px: 4, 
-                  color: '#0000ff', 
-                  borderColor: '#0000ff',
+                  color: '#003366', 
+                  borderColor: '#003366',
                   '&:hover': {
-                    borderColor: '#0000ff',
+                    borderColor: '#003366',
                     backgroundColor: 'rgba(0, 0, 255, 0.04)',
                   },
                 }}
@@ -128,10 +128,10 @@ const OwnerForm: React.FC = () => {
                 onClick={handleAgree} 
                 sx={{ 
                   px: 4, 
-                  backgroundColor: '#0000ff', 
+                  backgroundColor: '#003366', 
                   color: '#fff',
                   '&:hover': {
-                    backgroundColor: '#0000cc',
+                    backgroundColor: '#040654',
                   },
                 }}
               >
@@ -222,11 +222,11 @@ const OwnerForm: React.FC = () => {
                   textTransform: 'none', 
                   
                   fontWeight: 'bold',
-                  backgroundColor: '#0000ff',
+                  backgroundColor: '#003366',
                    fontSize: '1.05rem',
                   color: '#fff',
                   '&:hover': {
-                    backgroundColor: '#0000cc',
+                    backgroundColor: '#040654',
                   },
                 }}
               >
