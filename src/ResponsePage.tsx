@@ -4,12 +4,6 @@ import {
   Typography,
   Container,
   Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Button,
   CircularProgress,
   Snackbar,
@@ -22,12 +16,24 @@ import {
   useMediaQuery,
   useTheme,
   IconButton,
-  Tooltip
+  Tooltip,
+  List,
+  ListItem,
+  Divider,
+  ListItemText,
+  DialogContentText,
+  Chip,
+  Avatar,
+  Stack,
 } from "@mui/material";
 import axios from "axios";
-import { Delete, Search } from "@mui/icons-material";
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import Sidebar from './Sidebar'; 
+import { 
+  Delete, 
+  Search, 
+  KeyboardArrowRight,
+  FiberNew
+} from "@mui/icons-material";
+import Sidebar from './Sidebar';
 
 interface ContactFormResponse {
   id: number;
@@ -35,39 +41,35 @@ interface ContactFormResponse {
   email: string;
   subject: string;
   message: string;
+  status: string;
+  createdAt: string;
 }
 
 const ResponsesPage: React.FC = () => {
-  // State for storing responses
   const [responses, setResponses] = useState<ContactFormResponse[]>([]);
   const [filteredResponses, setFilteredResponses] = useState<ContactFormResponse[]>([]);
-
-  // State for loading and error handling
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  // State for Snackbar (success/error messages)
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
-
-  // State for delete confirmation dialog
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedResponseId, setSelectedResponseId] = useState<number | null>(null);
-
-  // State for search
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [detailDialogOpen, setDetailDialogOpen] = useState(false);
+  const [selectedResponse, setSelectedResponse] = useState<ContactFormResponse | null>(null);
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // Fetch all responses from the backend
   useEffect(() => {
     const fetchResponses = async () => {
       try {
         const response = await axios.get("http://localhost:8080/api/contact/responses");
-        console.log("Fetched responses:", response.data); // Debugging line
-        setResponses(response.data);
-        setFilteredResponses(response.data);
+        const sortedResponses = response.data.sort((a: ContactFormResponse, b: ContactFormResponse) => b.id - a.id);
+        setResponses(sortedResponses);
+        setFilteredResponses(sortedResponses);
         setLoading(false);
       } catch (err) {
         setError("Failed to fetch responses. Please try again.");
@@ -79,7 +81,6 @@ const ResponsesPage: React.FC = () => {
     fetchResponses();
   }, []);
 
-  // Handle search
   useEffect(() => {
     const filtered = responses.filter(
       (response) =>
@@ -91,158 +92,343 @@ const ResponsesPage: React.FC = () => {
     setFilteredResponses(filtered);
   }, [searchQuery, responses]);
 
-  // Handle delete confirmation dialog open
-  const handleDeleteClick = (id: number) => {
+  const handleDeleteClick = (id: number, e: React.MouseEvent) => {
+    e.stopPropagation();
     setSelectedResponseId(id);
     setDeleteDialogOpen(true);
   };
 
-  // Handle delete response
   const handleDeleteConfirm = async () => {
     if (selectedResponseId !== null) {
       try {
         await axios.delete(`http://localhost:8080/api/contact/delete/${selectedResponseId}`);
         setResponses(responses.filter((response) => response.id !== selectedResponseId));
         setFilteredResponses(filteredResponses.filter((response) => response.id !== selectedResponseId));
-        setSnackbarMessage("Response deleted successfully!");
-        setSnackbarSeverity("success");
-        setSnackbarOpen(true);
+        showSnackbar("Response deleted successfully!", "success");
       } catch (err) {
-        setSnackbarMessage("Failed to delete response. Please try again.");
-        setSnackbarSeverity("error");
-        setSnackbarOpen(true);
+        showSnackbar("Failed to delete response. Please try again.", "error");
         console.error("Error deleting response:", err);
       }
     }
     setDeleteDialogOpen(false);
   };
 
-  // Close Snackbar
+  const handleResponseClick = async (response: ContactFormResponse) => {
+    try {
+      // If status is "New", update it to "Opened"
+      if (response.status === "New") {
+        // Create full response object with updated status
+        const updatedResponse = {
+          id: response.id,
+          name: response.name,
+          email: response.email,
+          subject: response.subject,
+          message: response.message,
+          status: "Opened",
+          createdAt: response.createdAt
+        };
+        
+        const result = await axios.put(
+          `http://localhost:8080/api/contact/update-status/${response.id}`,
+          updatedResponse
+        );
+        
+        // Update the response in state
+        setResponses(responses.map(r => 
+          r.id === response.id ? result.data : r
+        ));
+        
+        setSelectedResponse(result.data);
+      } else {
+        setSelectedResponse(response);
+      }
+      
+      setDetailDialogOpen(true);
+    } catch (err) {
+      showSnackbar("Failed to update response status.", "error");
+      console.error("Error updating response status:", err);
+      if (axios.isAxiosError(err)) {
+        console.error("Error response:", err.response?.data);
+      }
+      setSelectedResponse(response);
+      setDetailDialogOpen(true);
+    }
+  };
+
+  const showSnackbar = (message: string, severity: "success" | "error") => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  };
+
+  const handleCloseDetailDialog = () => {
+    setDetailDialogOpen(false);
+  };
+
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
 
-  // Close delete confirmation dialog
   const handleDeleteDialogClose = () => {
     setDeleteDialogOpen(false);
   };
 
-  // Responsive design
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
 
   return (
-    <Box>
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        {/* Page Title */}
-        <Sidebar open={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
-          <Tooltip title="Admin Dashboard">
-                    <IconButton
-                      onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                      sx={{
-                        position: "fixed",
-                        left: isSidebarOpen ? 240 : 16, // Adjust position based on sidebar state
-                        top: 60, // Increased top value to move the icon further down
-                        zIndex: 1300, // High zIndex to ensure it's above other content
-                        '& svg': {
-                          fontSize: '2rem',
-                          color:"black"
-                        },
-                        backgroundColor: 'transparent',
-                        '&:hover': {
-                          backgroundColor: 'rgba(28, 34, 225, 0.61)',
-                          backdropFilter: 'blur(10px)',
-                          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                        },
-                      }}
-                    >
-                      <KeyboardArrowRightIcon />
-                    </IconButton>
-                  </Tooltip>
-                  
+    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+      <Sidebar open={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
       
-        <Typography variant="h4" component="h1" gutterBottom fontWeight="600" align="center">
-          Contact Us Responses
-        </Typography>
-
-        {/* Search Bar */}
-        <Box sx={{ mb: 4, display: "flex", justifyContent: "flex-end" }}>
-          <TextField
-            variant="outlined"
-            placeholder="Search responses..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            InputProps={{
-              startAdornment: <Search sx={{ mr: 1, color: "action.active" }} />,
+      <Box sx={{ 
+        flexGrow: 1, 
+        p: 3, 
+        ml: isSidebarOpen ? '240px' : 0, 
+        transition: theme.transitions.create('margin', {
+          easing: theme.transitions.easing.sharp,
+          duration: theme.transitions.duration.enteringScreen,
+        }) 
+      }}>
+        <Tooltip title="Admin Dashboard">
+          <IconButton
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            sx={{
+              position: "fixed",
+              left: isSidebarOpen ? 240 : 16,
+              top: 16,
+              zIndex: 1300,
+              backgroundColor: 'background.paper',
+              boxShadow: 2,
+              '&:hover': {
+                backgroundColor: 'primary.main',
+                color: 'primary.contrastText'
+              },
             }}
-            sx={{ width: isMobile ? "100%" : "300px" }}
-          />
-        </Box>
+          >
+            <KeyboardArrowRight sx={{ transform: isSidebarOpen ? 'rotate(180deg)' : 'none' }} />
+          </IconButton>
+        </Tooltip>
 
-        {/* Loading State */}
-        {loading && (
-          <Box display="flex" justifyContent="center" mt={4}>
-            <CircularProgress />
-          </Box>
-        )}
+        <Container maxWidth="xl" sx={{ py: 4 }}>
+          <Paper sx={{ p: 3, mb: 4, borderRadius: 4, boxShadow: '0 8px 16px rgba(0,0,0,0.1)' }}>
+            <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems="center" spacing={2}>
+              <Typography variant="h4" component="h1" fontWeight="700" color="text.primary">
+                Contact Responses
+              </Typography>
+              <TextField
+                variant="outlined"
+                placeholder="Search responses..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                InputProps={{
+                  startAdornment: <Search sx={{ mr: 1, color: "action.active" }} />,
+                  sx: { borderRadius: 4 }
+                }}
+                sx={{ width: isMobile ? '100%' : '350px' }}
+              />
+            </Stack>
+          </Paper>
 
-        {/* Error State */}
-        {error && (
-          <Box display="flex" justifyContent="center" mt={4}>
-            <Typography color="error">{error}</Typography>
-          </Box>
-        )}
+          {loading && (
+            <Box display="flex" justifyContent="center" mt={4}>
+              <CircularProgress size={60} thickness={4} />
+            </Box>
+          )}
 
-        {/* Responses Table */}
-        {!loading && !error && (
-          <TableContainer component={Paper} sx={{ mt: 4, borderRadius: 2, boxShadow: 3 }}>
-            <Table>
-              <TableHead>
-                <TableRow sx={{ backgroundColor: theme.palette.primary.main }}>
-                  <TableCell sx={{ color: "white" }}>Name</TableCell>
-                  <TableCell sx={{ color: "white" }}>Email</TableCell>
-                  <TableCell sx={{ color: "white" }}>Subject</TableCell>
-                  <TableCell sx={{ color: "white" }}>Message</TableCell>
-                  <TableCell align="center" sx={{ color: "white" }}>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredResponses.map((response) => (
-                  <TableRow key={response.id} hover sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-                    <TableCell>{response.name}</TableCell>
-                    <TableCell>{response.email}</TableCell>
-                    <TableCell>{response.subject}</TableCell>
-                    <TableCell>{response.message}</TableCell>
-                    <TableCell align="center">
-                      <Button
-                        variant="contained"
+          {error && (
+            <Box display="flex" justifyContent="center" mt={4}>
+              <Alert severity="error" sx={{ width: '100%', maxWidth: 600 }}>
+                {error}
+              </Alert>
+            </Box>
+          )}
+
+          {!loading && !error && (
+            <Paper sx={{ borderRadius: 4, boxShadow: '0 8px 16px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
+              <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                {filteredResponses.map((response, index) => (
+                  <React.Fragment key={response.id}>
+                    <ListItem 
+                      alignItems="flex-start" 
+                      sx={{ 
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                        '&:hover': {
+                          backgroundColor: 'action.hover',
+                          transform: 'translateY(-2px)'
+                        }
+                      }}
+                      onClick={() => handleResponseClick(response)}
+                    >
+                      <Avatar sx={{ bgcolor: 'primary.main', mr: 2 }}>
+                        {response.name.charAt(0).toUpperCase()}
+                      </Avatar>
+                      <ListItemText
+                        primary={
+                          <Stack direction="row" justifyContent="space-between" alignItems="center">
+                            <Typography variant="subtitle1" fontWeight="600">
+                              {response.subject}
+                            </Typography>
+                            {response.status === 'New' && (
+                              <Chip 
+                                icon={<FiberNew />}
+                                label="New"
+                                color="primary"
+                                size="small"
+                                sx={{ ml: 1 }}
+                              />
+                            )}
+                          </Stack>
+                        }
+                        secondary={
+                          <React.Fragment>
+                            <Typography
+                              component="span"
+                              variant="body2"
+                              sx={{ color: 'text.primary', display: 'block' }}
+                            >
+                              {response.name} • {response.email}
+                            </Typography>
+                            <Typography
+                              component="span"
+                              variant="body2"
+                              sx={{ 
+                                display: '-webkit-box',
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: 'vertical',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                mt: 0.5
+                              }}
+                            >
+                              {response.message}
+                            </Typography>
+                            
+                          </React.Fragment>
+                        }
+                      />
+                      <IconButton
+                        edge="end"
                         color="error"
-                        startIcon={<Delete />}
-                        onClick={() => handleDeleteClick(response.id)}
-                        sx={{ borderRadius: 2 }}
+                        onClick={(e) => handleDeleteClick(response.id, e)}
+                        sx={{ ml: 2 }}
                       >
-                        Delete
-                      </Button>
-                    </TableCell>
-                  </TableRow>
+                        <Delete />
+                      </IconButton>
+                    </ListItem>
+                    {index < filteredResponses.length - 1 && <Divider variant="inset" component="li" />}
+                  </React.Fragment>
                 ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+              </List>
+            </Paper>
+          )}
+        </Container>
+      </Box>
+
+      {/* Response Detail Dialog */}
+      <Dialog 
+        open={detailDialogOpen} 
+        onClose={handleCloseDetailDialog} 
+        maxWidth="md" 
+        fullWidth
+        PaperProps={{ sx: { borderRadius: 4 } }}
+      >
+        {selectedResponse && (
+          <>
+            <DialogTitle sx={{ 
+              backgroundColor: 'primary.main', 
+              color: 'primary.contrastText',
+              borderTopLeftRadius: 4,
+              borderTopRightRadius: 4
+            }}>
+              <Typography variant="h6" fontWeight="600">
+                {selectedResponse.subject}
+              </Typography>
+            </DialogTitle>
+            <DialogContent sx={{ p: 4 }}>
+              <Stack spacing={3}>
+                <Stack direction="row" spacing={2} alignItems="center">
+                  <Avatar sx={{ bgcolor: 'primary.main' }}>
+                    {selectedResponse.name.charAt(0).toUpperCase()}
+                  </Avatar>
+                  <Stack>
+                    <Typography variant="subtitle1" fontWeight="600">
+                      {selectedResponse.name}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {selectedResponse.email}
+                    </Typography>
+                  </Stack>
+                </Stack>
+
+                
+
+                <Box>
+                  <Typography variant="body1" fontWeight="500" gutterBottom>
+                    Message:
+                  </Typography>
+                  <Paper 
+                    variant="outlined" 
+                    sx={{ 
+                      p: 3, 
+                      borderRadius: 3,
+                      backgroundColor: 'background.default',
+                      whiteSpace: 'pre-wrap',
+                      maxHeight: '400px',
+                      overflowY: 'auto'
+                    }}
+                  >
+                    {selectedResponse.message}
+                  </Paper>
+                </Box>
+              </Stack>
+            </DialogContent>
+            <DialogActions sx={{ p: 3 }}>
+              <Button 
+                onClick={handleCloseDetailDialog} 
+                variant="contained"
+                sx={{ borderRadius: 3 }}
+              >
+                Close
+              </Button>
+            </DialogActions>
+          </>
         )}
-      </Container>
+      </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteDialogOpen} onClose={handleDeleteDialogClose}>
-        <DialogTitle>Delete Response</DialogTitle>
+      <Dialog 
+        open={deleteDialogOpen} 
+        onClose={handleDeleteDialogClose}
+        PaperProps={{ sx: { borderRadius: 4 } }}
+      >
+        <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>
-          <Typography>Are you sure you want to delete this response?</Typography>
+          <DialogContentText>
+            Are you sure you want to delete this response? This action cannot be undone.
+          </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDeleteDialogClose} color="primary">
+        <DialogActions sx={{ p: 3 }}>
+          <Button 
+            onClick={handleDeleteDialogClose} 
+            sx={{ borderRadius: 3 }}
+          >
             Cancel
           </Button>
-          <Button onClick={handleDeleteConfirm} color="error">
+          <Button 
+            onClick={handleDeleteConfirm} 
+            color="error"
+            variant="contained"
+            sx={{ borderRadius: 3 }}
+          >
             Delete
           </Button>
         </DialogActions>
@@ -254,11 +440,19 @@ const ResponsesPage: React.FC = () => {
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
         anchorOrigin={{
-          vertical: "bottom", 
-          horizontal: "right", 
+          vertical: "bottom",
+          horizontal: "right",
         }}
       >
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
+        <Alert 
+          onClose={handleSnackbarClose} 
+          severity={snackbarSeverity}
+          sx={{ 
+            borderRadius: 4,
+            boxShadow: 4,
+            width: '100%'
+          }}
+        >
           {snackbarMessage}
         </Alert>
       </Snackbar>

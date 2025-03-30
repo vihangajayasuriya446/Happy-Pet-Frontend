@@ -389,7 +389,7 @@ const OwnerTable: React.FC = () => {
             <TableContainer component={Paper} sx={{ boxShadow: 3, borderRadius: '8px', overflow: 'hidden' }}>
               <Table sx={{ minWidth: 650 }}>
                 <TableHead>
-                  <TableRow sx={{ backgroundColor: '#000099' }}> {/* Updated background color */}
+                  <TableRow sx={{ backgroundColor: '#003366' }}> {/* Updated background color */}
                     <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center', color: '#fff' }}>ID</TableCell>
                     <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center', color: '#fff' }}>Name</TableCell>
                     <TableCell sx={{ fontWeight: 'bold', padding: '16px', textAlign: 'center', color: '#fff' }}>Address</TableCell>

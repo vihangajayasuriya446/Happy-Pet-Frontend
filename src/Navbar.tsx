@@ -278,7 +278,7 @@ const Navbar = () => {
                   transform: "scaleX(1)",
                 },
               }}
-              onClick={() => handleNavigation("/contact-us")} // Hardcoded path for Contact Us
+              onClick={() => handleNavigation("/contactus")} // Hardcoded path for Contact Us
             >
               Contact Us
             </Typography>

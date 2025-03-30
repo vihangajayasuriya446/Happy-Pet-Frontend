@@ -172,7 +172,7 @@ const UserDetailsDashboard: React.FC = () => {
             borderRadius: "8px",
             mb: 3,
             textAlign: "center",
-            width: "100%",
+            width: "98%",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
