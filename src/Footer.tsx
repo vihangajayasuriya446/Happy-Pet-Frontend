@@ -161,7 +161,7 @@ const Footer = () => {
     gap={2}
   >
     <Link
-      href="https://www.facebook.com/yourpage" // Replace with your Facebook page URL
+      href="https://www.facebook.com/share/1PZSnD5qyk/?mibextid=wwXIfr" // Replace with your Facebook page URL
       target="_blank"
       rel="noopener noreferrer"
     >
