@@ -3,6 +3,32 @@ import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import Pets from "./Pets";
+
+type Pet = {
+  id: number;
+  name: string;
+  petType: string;
+  price: number;
+  breed: string;
+  birthYear: string;
+  gender: string;
+  imageUrl: string;
+  purchased: boolean;
+};
+
+interface Pets {
+  pet_id: number;
+  pet_name: string;
+  pet_species: string;
+  pet_age: number;
+  pet_gender: string;
+  pet_breed: string;
+  pet_adoptionStatus: string;
+  pet_photo: string;
+  image_url: string;
+  status: string;
+}
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -12,6 +38,8 @@ const HomePage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+  const [buyPets, setBuyPets] = useState<Pet[]>([]);
+  const [adoptPets, setAdoptPets] = useState<Pets[]>([]);
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -24,6 +52,64 @@ const HomePage: React.FC = () => {
       window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
+
+  useEffect(() => {
+    const fetchAdoptPets = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/api/pets/available");
+        if (!response.ok) {
+          throw new Error("Failed to fetch adoptable pets");
+        }
+        const data = await response.json();
+  
+        // Transform data to match the Pets interface
+        const transformedAdoptPets: Pets[] = data.map((pet: any) => ({
+          pet_id: pet.pet_id, // Use snake_case
+          pet_name: pet.pet_name,
+          pet_species: pet.pet_species,
+          pet_age: pet.pet_age,
+          pet_gender: pet.pet_gender,
+          pet_breed: pet.pet_breed,
+          pet_adoptionStatus: pet.pet_adoptionStatus,
+          pet_photo: pet.pet_photo,
+          image_url: pet.image_url ? `http://localhost:8080${pet.image_url}` : "/images/default-pet-image.png", // Fallback for missing image_url
+          status: pet.status,
+        }));
+  
+        setAdoptPets(transformedAdoptPets.slice(0, 3)); // Only take the first 3 pets
+      } catch (error) {
+        console.error("Error fetching adoptable pets:", error);
+      }
+    };
+  
+    fetchAdoptPets();
+  }, []);
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setToken(localStorage.getItem('token'));
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get<Pet[]>("http://localhost:8080/api/v1/pets") // Use the Pet type here
+      .then((response) => {
+        // Filter out purchased pets
+        const availablePets = response.data.filter((pet) => !pet.purchased);
+        setBuyPets(availablePets);
+      })
+      .catch((error) => {
+        console.error("Error fetching buy pets:", error);
+      });
+  }, []);
+
 
   useEffect(() => {
     axios
@@ -605,140 +691,543 @@ const HomePage: React.FC = () => {
         </Box>
       </Box>
 
+
       <Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2 }}>
-        <Typography variant="h4"
-        fontWeight="bold"
-        mb={4}
-        sx={{
-          color: "#FFFFFF", // Light text for contrast
-          position: "relative",
-          zIndex: 2,
-          textShadow: "0 0 10px rgba(0, 0, 0, 0.5)", // Subtle glow effect
-        }}>
-          Available Pets for Matchmaking
-        </Typography>
+  {/* Matchmaking Section */}
+  <Typography
+    variant="h4"
+    fontWeight="bold"
+    mb={4}
+    sx={{
+      color: "#FFFFFF",
+      position: "relative",
+      zIndex: 2,
+      textShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
+    }}
+  >
+    Available Pets for Matchmaking
+  </Typography>
 
-        <Box
-          display="grid"
-          gridTemplateColumns="repeat(auto-fit, minmax(250px, 1fr))"
-          gap={4}
-          justifyContent="center"
-          width="100%"
-          maxWidth="1200px"
-        >
-          {/* Display only 3 pets */}
-          {pets.slice(0, 3).map((pet) => (
-            <Card
-              key={pet.id}
-              sx={{
-                borderRadius: "24px",
-                transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
-                "&:hover": {
-                  transform: "translateY(-10px)",
-                  boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
-                },
-                display: "flex",
-                flexDirection: "column",
-                height: "100%",
-                backgroundColor: "rgba(255, 255, 255, 0.6)",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
-                backdropFilter: "blur(10px)",
-              }}
-            >
-              <CardMedia
-                component="img"
-                sx={{ height: 200, width: "100%", objectFit: "cover", borderRadius: "24px 24px 0 0" }}
-                image={`data:image/jpeg;base64,${pet.photo}`}
-                alt={pet.name}
-              />
-              <CardContent sx={{ flexGrow: 1, textAlign: "center", p: 3 }}>
-                <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ color: "text.primary" }}>
-                  {pet.name}
-                </Typography>
-                {pet.breed && (
-                  <Typography variant="body2" color="text.secondary">
-                    <strong>Breed:</strong> {pet.breed}
-                  </Typography>
-                )}
-                {pet.age && (
-                  <Typography variant="body2" color="text.secondary">
-                    <strong>Age:</strong> {pet.age}
-                  </Typography>
-                )}
-                {pet.location && (
-                  <Typography variant="body2" color="text.secondary">
-                    <strong>Location:</strong> {pet.location}
-                  </Typography>
-                )}
-              </CardContent>
-            </Card>
-          ))}
-
-          {/* "More Pets" Card */}
+  <Box
+    display="grid"
+    gridTemplateColumns="repeat(auto-fit, minmax(250px, 1fr))"
+    gap={4}
+    justifyContent="center"
+    width="100%"
+    maxWidth="1200px"
+  >
+    {/* Display up to 3 pets - show empty cards if less than 3 */}
+    {[...Array(3)].map((_, index) => {
+      const pet = pets[index];
+      if (pet) {
+        return (
           <Card
+            key={pet.id}
             sx={{
-              borderRadius: "16px",
-              backdropFilter: "blur(10px)",
-              backgroundColor: "rgba(255, 255, 255, 0.6)",
-              border: "1px solid rgba(0, 0, 0, 0.1)",
-              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
-              transition: "transform 0.3s ease, box-shadow 0.3s ease",
+              borderRadius: "24px",
+              transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
               "&:hover": {
-                transform: "translateY(-8px)",
+                transform: "translateY(-10px)",
                 boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
               },
-              cursor: "pointer",
-              p: 4,
-              textAlign: "center",
-              maxWidth: "400px",
-              margin: "auto",
+              display: "flex",
+              flexDirection: "column",
+              height: "100%",
+              backgroundColor: "rgba(255, 255, 255, 0.6)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              backdropFilter: "blur(10px)",
             }}
-            onClick={() => handleNavigation("/matchmaking")}
           >
-            <Box sx={{ p: 3 }}>
-              <FavoriteBorderIcon
-                sx={{
-                  fontSize: 80,
-                  mb: 3,
-                  color: "primary.main",
-                  filter: "drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1))",
-                }}
-              />
-              <Typography
-                variant="h5"
-                fontWeight="bold"
-                gutterBottom
-                sx={{ color: "#333", mb: 2 }}
-              >
-                {pets.length - 3} more pets
+            <CardMedia
+              component="img"
+              sx={{ height: 200, width: "100%", objectFit: "cover", borderRadius: "24px 24px 0 0" }}
+              image={`data:image/jpeg;base64,${pet.photo}`}
+              alt={pet.name}
+            />
+            <CardContent sx={{ flexGrow: 1, textAlign: "center", p: 3 }}>
+              <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ color: "text.primary" }}>
+                {pet.name}
               </Typography>
-              <Typography
-                variant="body1"
-                sx={{ color: "#666", mb: 3 }}
-              >
-                on HappyPet
-              </Typography>
-              <Button
-                variant="outlined"
-                sx={{
-                  borderRadius: "20px",
-                  textTransform: "none",
-                  fontWeight: "bold",
-                  color: "primary.main",
-                  borderColor: "primary.main",
-                  "&:hover": {
-                    backgroundColor: "primary.main",
-                    color: "white",
-                  },
-                }}
-              >
-                Meet Them
-              </Button>
-            </Box>
+              {pet.breed && (
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Breed:</strong> {pet.breed}
+                </Typography>
+              )}
+              {pet.age && (
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Age:</strong> {pet.age}
+                </Typography>
+              )}
+              {pet.location && (
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Location:</strong> {pet.location}
+                </Typography>
+              )}
+            </CardContent>
           </Card>
-        </Box>
-      </Box>
+        );
+      } else {
+        return (
+          <Card
+            key={`empty-${index}`}
+            sx={{
+              borderRadius: "24px",
+              display: "flex",
+              flexDirection: "column",
+              height: "100%",
+              backgroundColor: "rgba(255, 255, 255, 0.3)",
+              border: "1px dashed rgba(255, 255, 255, 0.5)",
+              backdropFilter: "blur(10px)",
+              opacity: 0.7,
+            }}
+          >
+            <CardMedia
+              component="div"
+              sx={{ 
+                height: 200, 
+                width: "100%", 
+                display: "flex", 
+                alignItems: "center", 
+                justifyContent: "center", 
+                backgroundColor: "rgba(0, 0, 0, 0.05)",
+                borderRadius: "24px 24px 0 0"
+              }}
+            >
+              <Typography variant="body1" color="text.secondary">
+                No pet available
+              </Typography>
+            </CardMedia>
+            <CardContent sx={{ flexGrow: 1, textAlign: "center", p: 3 }}>
+              <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ color: "text.primary" }}>
+              No pet available
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                <strong>Breed:</strong> -
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                <strong>Age:</strong> -
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                <strong>Location:</strong> -
+              </Typography>
+            </CardContent>
+          </Card>
+        );
+      }
+    })}
 
+    {/* "More Pets" Card for Matchmaking */}
+    <Card
+      sx={{
+        borderRadius: "16px",
+        backdropFilter: "blur(10px)",
+        backgroundColor: "rgba(255, 255, 255, 0.6)",
+        border: "1px solid rgba(0, 0, 0, 0.1)",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+        "&:hover": {
+          transform: "translateY(-8px)",
+          boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
+        },
+        cursor: "pointer",
+        p: 4,
+        textAlign: "center",
+        maxWidth: "400px",
+        margin: "auto",
+      }}
+      onClick={() => handleNavigation("/matchmaking")}
+    >
+      <Box sx={{ p: 3 }}>
+        <FavoriteBorderIcon
+          sx={{
+            fontSize: 80,
+            mb: 3,
+            color: "primary.main",
+            filter: "drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1))",
+          }}
+        />
+        <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ color: "#333", mb: 2 }}>
+          See more pets
+        </Typography>
+        <Typography variant="body1" sx={{ color: "#666", mb: 3 }}>
+          for Match
+        </Typography>
+        <Button
+          variant="outlined"
+          sx={{
+            borderRadius: "20px",
+            textTransform: "none",
+            fontWeight: "bold",
+            color: "primary.main",
+            borderColor: "primary.main",
+            "&:hover": {
+              backgroundColor: "primary.main",
+              color: "white",
+            },
+          }}
+        >
+          Meet Them
+        </Button>
+      </Box>
+    </Card>
+  </Box>
+</Box>
+
+{/* Adopt a Pet Section */}
+<Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2 }}>
+  <Typography variant="h4" fontWeight="bold" mb={4} sx={{ color: "#FFFFFF", textShadow: "0 0 10px rgba(0, 0, 0, 0.5)" }}>
+    Available Pets for Adoption
+  </Typography>
+  <Box
+    display="grid"
+    gridTemplateColumns="repeat(auto-fit, minmax(250px, 1fr))"
+    gap={4}
+    justifyContent="center"
+    width="100%"
+    maxWidth="1200px"
+  >
+    {/* Display up to 3 adoptable pets - show empty cards if less than 3 */}
+    {[...Array(3)].map((_, index) => {
+      const pet = adoptPets[index];
+      if (pet) {
+        return (
+          <Card
+            key={pet.pet_id}
+            sx={{
+              borderRadius: "24px",
+              transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+              "&:hover": {
+                transform: "translateY(-10px)",
+                boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
+              },
+              display: "flex",
+              flexDirection: "column",
+              height: "100%",
+              backgroundColor: "rgba(255, 255, 255, 0.6)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              backdropFilter: "blur(10px)",
+            }}
+          >
+            <CardMedia
+              component="img"
+              sx={{ height: 200, width: "100%", objectFit: "cover", borderRadius: "24px 24px 0 0" }}
+              image={pet.image_url || "/images/default-pet-image.png"}
+              alt={pet.pet_name}
+            />
+            <CardContent sx={{ flexGrow: 1, textAlign: "center", p: 3 }}>
+              <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ color: "text.primary" }}>
+                {pet.pet_name}
+              </Typography>
+              {pet.pet_breed && (
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Breed:</strong> {pet.pet_breed}
+                </Typography>
+              )}
+              {pet.pet_age && (
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Age:</strong> {pet.pet_age}
+                </Typography>
+              )}
+              {pet.pet_species && (
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Species:</strong> {pet.pet_species}
+                </Typography>
+              )}
+              {pet.status && (
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Status:</strong> {pet.status}
+                </Typography>
+              )}
+            </CardContent>
+          </Card>
+        );
+      } else {
+        return (
+          <Card
+            key={`empty-adopt-${index}`}
+            sx={{
+              borderRadius: "24px",
+              display: "flex",
+              flexDirection: "column",
+              height: "100%",
+              backgroundColor: "rgba(255, 255, 255, 0.3)",
+              border: "1px dashed rgba(255, 255, 255, 0.5)",
+              backdropFilter: "blur(10px)",
+              opacity: 0.7,
+            }}
+          >
+            <CardMedia
+              component="div"
+              sx={{ 
+                height: 200, 
+                width: "100%", 
+                display: "flex", 
+                alignItems: "center", 
+                justifyContent: "center", 
+                backgroundColor: "rgba(0, 0, 0, 0.05)",
+                borderRadius: "24px 24px 0 0"
+              }}
+            >
+              <Typography variant="body1" color="text.secondary">
+                No pet available
+              </Typography>
+            </CardMedia>
+            <CardContent sx={{ flexGrow: 1, textAlign: "center", p: 3 }}>
+              <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ color: "text.primary" }}>
+              No pet available
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                <strong>Breed:</strong> -
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                <strong>Age:</strong> -
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                <strong>Species:</strong> -
+              </Typography>
+            </CardContent>
+          </Card>
+        );
+      }
+    })}
+
+    {/* "More Pets" Card for Adoption */}
+    <Card
+      sx={{
+        borderRadius: "16px",
+        backdropFilter: "blur(10px)",
+        backgroundColor: "rgba(255, 255, 255, 0.6)",
+        border: "1px solid rgba(0, 0, 0, 0.1)",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+        "&:hover": {
+          transform: "translateY(-8px)",
+          boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
+        },
+        cursor: "pointer",
+        p: 4,
+        textAlign: "center",
+        maxWidth: "400px",
+        margin: "auto",
+      }}
+      onClick={() => handleCardClick("/adopt")}
+    >
+      <Box sx={{ p: 3 }}>
+        <FavoriteBorderIcon
+          sx={{
+            fontSize: 80,
+            mb: 3,
+            color: "primary.main",
+            filter: "drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1))",
+          }}
+        />
+        <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ color: "#333", mb: 2 }}>
+          See more pets
+        </Typography>
+        <Typography variant="body1" sx={{ color: "#666", mb: 3 }}>
+          for Adoption
+        </Typography>
+        <Button
+          variant="outlined"
+          sx={{
+            borderRadius: "20px",
+            textTransform: "none",
+            fontWeight: "bold",
+            color: "primary.main",
+            borderColor: "primary.main",
+            "&:hover": {
+              backgroundColor: "primary.main",
+              color: "white",
+            },
+          }}
+        >
+          See More
+        </Button>
+      </Box>
+    </Card>
+  </Box>
+</Box>
+
+{/* Buy Section */}
+<Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2 }}>
+  <Typography
+    variant="h4"
+    fontWeight="bold"
+    mb={4}
+    sx={{
+      color: "#FFFFFF",
+      position: "relative",
+      zIndex: 2,
+      textShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
+    }}
+  >
+    Available Pets for Buy
+  </Typography>
+
+  <Box
+    display="grid"
+    gridTemplateColumns="repeat(auto-fit, minmax(250px, 1fr))"
+    gap={4}
+    justifyContent="center"
+    width="100%"
+    maxWidth="1200px"
+  >
+    {/* Display up to 3 buy pets - show empty cards if less than 3 */}
+    {[...Array(3)].map((_, index) => {
+      const pet = buyPets[index];
+      if (pet) {
+        return (
+          <Card
+            key={pet.id}
+            sx={{
+              borderRadius: "24px",
+              transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+              "&:hover": {
+                transform: "translateY(-10px)",
+                boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
+              },
+              display: "flex",
+              flexDirection: "column",
+              height: "100%",
+              backgroundColor: "rgba(255, 255, 255, 0.6)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              backdropFilter: "blur(10px)",
+            }}
+          >
+            <CardMedia
+              component="img"
+              sx={{ height: 200, width: "100%", objectFit: "cover", borderRadius: "24px 24px 0 0" }}
+              image={pet.imageUrl ? `http://localhost:8080${pet.imageUrl}` : "/src/assets/pet-placeholder.png"}
+              alt={pet.name}
+            />
+            <CardContent sx={{ flexGrow: 1, textAlign: "center", p: 3 }}>
+              <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ color: "text.primary" }}>
+                {pet.name}
+              </Typography>
+              {pet.breed && (
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Breed:</strong> {pet.breed}
+                </Typography>
+              )}
+              {pet.birthYear && (
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Birth Year:</strong> {pet.birthYear}
+                </Typography>
+              )}
+              {pet.gender && (
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Gender:</strong> {pet.gender}
+                </Typography>
+              )}
+            </CardContent>
+          </Card>
+        );
+      } else {
+        return (
+          <Card
+            key={`empty-buy-${index}`}
+            sx={{
+              borderRadius: "24px",
+              display: "flex",
+              flexDirection: "column",
+              height: "100%",
+              backgroundColor: "rgba(255, 255, 255, 0.3)",
+              border: "1px dashed rgba(255, 255, 255, 0.5)",
+              backdropFilter: "blur(10px)",
+              opacity: 0.7,
+            }}
+          >
+            <CardMedia
+              component="div"
+              sx={{ 
+                height: 200, 
+                width: "100%", 
+                display: "flex", 
+                alignItems: "center", 
+                justifyContent: "center", 
+                backgroundColor: "rgba(0, 0, 0, 0.05)",
+                borderRadius: "24px 24px 0 0"
+              }}
+            >
+              <Typography variant="body1" color="text.secondary">
+                No pet available
+              </Typography>
+            </CardMedia>
+            <CardContent sx={{ flexGrow: 1, textAlign: "center", p: 3 }}>
+              <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ color: "text.primary" }}>
+              No pet available
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                <strong>Breed:</strong> -
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                <strong>Birth Year:</strong> -
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                <strong>Gender:</strong> -
+              </Typography>
+            </CardContent>
+          </Card>
+        );
+      }
+    })}
+
+    {/* "More Pets" Card for Buy */}
+    <Card
+      sx={{
+        borderRadius: "16px",
+        backdropFilter: "blur(10px)",
+        backgroundColor: "rgba(255, 255, 255, 0.6)",
+        border: "1px solid rgba(0, 0, 0, 0.1)",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+        "&:hover": {
+          transform: "translateY(-8px)",
+          boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
+        },
+        cursor: "pointer",
+        p: 4,
+        textAlign: "center",
+        maxWidth: "400px",
+        margin: "auto",
+      }}
+      onClick={() => handleNavigation("/buy")}
+    >
+      <Box sx={{ p: 3 }}>
+        <FavoriteBorderIcon
+          sx={{
+            fontSize: 80,
+            mb: 3,
+            color: "primary.main",
+            filter: "drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1))",
+          }}
+        />
+        <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ color: "#333", mb: 2 }}>
+          See more pets
+        </Typography>
+        <Typography variant="body1" sx={{ color: "#666", mb: 3 }}>
+          for Buy
+        </Typography>
+        <Button
+          variant="outlined"
+          sx={{
+            borderRadius: "20px",
+            textTransform: "none",
+            fontWeight: "bold",
+            color: "primary.main",
+            borderColor: "primary.main",
+            "&:hover": {
+              backgroundColor: "primary.main",
+              color: "white",
+            },
+          }}
+        >
+          Meet Them
+        </Button>
+      </Box>
+    </Card>
+  </Box>
+</Box>
       {/* Additional Content Section */}
       <Box sx={{ mt: 8, px: { xs: 2, md: 4 }, textAlign: "center" }}>
         <Typography variant="h3"
