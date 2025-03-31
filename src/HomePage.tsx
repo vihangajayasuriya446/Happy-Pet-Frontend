@@ -1097,7 +1097,8 @@ const HomePage: React.FC = () => {
             <CardMedia
               component="img"
               sx={{ height: 200, width: "100%", objectFit: "cover", borderRadius: "24px 24px 0 0" }}
-              image={pet.imageUrl ? `http://localhost:8080${pet.imageUrl}` : "/src/assets/pet-placeholder.png"}
+              image={pet.imageUrl ? `http://51.21.197.93:8080${pet.imageUrl}` : "/src/assets/pet-placeholder.png"}
+
               alt={pet.name}
             />
             <CardContent sx={{ flexGrow: 1, textAlign: "center", p: 3 }}>
