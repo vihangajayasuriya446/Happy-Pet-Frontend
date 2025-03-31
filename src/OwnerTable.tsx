@@ -51,7 +51,7 @@ const OwnerTable: React.FC = () => {
     const fetchOwners = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('http://localhost:8080/api/v1/getowners', {
+        const response = await fetch('http://51.21.197.93:8080/api/v1/getowners', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -71,7 +71,7 @@ const OwnerTable: React.FC = () => {
 
     const fetchUsers = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/v1/getusers');
+        const response = await fetch('http://51.21.197.93:8080/api/v1/getusers');
         if (!response.ok) {
           throw new Error('Failed to fetch users');
         }
@@ -88,7 +88,7 @@ const OwnerTable: React.FC = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/v1/deleteowner/${id}`, {
+      const response = await fetch(`http://51.21.197.93:8080/api/v1/deleteowner/${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -109,7 +109,7 @@ const OwnerTable: React.FC = () => {
   const handleToggle = async (id: number, currentConfirmation: string) => {
     const newConfirmation = currentConfirmation === 'Yes' ? 'No' : 'Yes';
     try {
-      const response = await fetch(`http://localhost:8080/api/v1/updateowner/${id}`, {
+      const response = await fetch(`http://51.21.197.93:8080/api/v1/updateowner/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

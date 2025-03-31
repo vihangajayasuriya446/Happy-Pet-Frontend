@@ -52,7 +52,7 @@ const Users: React.FC = () => {
 
   const { data: users = [], refetch, isLoading, isError } = useQuery<User[]>({
     queryKey: ["users"],
-    queryFn: () => Axios.get("http://localhost:8080/api/v1/getusers").then((res) => res.data),
+    queryFn: () => Axios.get("http://51.21.197.93:8080/api/v1/getusers").then((res) => res.data),
     retry: false, // Prevent automatic retries on error
   });
 
@@ -64,7 +64,7 @@ const Users: React.FC = () => {
 
   const addUserMutation = useMutation({
     mutationFn: (data: FormData) =>
-      Axios.post("http://localhost:8080/api/v1/adduser", data, {
+      Axios.post("http://51.21.197.93:8080/api/v1/adduser", data, {
         headers: {
           "Content-Type": "multipart/form-data",
           "Authorization": `Bearer ${token}`, // Include the token
@@ -86,7 +86,7 @@ const Users: React.FC = () => {
 
   const updateUserMutation = useMutation({
     mutationFn: (data: FormData) =>
-      Axios.put("http://localhost:8080/api/v1/updateuser", data, {
+      Axios.put("http://51.21.197.93:8080/api/v1/updateuser", data, {
         headers: {
           "Content-Type": "multipart/form-data",
           "Authorization": `Bearer ${token}`, // Include the token
@@ -108,7 +108,7 @@ const Users: React.FC = () => {
 
   const deleteUserMutation = useMutation({
     mutationFn: (id: number) =>
-      Axios.delete(`http://localhost:8080/api/v1/deleteuser/${id}`, {
+      Axios.delete(`http://51.21.197.93:8080/api/v1/deleteuser/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`, // Include the token
         },

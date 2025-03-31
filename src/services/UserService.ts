@@ -19,7 +19,7 @@ interface UserDTO {
 }
 
 
-const API_BASE_URL = 'http://localhost:8080/api/v1';
+const API_BASE_URL = 'http://51.21.197.93:8080/api/v1';
 
 export class UserService {
     // Get all users

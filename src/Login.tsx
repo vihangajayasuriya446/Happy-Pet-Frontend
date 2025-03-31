@@ -32,7 +32,7 @@ const Login: React.FC = () => {
         setIsLoading(true);
 
         try {
-            const response = await fetch('http://localhost:8080/api/auth/authenticate', {
+            const response = await fetch('http://51.21.197.93:8080/api/auth/authenticate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

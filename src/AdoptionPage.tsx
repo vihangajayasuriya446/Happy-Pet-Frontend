@@ -309,7 +309,7 @@ const PetGrid = () => {
                                                     transform: 'scale(1.1)',
                                                 },
                                             }}
-                                            image={`http://localhost:8080${pet.image_url}`}
+                                            image={`http://51.21.197.93:8080${pet.image_url}`}
                                             alt={pet.pet_name}
                                         />
                                         <GradientOverlay />

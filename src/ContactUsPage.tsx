@@ -126,7 +126,7 @@ const ContactUsPage: React.FC = () => {
 
     try {
       // Send POST request to the backend
-      const response = await axios.post("http://localhost:8080/api/contact/submit", formData);
+      const response = await axios.post("http://51.21.197.93:8080/api/contact/submit", formData);
 
       // Show success message
       setSnackbarMessage("Message sent successfully!");

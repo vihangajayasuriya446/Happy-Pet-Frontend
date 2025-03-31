@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Adoption } from './types';
 
-const API_URL = 'http://localhost:8080';
+const API_URL = 'http://51.21.197.93:8080';
 
 // Fetch all adoption applications
 export const fetchAllAdoptions = async (): Promise<Adoption[]> => {
