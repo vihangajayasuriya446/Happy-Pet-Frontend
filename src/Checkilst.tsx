@@ -239,7 +239,7 @@ const PetLoversChecklist = () => {
       }}>
         <Box sx={{
           backdropFilter: 'blur(12px)',
-          backgroundColor: 'rgba(255, 255, 255, 0.13)',
+          backgroundColor: 'rgba(255, 255, 255, 0.33)',
           borderRadius: 8,
           p: { xs: 2, sm: 4 },
           boxShadow: '0 8px 32px rgba(0, 51, 102, 0.05)',
