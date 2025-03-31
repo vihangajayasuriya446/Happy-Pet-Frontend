@@ -73,6 +73,16 @@ const HomePage: React.FC = () => {
     }, 1000);
   };
 
+  const article1 = () => {
+    navigate('/checklist');
+  };
+  const article2 = () => {
+    navigate('/petagecalculator');
+  };
+  const article3 = () => {
+    navigate('/FAQ');
+  };
+
   const FullHeightBox = styled(Box)({
     display: "flex",
     flexDirection: "column",
@@ -452,6 +462,7 @@ const HomePage: React.FC = () => {
             </Typography>
             <Button
               variant="outlined"
+              onClick={article1}
               sx={{
                 borderRadius: "20px",
                 textTransform: "none",
@@ -513,6 +524,7 @@ const HomePage: React.FC = () => {
             </Typography>
             <Button
               variant="outlined"
+              onClick={article2}
               sx={{
                 borderRadius: "20px",
                 textTransform: "none",
@@ -574,6 +586,7 @@ const HomePage: React.FC = () => {
             </Typography>
             <Button
               variant="outlined"
+              onClick={article3}
               sx={{
                 borderRadius: "20px",
                 textTransform: "none",
@@ -787,7 +800,7 @@ const HomePage: React.FC = () => {
                 />
               </Box>
               <Typography variant="h5" fontWeight="bold" sx={{ color: "text.primary", mb: 2 }}>
-                Dog Adoption Articles
+                Dog Adoption Guide
               </Typography>
               <Typography variant="body1" sx={{ color: "text.secondary", mb: 3 }}>
                 Learn more about caring for your new dog.
@@ -852,7 +865,7 @@ const HomePage: React.FC = () => {
                 />
               </Box>
               <Typography variant="h5" fontWeight="bold" sx={{ color: "text.primary", mb: 2 }}>
-                Cat Adoption Articles
+                Cat Adoption Guide
               </Typography>
               <Typography variant="body1" sx={{ color: "text.secondary", mb: 3 }}>
                 Helpful insights on what to expect.
@@ -917,7 +930,7 @@ const HomePage: React.FC = () => {
                 />
               </Box>
               <Typography variant="h5" fontWeight="bold" sx={{ color: "text.primary", mb: 2 }}>
-                Bird Adoption Articles
+                Bird Adoption Guide
               </Typography>
               <Typography variant="body1" sx={{ color: "text.secondary", mb: 3 }}>
                 Discover how to care for your new bird.

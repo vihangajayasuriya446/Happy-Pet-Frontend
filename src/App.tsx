@@ -31,6 +31,9 @@ import { CartProvider } from './contexts/CartContext'; // CHANGES - import the C
 import ScrollToTop from '../src/components/ScrollTop'; // Add this import
 import ResponsesPage from './ResponsePage';
 import SupportUsPage from './SupportUs';
+import PetLoversChecklist from './Checkilst';
+import PetAgeCalculator from './PetageCal';
+import FAQPage from './FAQ';
 
 const App: React.FC = () => {
   return (
@@ -67,6 +70,9 @@ const App: React.FC = () => {
           <Route path="/card-payment" element={<PaymentPage />} />
           <Route path="/contactusresponses" element={<ResponsesPage/>} />
           <Route path="/supportus" element={<SupportUsPage/>} />
+          <Route path="/checklist" element={<PetLoversChecklist/>} />
+          <Route path="/petagecalculator" element={<PetAgeCalculator/>} />
+          <Route path="/FAQ" element={<FAQPage/>} />
           <Route path="/dialog-payment" element={<DialogPayment isOpen={true} onClose={() => {}}  />} />
         </Routes>
         <Footer />

@@ -155,32 +155,48 @@ const PetGrid = () => {
     const renderContent = () => {
         if (loading) {
             return (
-                <Box sx={{ padding: '2rem', maxWidth: '1500px', margin: '0 auto', paddingTop: '80px' }}>
+                <Box sx={{ 
+                    padding: { xs: '4rem', md: '5rem' },
+                    maxWidth: '1500px',
+                    margin: '0 auto',
+                    paddingTop: '80px'
+                }}>
+                    {/* Glassmorphism Heading Box */}
                     <Box sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        mb: 4
+                        backdropFilter: 'blur(8px)',
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        borderRadius: '16px',
+                        padding: '2rem',
+                        marginBottom: '3rem',
+                        textAlign: 'center',
+                        boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.18)',
                     }}>
-                        <Box sx={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.54)',
-                            borderRadius: '16px',
-                            px: 4,
-                            py: 2,
-                            display: 'inline-block'
-                        }}>
-                            <Typography
-                                variant="h3"
-                                sx={{
-                                    textAlign: 'center',
-                                    fontWeight: 'bold',
-                                    color: '#003366',
-                                    fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' }
-                                }}
-                            >
-                                Adopt a Pet
-                            </Typography>
-                        </Box>
+                        <Typography
+                            variant="h3"
+                            sx={{
+                                color: '#000',
+                                fontWeight: 800,
+                                fontSize: { xs: '2.5rem', md: '3.5rem' },
+                                fontFamily: '"Nunito", sans-serif',
+                                textAlign: 'center',
+                                position: 'relative',
+                                display: 'inline-block',
+                                '&::after': {
+                                    content: '""',
+                                    position: 'absolute',
+                                    left: '25%',
+                                    bottom: '-10px',
+                                    width: '50%',
+                                    height: '4px',
+                                    backgroundColor: '#003366',
+                                }
+                            }}
+                        >
+                            Adopt a Pet
+                        </Typography>
                     </Box>
+                    
                     <Grid container spacing={4}>
                         {[...Array(8)].map((_, index) => (
                             <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
@@ -203,53 +219,76 @@ const PetGrid = () => {
 
         if (error) {
             return (
-                <Box sx={{ padding: '2rem', textAlign: 'center' }}>
-                    <Typography color="error">{error}</Typography>
-                    <Button
-                        variant="contained"
-                        sx={{ mt: 2 }}
-                        onClick={() => window.location.reload()}
-                    >
-                        Try Again
-                    </Button>
+                <Box sx={{ 
+                    padding: { xs: '3rem', md: '4rem' },
+                    maxWidth: '1500px',
+                    margin: '0 auto',
+                    paddingTop: '80px'
+                }}>
+                    <Box sx={{
+                        backdropFilter: 'blur(8px)',
+                        backgroundColor: 'rgba(255, 255, 255, 0.14)',
+                        borderRadius: '16px',
+                        padding: '2rem',
+                        marginBottom: '3rem',
+                        textAlign: 'center',
+                        boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.18)',
+                    }}>
+                        <Typography color="error">{error}</Typography>
+                        <Button
+                            variant="contained"
+                            sx={{ mt: 2 }}
+                            onClick={() => window.location.reload()}
+                        >
+                            Try Again
+                        </Button>
+                    </Box>
                 </Box>
             );
         }
 
         return (
-            <Box sx={{
-                padding: '2rem',
+            <Box sx={{ 
+                padding: { xs: '3rem', md: '4rem' },
                 maxWidth: '1500px',
                 margin: '0 auto',
                 paddingTop: '80px'
             }}>
-                {/* Centered heading with white transparent background */}
+                {/* Glassmorphism Heading Box */}
                 <Box sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    mb: 4
+                    backdropFilter: 'blur(8px)',
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '16px',
+                    padding: '2rem',
+                    marginBottom: '3rem',
+                    textAlign: 'center',
+                    boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
+                    border: '1px solid rgba(255, 255, 255, 0.18)',
                 }}>
-                    <Box sx={{
-                        backgroundColor: 'rgba(255, 255, 255, 0.39)',
-                        borderRadius: '16px',
-                        px: 4,
-                        py: 2,
-                        display: 'inline-block',
-                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)',
-                        backdropFilter: 'blur(5px)',
-                    }}>
-                        <Typography
-                            variant="h3"
-                            sx={{
-                                textAlign: 'center',
-                                fontWeight: 'bold',
-                                color: '#003366',
-                                fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' }
-                            }}
-                        >
-                            Adopt a Pet
-                        </Typography>
-                    </Box>
+                    <Typography
+                        variant="h3"
+                        sx={{
+                            color: '#000',
+                            fontWeight: 800,
+                            fontSize: { xs: '2.5rem', md: '3.5rem' },
+                            fontFamily: '"Nunito", sans-serif',
+                            textAlign: 'center',
+                            position: 'relative',
+                            display: 'inline-block',
+                            '&::after': {
+                                content: '""',
+                                position: 'absolute',
+                                left: '25%',
+                                bottom: '-10px',
+                                width: '50%',
+                                height: '4px',
+                                backgroundColor: '#003366',
+                            }
+                        }}
+                    >
+                        Adopt a Pet
+                    </Typography>
                 </Box>
 
                 <Grid container spacing={4}>
@@ -376,7 +415,7 @@ const PetGrid = () => {
                         <Grid item xs={12}>
                             <Box sx={{ textAlign: 'center', mt: 4 }}>
                                 <img
-                                    src="/no-pets-illustration.svg" // Add a placeholder illustration
+                                    src="/no-pets-illustration.svg"
                                     alt="No pets available"
                                     style={{ width: '200px', height: '200px' }}
                                 />

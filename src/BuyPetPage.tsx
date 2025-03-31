@@ -52,7 +52,7 @@ const BuyPetPage: React.FC = () => {
             >
                 <Container maxWidth="lg" sx={{ position: 'relative' }}>
                     <Box sx={{
-                        backgroundColor: 'rgba(255, 255, 255, 0.37)',
+                        backgroundColor: 'rgba(249, 247, 247, 0.04)',
                         borderRadius: '12px',
                         p: 3,
                         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.22)',
@@ -125,18 +125,29 @@ const BuyPetPage: React.FC = () => {
 
                             {/* Title in the center */}
                             <Typography
-                                variant="h3"
-                                sx={{
-                                    color: '#003366',
-                                    fontWeight: 800,
-                                    fontSize: { xs: '2rem', md: '3rem' },
-                                    fontFamily: '"Nunito", sans-serif',
-                                    textAlign: 'center',
-                                    order: { xs: 1, sm: 2 },
-                                }}
-                            >
-                                Buy a Pet
-                            </Typography>
+    variant="h3"
+    sx={{
+        color: 'black',
+        fontWeight: 800,
+        fontSize: { xs: '3rem', md: '4rem' },
+        fontFamily: '"Nunito", sans-serif',
+        textAlign: 'center',
+        order: { xs: 1, sm: 2 },
+        position: 'relative',
+        display: 'inline-block',
+        '&::after': {
+            content: '""',
+            position: 'absolute',
+            left: '25%', // This will start the underline at 25% of the text width
+            bottom: '-10px', // Adjust this to position the underline properly
+            width: '50%', // This will make the underline half the width of the text
+            height: '3.5px', // Adjust thickness as needed
+            backgroundColor: '#003366',
+        }
+    }}
+>
+    Buy a Pet
+</Typography>
 
                             {/* Empty Box to maintain layout balance */}
                             <Box
