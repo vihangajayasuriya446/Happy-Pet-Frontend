@@ -350,7 +350,7 @@ const HomePage: React.FC = () => {
               }}
             >
               <img
-                src="/src/assets/buy-pet.png"
+                src="/buy-pet.png"
                 alt="Buy Pet Icon"
                 style={{ width: "60%", height: "60%", objectFit: "contain" }}
               />
@@ -402,7 +402,7 @@ const HomePage: React.FC = () => {
               }}
             >
               <img
-                src="/src/assets/adopt_pet_icon.png"
+                src="/adopt_pet_icon.png"
                 alt="Adopt Pet Icon"
                 style={{ width: "60%", height: "60%", objectFit: "contain" }}
               />
@@ -454,7 +454,7 @@ const HomePage: React.FC = () => {
               }}
             >
               <img
-                src="/src/assets/matchmaking_icon.png"
+                src="/matchmaking_icon.png"
                 alt="Matchmaking Icon"
                 style={{ width: "60%", height: "60%", objectFit: "contain" }}
               />
@@ -535,7 +535,7 @@ const HomePage: React.FC = () => {
               }}
             >
               <img
-                src="/src/assets/checklist.png"
+                src="/checklist.png"
                 alt="Checklist Icon"
                 style={{ width: "60%", height: "60%", objectFit: "contain" }}
               />
@@ -597,7 +597,7 @@ const HomePage: React.FC = () => {
               }}
             >
               <img
-                src="/src/assets/pet-care.png"
+                src="/pet-care.png"
                 alt="Pet Care Icon"
                 style={{ width: "60%", height: "60%", objectFit: "contain" }}
               />
@@ -659,7 +659,7 @@ const HomePage: React.FC = () => {
               }}
             >
               <img
-                src="/src/assets/help.png"
+                src="/help.png"
                 alt="FAQ Icon"
                 style={{ width: "60%", height: "60%", objectFit: "contain" }}
               />
@@ -1284,7 +1284,7 @@ const HomePage: React.FC = () => {
                 }}
               >
                 <img
-                  src="/src/assets/dog-icon.png"
+                  src="/dog-icon.png"
                   alt="Dog Icon"
                   style={{ width: "60%", height: "60%", objectFit: "contain" }}
                 />
@@ -1349,7 +1349,7 @@ const HomePage: React.FC = () => {
                 }}
               >
                 <img
-                  src="/src/assets/cat-icon.png"
+                  src="/cat-icon.png"
                   alt="Cat Icon"
                   style={{ width: "60%", height: "60%", objectFit: "contain" }}
                 />
@@ -1414,7 +1414,7 @@ const HomePage: React.FC = () => {
                 }}
               >
                 <img
-                  src="/src/assets/bird-icon.png"
+                  src="/bird-icon.png"
                   alt="Bird Icon"
                   style={{ width: "60%", height: "60%", objectFit: "contain" }}
                 />
