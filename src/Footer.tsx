@@ -27,7 +27,7 @@ const Footer = () => {
         {/* Logo & Basic Links */}
         <Grid item xs={12} sm={3} textAlign={{ xs: "center", sm: "left" }}>
           <img
-            src="/src/assets/logo512.png"
+            src="/logo512.png"
             alt="Happy Pet"
             style={{
               height: 120,
