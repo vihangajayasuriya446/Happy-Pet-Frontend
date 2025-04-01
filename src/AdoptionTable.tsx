@@ -182,7 +182,7 @@ const PetTable: React.FC<PetTableProps> = ({ rows, deletePet, onOpenForm, onEdit
                       {row.image_url && (
                         <Avatar
                           alt={row.pet_name}
-                          src={`http://51.21.197.93:8080${row.image_url}`}
+                          src={`http://13.60.206.42:8080${row.image_url}`}
                           sx={{ width: 50, height: 50, margin: "0 auto" }}
                         />
                       )}

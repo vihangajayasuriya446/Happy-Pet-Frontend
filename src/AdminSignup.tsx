@@ -35,7 +35,7 @@ const AdminSignup: React.FC = () => {
         setIsSignupLoading(true);
 
         try {
-            const response = await fetch('http://51.21.197.93:8080/api/auth/register-admin?secretKey=vihanga-2022', {
+            const response = await fetch('http://13.60.206.42:8080/api/auth/register-admin?secretKey=vihanga-2022', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
