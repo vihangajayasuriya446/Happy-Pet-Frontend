@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-// Enhanced Glass Morphism Styling with better readability
+// Enhanced Glass Morphism effects Styling with better readability
 const GlassPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
   textAlign: 'center',
