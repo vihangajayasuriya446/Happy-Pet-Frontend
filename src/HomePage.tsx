@@ -1094,6 +1094,7 @@ const HomePage: React.FC = () => {
               backdropFilter: "blur(10px)",
             }}
           >
+            
             <CardMedia
               component="img"
               sx={{ height: 200, width: "100%", objectFit: "cover", borderRadius: "24px 24px 0 0" }}
