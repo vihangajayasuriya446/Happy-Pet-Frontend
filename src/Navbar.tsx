@@ -545,12 +545,12 @@ const DrawerMenu = ({ open, toggleDrawer }: DrawerMenuProps) => {
         "& .MuiDrawer-paper": {
           width: 300,
           boxSizing: "border-box",
-          bgcolor: "rgba(248, 249, 250, 0.1)", // Soft gray background
-          backdropFilter: "blur(10px)", // Enhanced glass morphism effect
-          WebkitBackdropFilter: "blur(20px)", // Safari support
+          bgcolor: "rgba(248, 249, 250, 0.1)",
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(20px)",
           boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
-          borderRight: "1px solid rgba(0, 0, 0, 0.1)", // Subtle border
-          backgroundImage: "linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.6))", // Gradient overlay
+          borderRight: "1px solid rgba(0, 0, 0, 0.1)",
+          backgroundImage: "linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.6))",
         },
       }}
     >
@@ -588,36 +588,43 @@ const DrawerMenu = ({ open, toggleDrawer }: DrawerMenuProps) => {
         >
           Menu
         </Typography>
-        <List sx={{ width: "100%" }}>
-          {[
-            { name: "Pet Buy", path: "/buy" },
-            { name: "Pet Adopt", path: "/adopt" },
-            { name: "Matchmaking", path: "/matchmaking" },
-          ].map((item) => (
-            <ListItem
-              key={item.name}
-              onClick={() => handleNavigation(item.path)}
-              sx={{
-                cursor: "pointer",
-                borderRadius: "12px",
-                "&:hover": {
-                  bgcolor: "rgba(0, 123, 255, 0.1)",
-                  transform: "translateX(5px)",
-                  transition: "all 0.3s ease",
-                },
-              }}
-            >
-              <ListItemText
-                primary={item.name}
+
+        {loading ? (
+          <Box display="flex" justifyContent="center" p={3}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <List sx={{ width: "100%" }}>
+            {[
+              { name: "Pet Buy", path: "/buy" },
+              { name: "Pet Adopt", path: "/adopt" },
+              { name: "Matchmaking", path: "/matchmaking" },
+            ].map((item) => (
+              <ListItem
+                key={item.name}
+                onClick={() => handleNavigation(item.path)}
                 sx={{
-                  color: "#333333",
-                  fontWeight: "500",
-                  "&:hover": { color: "#007BFF" },
+                  cursor: "pointer",
+                  borderRadius: "12px",
+                  "&:hover": {
+                    bgcolor: "rgba(0, 123, 255, 0.1)",
+                    transform: "translateX(5px)",
+                    transition: "all 0.3s ease",
+                  },
                 }}
-              />
-            </ListItem>
-          ))}
-        </List>
+              >
+                <ListItemText
+                  primary={item.name}
+                  sx={{
+                    color: "#333333",
+                    fontWeight: "500",
+                    "&:hover": { color: "#007BFF" },
+                  }}
+                />
+              </ListItem>
+            ))}
+          </List>
+        )}
       </Box>
     </Drawer>
   );

@@ -5,18 +5,16 @@ import {
     Typography,
     Button,
     Box,
-    IconButton,
+    
     Snackbar,
     Alert,
     CircularProgress,
     Chip,
-    Tooltip,
+    
     Divider
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
+
 import EmailIcon from "@mui/icons-material/Email";
-import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import { useCart } from "../contexts/CartContext";
@@ -80,7 +78,7 @@ const derivePetTypeFromBreed = (breed: string): string => {
 
 const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
     const navigate = useNavigate();
-    const [quantity, setQuantity] = useState(0);
+   
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [isAdding, setIsAdding] = useState(false);
     const { addToCart, loading , isPetInCart } = useCart();
@@ -112,41 +110,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet, onAdopt }) => {
         setPetType(type);
     }, [pet.imageUrl, pet.image, pet.id, pet.name, pet.petType, pet.breed]);
 
-    // Updated to explicitly increment by 1
-    const handleIncrement = () => {
-        setQuantity(prevQuantity => prevQuantity + 1);
-    };
 
-    // Updated to explicitly decrement by 1
-    const handleDecrement = () => {
-        if (quantity > 0) {
-            setQuantity(prevQuantity => prevQuantity - 1);
-        }
-    };
-
-    const handleAddToCart = async () => {
-        if (quantity > 0) {
-            setIsAdding(true);
-            try {
-                console.log("Adding pet to bag with image:", {
-                    petId: pet.id,
-                    petName: pet.name,
-                    imageUrl: resolvedImageUrl,
-                    petType: petType,
-                    quantity: quantity
-                });
-
-                // Pass the entire pet object with type information
-                await addToCart({...pet, petType}, quantity);
-                setSnackbarOpen(true);
-                setQuantity(0);
-            } catch (error) {
-                console.error("Error adding to bag:", error);
-            } finally {
-                setIsAdding(false);
-            }
-        }
-    };
 
     // Handler for "Contact the owner" button - updated to store pet type information
     const handleContactOwner = () => {

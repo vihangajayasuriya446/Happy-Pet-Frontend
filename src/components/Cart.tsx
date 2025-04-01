@@ -5,10 +5,9 @@ import {
     CircularProgress
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
+
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import { useCart } from "../contexts/CartContext";
 import Toast from "../components/Toast";
@@ -93,12 +92,7 @@ interface CartProps {
 }
 
 // Helper function to ensure number type
-const ensureNumber = (value: string | number): number => {
-    if (typeof value === 'string') {
-        return parseInt(value, 10);
-    }
-    return value;
-};
+
 
 // Cache for resolved image URLs to avoid repeated processing
 const imageCache: Record<string, string> = {};
@@ -217,7 +211,7 @@ const determinePetType = (pet: CartPet): string => {
 
 const Cart: React.FC<CartProps> = ({ open, onClose }) => {
     const navigate = useNavigate();
-    const { items, removeFromCart, updateQuantity, clearCart, loading, getCartTotal } = useCart();
+    const { items, removeFromCart, clearCart, loading, getCartTotal } = useCart();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -361,51 +355,12 @@ const Cart: React.FC<CartProps> = ({ open, onClose }) => {
         }
     }, [open, items, handleImageError]);
 
-    const handleCheckout = () => {
-        // Just close the cart drawer
-        onClose();
-
-        // Optional: log for development purposes
-        console.log("Checkout clicked, total:", getCartTotal().toFixed(2));
-    };
+   
 
     // Handle quantity increment without showing notifications
-    const handleIncrement = async (id: string | number, e: React.MouseEvent) => {
-        e.stopPropagation();
-        try {
-            // Call the updateQuantity function but don't show a notification
-            await updateQuantity(id, 'plus');
-        } catch (error) {
-            console.error("Error increasing quantity:", error);
-            // Only show notification for errors
-            setToast({
-                open: true,
-                message: 'Failed to update quantity',
-                type: 'error'
-            });
-        }
-    };
-
+    
     // Handle quantity decrement without showing notifications
-    const handleDecrement = async (id: string | number, e: React.MouseEvent) => {
-        e.stopPropagation();
-        const idAsNumber = ensureNumber(id);
-        const item = items.find(item => ensureNumber(item.pet.id) === idAsNumber);
-        if (item && item.quantity > 1) {
-            try {
-                // Call the updateQuantity function but don't show a notification
-                await updateQuantity(id, 'minus');
-            } catch (error) {
-                console.error("Error decreasing quantity:", error);
-                // Only show notification for errors
-                setToast({
-                    open: true,
-                    message: 'Failed to update quantity',
-                    type: 'error'
-                });
-            }
-        }
-    };
+    
 
     const handleRemove = async (id: string | number, e: React.MouseEvent) => {
         e.stopPropagation();

@@ -6,9 +6,6 @@ import {
   Container,
   Grid,
   Paper,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
   Snackbar,
   Alert,
   Select,
@@ -17,7 +14,7 @@ import {
   InputLabel,
 } from "@mui/material";
 import React, { useState } from "react";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
 import axios from "axios";
 
 const ContactUsPage: React.FC = () => {
@@ -115,34 +112,32 @@ const ContactUsPage: React.FC = () => {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Validate form before submission
+  
     if (!validateForm()) {
       setSnackbarMessage("Please fix the errors in the form.");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
       return;
     }
-
+  
     try {
-      // Send POST request to the backend
       const response = await axios.post("http://13.60.206.42:8080/api/contact/submit", formData);
-
-      // Show success message
-      setSnackbarMessage("Message sent successfully!");
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
-
-      // Clear the form
+      
+      // Use the response data if needed
+      if (response.status === 200) {
+        setSnackbarMessage(response.data.message || "Message sent successfully!");
+        setSnackbarSeverity("success");
+        setSnackbarOpen(true);
+      }
+  
       setFormData({
         name: "",
         email: "",
         subject: "",
         message: "",
-        status: "New", // Reset status to default
+        status: "New",
       });
     } catch (error) {
-      // Show error message
       setSnackbarMessage("Failed to send message. Please try again.");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);

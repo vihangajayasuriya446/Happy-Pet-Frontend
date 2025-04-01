@@ -14,7 +14,7 @@ const AppRouter = () => {
         <Route path="/payment" element={<PaymentPage />} />
         <Route 
           path="/dialog-payment" 
-          element={<DialogPayment isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} amountToPay={50} />} 
+          element={<DialogPayment isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)}  />} 
         />
       </Routes>
     </Router>

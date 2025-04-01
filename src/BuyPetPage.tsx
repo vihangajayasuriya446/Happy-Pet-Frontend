@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, Typography, Container, FormControl, Select, MenuItem, SelectChangeEvent, Snackbar, Alert } from "@mui/material";
-import { useCart } from "./contexts/CartContext";
+
 import PetList from "./components/PetList";
 import DrawerMenu from "./components/DrawerMenu";
 import Cart from "./components/Cart";
@@ -10,8 +10,8 @@ const BuyPetPage: React.FC = () => {
     const [cartOpen, setCartOpen] = useState(false);
     const [searchQuery] = useState('');
     const [petType, setPetType] = useState<string>('all');
-    const { getItemCount } = useCart();
-    const itemCount = getItemCount();
+    
+   
 
     const [snackbarOpen, setSnackbarOpen] = useState(false);
 

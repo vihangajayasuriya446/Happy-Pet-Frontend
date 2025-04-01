@@ -7,7 +7,7 @@ import {
   AccordionDetails,
   Box,
   useTheme,
-  useMediaQuery,
+  
   styled,
   Fab
 } from '@mui/material';
@@ -35,12 +35,7 @@ const StyledAccordion = styled(Accordion)(({ theme }) => ({
   }
 }));
 
-const SectionHeader = styled(Typography)(({ theme }) => ({
-  marginBottom: theme.spacing(2),
-  color: '#003366',
-  fontWeight: 600,
-  fontSize: '1.5rem'
-}));
+
 
 interface FAQItem {
   question: string;
@@ -49,7 +44,7 @@ interface FAQItem {
 
 const FAQPage: React.FC = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  
   const [expanded, setExpanded] = useState<string | false>(false);
   const [showScroll, setShowScroll] = useState(false);
 
@@ -128,7 +123,7 @@ const FAQPage: React.FC = () => {
     }
   ];
 
-  const handleChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+  const handleChange = (panel: string) => (_event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded ? panel : false);
   };
 

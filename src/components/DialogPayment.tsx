@@ -37,7 +37,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = () => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const { getCartTotal, clearCart , getCartPetIds } = useCart();
   const navigate = useNavigate();
-  const [amountToPay , setAmountToPay ] = useState(getCartTotal())
+  const [amountToPay  ] = useState(getCartTotal())
   const [paymentSuccess , setPaymentSuccess] = useState(false)
 
   useEffect(() => {

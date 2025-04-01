@@ -18,7 +18,7 @@ import {
   CardContent,
   Alert,
   Fab,
-  Paper,
+
   Container,
   useTheme,
   styled
@@ -26,7 +26,7 @@ import {
 import {
   KeyboardArrowUp as KeyboardArrowUpIcon,
   Pets as PetsIcon,
-  Info as InfoIcon
+  
 } from '@mui/icons-material';
 import petImage from './assets/Picture.jpg';
 
@@ -60,17 +60,17 @@ const StyledTable = styled(TableContainer)(({ theme }) => ({
   marginBottom: theme.spacing(3)
 }));
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
+const StyledTableCell = styled(TableCell)({
   borderBottom: '1px solid rgba(0, 51, 102, 0.1)',
   fontWeight: 500,
   fontSize: '1rem'
-}));
+});
 
-const StyledTableHeadCell = styled(TableCell)(({ theme }) => ({
+const StyledTableHeadCell = styled(TableCell)({
   fontWeight: 600,
   backgroundColor: 'rgba(0, 51, 102, 0.05)',
   fontSize: '1.1rem'
-}));
+});
 
 // Type definitions
 type PetType = 'dog' | 'cat' | 'bird';

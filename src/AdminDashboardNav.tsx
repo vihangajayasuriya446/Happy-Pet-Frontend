@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Box, Typography, IconButton, useTheme } from '@mui/material';
+import { Box, Typography, IconButton } from '@mui/material';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import Sidebar from './Sidebar'; // Adjust the import path as necessary
 
 const AdminDashboardNav: React.FC = () => {
-  const theme = useTheme();
+  
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {

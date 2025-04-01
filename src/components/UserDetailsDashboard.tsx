@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import {
     Box,
-    Button,
+   
     Snackbar,
     Alert,
     CircularProgress,
 } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
 import { InquiryService } from '../services/InquiryService';
 import UserDetailsForm, { UserInquiry } from './UserDetailsForm';
 
@@ -259,10 +259,7 @@ const UserDetailsDashboard1: React.FC = () => {
     };
 
     // Navigation function to go back to the "Buy a Pet" page
-    const goBackToPetList = () => {
-        navigate('/');
-    };
-
+   
     const resetForm = () => {
         setSelectedInquiry(null);
         setSubmitted(false);
