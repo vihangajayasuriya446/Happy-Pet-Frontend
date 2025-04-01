@@ -1,4 +1,4 @@
-// CHANGES - Imported cart icon and drawer to navbar . now cart can be obened through navbar
+// CHANGES - Imported cart icon and drawer to navbar . now cart can be obened through the navbar
 import { useState, MouseEvent } from "react";
 import {
   AppBar,
