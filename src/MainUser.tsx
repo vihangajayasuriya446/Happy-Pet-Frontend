@@ -118,7 +118,7 @@ const MainPage = () => {
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
       const response = await fetch(
-        `http://51.21.197.93:8080/api/v1/getfetchedusers?${queryParams.toString()}`,
+        `http://13.60.206.42:8080/api/v1/getfetchedusers?${queryParams.toString()}`,
         {
           method: "GET",
           headers: {

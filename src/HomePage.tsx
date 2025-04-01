@@ -56,7 +56,7 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     const fetchAdoptPets = async () => {
       try {
-        const response = await fetch("http://51.21.197.93:8080/api/pets/available");
+        const response = await fetch("http://13.60.206.42:8080/api/pets/available");
         if (!response.ok) {
           throw new Error("Failed to fetch adoptable pets");
         }
@@ -72,7 +72,7 @@ const HomePage: React.FC = () => {
           pet_breed: pet.pet_breed,
           pet_adoptionStatus: pet.pet_adoptionStatus,
           pet_photo: pet.pet_photo,
-          image_url: pet.image_url ? `http://51.21.197.93:8080${pet.image_url}` : "/images/default-pet-image.png", // Fallback for missing image_url
+          image_url: pet.image_url ? `http://13.60.206.42:8080${pet.image_url}` : "/images/default-pet-image.png", // Fallback for missing image_url
           status: pet.status,
         }));
   
@@ -99,7 +99,7 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
     axios
-      .get<Pet[]>("http://51.21.197.93:8080/api/v1/pets") // Use the Pet type here
+      .get<Pet[]>("http://13.60.206.42:8080/api/v1/pets") // Use the Pet type here
       .then((response) => {
         // Filter out purchased pets
         const availablePets = response.data.filter((pet) => !pet.purchased);
@@ -113,7 +113,7 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
     axios
-      .get("http://51.21.197.93:8080/api/v1/getusers")
+      .get("http://13.60.206.42:8080/api/v1/getusers")
       .then((response) => {
         setPets(response.data);
       })
@@ -1097,7 +1097,7 @@ const HomePage: React.FC = () => {
             <CardMedia
               component="img"
               sx={{ height: 200, width: "100%", objectFit: "cover", borderRadius: "24px 24px 0 0" }}
-              image={pet.imageUrl ? `http://51.21.197.93:8080${pet.imageUrl}` : "/src/assets/pet-placeholder.png"}
+              image={pet.imageUrl ? `http://13.60.206.42:8080${pet.imageUrl}` : "/src/assets/pet-placeholder.png"}
 
               alt={pet.name}
             />

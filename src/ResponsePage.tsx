@@ -64,7 +64,7 @@ const ResponsesPage: React.FC = () => {
 
   const fetchResponses = async () => {
     try {
-      const response = await axios.get("http://51.21.197.93:8080/api/contact/responses");
+      const response = await axios.get("http://13.60.206.42:8080/api/contact/responses");
       const sortedResponses = response.data.sort((a: ContactFormResponse, b: ContactFormResponse) => b.id - a.id);
       setResponses(sortedResponses);
       setFilteredResponses(sortedResponses);
@@ -112,7 +112,7 @@ const ResponsesPage: React.FC = () => {
   const handleDeleteConfirm = async () => {
     if (selectedResponseId !== null) {
       try {
-        await axios.delete(`http://51.21.197.93:8080/api/contact/delete/${selectedResponseId}`);
+        await axios.delete(`http://13.60.206.42:8080/api/contact/delete/${selectedResponseId}`);
         setResponses(responses.filter((response) => response.id !== selectedResponseId));
         setFilteredResponses(filteredResponses.filter((response) => response.id !== selectedResponseId));
         showSnackbar("Response deleted successfully!", "success");
@@ -138,7 +138,7 @@ const ResponsesPage: React.FC = () => {
         };
         
         const result = await axios.put(
-          `http://51.21.197.93:8080/api/contact/update-status/${response.id}`,
+          `http://13.60.206.42:8080/api/contact/update-status/${response.id}`,
           updatedResponse
         );
         

@@ -87,7 +87,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
 
   const fetchUserDetails = async (userId: number) => {
     try {
-      const response = await axios.get<UserDetails>(`http://51.21.197.93:8080/api/v1/users/${userId}`);
+      const response = await axios.get<UserDetails>(`http://13.60.206.42:8080/api/v1/users/${userId}`);
       setUserDetails(response.data);
     } catch (error) {
       console.error('Error fetching user details:', error);
@@ -125,7 +125,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
         };
         
         // Make PUT request to update user
-        const response = await axios.put(`http://51.21.197.93:8080/api/v1/users/update/${user_id}`, userData);
+        const response = await axios.put(`http://13.60.206.42:8080/api/v1/users/update/${user_id}`, userData);
         console.log('User details updated successfully:', response.data);
         // Handle success
       } catch (error) {
