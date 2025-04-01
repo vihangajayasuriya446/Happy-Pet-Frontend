@@ -39,7 +39,7 @@ const PaymentPage: React.FC = () => {
       let response;
       
       if (paymentDetails.paymentMethod === "Card") {
-        response = await axios.post("http://13.60.206.42:8080/api/payment/card", {
+        response = await axios.post("/api/payment/card", {
           amount: paymentDetails.amount,
           cardNumber: paymentDetails.cardNumber,
           cvv: paymentDetails.cvv,
@@ -47,7 +47,7 @@ const PaymentPage: React.FC = () => {
           expiryYear: paymentDetails.expiryYear,
         });
       } else {
-        response = await axios.post("http://13.60.206.42:8080/api/payment/ezcash", {
+        response = await axios.post("/api/payment/ezcash", {
           amount: paymentDetails.amount,
           phone: paymentDetails.phoneNumber,
         });

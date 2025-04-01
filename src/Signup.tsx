@@ -40,7 +40,7 @@ const Signup: React.FC = () => {
         }
 
         try {
-            const response = await fetch('http://13.60.206.42:8080/api/auth/register', {
+            const response = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ...formData, role: 'user' }),

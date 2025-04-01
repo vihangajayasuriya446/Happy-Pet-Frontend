@@ -28,7 +28,7 @@ interface PetListProps {
     enableContactOwner?: boolean;
 }
 
-const API_BASE_URL = 'http://13.60.206.42:8080';
+const API_BASE_URL = '';
 const PETS_API_URL = `${API_BASE_URL}/api/v1/pets`;
 
 // Helper function to determine pet type with equal consideration for dog, cat, and bird

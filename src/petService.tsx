@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Pet } from './types';
 
-const API_URL = 'http://13.60.206.42:8080';
+const API_URL = '';
 
 export const fetchAvailablePets = async (): Promise<Pet[]> => {
   try {

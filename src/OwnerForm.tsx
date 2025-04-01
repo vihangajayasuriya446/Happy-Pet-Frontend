@@ -41,7 +41,7 @@ const OwnerForm: React.FC = () => {
     }
 
     try {
-      const response = await fetch('http://13.60.206.42:8080/api/v1/addowner', {
+      const response = await fetch('/api/v1/addowner', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -121,7 +121,7 @@ const ContactUsPage: React.FC = () => {
     }
   
     try {
-      const response = await axios.post("http://13.60.206.42:8080/api/contact/submit", formData);
+      const response = await axios.post("/api/contact/submit", formData);
       
       // Use the response data if needed
       if (response.status === 200) {

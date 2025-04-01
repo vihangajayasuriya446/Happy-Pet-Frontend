@@ -59,9 +59,9 @@ export interface UserWithInquiriesDTO {
 }
 
 // API endpoints
-const API_BASE_URL = "http://13.60.206.42:8080/api/v1/pets";
-const USER_API_URL = "http://13.60.206.42:8080/api/v1/getusers";
-const INQUIRY_API_URL = "http://13.60.206.42:8080/api/v1/inquiries";
+const API_BASE_URL = "/api/v1/pets";
+const USER_API_URL = "/api/v1/getusers";
+const INQUIRY_API_URL = "/api/v1/inquiries";
 
 // InquiryService class
 export class InquiryService {

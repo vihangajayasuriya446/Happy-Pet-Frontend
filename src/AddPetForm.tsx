@@ -19,7 +19,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import React from "react";
 
 // API endpoints
-const API_BASE_URL = "http://13.60.206.42:8080/api/v1/pets";
+const API_BASE_URL = "/api/v1/pets";
 
 interface PetData {
     id: string | number;

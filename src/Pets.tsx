@@ -25,7 +25,7 @@ const Pets: React.FC = () => {
   const { data: pets = [] as Pet[] } = useQuery<Pet[], Error>({
     queryKey: ["pets"],
     queryFn: async () => {
-      const response = await axios.get("http://13.60.206.42:8080/api/v1/gets");
+      const response = await axios.get("/api/v1/gets");
       // Map backend model to frontend model
       return (response.data as { pet_id: number; pet_name: string; pet_species: string; pet_age: number; pet_gender: PetGender; pet_breed: string; status: PetStatus; pet_description: string; image_url: string; created_at: string }[]).map((pet) => ({
         pet_id: pet.pet_id,
@@ -47,7 +47,7 @@ const Pets: React.FC = () => {
   // Add a pet
   const addPetMutation = useMutation({
     mutationFn: async (data: FormData) => {
-      const response = await axios.post("http://13.60.206.42:8080/api/v1/addpet", data, {
+      const response = await axios.post("/api/v1/addpet", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       return response.data;
@@ -63,7 +63,7 @@ const Pets: React.FC = () => {
   // Update a pet
   const updatePetMutation = useMutation({
     mutationFn: async (data: FormData) => {
-      const response = await axios.put("http://13.60.206.42:8080/api/v1/updatepet", data, {
+      const response = await axios.put("/api/v1/updatepet", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       return response.data;
@@ -79,7 +79,7 @@ const Pets: React.FC = () => {
   // Delete a pet
   const deletePetMutation = useMutation({
     mutationFn: async (id: number) => {
-      const response = await axios.delete(`http://13.60.206.42:8080/api/v1/deletepet/${id}`);
+      const response = await axios.delete(`/api/v1/deletepet/${id}`);
       return response.data;
     },
     onSuccess: () => {
