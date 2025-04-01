@@ -7,6 +7,10 @@
     {
       "source": "/uploads/:path*",
       "destination": "http://13.60.206.42:8080/uploads/:path*"
+    },
+    {
+      "source": "/images/**",
+      "destination": "http://13.60.206.42:8080/images/**"
     }
   ],
   "headers": [
