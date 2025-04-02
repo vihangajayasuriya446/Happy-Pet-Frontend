@@ -691,7 +691,6 @@ const HomePage: React.FC = () => {
         </Box>
       </Box>
 
-
       <Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2 }}>
   {/* Matchmaking Section */}
   <Typography
@@ -703,18 +702,24 @@ const HomePage: React.FC = () => {
       position: "relative",
       zIndex: 2,
       textShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
+      fontSize: { xs: "1.8rem", sm: "2.2rem", md: "2.5rem" } // Responsive font size
     }}
   >
     Available Pets for Matchmaking
   </Typography>
 
   <Box
-    display="grid"
-    gridTemplateColumns="repeat(auto-fit, minmax(250px, 1fr))"
-    gap={4}
-    justifyContent="center"
-    width="100%"
-    maxWidth="1200px"
+    sx={{
+      display: "flex",
+      flexDirection: { xs: "column", sm: "row" }, // Stack vertically on mobile, row on larger screens
+      flexWrap: "wrap",
+      justifyContent: "center",
+      gap: 4,
+      width: "100%",
+      maxWidth: "1200px",
+      overflowX: { xs: "auto", sm: "visible" }, // Allow horizontal scrolling on mobile if needed
+      px: { xs: 2, sm: 0 } // Add some padding on mobile
+    }}
   >
     {/* Display up to 3 pets - show empty cards if less than 3 */}
     {[...Array(3)].map((_, index) => {
@@ -724,6 +729,9 @@ const HomePage: React.FC = () => {
           <Card
             key={pet.id}
             sx={{
+              minWidth: 240, // Fixed minimum width
+              width: 240, // Fixed width
+              height: 300, // Fixed height
               borderRadius: "24px",
               transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
               "&:hover": {
@@ -732,7 +740,6 @@ const HomePage: React.FC = () => {
               },
               display: "flex",
               flexDirection: "column",
-              height: "100%",
               backgroundColor: "rgba(255, 255, 255, 0.6)",
               border: "1px solid rgba(255, 255, 255, 0.1)",
               backdropFilter: "blur(10px)",
@@ -740,11 +747,23 @@ const HomePage: React.FC = () => {
           >
             <CardMedia
               component="img"
-              sx={{ height: 200, width: "100%", objectFit: "cover", borderRadius: "24px 24px 0 0" }}
+              sx={{ 
+                height: 140, // Slightly reduced height for mobile
+                width: "100%", 
+                objectFit: "cover", 
+                borderRadius: "24px 24px 0 0" 
+              }}
               image={`data:image/jpeg;base64,${pet.photo}`}
               alt={pet.name}
             />
-            <CardContent sx={{ flexGrow: 1, textAlign: "center", p: 3 }}>
+            <CardContent sx={{ 
+              flexGrow: 1, 
+              textAlign: "center", 
+              p: 2, // Reduced padding for mobile
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center"
+            }}>
               <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ color: "text.primary" }}>
                 {pet.name}
               </Typography>
@@ -771,10 +790,12 @@ const HomePage: React.FC = () => {
           <Card
             key={`empty-${index}`}
             sx={{
+              minWidth: 240,
+              width: 240,
+              height: 300,
               borderRadius: "24px",
               display: "flex",
               flexDirection: "column",
-              height: "100%",
               backgroundColor: "rgba(255, 255, 255, 0.3)",
               border: "1px dashed rgba(255, 255, 255, 0.5)",
               backdropFilter: "blur(10px)",
@@ -784,7 +805,7 @@ const HomePage: React.FC = () => {
             <CardMedia
               component="div"
               sx={{ 
-                height: 200, 
+                height: 140,
                 width: "100%", 
                 display: "flex", 
                 alignItems: "center", 
@@ -797,9 +818,16 @@ const HomePage: React.FC = () => {
                 No pet available
               </Typography>
             </CardMedia>
-            <CardContent sx={{ flexGrow: 1, textAlign: "center", p: 3 }}>
+            <CardContent sx={{ 
+              flexGrow: 1, 
+              textAlign: "center", 
+              p: 2,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center"
+            }}>
               <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ color: "text.primary" }}>
-              No pet available
+                No pet available
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 <strong>Breed:</strong> -
@@ -819,6 +847,9 @@ const HomePage: React.FC = () => {
     {/* "More Pets" Card for Matchmaking */}
     <Card
       sx={{
+        minWidth: 240,
+        width: 240,
+        height: 300,
         borderRadius: "16px",
         backdropFilter: "blur(10px)",
         backgroundColor: "rgba(255, 255, 255, 0.6)",
@@ -830,26 +861,35 @@ const HomePage: React.FC = () => {
           boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
         },
         cursor: "pointer",
-        p: 4,
+        p: 2, // Reduced padding for mobile
         textAlign: "center",
-        maxWidth: "400px",
-        margin: "auto",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center"
       }}
       onClick={() => handleNavigation("/matchmaking")}
     >
-      <Box sx={{ p: 3 }}>
+      <Box sx={{ p: 2 }}>
         <FavoriteBorderIcon
           sx={{
-            fontSize: 80,
-            mb: 3,
+            fontSize: 60, // Smaller icon for mobile
+            mb: 2,
             color: "primary.main",
             filter: "drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1))",
           }}
         />
-        <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ color: "#333", mb: 2 }}>
+        <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ 
+          color: "#333", 
+          mb: 2,
+          fontSize: "1.2rem" // Smaller font for mobile
+        }}>
           See more pets
         </Typography>
-        <Typography variant="body1" sx={{ color: "#666", mb: 3 }}>
+        <Typography variant="body1" sx={{ 
+          color: "#666", 
+          mb: 2,
+          fontSize: "0.9rem" // Smaller font for mobile
+        }}>
           for Match
         </Typography>
         <Button
@@ -864,6 +904,8 @@ const HomePage: React.FC = () => {
               backgroundColor: "primary.main",
               color: "white",
             },
+            fontSize: "0.8rem", // Smaller button text for mobile
+            padding: "6px 16px" // Smaller button padding
           }}
         >
           Meet Them
@@ -875,16 +917,25 @@ const HomePage: React.FC = () => {
 
 {/* Adopt a Pet Section */}
 <Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2 }}>
-  <Typography variant="h4" fontWeight="bold" mb={4} sx={{ color: "#FFFFFF", textShadow: "0 0 10px rgba(0, 0, 0, 0.5)" }}>
+  <Typography variant="h4" fontWeight="bold" mb={4} sx={{ 
+    color: "#FFFFFF", 
+    textShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
+    fontSize: { xs: "1.8rem", sm: "2.2rem", md: "2.5rem" } // Responsive font size
+  }}>
     Available Pets for Adoption
   </Typography>
   <Box
-    display="grid"
-    gridTemplateColumns="repeat(auto-fit, minmax(250px, 1fr))"
-    gap={4}
-    justifyContent="center"
-    width="100%"
-    maxWidth="1200px"
+    sx={{
+      display: "flex",
+      flexDirection: { xs: "column", sm: "row" },
+      flexWrap: "wrap",
+      justifyContent: "center",
+      gap: 4,
+      width: "100%",
+      maxWidth: "1200px",
+      overflowX: { xs: "auto", sm: "visible" },
+      px: { xs: 2, sm: 0 }
+    }}
   >
     {/* Display up to 3 adoptable pets - show empty cards if less than 3 */}
     {[...Array(3)].map((_, index) => {
@@ -894,6 +945,9 @@ const HomePage: React.FC = () => {
           <Card
             key={pet.pet_id}
             sx={{
+              minWidth: 240,
+              width: 240,
+              height: 300,
               borderRadius: "24px",
               transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
               "&:hover": {
@@ -902,7 +956,6 @@ const HomePage: React.FC = () => {
               },
               display: "flex",
               flexDirection: "column",
-              height: "100%",
               backgroundColor: "rgba(255, 255, 255, 0.6)",
               border: "1px solid rgba(255, 255, 255, 0.1)",
               backdropFilter: "blur(10px)",
@@ -910,11 +963,23 @@ const HomePage: React.FC = () => {
           >
             <CardMedia
               component="img"
-              sx={{ height: 200, width: "100%", objectFit: "cover", borderRadius: "24px 24px 0 0" }}
+              sx={{ 
+                height: 140,
+                width: "100%", 
+                objectFit: "cover", 
+                borderRadius: "24px 24px 0 0" 
+              }}
               image={pet.image_url || "/images/default-pet-image.png"}
               alt={pet.pet_name}
             />
-            <CardContent sx={{ flexGrow: 1, textAlign: "center", p: 3 }}>
+            <CardContent sx={{ 
+              flexGrow: 1, 
+              textAlign: "center", 
+              p: 2,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center"
+            }}>
               <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ color: "text.primary" }}>
                 {pet.pet_name}
               </Typography>
@@ -946,10 +1011,12 @@ const HomePage: React.FC = () => {
           <Card
             key={`empty-adopt-${index}`}
             sx={{
+              minWidth: 240,
+              width: 240,
+              height: 300,
               borderRadius: "24px",
               display: "flex",
               flexDirection: "column",
-              height: "100%",
               backgroundColor: "rgba(255, 255, 255, 0.3)",
               border: "1px dashed rgba(255, 255, 255, 0.5)",
               backdropFilter: "blur(10px)",
@@ -959,7 +1026,7 @@ const HomePage: React.FC = () => {
             <CardMedia
               component="div"
               sx={{ 
-                height: 200, 
+                height: 140,
                 width: "100%", 
                 display: "flex", 
                 alignItems: "center", 
@@ -972,9 +1039,16 @@ const HomePage: React.FC = () => {
                 No pet available
               </Typography>
             </CardMedia>
-            <CardContent sx={{ flexGrow: 1, textAlign: "center", p: 3 }}>
+            <CardContent sx={{ 
+              flexGrow: 1, 
+              textAlign: "center", 
+              p: 2,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center"
+            }}>
               <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ color: "text.primary" }}>
-              No pet available
+                No pet available
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 <strong>Breed:</strong> -
@@ -994,6 +1068,9 @@ const HomePage: React.FC = () => {
     {/* "More Pets" Card for Adoption */}
     <Card
       sx={{
+        minWidth: 240,
+        width: 240,
+        height: 300,
         borderRadius: "16px",
         backdropFilter: "blur(10px)",
         backgroundColor: "rgba(255, 255, 255, 0.6)",
@@ -1005,26 +1082,35 @@ const HomePage: React.FC = () => {
           boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
         },
         cursor: "pointer",
-        p: 4,
+        p: 2,
         textAlign: "center",
-        maxWidth: "400px",
-        margin: "auto",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center"
       }}
       onClick={() => handleCardClick("/adopt")}
     >
-      <Box sx={{ p: 3 }}>
+      <Box sx={{ p: 2 }}>
         <FavoriteBorderIcon
           sx={{
-            fontSize: 80,
-            mb: 3,
+            fontSize: 60,
+            mb: 2,
             color: "primary.main",
             filter: "drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1))",
           }}
         />
-        <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ color: "#333", mb: 2 }}>
+        <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ 
+          color: "#333", 
+          mb: 2,
+          fontSize: "1.2rem"
+        }}>
           See more pets
         </Typography>
-        <Typography variant="body1" sx={{ color: "#666", mb: 3 }}>
+        <Typography variant="body1" sx={{ 
+          color: "#666", 
+          mb: 2,
+          fontSize: "0.9rem"
+        }}>
           for Adoption
         </Typography>
         <Button
@@ -1039,6 +1125,8 @@ const HomePage: React.FC = () => {
               backgroundColor: "primary.main",
               color: "white",
             },
+            fontSize: "0.8rem",
+            padding: "6px 16px"
           }}
         >
           See More
@@ -1059,18 +1147,24 @@ const HomePage: React.FC = () => {
       position: "relative",
       zIndex: 2,
       textShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
+      fontSize: { xs: "1.8rem", sm: "2.2rem", md: "2.5rem" }
     }}
   >
     Available Pets for Buy
   </Typography>
 
   <Box
-    display="grid"
-    gridTemplateColumns="repeat(auto-fit, minmax(250px, 1fr))"
-    gap={4}
-    justifyContent="center"
-    width="100%"
-    maxWidth="1200px"
+    sx={{
+      display: "flex",
+      flexDirection: { xs: "column", sm: "row" },
+      flexWrap: "wrap",
+      justifyContent: "center",
+      gap: 4,
+      width: "100%",
+      maxWidth: "1200px",
+      overflowX: { xs: "auto", sm: "visible" },
+      px: { xs: 2, sm: 0 }
+    }}
   >
     {/* Display up to 3 buy pets - show empty cards if less than 3 */}
     {[...Array(3)].map((_, index) => {
@@ -1080,6 +1174,9 @@ const HomePage: React.FC = () => {
           <Card
             key={pet.id}
             sx={{
+              minWidth: 240,
+              width: 240,
+              height: 300,
               borderRadius: "24px",
               transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
               "&:hover": {
@@ -1088,21 +1185,30 @@ const HomePage: React.FC = () => {
               },
               display: "flex",
               flexDirection: "column",
-              height: "100%",
               backgroundColor: "rgba(255, 255, 255, 0.6)",
               border: "1px solid rgba(255, 255, 255, 0.1)",
               backdropFilter: "blur(10px)",
             }}
           >
-            
             <CardMedia
               component="img"
-              sx={{ height: 200, width: "100%", objectFit: "cover", borderRadius: "24px 24px 0 0" }}
+              sx={{ 
+                height: 140,
+                width: "100%", 
+                objectFit: "cover", 
+                borderRadius: "24px 24px 0 0" 
+              }}
               image={pet.imageUrl ? `${pet.imageUrl}` : "/src/assets/pet-placeholder.png"}
-
               alt={pet.name}
             />
-            <CardContent sx={{ flexGrow: 1, textAlign: "center", p: 3 }}>
+            <CardContent sx={{ 
+              flexGrow: 1, 
+              textAlign: "center", 
+              p: 2,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center"
+            }}>
               <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ color: "text.primary" }}>
                 {pet.name}
               </Typography>
@@ -1129,10 +1235,12 @@ const HomePage: React.FC = () => {
           <Card
             key={`empty-buy-${index}`}
             sx={{
+              minWidth: 240,
+              width: 240,
+              height: 300,
               borderRadius: "24px",
               display: "flex",
               flexDirection: "column",
-              height: "100%",
               backgroundColor: "rgba(255, 255, 255, 0.3)",
               border: "1px dashed rgba(255, 255, 255, 0.5)",
               backdropFilter: "blur(10px)",
@@ -1142,7 +1250,7 @@ const HomePage: React.FC = () => {
             <CardMedia
               component="div"
               sx={{ 
-                height: 200, 
+                height: 140,
                 width: "100%", 
                 display: "flex", 
                 alignItems: "center", 
@@ -1155,9 +1263,16 @@ const HomePage: React.FC = () => {
                 No pet available
               </Typography>
             </CardMedia>
-            <CardContent sx={{ flexGrow: 1, textAlign: "center", p: 3 }}>
+            <CardContent sx={{ 
+              flexGrow: 1, 
+              textAlign: "center", 
+              p: 2,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center"
+            }}>
               <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ color: "text.primary" }}>
-              No pet available
+                No pet available
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 <strong>Breed:</strong> -
@@ -1177,6 +1292,9 @@ const HomePage: React.FC = () => {
     {/* "More Pets" Card for Buy */}
     <Card
       sx={{
+        minWidth: 240,
+        width: 240,
+        height: 300,
         borderRadius: "16px",
         backdropFilter: "blur(10px)",
         backgroundColor: "rgba(255, 255, 255, 0.6)",
@@ -1188,26 +1306,35 @@ const HomePage: React.FC = () => {
           boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
         },
         cursor: "pointer",
-        p: 4,
+        p: 2,
         textAlign: "center",
-        maxWidth: "400px",
-        margin: "auto",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center"
       }}
       onClick={() => handleNavigation("/buy")}
     >
-      <Box sx={{ p: 3 }}>
+      <Box sx={{ p: 2 }}>
         <FavoriteBorderIcon
           sx={{
-            fontSize: 80,
-            mb: 3,
+            fontSize: 60,
+            mb: 2,
             color: "primary.main",
             filter: "drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1))",
           }}
         />
-        <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ color: "#333", mb: 2 }}>
+        <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ 
+          color: "#333", 
+          mb: 2,
+          fontSize: "1.2rem"
+        }}>
           See more pets
         </Typography>
-        <Typography variant="body1" sx={{ color: "#666", mb: 3 }}>
+        <Typography variant="body1" sx={{ 
+          color: "#666", 
+          mb: 2,
+          fontSize: "0.9rem"
+        }}>
           for Buy
         </Typography>
         <Button
@@ -1222,6 +1349,8 @@ const HomePage: React.FC = () => {
               backgroundColor: "primary.main",
               color: "white",
             },
+            fontSize: "0.8rem",
+            padding: "6px 16px"
           }}
         >
           Meet Them
@@ -1230,6 +1359,8 @@ const HomePage: React.FC = () => {
     </Card>
   </Box>
 </Box>
+    
+
       {/* Additional Content Section */}
       <Box sx={{ mt: 8, px: { xs: 2, md: 4 }, textAlign: "center" }}>
         <Typography variant="h3"
