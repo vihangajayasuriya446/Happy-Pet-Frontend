@@ -11,6 +11,10 @@
     {
       "source": "/images/:path*",
       "destination": "http://13.60.206.42:8080/images/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ],
   "headers": [
