@@ -54,7 +54,7 @@ const Navbar = () => {
     setTimeout(() => {
       navigate(path);
       setNavigationLoading(false);
-    }, 500);
+    }, 300); // Reduced from 500ms to 300ms
   };
 
   const toggleCart = () => {
@@ -76,7 +76,7 @@ const Navbar = () => {
       localStorage.removeItem("role");
       navigate("/login");
       setNavigationLoading(false);
-    }, 2000);
+    }, 300); // Reduced from 2000ms to 300ms
   };
 
   const handleSignup = () => {
@@ -84,7 +84,7 @@ const Navbar = () => {
     setTimeout(() => {
       navigate("/signup");
       setSignupLoading(false);
-    }, 2000);
+    }, 300); // Reduced from 2000ms to 300ms
   };
 
   const handleLogin = () => {
@@ -92,7 +92,7 @@ const Navbar = () => {
     setTimeout(() => {
       navigate("/login");
       setLoginLoading(false);
-    }, 2000);
+    }, 300); // Reduced from 2000ms to 300ms
   };
 
   const open = Boolean(anchorEl);
@@ -509,7 +509,7 @@ const DrawerMenu = ({ open, toggleDrawer }: DrawerMenuProps) => {
       toggleDrawer();
       navigate(path);
       setLoading(false);
-    }, 2000);
+    }, 300); // Reduced from 2000ms to 300ms
   };
 
   return (

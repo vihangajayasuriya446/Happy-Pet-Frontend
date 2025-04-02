@@ -1026,11 +1026,7 @@ const HomePage: React.FC = () => {
                   <strong>Species:</strong> {pet.pet_species}
                 </Typography>
               )}
-              {pet.status && (
-                <Typography variant="body2" color="text.secondary">
-                  <strong>Status:</strong> {pet.status}
-                </Typography>
-              )}
+              
             </CardContent>
           </Card>
         );
