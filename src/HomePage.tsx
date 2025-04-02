@@ -1,8 +1,9 @@
-import { Box, Button, Typography, Card, styled, CardContent, CardMedia, CircularProgress, Snackbar, Alert } from "@mui/material";
+import { Box, Button, Typography, Card, styled, CardContent, CardMedia, CircularProgress, Snackbar, Alert, Fab } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import Pets from "./Pets";
 
 type Pet = {
@@ -40,6 +41,7 @@ const HomePage: React.FC = () => {
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
   const [buyPets, setBuyPets] = useState<Pet[]>([]);
   const [adoptPets, setAdoptPets] = useState<Pets[]>([]);
+  const [showScroll, setShowScroll] = useState(false);
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -110,7 +112,6 @@ const HomePage: React.FC = () => {
       });
   }, []);
 
-
   useEffect(() => {
     axios
       .get("/api/v1/getusers")
@@ -132,6 +133,22 @@ const HomePage: React.FC = () => {
       localStorage.removeItem('justSignedUp'); // Clear the flag
     }
   }, [role]);
+
+  useEffect(() => {
+    const checkScroll = () => {
+      if (!showScroll && window.pageYOffset > 400) {
+        setShowScroll(true);
+      } else if (showScroll && window.pageYOffset <= 400) {
+        setShowScroll(false);
+      }
+    };
+    window.addEventListener('scroll', checkScroll);
+    return () => window.removeEventListener('scroll', checkScroll);
+  }, [showScroll]);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
@@ -1617,6 +1634,30 @@ const HomePage: React.FC = () => {
             </Card>
         </Box>
       </Box>
+
+      {/* Back to Top Button */}
+      {showScroll && (
+        <Fab
+          onClick={scrollToTop}
+          sx={{
+            position: 'fixed',
+            bottom: 32,
+            right: 32,
+            backgroundColor: 'rgba(0, 51, 102, 0.9)',
+            color: 'white',
+            '&:hover': {
+              backgroundColor: '#003366',
+              boxShadow: '0 3px 10px rgba(0, 0, 0, 0.3)'
+            },
+            transition: 'all 0.3s ease',
+            backdropFilter: 'blur(8px)',
+          }}
+          size="medium"
+          aria-label="scroll back to top"
+        >
+          <KeyboardArrowUpIcon fontSize="medium" />
+        </Fab>
+      )}
     </FullHeightBox>
   );
 };
