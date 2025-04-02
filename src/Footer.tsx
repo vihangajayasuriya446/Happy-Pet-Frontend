@@ -4,17 +4,33 @@ import { Facebook, Instagram, LinkedIn } from "@mui/icons-material";
 const Footer = () => {
   return (
     <Box
+      component="footer"
       sx={{
-        bgcolor: "rgba(255, 255, 255, 0.8)", // Semi-transparent background
+        bgcolor: "rgba(255, 255, 255, 0.8)",
         py: 6,
         px: { xs: 2, sm: 4 },
         mt: 8,
         borderTop: "1px solid rgba(0, 0, 0, 0.1)",
-        backdropFilter: "blur(10px)", // Glass morphism effect
-        minHeight: "300px", // Standard height for footer
+        backdropFilter: "blur(10px)",
+        minHeight: "300px",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
+        width: "100vw", // Ensure full viewport width
+        position: "relative", // Needed for proper backdrop filter
+        left: 0, // Align to left edge
+        right: 0, // Align to right edge
+        overflow: "hidden", // Prevent any overflow issues
+        "&::before": { // Glass morphism enhancement
+          content: '""',
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(255, 255, 255, 0.15)",
+          zIndex: -1,
+        }
       }}
     >
       <Grid
@@ -23,6 +39,11 @@ const Footer = () => {
         maxWidth="lg"
         mx="auto"
         justifyContent="space-between"
+        sx={{
+          width: "100%", // Ensure grid takes full width
+          position: "relative", // Ensure content stays above background
+          zIndex: 1 // Ensure content stays above background
+        }}
       >
         {/* Logo & Basic Links */}
         <Grid item xs={12} sm={3} textAlign={{ xs: "center", sm: "left" }}>
@@ -146,71 +167,71 @@ const Footer = () => {
           </Link>
         </Grid>
 
-              {/* Social Media Icons Section */}
-<Grid item xs={12} sm={3} textAlign={{ xs: "center", sm: "left" }}>
-  <Typography
-    variant="h6"
-    fontWeight="bold"
-    sx={{ mb: 2, color: "text.primary" }}
-  >
-    Follow Us
-  </Typography>
-  <Box
-    display="flex"
-    justifyContent={{ xs: "center", sm: "left" }}
-    gap={2}
-  >
-    <Link
-      href="https://www.facebook.com/share/1PZSnD5qyk/?mibextid=wwXIfr" // Replace with your Facebook page URL
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <Facebook
-        sx={{
-          fontSize: 30,
-          cursor: "pointer",
-          color: "text.primary",
-          transition: "color 0.3s ease",
-          "&:hover": { color: "primary.main" },
-        }}
-      />
-    </Link>
-    <Link
-      href="https://www.instagram.com/happypetlk?igsh=MW51MmI2OWJ3OHR5OA==" // Replace with your Instagram page URL
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <Instagram
-        sx={{
-          fontSize: 30,
-          cursor: "pointer",
-          color: "text.primary",
-          transition: "color 0.3s ease",
-          "&:hover": { color: "primary.main" },
-        }}
-      />
-    </Link>
-    <Link
-      href="https://www.linkedin.com/in/happy-pet-664b40352/" 
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <LinkedIn
-        sx={{
-          fontSize: 30,
-          cursor: "pointer",
-          color: "text.primary",
-          transition: "color 0.3s ease",
-          "&:hover": { color: "primary.main" },
-        }}
-      />
-    </Link>
-  </Box>
-</Grid>
+        {/* Social Media Icons Section */}
+        <Grid item xs={12} sm={3} textAlign={{ xs: "center", sm: "left" }}>
+          <Typography
+            variant="h6"
+            fontWeight="bold"
+            sx={{ mb: 2, color: "text.primary" }}
+          >
+            Follow Us
+          </Typography>
+          <Box
+            display="flex"
+            justifyContent={{ xs: "center", sm: "left" }}
+            gap={2}
+          >
+            <Link
+              href="https://www.facebook.com/share/1PZSnD5qyk/?mibextid=wwXIfr"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Facebook
+                sx={{
+                  fontSize: 30,
+                  cursor: "pointer",
+                  color: "text.primary",
+                  transition: "color 0.3s ease",
+                  "&:hover": { color: "primary.main" },
+                }}
+              />
+            </Link>
+            <Link
+              href="https://www.instagram.com/happypetlk?igsh=MW51MmI2OWJ3OHR5OA=="
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Instagram
+                sx={{
+                  fontSize: 30,
+                  cursor: "pointer",
+                  color: "text.primary",
+                  transition: "color 0.3s ease",
+                  "&:hover": { color: "primary.main" },
+                }}
+              />
+            </Link>
+            <Link
+              href="https://www.linkedin.com/in/happy-pet-664b40352/" 
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <LinkedIn
+                sx={{
+                  fontSize: 30,
+                  cursor: "pointer",
+                  color: "text.primary",
+                  transition: "color 0.3s ease",
+                  "&:hover": { color: "primary.main" },
+                }}
+              />
+            </Link>
+          </Box>
+        </Grid>
       </Grid>
 
       {/* Copyright Section */}
-      <Box textAlign="center" mt={5}>
+      <Box textAlign="center" mt={5} sx={{ position: "relative", zIndex: 1 }}>
         <Typography
           variant="body2"
           sx={{ color: "text.secondary", fontSize: "0.875rem" }}

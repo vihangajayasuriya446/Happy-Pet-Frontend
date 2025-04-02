@@ -920,11 +920,18 @@ const HomePage: React.FC = () => {
 
 {/* Adopt a Pet Section */}
 <Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2 }}>
-  <Typography variant="h4" fontWeight="bold" mb={4} sx={{ 
-    color: "#FFFFFF", 
-    textShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
-    fontSize: { xs: "1.8rem", sm: "2.2rem", md: "2.5rem" }
-  }}>
+  <Typography 
+   variant="h4"
+   fontWeight="bold"
+   mb={4}
+   sx={{
+     color: "#FFFFFF",
+     position: "relative",
+     zIndex: 2,
+     textShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
+     fontSize: { xs: "1.8rem", sm: "2.2rem", md: "2.5rem" }
+   }}
+  >
     Available Pets for Adoption
   </Typography>
   <Box
@@ -1145,16 +1152,16 @@ const HomePage: React.FC = () => {
 {/* Buy Section */}
 <Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2 }}>
   <Typography
-    variant="h4"
-    fontWeight="bold"
-    mb={4}
-    sx={{
-      color: "#FFFFFF",
-      position: "relative",
-      zIndex: 2,
-      textShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
-      fontSize: { xs: "1.8rem", sm: "2.2rem", md: "2.5rem" }
-    }}
+     variant="h4"
+     fontWeight="bold"
+     mb={4}
+     sx={{
+       color: "#FFFFFF",
+       position: "relative",
+       zIndex: 2,
+       textShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
+       fontSize: { xs: "1.8rem", sm: "2.2rem", md: "2.5rem" }
+     }}
   >
     Available Pets for Buy
   </Typography>
