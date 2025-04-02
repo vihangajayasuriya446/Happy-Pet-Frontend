@@ -225,7 +225,7 @@ const SupportUsPage = () => {
                   {option.title === "Spread the Word" && (
                     <Box textAlign="center" mt={3}>
                       <IconButton 
-                        href="https://www.facebook.com/share/1PZSnD5qyk/?mibextid=wwXIfr"
+                        href="https://www.facebook.com/share/18fUYPZojB/?mibextid=wwXIfr"
                         target="_blank"
                         sx={{ mx: 1, color: '#003366' }}
                       >

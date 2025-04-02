@@ -8,6 +8,9 @@ import {
   Typography,
   Container,
   Modal,
+  Paper,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 
 const OwnerForm: React.FC = () => {
@@ -22,9 +25,11 @@ const OwnerForm: React.FC = () => {
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
-  const [open, setOpen] = useState(true); // Modal starts open
+  const [open, setOpen] = useState(true);
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -68,174 +73,213 @@ const OwnerForm: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate('/matchmaking'); // Navigate to MainUser page
+    navigate('/matchmaking');
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 10 }}>
-      <Box>
-        {/* Policy Modal */}
-        <Modal open={open} onClose={handleAgree}>
-          <Box
-            sx={{
-              position: 'absolute' as 'absolute',
-              top: '50%',
-              left: '50.5%',
-              transform: 'translate(-50%, -50%)',
-              bgcolor: '#fff',
-              boxShadow: 24,
-              p: 4,
-              borderRadius: 3,
-              textAlign: 'center',
-              outline: 'none',
-              width: '520px', // Match the form box width
-              maxWidth: '90%', // Ensure responsiveness
-            }}
-          >
-            <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ color: '#002855' }}>
-              Pet Matchmaking Policy & Terms
-            </Typography>
-            <Typography variant="body1" paragraph sx={{ color: '#000000' }}>
-              Happypet’s Pet Matchmaking feature connects pet owners seeking
-              breeding partners. We solely facilitate contact and do not
-              participate in the breeding process. Users are responsible for
-              verifying pet health, compatibility, and compliance with legal and
-              ethical standards.
-            </Typography>
-            <Typography variant="body1" paragraph sx={{ color: '#000000' }}>
-              Happypet is not liable for any disputes, health issues, or outcomes
-              arising from these arrangements. Use of this feature is at the
-              user’s own discretion and risk.
-            </Typography>
-            <Box mt={3} display="flex" justifyContent="center" gap={2}>
-              <Button 
-                variant="outlined" 
-                onClick={handleBack} 
-                sx={{ 
-                  px: 4, 
-                  color: '#003366', 
-                  borderColor: '#003366',
-                  '&:hover': {
-                    borderColor: '#003366',
-                    backgroundColor: 'rgba(0, 0, 255, 0.04)',
-                  },
-                }}
-              >
-                Back
-              </Button>
-              <Button 
-                variant="contained" 
-                onClick={handleAgree} 
-                sx={{ 
-                  px: 4, 
-                  backgroundColor: '#003366', 
-                  color: '#fff',
-                  '&:hover': {
-                    backgroundColor: '#040654',
-                  },
-                }}
-              >
-                Agree
-              </Button>
-            </Box>
-          </Box>
-        </Modal>
-
-        {/* Form Container */}
+    <Container 
+      maxWidth={false} 
+      sx={{ 
+        py: 1,
+        px: { xs: 0, sm: 2 },
+        minHeight: '90vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        width: '100%',
+        maxWidth: 'sm',
+        margin: '0 auto',
+      }}
+    >
+      {/* Policy Modal */}
+      <Modal 
+        open={open} 
+        onClose={handleAgree}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          outline: 'none',
+        }}
+      >
         <Box
           sx={{
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-            padding: '2.5rem',
-            borderRadius: 3,
-            boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-            border: '1px solid rgba(0, 0, 0, 0.1)',
-            mt: 15,
-            mb: 8,
-            width: '500px', // Match the modal width
-            maxWidth: '90%', // Ensure responsiveness
-            mx: 'auto', // Center the form
+            bgcolor: '#fff',
+            boxShadow: 24,
+            p: { xs: 2, sm: 3 },
+            borderRadius: 2,
+            textAlign: 'center',
+            width: { xs: 'calc(100% - 32px)', sm: '500px' },
+            maxWidth: '95vw',
+            mx: 'auto',
+            outline: 'none',
           }}
         >
-          <Typography
-            variant="h4"
-            gutterBottom
-            fontWeight="bold"
-            textAlign="center"
-            sx={{ color: '#002855', mb: 3 }}
+          <Typography 
+            variant={isMobile ? "h6" : "h5"} 
+            fontWeight="bold" 
+            gutterBottom 
+            sx={{ color: '#002855' }}
           >
-            Matchmaking Request Form
+            Pet Matchmaking Policy & Terms
           </Typography>
-          <Typography variant="body1" textAlign="center" sx={{ color: '#000000', mb: 4 }}>
-            Fill required details to send a matchmaking request.
+          <Typography variant="body1" paragraph sx={{ 
+            color: '#000000',
+            fontSize: { xs: '0.875rem', sm: '1rem' }
+          }}>
+            Happypet's Pet Matchmaking feature connects pet owners seeking
+            breeding partners. We solely facilitate contact and do not
+            participate in the breeding process. Users are responsible for
+            verifying pet health, compatibility, and compliance with legal and
+            ethical standards.
           </Typography>
-
-          {/* Error/Success Alerts */}
-          {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
-          {success && (
-            <Alert severity="success" sx={{ mb: 3 }}>
-              Request sent successfully!
-            </Alert>
-          )}
-
-          {/* Form */}
-          <form onSubmit={handleSubmit}>
-            <TextField
-              label="Owner Name"
-              fullWidth
-              value={owner.ownerName}
-              onChange={(e) => setOwner({ ...owner, ownerName: e.target.value })}
-              margin="normal"
-              required
-              sx={{ mb: 3 }}
-              variant="outlined"
-            />
-            <TextField
-              label="Address"
-              fullWidth
-              value={owner.address}
-              onChange={(e) => setOwner({ ...owner, address: e.target.value })}
-              margin="normal"
-              required
-              sx={{ mb: 3 }}
-              variant="outlined"
-            />
-            <TextField
-              label="Contact Number"
-              fullWidth
-              value={owner.contactNumber}
-              onChange={(e) => setOwner({ ...owner, contactNumber: e.target.value })}
-              margin="normal"
-              required
-              sx={{ mb: 4 }}
-              variant="outlined"
-            />
-            {/* Hidden field for petId */}
-            <input type="hidden" name="petId" value={owner.petId} />
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4 }}>
-              <Button 
-                type="submit" 
-                variant="contained" 
-                sx={{ 
-                  px: 5, 
-                  py: 1.5, 
-                  borderRadius: 2, 
-                  textTransform: 'none', 
-                  
-                  fontWeight: 'bold',
-                  backgroundColor: '#003366',
-                   fontSize: '1.05rem',
-                  color: '#fff',
-                  '&:hover': {
-                    backgroundColor: '#040654',
-                  },
-                }}
-              >
-                Send
-              </Button>
-            </Box>
-          </form>
+          <Typography variant="body1" paragraph sx={{ 
+            color: '#000000',
+            fontSize: { xs: '0.875rem', sm: '1rem' }
+          }}>
+            Happypet is not liable for any disputes, health issues, or outcomes
+            arising from these arrangements. Use of this feature is at the
+            user's own discretion and risk.
+          </Typography>
+          <Box mt={2} display="flex" justifyContent="center" gap={2}
+            flexDirection={isMobile ? 'column' : 'row'}
+          >
+            <Button 
+              variant="outlined" 
+              onClick={handleBack} 
+              fullWidth={isMobile}
+              sx={{ 
+                color: '#003366', 
+                borderColor: '#003366',
+                '&:hover': {
+                  borderColor: '#003366',
+                  backgroundColor: 'rgba(0, 0, 255, 0.04)',
+                },
+              }}
+            >
+              Back
+            </Button>
+            <Button 
+              variant="contained" 
+              onClick={handleAgree} 
+              fullWidth={isMobile}
+              sx={{ 
+                backgroundColor: '#003366', 
+                color: '#fff',
+                '&:hover': {
+                  backgroundColor: '#040654',
+                },
+              }}
+            >
+              Agree
+            </Button>
+          </Box>
         </Box>
-      </Box>
+      </Modal>
+
+      {/* Form Container */}
+      <Paper elevation={0} sx={{ 
+        p: { xs: 2, sm: 3 },
+        borderRadius: 2,
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        border: `1px solid ${theme.palette.divider}`,
+        width: 'calc(100% - 16px)',
+        maxWidth: '500px',
+        mx: 'auto',
+        my: 2,
+      }}>
+        <Typography
+          variant={isMobile ? "h5" : "h4"}
+          gutterBottom
+          fontWeight="bold"
+          textAlign="center"
+          sx={{ 
+            color: '#002855',
+            mb: 2,
+            fontSize: { xs: '1.3rem', sm: '1.75rem' }
+          }}
+        >
+          Matchmaking Request Form
+        </Typography>
+        <Typography 
+          variant="body1" 
+          textAlign="center" 
+          sx={{ 
+            color: '#000000', 
+            mb: 3,
+            fontSize: { xs: '0.875rem', sm: '1rem' }
+          }}
+        >
+          Fill required details to send a matchmaking request.
+        </Typography>
+
+        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+        {success && <Alert severity="success" sx={{ mb: 2 }}>Request sent successfully!</Alert>}
+
+        <form onSubmit={handleSubmit}>
+          <TextField
+            label="Owner Name"
+            fullWidth
+            value={owner.ownerName}
+            onChange={(e) => setOwner({ ...owner, ownerName: e.target.value })}
+            margin="normal"
+            required
+            sx={{ mb: 2 }}
+            variant="outlined"
+            size={isMobile ? "small" : "medium"}
+          />
+          <TextField
+            label="Address"
+            fullWidth
+            value={owner.address}
+            onChange={(e) => setOwner({ ...owner, address: e.target.value })}
+            margin="normal"
+            required
+            sx={{ mb: 2 }}
+            variant="outlined"
+            size={isMobile ? "small" : "medium"}
+          />
+          <TextField
+            label="Contact Number"
+            fullWidth
+            value={owner.contactNumber}
+            onChange={(e) => setOwner({ ...owner, contactNumber: e.target.value })}
+            margin="normal"
+            required
+            sx={{ mb: 3 }}
+            variant="outlined"
+            size={isMobile ? "small" : "medium"}
+          />
+          
+          <input type="hidden" name="petId" value={owner.petId} />
+          
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'flex-end', 
+            mt: 2 
+          }}>
+            <Button 
+              type="submit" 
+              variant="contained" 
+              sx={{ 
+                px: 4,
+                py: 1,
+                borderRadius: 2,
+                textTransform: 'none',
+                fontWeight: 'bold',
+                backgroundColor: '#003366',
+                fontSize: '0.9375rem',
+                color: '#fff',
+                '&:hover': {
+                  backgroundColor: '#040654',
+                },
+              }}
+            >
+              Send Request
+            </Button>
+          </Box>
+        </form>
+      </Paper>
     </Container>
   );
 };

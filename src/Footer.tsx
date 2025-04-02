@@ -211,7 +211,7 @@ const Footer = () => {
             gap={2}
           >
             <MuiLink
-              href="https://www.facebook.com/share/1PZSnD5qyk/?mibextid=wwXIfr"
+              href="https://www.facebook.com/share/18fUYPZojB/?mibextid=wwXIfr"
               target="_blank"
               rel="noopener noreferrer"
             >
