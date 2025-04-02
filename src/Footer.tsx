@@ -17,9 +17,9 @@ const Footer = () => {
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        width: "100vw",
-        marginLeft: "calc(-50vw + 50%)",
+        width: "100%",
         boxSizing: "border-box",
+        overflowX: "hidden", // Prevent horizontal overflow
       }}
     >
       <Grid
@@ -29,6 +29,11 @@ const Footer = () => {
         mx="auto"
         justifyContent="space-between"
         width="100%"
+        sx={{
+          // Ensure content doesn't cause overflow on small screens
+          marginLeft: "0 !important",
+          marginRight: "0 !important",
+        }}
       >
         {/* Logo & Basic Links */}
         <Grid item xs={12} sm={3} textAlign={{ xs: "center", sm: "left" }}>
@@ -41,6 +46,7 @@ const Footer = () => {
                 marginBottom: 20,
                 objectFit: "contain",
                 filter: "drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1))",
+                maxWidth: "100%", // Ensure image doesn't overflow
               }}
             />
           </RouterLink>
