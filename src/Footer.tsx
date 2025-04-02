@@ -17,7 +17,8 @@ const Footer = () => {
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        width: "100vw",
+        width: "100%", // Changed from 100vw
+        overflowX: "hidden",
         marginLeft: "calc(-50vw + 50%)",
         boxSizing: "border-box",
       }}
