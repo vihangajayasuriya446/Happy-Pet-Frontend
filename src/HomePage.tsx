@@ -691,7 +691,7 @@ const HomePage: React.FC = () => {
         </Box>
       </Box>
 
-      <Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2 }}>
+      <Box display="flex" flexDirection="column" alignItems="center"  sx={{ mt: 4, px: 2 , textAlign: "center" }}>
   {/* Matchmaking Section */}
   <Typography
     variant="h4"
@@ -919,7 +919,7 @@ const HomePage: React.FC = () => {
 </Box>
 
 {/* Adopt a Pet Section */}
-<Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2 }}>
+<Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2 , textAlign: "center" }}>
   <Typography 
    variant="h4"
    fontWeight="bold"
@@ -1150,7 +1150,7 @@ const HomePage: React.FC = () => {
 </Box>
 
 {/* Buy Section */}
-<Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2 }}>
+<Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2 , textAlign: "center" }}>
   <Typography
      variant="h4"
      fontWeight="bold"
