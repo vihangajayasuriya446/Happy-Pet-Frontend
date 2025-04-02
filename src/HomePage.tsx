@@ -232,22 +232,26 @@ const HomePage: React.FC = () => {
 <Box
   component="div"
   sx={{
-
     textAlign: "center",
     backdropFilter: "blur(30px) saturate(250%)",
-    backgroundColor: "rgba(255, 255, 255, 0.15)", // Ultra-translucent background
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
     boxShadow: `
       0 12px 40px rgba(255, 255, 255, 0.15),
       0 -12px 40px rgba(255, 255, 255, 0.1),
       inset 0 0 20px rgba(255, 255, 255, 0.1)
-    `, // Multi-layered glowing shadow
+    `,
     borderRadius: "40px",
-    padding: { xs: "32px 24px", sm: "40px 32px", md: "48px 40px" }, // Adjusted padding for better spacing
-    border: "1px solid rgba(255, 255, 255, 0.4)", // Enhanced border for depth
+    padding: { xs: "32px 24px", sm: "40px 32px", md: "48px 40px" },
+    border: "1px solid rgba(255, 255, 255, 0.4)",
     animation: "fadeIn 1s ease-out, float 6s infinite ease-in-out",
     maxWidth: "90%",
-    mx: "auto",
+    margin: "0 auto", // Changed from mx/my to ensure proper centering
     my: 5,
+    width: { xs: "90vw", sm: "auto" }, // Added viewport-based width for mobile
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
     transition: "transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
     "&:hover": {
       transform: "scale(1.05) rotate(1deg)",
@@ -255,7 +259,7 @@ const HomePage: React.FC = () => {
         0 16px 50px rgba(255, 255, 255, 0.25),
         0 -16px 50px rgba(255, 255, 255, 0.2),
         inset 0 0 30px rgba(255, 255, 255, 0.2)
-      `, // Enhanced glow and 3D effect on hover
+      `,
     },
     "@keyframes fadeIn": {
       "from": { opacity: 0, transform: "translateY(30px)" },
@@ -270,11 +274,11 @@ const HomePage: React.FC = () => {
   <Typography
     variant="h2"
     sx={{
-      color: "#0f2179", // Solid, vibrant color
+      color: "#0f2179",
       fontWeight: 800,
       fontSize: { xs: "2.5rem", sm: "3rem", md: "3.5rem" },
-      textShadow: "2px 3px 10px rgba(0, 0, 0, 0.4)", // Softer shadow
-      lineHeight: 1.2, // Adjusted line height for better readability
+      textShadow: "2px 3px 10px rgba(0, 0, 0, 0.4)",
+      lineHeight: 1.2,
       mb: 3,
       WebkitFontSmoothing: "antialiased",
       textRendering: "optimizeLegibility",
@@ -286,10 +290,10 @@ const HomePage: React.FC = () => {
   <Typography
     variant="h4"
     sx={{
-      color: "rgba(255, 255, 255, 0.95)", // Bright, modern text color
+      color: "rgba(255, 255, 255, 0.95)",
       fontWeight: 600,
       fontSize: { xs: "1.6rem", sm: "1.9rem", md: "2.2rem" },
-      textShadow: "1px 2px 5px rgba(0, 0, 0, 0.4)", // Subtle shadow
+      textShadow: "1px 2px 5px rgba(0, 0, 0, 0.4)",
       mt: 3,
       lineHeight: 1.4,
       letterSpacing: "0.03em",
@@ -299,7 +303,6 @@ const HomePage: React.FC = () => {
     Where Happy Pets Meet Loving Homes!
   </Typography>
 </Box>
-
         {/* Cards Container */}
         <Box
           component="div"
