@@ -14,7 +14,9 @@ import {
   Button,
   Avatar,
   CircularProgress,
-  Badge
+  Badge,
+  useMediaQuery,
+  useTheme
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close"; // Import CloseIcon
@@ -35,6 +37,8 @@ interface UserDetails {
 }
 
 const Navbar = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [signupLoading, setSignupLoading] = useState(false); // Separate loading state for Sign Up
@@ -58,7 +62,7 @@ const Navbar = () => {
 
   const toggleCart = () => {
     setCartOpen(!cartOpen);
-};
+  };
 
   const handleAccountClick = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -116,7 +120,7 @@ const Navbar = () => {
 
   return (
     <>
-    <Cart open={cartOpen} onClose={toggleCart} />
+      <Cart open={cartOpen} onClose={toggleCart} />
       <AppBar
         position="fixed"
         sx={{
@@ -129,209 +133,191 @@ const Navbar = () => {
           borderBottom: "1px solid rgba(0, 0, 0, 0.1)", // Subtle border
         }}
       >
-        <Toolbar>
-          <Box
-            component="img"
-            src={logoImg} // CHANGES - Use imported logo image instead of using path
-            alt="HappyPet Logo"
-            sx={{ height: 100, width: 100, mr: 2 }}
-          />
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: "bold",
-              color: "#002855",
-              flexGrow: 1,
-              fontSize: "1.5rem",
-            }}
-          >
-            &nbsp;
-          </Typography>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 4, // Standardized gap between navigation links
-              mr: 4, // Margin to separate from account icon
-            }}
-          >
-            {/* Home */}
-            <Typography
-              variant="body1"
-              sx={{
-                cursor: "pointer",
-                fontWeight: "500",
-                color: "#333333",
-                position: "relative",
-                "&:hover": {
-                  color: "#007BFF",
-                  transition: "color 0.3s ease",
-                },
-                "&::after": {
-                  content: '""',
-                  position: "absolute",
-                  bottom: "-4px",
-                  left: 0,
-                  width: "100%",
-                  height: "2px",
-                  backgroundColor: "#007BFF",
-                  transform: "scaleX(0)",
-                  transition: "transform 0.3s ease",
-                },
-                "&:hover::after": {
-                  transform: "scaleX(1)",
-                },
-              }}
-              onClick={() => handleNavigation("/")} // Hardcoded path for Home
-            >
-              Home
-            </Typography>
-
-            {/* Services */}
-            <Typography
-              variant="body1"
-              sx={{
-                cursor: "pointer",
-                fontWeight: "500",
-                color: "#333333",
-                position: "relative",
-                "&:hover": {
-                  color: "#007BFF",
-                  transition: "color 0.3s ease",
-                },
-                "&::after": {
-                  content: '""',
-                  position: "absolute",
-                  bottom: "-4px",
-                  left: 0,
-                  width: "100%",
-                  height: "2px",
-                  backgroundColor: "#007BFF",
-                  transform: "scaleX(0)",
-                  transition: "transform 0.3s ease",
-                },
-                "&:hover::after": {
-                  transform: "scaleX(1)",
-                },
-              }}
-              onClick={() => handleNavigation("/aboutus")} // Hardcoded path for Services
-            >
-              About Us
-            </Typography>
-
-            {/* About Us */}
-            <Typography
-              variant="body1"
-              sx={{
-                cursor: "pointer",
-                fontWeight: "500",
-                color: "#333333",
-                position: "relative",
-                "&:hover": {
-                  color: "#007BFF",
-                  transition: "color 0.3s ease",
-                },
-                "&::after": {
-                  content: '""',
-                  position: "absolute",
-                  bottom: "-4px",
-                  left: 0,
-                  width: "100%",
-                  height: "2px",
-                  backgroundColor: "#007BFF",
-                  transform: "scaleX(0)",
-                  transition: "transform 0.3s ease",
-                },
-                "&:hover::after": {
-                  transform: "scaleX(1)",
-                },
-              }}
-              onClick={() => handleNavigation("/terms")} // Hardcoded path for About Us
-            >
-              Terms
-            </Typography>
-
-            {/* Contact Us */}
-            <Typography
-              variant="body1"
-              sx={{
-                cursor: "pointer",
-                fontWeight: "500",
-                color: "#333333",
-                position: "relative",
-                "&:hover": {
-                  color: "#007BFF",
-                  transition: "color 0.3s ease",
-                },
-                "&::after": {
-                  content: '""',
-                  position: "absolute",
-                  bottom: "-4px",
-                  left: 0,
-                  width: "100%",
-                  height: "2px",
-                  backgroundColor: "#007BFF",
-                  transform: "scaleX(0)",
-                  transition: "transform 0.3s ease",
-                },
-                "&:hover::after": {
-                  transform: "scaleX(1)",
-                },
-              }}
-              onClick={() => handleNavigation("/contactus")} // Hardcoded path for Contact Us
-            >
-              Contact Us
-            </Typography>
+        <Toolbar sx={{ justifyContent: "space-between" }}>
+          <Box display="flex" alignItems="center">
+            <Box
+              component="img"
+              src={logoImg}
+              alt="HappyPet Logo"
+              sx={{ height: isMobile ? 60 : 100, width: isMobile ? 60 : 100, mr: 2 }}
+            />
           </Box>
-          <IconButton
-              onClick={toggleCart}
-              // sx={{
-              //     position: 'absolute',
-              //     right: { xs: -70, sm: -70, md: -70 },
-              //     top: { xs: 20, md: 15 },
-              //     transform: 'translateY(-50%)',
-              //     bgcolor: 'white',
-              //     boxShadow: 3,
-              //     '&:hover': {
-              //         bgcolor: '#f5f5f5',
-              //     },
-              // }}
+
+          {!isMobile && (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 4,
+                mr: 4,
+              }}
             >
-              <Badge
-                  badgeContent={itemCount}
-                  color="error"
-                  sx={{
-                      '& .MuiBadge-badge': {
-                          fontSize: '0.7rem',
-                          height: '20px',
-                          minWidth: '20px',
-                          padding: '0 4px',
-                      }
-                  }}
-              >
-              <ShoppingBagIcon sx={{ color: '#003366' }} />
-            </Badge>
-          </IconButton>
-          <IconButton sx={{ ml: 2 }} onClick={handleAccountClick}>
-            {userDetails ? (
-              <Avatar
+              <Typography
+                variant="body1"
                 sx={{
-                  bgcolor: "#007BFF",
-                  width: 25,
-                  height: 25,
-                  fontSize: 15,
-                  "&:hover": { transform: "scale(1.1)", transition: "transform 0.3s ease" },
+                  cursor: "pointer",
+                  fontWeight: "500",
+                  color: "#333333",
+                  position: "relative",
+                  "&:hover": {
+                    color: "#007BFF",
+                    transition: "color 0.3s ease",
+                  },
+                  "&::after": {
+                    content: '""',
+                    position: "absolute",
+                    bottom: "-4px",
+                    left: 0,
+                    width: "100%",
+                    height: "2px",
+                    backgroundColor: "#007BFF",
+                    transform: "scaleX(0)",
+                    transition: "transform 0.3s ease",
+                  },
+                  "&:hover::after": {
+                    transform: "scaleX(1)",
+                  },
+                }}
+                onClick={() => handleNavigation("/")}
+              >
+                Home
+              </Typography>
+
+              <Typography
+                variant="body1"
+                sx={{
+                  cursor: "pointer",
+                  fontWeight: "500",
+                  color: "#333333",
+                  position: "relative",
+                  "&:hover": {
+                    color: "#007BFF",
+                    transition: "color 0.3s ease",
+                  },
+                  "&::after": {
+                    content: '""',
+                    position: "absolute",
+                    bottom: "-4px",
+                    left: 0,
+                    width: "100%",
+                    height: "2px",
+                    backgroundColor: "#007BFF",
+                    transform: "scaleX(0)",
+                    transition: "transform 0.3s ease",
+                  },
+                  "&:hover::after": {
+                    transform: "scaleX(1)",
+                  },
+                }}
+                onClick={() => handleNavigation("/aboutus")}
+              >
+                About Us
+              </Typography>
+
+              <Typography
+                variant="body1"
+                sx={{
+                  cursor: "pointer",
+                  fontWeight: "500",
+                  color: "#333333",
+                  position: "relative",
+                  "&:hover": {
+                    color: "#007BFF",
+                    transition: "color 0.3s ease",
+                  },
+                  "&::after": {
+                    content: '""',
+                    position: "absolute",
+                    bottom: "-4px",
+                    left: 0,
+                    width: "100%",
+                    height: "2px",
+                    backgroundColor: "#007BFF",
+                    transform: "scaleX(0)",
+                    transition: "transform 0.3s ease",
+                  },
+                  "&:hover::after": {
+                    transform: "scaleX(1)",
+                  },
+                }}
+                onClick={() => handleNavigation("/terms")}
+              >
+                Terms
+              </Typography>
+
+              <Typography
+                variant="body1"
+                sx={{
+                  cursor: "pointer",
+                  fontWeight: "500",
+                  color: "#333333",
+                  position: "relative",
+                  "&:hover": {
+                    color: "#007BFF",
+                    transition: "color 0.3s ease",
+                  },
+                  "&::after": {
+                    content: '""',
+                    position: "absolute",
+                    bottom: "-4px",
+                    left: 0,
+                    width: "100%",
+                    height: "2px",
+                    backgroundColor: "#007BFF",
+                    transform: "scaleX(0)",
+                    transition: "transform 0.3s ease",
+                  },
+                  "&:hover::after": {
+                    transform: "scaleX(1)",
+                  },
+                }}
+                onClick={() => handleNavigation("/contactus")}
+              >
+                Contact Us
+              </Typography>
+            </Box>
+          )}
+
+          <Box display="flex" alignItems="center">
+            <IconButton onClick={toggleCart}>
+              <Badge
+                badgeContent={itemCount}
+                color="error"
+                sx={{
+                  '& .MuiBadge-badge': {
+                    fontSize: '0.7rem',
+                    height: '20px',
+                    minWidth: '20px',
+                    padding: '0 4px',
+                  }
                 }}
               >
-                {userDetails.firstName.charAt(0).toUpperCase()}
-              </Avatar>
-            ) : (
-              <AccountCircle />
-            )}
-          </IconButton>
-          <IconButton onClick={toggleDrawer}>
-            <MenuIcon />
-          </IconButton>
+                <ShoppingBagIcon sx={{ color: '#003366' }} />
+              </Badge>
+            </IconButton>
+
+            <IconButton sx={{ ml: isMobile ? 1 : 2 }} onClick={handleAccountClick}>
+              {userDetails ? (
+                <Avatar
+                  sx={{
+                    bgcolor: "#007BFF",
+                    width: isMobile ? 25 : 30,
+                    height: isMobile ? 25 : 30,
+                    fontSize: isMobile ? 12 : 15,
+                    "&:hover": { transform: "scale(1.1)", transition: "transform 0.3s ease" },
+                  }}
+                >
+                  {userDetails.firstName.charAt(0).toUpperCase()}
+                </Avatar>
+              ) : (
+                <AccountCircle sx={{ fontSize: isMobile ? 30 : 40 }} />
+              )}
+            </IconButton>
+
+            <IconButton onClick={toggleDrawer}>
+              <MenuIcon sx={{ fontSize: isMobile ? 30 : 40 }} />
+            </IconButton>
+          </Box>
         </Toolbar>
       </AppBar>
 
@@ -350,15 +336,15 @@ const Navbar = () => {
         }}
         PaperProps={{
           style: {
-            minWidth: "320px",
+            minWidth: isMobile ? "280px" : "320px",
             padding: "24px",
             boxShadow: "0 12px 32px rgba(0, 0, 0, 0.2)",
             borderRadius: "20px",
-            border: "1px solid rgba(255, 255, 255, 0.2)", // Subtle border for glass effect
-            backgroundColor: "rgba(255, 255, 255, 0.85)", // Semi-transparent white
-            backdropFilter: "blur(20px)", // Enhanced glass morphism
-            WebkitBackdropFilter: "blur(20px)", // Safari support
-            backgroundImage: "linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.6))", // Gradient overlay
+            border: "1px solid rgba(255, 255, 255, 0.2)",
+            backgroundColor: "rgba(255, 255, 255, 0.85)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            backgroundImage: "linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.6))",
             overflow: "hidden",
           },
         }}
@@ -373,13 +359,12 @@ const Navbar = () => {
         >
           {userDetails ? (
             <>
-              {/* Avatar with gradient background */}
               <Avatar
                 sx={{
                   background: "linear-gradient(135deg, #6a11cb, #2575fc)",
-                  width: "100px",
-                  height: "100px",
-                  fontSize: "36px",
+                  width: isMobile ? "80px" : "100px",
+                  height: isMobile ? "80px" : "100px",
+                  fontSize: isMobile ? "28px" : "36px",
                   mb: 3,
                   boxShadow: "0 8px 16px rgba(106, 17, 203, 0.3)",
                   transition: "transform 0.3s ease, box-shadow 0.3s ease",
@@ -392,12 +377,11 @@ const Navbar = () => {
                 {userDetails.firstName.charAt(0).toUpperCase()}
               </Avatar>
 
-              {/* User Name */}
               <Typography
                 variant="h6"
                 sx={{
                   fontWeight: "800",
-                  fontSize: "24px",
+                  fontSize: isMobile ? "20px" : "24px",
                   color: "#1a1a1a",
                   textAlign: "center",
                   letterSpacing: "-0.5px",
@@ -406,19 +390,17 @@ const Navbar = () => {
                 {userDetails.firstName} {userDetails.lastName}
               </Typography>
 
-              {/* User Email */}
               <Typography
                 variant="body2"
                 sx={{
                   color: "#4a4a4a",
-                  fontSize: "16px",
+                  fontSize: isMobile ? "14px" : "16px",
                   textAlign: "center",
                 }}
               >
                 {userDetails.email}
               </Typography>
               
-              {/* Sign Out Button */}
               <Button
                 variant="contained"
                 onClick={handleLogout}
@@ -429,7 +411,7 @@ const Navbar = () => {
                   borderRadius: "14px",
                   fontWeight: "700",
                   textTransform: "none",
-                  fontSize: "16px",
+                  fontSize: isMobile ? "14px" : "16px",
                   background: "linear-gradient(135deg, #ff416c, #ff4b2b)",
                   boxShadow: "0 6px 12px rgba(255, 65, 108, 0.3)",
                   transition: "all 0.3s ease",
@@ -445,12 +427,11 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              {/* No User Details Message */}
               <Typography
                 variant="body1"
                 sx={{
                   color: "#4a4a4a",
-                  fontSize: "18px",
+                  fontSize: isMobile ? "16px" : "18px",
                   textAlign: "center",
                   mb: 3,
                 }}
@@ -458,18 +439,17 @@ const Navbar = () => {
                 Please sign in to the system
               </Typography>
 
-              {/* Sign Up Button */}
               <Button
                 variant="contained"
                 onClick={handleSignup}
-                disabled={signupLoading} // Use signupLoading state
+                disabled={signupLoading}
                 sx={{
                   width: "100%",
                   padding: "14px",
                   borderRadius: "14px",
                   fontWeight: "700",
                   textTransform: "none",
-                  fontSize: "16px",
+                  fontSize: isMobile ? "14px" : "16px",
                   background: "linear-gradient(135deg, #6a11cb, #2575fc)",
                   boxShadow: "0 6px 12px rgba(106, 17, 203, 0.3)",
                   transition: "all 0.3s ease",
@@ -483,18 +463,17 @@ const Navbar = () => {
                 {signupLoading ? <CircularProgress size={24} sx={{ color: "white" }} /> : "Sign Up"}
               </Button>
 
-              {/* Login Button */}
               <Button
                 variant="contained"
                 onClick={handleLogin}
-                disabled={loginLoading} // Use loginLoading state
+                disabled={loginLoading}
                 sx={{
                   width: "100%",
                   padding: "14px",
                   borderRadius: "14px",
                   fontWeight: "700",
                   textTransform: "none",
-                  fontSize: "16px",
+                  fontSize: isMobile ? "14px" : "16px",
                   background: "linear-gradient(135deg, #00c6ff, #0072ff)",
                   boxShadow: "0 6px 12px rgba(0, 198, 255, 0.3)",
                   transition: "all 0.3s ease",
@@ -524,6 +503,8 @@ interface DrawerMenuProps {
 const DrawerMenu = ({ open, toggleDrawer }: DrawerMenuProps) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleNavigation = (path: string) => {
     setLoading(true);
@@ -540,10 +521,10 @@ const DrawerMenu = ({ open, toggleDrawer }: DrawerMenuProps) => {
       open={open}
       onClose={toggleDrawer}
       sx={{
-        width: 300,
+        width: isMobile ? 250 : 300,
         flexShrink: 0,
         "& .MuiDrawer-paper": {
-          width: 300,
+          width: isMobile ? 250 : 300,
           boxSizing: "border-box",
           bgcolor: "rgba(248, 249, 250, 0.1)",
           backdropFilter: "blur(10px)",
@@ -563,7 +544,6 @@ const DrawerMenu = ({ open, toggleDrawer }: DrawerMenuProps) => {
           gap: 2,
         }}
       >
-        {/* Close Button */}
         <IconButton
           onClick={toggleDrawer}
           sx={{
@@ -582,7 +562,7 @@ const DrawerMenu = ({ open, toggleDrawer }: DrawerMenuProps) => {
           sx={{
             fontWeight: "bold",
             color: "#002855",
-            fontSize: "1.5rem",
+            fontSize: isMobile ? "1.2rem" : "1.5rem",
             mb: 2,
           }}
         >
@@ -599,6 +579,10 @@ const DrawerMenu = ({ open, toggleDrawer }: DrawerMenuProps) => {
               { name: "Pet Buy", path: "/buy" },
               { name: "Pet Adopt", path: "/adopt" },
               { name: "Matchmaking", path: "/matchmaking" },
+              { name: "Home", path: "/" },
+              { name: "About Us", path: "/aboutus" },
+              { name: "Terms", path: "/terms" },
+              { name: "Contact Us", path: "/contactus" },
             ].map((item) => (
               <ListItem
                 key={item.name}
