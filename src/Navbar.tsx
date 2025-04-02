@@ -1,4 +1,3 @@
-
 import { useState, MouseEvent } from "react";
 import {
   AppBar,
@@ -19,15 +18,14 @@ import {
   useTheme
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import CloseIcon from "@mui/icons-material/Close"; // Import CloseIcon
+import CloseIcon from "@mui/icons-material/Close";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import logoImg from './assets/logo512.png'; // CHANGES - Import logo image
-import { useCart } from "./contexts/CartContext"; // CHANGES - Import cart context
+import logoImg from './assets/logo512.png';
+import { useCart } from "./contexts/CartContext";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import Cart from "./components/Cart"; 
-
 
 interface UserDetails {
   email: string;
@@ -41,15 +39,14 @@ const Navbar = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [signupLoading, setSignupLoading] = useState(false); // Separate loading state for Sign Up
-  const [loginLoading, setLoginLoading] = useState(false); // Separate loading state for Login
-  const [navigationLoading, setNavigationLoading] = useState(false); // Loading state for navigation
+  const [signupLoading, setSignupLoading] = useState(false);
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [navigationLoading, setNavigationLoading] = useState(false);
   const navigate = useNavigate();
   const [cartOpen, setCartOpen] = useState(false);
   const { getItemCount } = useCart();
   const itemCount = getItemCount();
   
-
   const toggleDrawer = () => setDrawerOpen(!drawerOpen);
 
   const handleNavigation = (path: string) => {
@@ -83,18 +80,18 @@ const Navbar = () => {
   };
 
   const handleSignup = () => {
-    setSignupLoading(true); // Set loading state for Sign Up
+    setSignupLoading(true);
     setTimeout(() => {
       navigate("/signup");
-      setSignupLoading(false); // Reset loading state after navigation
+      setSignupLoading(false);
     }, 2000);
   };
 
   const handleLogin = () => {
-    setLoginLoading(true); // Set loading state for Login
+    setLoginLoading(true);
     setTimeout(() => {
       navigate("/login");
-      setLoginLoading(false); // Reset loading state after navigation
+      setLoginLoading(false);
     }, 2000);
   };
 
@@ -124,13 +121,13 @@ const Navbar = () => {
       <AppBar
         position="fixed"
         sx={{
-          bgcolor: "rgba(248, 249, 250, 0.9)", // Soft gray background
-          backdropFilter: "blur(10px)", // Glass morphism effect
-          WebkitBackdropFilter: "blur(10px)", // Safari support
+          bgcolor: "rgba(248, 249, 250, 0.9)",
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(10px)",
           color: "#333333",
           boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
           px: 2,
-          borderBottom: "1px solid rgba(0, 0, 0, 0.1)", // Subtle border
+          borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
         }}
       >
         <Toolbar sx={{ justifyContent: "space-between" }}>
@@ -574,40 +571,96 @@ const DrawerMenu = ({ open, toggleDrawer }: DrawerMenuProps) => {
             <CircularProgress />
           </Box>
         ) : (
-          <List sx={{ width: "100%" }}>
-            {[
-              { name: "Home", path: "/" },
-              { name: "Pet Buy", path: "/buy" },
-              { name: "Pet Adopt", path: "/adopt" },
-              { name: "Matchmaking", path: "/matchmaking" },
-              { name: "About Us", path: "/aboutus" },
-              { name: "Terms", path: "/terms" },
-              { name: "Contact Us", path: "/contactus" },
-            ].map((item) => (
-              <ListItem
-                key={item.name}
-                onClick={() => handleNavigation(item.path)}
-                sx={{
-                  cursor: "pointer",
-                  borderRadius: "12px",
-                  "&:hover": {
-                    bgcolor: "rgba(0, 123, 255, 0.1)",
-                    transform: "translateX(5px)",
-                    transition: "all 0.3s ease",
-                  },
-                }}
-              >
-                <ListItemText
-                  primary={item.name}
+          <Box sx={{ width: "100%" }}>
+            {/* General Section */}
+            <Typography
+              variant="subtitle1"
+              sx={{
+                px: 2,
+                pt: 1,
+                color: "#666",
+                fontWeight: "600",
+                fontSize: isMobile ? "0.9rem" : "1rem",
+              }}
+            >
+              General
+            </Typography>
+            <List sx={{ width: "100%" }}>
+              {[
+                { name: "Home", path: "/" },
+                { name: "About Us", path: "/aboutus" },
+                { name: "Terms", path: "/terms" },
+                { name: "Contact Us", path: "/contactus" },
+              ].map((item) => (
+                <ListItem
+                  key={item.name}
+                  onClick={() => handleNavigation(item.path)}
                   sx={{
-                    color: "#333333",
-                    fontWeight: "500",
-                    "&:hover": { color: "#007BFF" },
+                    cursor: "pointer",
+                    borderRadius: "12px",
+                    "&:hover": {
+                      bgcolor: "rgba(0, 123, 255, 0.1)",
+                      transform: "translateX(5px)",
+                      transition: "all 0.3s ease",
+                    },
                   }}
-                />
-              </ListItem>
-            ))}
-          </List>
+                >
+                  <ListItemText
+                    primary={item.name}
+                    sx={{
+                      color: "#333333",
+                      fontWeight: "500",
+                      "&:hover": { color: "#007BFF" },
+                    }}
+                  />
+                </ListItem>
+              ))}
+            </List>
+
+            {/* Pet Services Section */}
+            <Typography
+              variant="subtitle1"
+              sx={{
+                px: 2,
+                pt: 2,
+                color: "#666",
+                fontWeight: "600",
+                fontSize: isMobile ? "0.9rem" : "1rem",
+              }}
+            >
+              Pet Services
+            </Typography>
+            <List sx={{ width: "100%" }}>
+              {[
+                { name: "Pet Buy", path: "/buy" },
+                { name: "Pet Adopt", path: "/adopt" },
+                { name: "Matchmaking", path: "/matchmaking" },
+              ].map((item) => (
+                <ListItem
+                  key={item.name}
+                  onClick={() => handleNavigation(item.path)}
+                  sx={{
+                    cursor: "pointer",
+                    borderRadius: "12px",
+                    "&:hover": {
+                      bgcolor: "rgba(0, 123, 255, 0.1)",
+                      transform: "translateX(5px)",
+                      transition: "all 0.3s ease",
+                    },
+                  }}
+                >
+                  <ListItemText
+                    primary={item.name}
+                    sx={{
+                      color: "#333333",
+                      fontWeight: "500",
+                      "&:hover": { color: "#007BFF" },
+                    }}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Box>
         )}
       </Box>
     </Drawer>
