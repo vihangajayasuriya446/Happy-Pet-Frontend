@@ -691,19 +691,28 @@ const HomePage: React.FC = () => {
         </Box>
       </Box>
 
-      <Box display="flex" flexDirection="column" alignItems="center"  sx={{ mt: 4, px: 2 , textAlign: "center" }}>
+      <Box sx={{ 
+    mt: 4, 
+    px: 2,
+    width: "100%", // Ensure full width
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center", // This centers child items horizontally
+    textAlign: "center" // This centers text within the Typography
+  }}>
   {/* Matchmaking Section */}
   <Typography
-    variant="h4"
-    fontWeight="bold"
-    mb={4}
-    sx={{
-      color: "#FFFFFF",
-      position: "relative",
-      zIndex: 2,
-      textShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
-      fontSize: { xs: "1.8rem", sm: "2.2rem", md: "2.5rem" }
-    }}
+     variant="h4"
+     fontWeight="bold"
+     mb={4}
+     sx={{
+       color: "#FFFFFF",
+       position: "relative",
+       zIndex: 2,
+       textShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
+       fontSize: { xs: "1.8rem", sm: "2.2rem", md: "2.5rem" },
+       width: "100%" // Ensure full width for text alignment
+     }} 
   >
     Available Pets for Matchmaking
   </Typography>
@@ -919,18 +928,27 @@ const HomePage: React.FC = () => {
 </Box>
 
 {/* Adopt a Pet Section */}
-<Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2 , textAlign: "center" }}>
+<Box sx={{ 
+    mt: 4, 
+    px: 2,
+    width: "100%", // Ensure full width
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center", // This centers child items horizontally
+    textAlign: "center" // This centers text within the Typography
+  }}>
   <Typography 
-   variant="h4"
-   fontWeight="bold"
-   mb={4}
-   sx={{
-     color: "#FFFFFF",
-     position: "relative",
-     zIndex: 2,
-     textShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
-     fontSize: { xs: "1.8rem", sm: "2.2rem", md: "2.5rem" }
-   }}
+    variant="h4"
+    fontWeight="bold"
+    mb={4}
+    sx={{
+      color: "#FFFFFF",
+      position: "relative",
+      zIndex: 2,
+      textShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
+      fontSize: { xs: "1.8rem", sm: "2.2rem", md: "2.5rem" },
+      width: "100%" // Ensure full width for text alignment
+    }}
   >
     Available Pets for Adoption
   </Typography>
@@ -1150,18 +1168,27 @@ const HomePage: React.FC = () => {
 </Box>
 
 {/* Buy Section */}
-<Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2 , textAlign: "center" }}>
+<Box  sx={{ 
+    mt: 4, 
+    px: 2,
+    width: "100%", // Ensure full width
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center", // This centers child items horizontally
+    textAlign: "center" // This centers text within the Typography
+  }}>
   <Typography
-     variant="h4"
-     fontWeight="bold"
-     mb={4}
-     sx={{
-       color: "#FFFFFF",
-       position: "relative",
-       zIndex: 2,
-       textShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
-       fontSize: { xs: "1.8rem", sm: "2.2rem", md: "2.5rem" }
-     }}
+    variant="h4"
+    fontWeight="bold"
+    mb={4}
+    sx={{
+      color: "#FFFFFF",
+      position: "relative",
+      zIndex: 2,
+      textShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
+      fontSize: { xs: "1.8rem", sm: "2.2rem", md: "2.5rem" },
+      width: "100%" // Ensure full width for text alignment
+    }}
   >
     Available Pets for Buy
   </Typography>
