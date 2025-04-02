@@ -576,10 +576,10 @@ const DrawerMenu = ({ open, toggleDrawer }: DrawerMenuProps) => {
         ) : (
           <List sx={{ width: "100%" }}>
             {[
+              { name: "Home", path: "/" },
               { name: "Pet Buy", path: "/buy" },
               { name: "Pet Adopt", path: "/adopt" },
               { name: "Matchmaking", path: "/matchmaking" },
-              { name: "Home", path: "/" },
               { name: "About Us", path: "/aboutus" },
               { name: "Terms", path: "/terms" },
               { name: "Contact Us", path: "/contactus" },
