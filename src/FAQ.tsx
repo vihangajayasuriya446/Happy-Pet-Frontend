@@ -17,7 +17,7 @@ import {
   Pets as PetsIcon
 } from '@mui/icons-material';
 
-// Styled components with glassmorphism effect
+
 const StyledAccordion = styled(Accordion)(({ theme }) => ({
   marginBottom: theme.spacing(2),
   borderRadius: '12px !important',
