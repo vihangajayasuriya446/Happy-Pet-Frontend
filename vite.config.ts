@@ -16,7 +16,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           react: ['react', 'react-dom', 'react-router-dom'],
-          vendor: ['axios', 'lodash'], // Removed moment if you're not using it
+          vendor: ['axios', 'lodash'], 
         }
       }
     },
