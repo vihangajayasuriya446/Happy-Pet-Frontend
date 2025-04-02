@@ -16,6 +16,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           react: ['react', 'react-dom', 'react-router-dom'],
+          mui: ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled'],
           vendor: ['axios', 'lodash'], 
         }
       }
@@ -23,5 +24,5 @@ export default defineConfig({
     chunkSizeWarningLimit: 1000,
     assetsInlineLimit: 4096
   },
-  assetsInclude: ['/.jpg', '/.png', '/.mp4', '/.webp', '/*.svg']
+  assetsInclude: ['**/*.jpg', '**/*.png', '**/*.mp4', '**/*.webp', '**/*.svg']
 });
