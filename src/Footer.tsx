@@ -1,24 +1,25 @@
-import { Box, Typography, Link, Grid } from "@mui/material";
+import { Box, Typography, Link as MuiLink, Grid } from "@mui/material";
 import { Facebook, Instagram, LinkedIn } from "@mui/icons-material";
+import { Link as RouterLink } from "react-router-dom";
 
 const Footer = () => {
   return (
     <Box
       component="footer"
       sx={{
-        bgcolor: "rgba(255, 255, 255, 0.8)", // Semi-transparent background
+        bgcolor: "rgba(255, 255, 255, 0.8)",
         py: 6,
         px: { xs: 2, sm: 4 },
         mt: 8,
         borderTop: "1px solid rgba(0, 0, 0, 0.1)",
-        backdropFilter: "blur(10px)", // Glass morphism effect
-        minHeight: "300px", // Standard height for footer
+        backdropFilter: "blur(10px)",
+        minHeight: "300px",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        width: "100vw", // Ensure full viewport width
-        marginLeft: "calc(-50vw + 50%)", // Center the footer properly
-        boxSizing: "border-box", // Include padding in width calculation
+        width: "100vw",
+        marginLeft: "calc(-50vw + 50%)",
+        boxSizing: "border-box",
       }}
     >
       <Grid
@@ -31,47 +32,51 @@ const Footer = () => {
       >
         {/* Logo & Basic Links */}
         <Grid item xs={12} sm={3} textAlign={{ xs: "center", sm: "left" }}>
-          <img
-            src="/logo512.png"
-            alt="Happy Pet"
-            style={{
-              height: 120,
-              marginBottom: 20,
-              objectFit: "contain",
-              filter: "drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1))",
-            }}
-          />
+          <RouterLink to="/">
+            <img
+              src="/logo512.png"
+              alt="Happy Pet"
+              style={{
+                height: 120,
+                marginBottom: 20,
+                objectFit: "contain",
+                filter: "drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1))",
+              }}
+            />
+          </RouterLink>
           <Box>
-            <Typography
-              variant="body1"
-              sx={{ mb: 1, color: "text.primary", transition: "color 0.3s ease" }}
+            <RouterLink 
+              to="/aboutus" 
+              style={{ textDecoration: 'none', color: 'inherit' }}
             >
-              <Link
-                href="/aboutus"
-                underline="hover"
-                color="inherit"
-                sx={{
+              <Typography
+                variant="body1"
+                sx={{ 
+                  mb: 1, 
+                  color: "text.primary", 
+                  transition: "color 0.3s ease",
                   "&:hover": { color: "primary.main" },
                 }}
               >
                 About Us
-              </Link>
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{ mb: 1, color: "text.primary", transition: "color 0.3s ease" }}
+              </Typography>
+            </RouterLink>
+            <RouterLink 
+              to="/contactus" 
+              style={{ textDecoration: 'none', color: 'inherit' }}
             >
-              <Link
-                href="/contactus"
-                underline="hover"
-                color="inherit"
-                sx={{
+              <Typography
+                variant="body1"
+                sx={{ 
+                  mb: 1, 
+                  color: "text.primary", 
+                  transition: "color 0.3s ease",
                   "&:hover": { color: "primary.main" },
                 }}
               >
                 Contact Us
-              </Link>
-            </Typography>
+              </Typography>
+            </RouterLink>
           </Box>
         </Grid>
 
@@ -84,33 +89,53 @@ const Footer = () => {
           >
             Information
           </Typography>
-          <Link
-            href="/matchmaking"
-            underline="hover"
-            color="inherit"
-            display="block"
-            sx={{ mb: 1, color: "text.primary", transition: "color 0.3s ease" }}
+          <RouterLink 
+            to="/matchmaking" 
+            style={{ textDecoration: 'none', color: 'inherit' }}
           >
-            Pet Matchmaking
-          </Link>
-          <Link
-            href="/buy"
-            underline="hover"
-            color="inherit"
-            display="block"
-            sx={{ mb: 1, color: "text.primary", transition: "color 0.3s ease" }}
+            <Typography
+              variant="body1"
+              sx={{ 
+                mb: 1, 
+                color: "text.primary", 
+                transition: "color 0.3s ease",
+                "&:hover": { color: "primary.main" },
+              }}
+            >
+              Pet Matchmaking
+            </Typography>
+          </RouterLink>
+          <RouterLink 
+            to="/buy" 
+            style={{ textDecoration: 'none', color: 'inherit' }}
           >
-            Buy Pets
-          </Link>
-          <Link
-            href="/adopt"
-            underline="hover"
-            color="inherit"
-            display="block"
-            sx={{ color: "text.primary", transition: "color 0.3s ease" }}
+            <Typography
+              variant="body1"
+              sx={{ 
+                mb: 1, 
+                color: "text.primary", 
+                transition: "color 0.3s ease",
+                "&:hover": { color: "primary.main" },
+              }}
+            >
+              Buy Pets
+            </Typography>
+          </RouterLink>
+          <RouterLink 
+            to="/adopt" 
+            style={{ textDecoration: 'none', color: 'inherit' }}
           >
-            Adopt Pets
-          </Link>
+            <Typography
+              variant="body1"
+              sx={{ 
+                color: "text.primary", 
+                transition: "color 0.3s ease",
+                "&:hover": { color: "primary.main" },
+              }}
+            >
+              Adopt Pets
+            </Typography>
+          </RouterLink>
         </Grid>
 
         {/* Helpful Links Section */}
@@ -122,33 +147,53 @@ const Footer = () => {
           >
             Helpful Links
           </Typography>
-          <Link
-            href="/supportus"
-            underline="hover"
-            color="inherit"
-            display="block"
-            sx={{ mb: 1, color: "text.primary", transition: "color 0.3s ease" }}
+          <RouterLink 
+            to="/supportus" 
+            style={{ textDecoration: 'none', color: 'inherit' }}
           >
-            Support
-          </Link>
-          <Link
-            href="/terms"
-            underline="hover"
-            color="inherit"
-            display="block"
-            sx={{ mb: 1, color: "text.primary", transition: "color 0.3s ease" }}
+            <Typography
+              variant="body1"
+              sx={{ 
+                mb: 1, 
+                color: "text.primary", 
+                transition: "color 0.3s ease",
+                "&:hover": { color: "primary.main" },
+              }}
+            >
+              Support
+            </Typography>
+          </RouterLink>
+          <RouterLink 
+            to="/terms" 
+            style={{ textDecoration: 'none', color: 'inherit' }}
           >
-            Terms & Conditions
-          </Link>
-          <Link
-            href="/privacy"
-            underline="hover"
-            color="inherit"
-            display="block"
-            sx={{ color: "text.primary", transition: "color 0.3s ease" }}
+            <Typography
+              variant="body1"
+              sx={{ 
+                mb: 1, 
+                color: "text.primary", 
+                transition: "color 0.3s ease",
+                "&:hover": { color: "primary.main" },
+              }}
+            >
+              Terms & Conditions
+            </Typography>
+          </RouterLink>
+          <RouterLink 
+            to="/privacy" 
+            style={{ textDecoration: 'none', color: 'inherit' }}
           >
-            Privacy Policy
-          </Link>
+            <Typography
+              variant="body1"
+              sx={{ 
+                color: "text.primary", 
+                transition: "color 0.3s ease",
+                "&:hover": { color: "primary.main" },
+              }}
+            >
+              Privacy Policy
+            </Typography>
+          </RouterLink>
         </Grid>
 
         {/* Social Media Icons Section */}
@@ -165,7 +210,7 @@ const Footer = () => {
             justifyContent={{ xs: "center", sm: "left" }}
             gap={2}
           >
-            <Link
+            <MuiLink
               href="https://www.facebook.com/share/1PZSnD5qyk/?mibextid=wwXIfr"
               target="_blank"
               rel="noopener noreferrer"
@@ -179,8 +224,8 @@ const Footer = () => {
                   "&:hover": { color: "primary.main" },
                 }}
               />
-            </Link>
-            <Link
+            </MuiLink>
+            <MuiLink
               href="https://www.instagram.com/happypetlk?igsh=MW51MmI2OWJ3OHR5OA=="
               target="_blank"
               rel="noopener noreferrer"
@@ -194,9 +239,9 @@ const Footer = () => {
                   "&:hover": { color: "primary.main" },
                 }}
               />
-            </Link>
-            <Link
-              href="https://www.linkedin.com/in/happy-pet-664b40352/" 
+            </MuiLink>
+            <MuiLink
+              href="https://www.linkedin.com/in/happy-pet-664b40352/"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -209,7 +254,7 @@ const Footer = () => {
                   "&:hover": { color: "primary.main" },
                 }}
               />
-            </Link>
+            </MuiLink>
           </Box>
         </Grid>
       </Grid>
