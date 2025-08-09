@@ -8,7 +8,7 @@
 **Happy Pet** is a full-stack web platform designed to promote **ethical pet adoption, purchasing, and matchmaking** while fostering **animal welfare awareness**.  
 The system connects **adopters, breeders, and shelters** through a secure, **role-based access** platform with a responsive UI and seamless user experience.
 
-This is the **frontend** repository of the Happy Pet project, built with **React (Next.js)** and styled using **Tailwind CSS**, communicating with a Spring Boot backend via REST APIs.
+This is the **frontend** repository of the Happy Pet project, built with **React** and styled using **Tailwind CSS**, communicating with a Spring Boot backend via REST APIs.
 
 ---
 
@@ -26,6 +26,7 @@ This is the **frontend** repository of the Happy Pet project, built with **React
 - React (Next.js)
 - TypeScript
 - Tailwind CSS
+- Material UI (MUI)
 - Axios
 
 **Backend**
