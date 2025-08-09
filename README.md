@@ -72,6 +72,11 @@ Ensure you have the following installed:
 - Navigate to http://localhost:3000
 ---
 
+## 📽️ Demo Video
+https://www.youtube.com/watch?v=3azFI7EclAU
+
+---
+
 ## Frontend-Backend-DB Flow
 
 <img width="3840" height="2059" alt="Mermaid Chart - Create complex, visual diagrams with text  A smarter way of creating diagrams -2025-08-09-183513" src="https://github.com/user-attachments/assets/d00e0074-56f3-44af-bbaf-ac13dab558da" />
