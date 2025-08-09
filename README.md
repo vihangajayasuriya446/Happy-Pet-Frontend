@@ -70,6 +70,42 @@ Ensure you have the following installed:
    ```
 6. **Open in browser**
 - Navigate to http://localhost:3000
+
+---
+
+## 🖼️ User Interfaces
+
+- Login Page
+![6babe382-0234-4053-946f-88235b0a0710](https://github.com/user-attachments/assets/5a7c6bd1-beb6-4d80-b727-ddf14e3ab1eb)
+
+- Home Page 
+![b5a0e1eb-9a03-4ba7-b965-96d72392fca7](https://github.com/user-attachments/assets/fadc9d33-086d-4a9a-a798-8fe23c77705f)
+
+- Home Page
+![b41e80da-eb54-4b2a-8a7c-9a4199815899](https://github.com/user-attachments/assets/c3ad149e-8862-4766-a905-4db8df2cf1ad)
+
+- Home Page
+![ffc96dd0-33b6-44c4-b90a-53e5598cc26c](https://github.com/user-attachments/assets/8c9f9f1f-4b00-4343-901b-087101bcd960)
+
+- Pet Buy Dashboard
+![5563d8e3-5833-4736-b8b9-cc7b92f84eaa](https://github.com/user-attachments/assets/ca0a8a02-c725-4731-8798-784a4a900dba)
+
+- Matchmaking Dashboard
+![07466db7-07bc-42c8-90f3-533b4ca5ddaf](https://github.com/user-attachments/assets/19f70b3d-db6a-44cb-aa0a-42d871cd2bd4)
+
+- Buy Pet Page
+![e1198d3d-6899-4fe1-a03e-0f2a4059698d](https://github.com/user-attachments/assets/7d714550-6381-4bc6-95ad-ff9c37e11bbe)
+
+- Adopt Pet Page
+![8275b5b1-bf54-42de-bea0-e96f462fede2](https://github.com/user-attachments/assets/e9520078-8275-462b-990b-4664f99abbed)
+
+- About Us
+![9fdd3838-c4b7-4c9c-85e0-c11e623d5bfd](https://github.com/user-attachments/assets/87fef30a-3de8-4d70-be71-ea2e9cd579b9)
+
+- Contact Us
+![8cd6f6c2-a4aa-4cad-87ce-3723490020fe](https://github.com/user-attachments/assets/09e78096-95e7-45b0-8883-4d41a60d1d4d)
+
+
 ---
 
 ## 📽️ Demo Video
