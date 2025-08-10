@@ -14,7 +14,7 @@ This is the **frontend** repository of the Happy Pet project, built with **React
 
 ## ✨ Features
 - 🔐 **User Authentication** – Secure registration & login with JWT-based authentication.
-- 📄 **Article Management** – Admins can create, edit, and delete informational content.
+- 📄 **Pet Management** – Admins can create, edit, and delete informational content.
 - 🐕 **Pet Inquiry Submission** – Users can browse pets and send adoption requests.
 - 📱 **Responsive UI** – Mobile-first design with Tailwind CSS.
 - 🔔 **Snackbar Notifications** – Real-time feedback for user actions.
